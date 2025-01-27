@@ -14,36 +14,51 @@
          <div class="card-body">
             <form method="post" enctype="multipart/form-data">
                {% csrf_token %}
+               
+               <!-- Tabs for Titles -->
+               <ul class="nav nav-tabs" id="title-tabs" role="tablist">
+                  {% for code, name in LANGUAGES %}
+                  <li class="nav-item" role="presentation">
+                     <button class="nav-link {% if forloop.first %}active{% endif %}" id="title-tab-{{ code }}" data-bs-toggle="tab" data-bs-target="#title-{{ code }}" type="button" role="tab" aria-controls="title-{{ code }}" aria-selected="true">
+                        {{ name }}
+                     </button>
+                  </li>
+                  {% endfor %}
+               </ul>
 
-               <!-- Title -->
-               <div class="mb-3">
-                  <label for="title_uz" class="form-label">Sarlavha (O‘zbek)</label>
-                  <input type="text" id="title_uz" name="title[uz]" class="form-control" placeholder="Sarlavha (O‘zbek)">
-               </div>
-               <div class="mb-3">
-                  <label for="title_en" class="form-label">Sarlavha (English)</label>
-                  <input type="text" id="title_en" name="title[en]" class="form-control" placeholder="Sarlavha (English)">
-               </div>
-               <div class="mb-3">
-                  <label for="title_ru" class="form-label">Sarlavha (Русский)</label>
-                  <input type="text" id="title_ru" name="title[ru]" class="form-control" placeholder="Sarlavha (Русский)">
+               <!-- Tab Content for Titles -->
+               <div class="tab-content mt-3">
+                  {% for code, name in LANGUAGES %}
+                  <div class="tab-pane fade {% if forloop.first %}show active{% endif %}" id="title-{{ code }}" role="tabpanel" aria-labelledby="title-tab-{{ code }}">
+                     <div class="mb-3">
+                        <label for="title_{{ code }}" class="form-label">Sarlavha ({{ name }})</label>
+                        <input type="text" id="title_{{ code }}" name="title[{{ code }}]" class="form-control" placeholder="Sarlavha ({{ name }})">
+                     </div>
+                  </div>
+                  {% endfor %}
                </div>
 
-               <!-- Content -->
-               <div class="mb-3">
-                  <label for="content_uz" class="form-label">Mazmun (O‘zbek)</label>
-                  <textarea id="content_uz" name="content[uz]" class="form-control" rows="3"
-                            placeholder="Mazmun (O‘zbek)"></textarea>
-               </div>
-               <div class="mb-3">
-                  <label for="content_en" class="form-label">Mazmun (English)</label>
-                  <textarea id="content_en" name="content[en]" class="form-control" rows="3"
-                            placeholder="Mazmun (English)"></textarea>
-               </div>
-               <div class="mb-3">
-                  <label for="content_ru" class="form-label">Mazmun (Русский)</label>
-                  <textarea id="content_ru" name="content[ru]" class="form-control" rows="3"
-                            placeholder="Mazmun (Русский)"></textarea>
+               <!-- Tabs for Content -->
+               <ul class="nav nav-tabs" id="content-tabs" role="tablist">
+                  {% for code, name in LANGUAGES %}
+                  <li class="nav-item" role="presentation">
+                     <button class="nav-link {% if forloop.first %}active{% endif %}" id="content-tab-{{ code }}" data-bs-toggle="tab" data-bs-target="#content-{{ code }}" type="button" role="tab" aria-controls="content-{{ code }}" aria-selected="true">
+                        {{ name }}
+                     </button>
+                  </li>
+                  {% endfor %}
+               </ul>
+
+               <!-- Tab Content for Content -->
+               <div class="tab-content mt-3">
+                  {% for code, name in LANGUAGES %}
+                  <div class="tab-pane fade {% if forloop.first %}show active{% endif %}" id="content-{{ code }}" role="tabpanel" aria-labelledby="content-tab-{{ code }}">
+                     <div class="mb-3">
+                        <label for="content_{{ code }}" class="form-label">Mazmun ({{ name }})</label>
+                        <textarea id="content_{{ code }}" name="content[{{ code }}]" class="form-control" rows="3" placeholder="Mazmun ({{ name }})"></textarea>
+                     </div>
+                  </div>
+                  {% endfor %}
                </div>
 
                <!-- Image -->
@@ -77,5 +92,36 @@
 {% endblock content %}
 
 {% block script %}
+<script>
+document.querySelector('form').addEventListener('submit', function (event) {
+    event.preventDefault();
 
+    const formData = new FormData(this);
+    fetch("{% url 'add-news-view' %}", {
+        method: "POST",
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === "success") {
+            Swal.fire({
+                icon: "success",
+                title: "Muvaffaqiyatli!",
+                text: data.message,
+                confirmButtonText: "OK"
+            }).then(() => {
+                location.reload(); // Sahifani yangilash
+            });
+        } else {
+            Swal.fire({
+                icon: "error",
+                title: "Xatolik!",
+                text: data.message,
+                confirmButtonText: "OK"
+            });
+        }
+    })
+    .catch(err => console.error("Error:", err));
+});
+</script>
 {% endblock script %}

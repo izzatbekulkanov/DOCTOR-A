@@ -92,6 +92,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'logs.middleware.LogMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
 ]
 
 # settings.py
@@ -111,6 +112,7 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.template.context_processors.media',
                 'django.contrib.messages.context_processors.messages',
+                'core.context_processors.languages',
             ],
         },
     },
@@ -159,7 +161,12 @@ USE_TZ = True  # Timezone-aware vaqtni ishlatish
 
 # Internationalization va Local formatting
 USE_I18N = True              # Internationalization-ni yoqish
-USE_L10N = True              # Local formatlashni yoqish
+USE_L10N = True
+
+LOCALE_PATHS = [
+    BASE_DIR / 'locale',
+]
+# Local formatlashni yoqish
 
 STATIC_URL = 'static/'
 

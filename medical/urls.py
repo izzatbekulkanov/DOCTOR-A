@@ -4,7 +4,7 @@ from logs.views import LogsView
 from .view.announcement import AnnouncementView
 from .view.data import DataView
 from .view.employees import EmployeesView
-from .view.news import NewsListView, AddNewsListView
+from .view.news import NewsListView, AddNewsListView, NewsDetailView
 from .view.settings import SettingView, contact_phone_delete
 from .view.sponsors import SponsorsView
 from .views import MainView
@@ -25,6 +25,7 @@ mainurlpatterns = [
     path('main/announcement/', AnnouncementView.as_view(), name='announcement-view'),
     path('main/sponsors/', SponsorsView.as_view(), name='sponsors-view'),
     path('main/employees/', EmployeesView.as_view(), name='employees-view'),
+    path('main/news/<int:pk>/', NewsDetailView.as_view(), name='news-detail'),
 ]
 
 urlpatterns = mainpatterns + settingpatterns + mainurlpatterns
