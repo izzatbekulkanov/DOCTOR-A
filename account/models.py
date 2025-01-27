@@ -37,6 +37,10 @@ class CustomUser(AbstractUser):
     tax_identification_number = models.CharField(max_length=20, null=True, blank=True, help_text="STIR")
     insurance_number = models.CharField(max_length=50, null=True, blank=True, help_text="Sug'urta raqami")
 
+    # Django standart maydonlarini qayta belgilash
+    is_active = models.BooleanField(default=True, help_text="Foydalanuvchi faol yoki faol emasligini belgilaydi")
+    is_staff = models.BooleanField(default=False, help_text="Foydalanuvchi admin sahifasiga kira oladimi")
+
     def __str__(self):
         return self.username
 

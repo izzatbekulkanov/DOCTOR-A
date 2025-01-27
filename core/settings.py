@@ -1,5 +1,6 @@
 from pathlib import Path
 from datetime import timedelta
+from django.utils.translation import gettext_lazy as _
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -139,12 +140,26 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-LANGUAGE_CODE = 'en-us'
+# Default til
+LANGUAGE_CODE = 'uz'  # Default til O'zbek tili
 
-TIME_ZONE = 'Asia/Tashkent'  # Tashkent vaqti
+LANGUAGES = [
+    ('uz', _('Uzbek')),       # O'zbek tili
+    ('kk', _('Kazakh')),      # Qozoq tili
+    ('tr', _('Turkish')),     # Turk tili
+    ('ru', _('Russian')),     # Rus tili
+    ('en', _('English')),     # Ingliz tili
+    ('de', _('German')),      # Nemis tili
+    ('fr', _('French')),      # Fransuz tili
+    ('ko', _('Korean')),      # Koreys tili
+]
+
+TIME_ZONE = 'Asia/Tashkent'  # Tashkent vaqt zonasi
 USE_TZ = True  # Timezone-aware vaqtni ishlatish
 
-USE_I18N = True
+# Internationalization va Local formatting
+USE_I18N = True              # Internationalization-ni yoqish
+USE_L10N = True              # Local formatlashni yoqish
 
 STATIC_URL = 'static/'
 

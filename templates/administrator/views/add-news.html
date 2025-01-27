@@ -1,0 +1,81 @@
+{% extends 'administrator/main.html' %}
+{% load static %}
+{% block style %}
+<link rel="stylesheet" href="{% static 'css/custom-style.css' %}">
+{% endblock style %}
+
+{% block content %}
+<div class="page-content">
+   <div class="container-fluid">
+      <div class="card shadow-sm">
+         <div class="card-header">
+            <h5 class="mb-0">Yangi Yangilik Qo‘shish</h5>
+         </div>
+         <div class="card-body">
+            <form method="post" enctype="multipart/form-data">
+               {% csrf_token %}
+
+               <!-- Title -->
+               <div class="mb-3">
+                  <label for="title_uz" class="form-label">Sarlavha (O‘zbek)</label>
+                  <input type="text" id="title_uz" name="title[uz]" class="form-control" placeholder="Sarlavha (O‘zbek)">
+               </div>
+               <div class="mb-3">
+                  <label for="title_en" class="form-label">Sarlavha (English)</label>
+                  <input type="text" id="title_en" name="title[en]" class="form-control" placeholder="Sarlavha (English)">
+               </div>
+               <div class="mb-3">
+                  <label for="title_ru" class="form-label">Sarlavha (Русский)</label>
+                  <input type="text" id="title_ru" name="title[ru]" class="form-control" placeholder="Sarlavha (Русский)">
+               </div>
+
+               <!-- Content -->
+               <div class="mb-3">
+                  <label for="content_uz" class="form-label">Mazmun (O‘zbek)</label>
+                  <textarea id="content_uz" name="content[uz]" class="form-control" rows="3"
+                            placeholder="Mazmun (O‘zbek)"></textarea>
+               </div>
+               <div class="mb-3">
+                  <label for="content_en" class="form-label">Mazmun (English)</label>
+                  <textarea id="content_en" name="content[en]" class="form-control" rows="3"
+                            placeholder="Mazmun (English)"></textarea>
+               </div>
+               <div class="mb-3">
+                  <label for="content_ru" class="form-label">Mazmun (Русский)</label>
+                  <textarea id="content_ru" name="content[ru]" class="form-control" rows="3"
+                            placeholder="Mazmun (Русский)"></textarea>
+               </div>
+
+               <!-- Image -->
+               <div class="mb-3">
+                  <label for="image" class="form-label">Rasm</label>
+                  <input type="file" id="image" name="image" class="form-control">
+               </div>
+
+               <!-- Publish date -->
+               <div class="mb-3">
+                  <label for="published_date" class="form-label">Chop etilgan sana</label>
+                  <input type="date" id="published_date" name="published_date" class="form-control">
+               </div>
+
+               <!-- Is published -->
+               <div class="form-check form-switch mb-3">
+                  <input type="checkbox" id="is_published" name="is_published" class="form-check-input">
+                  <label for="is_published" class="form-check-label">Chop etilgan</label>
+               </div>
+
+               <!-- Submit button -->
+               <div class="text-end">
+                  <button type="submit" class="btn btn-primary">Saqlash</button>
+                  <a href="{% url 'news-view' %}" class="btn btn-secondary">Bekor qilish</a>
+               </div>
+            </form>
+         </div>
+      </div>
+   </div>
+</div>
+{% endblock content %}
+
+{% block script %}
+
+{% endblock script %}

@@ -8,7 +8,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('account/', include('account.urls')),  # Added account app URLs
     path('', include('dashboard.urls')),
-    path('main', include('medical.urls')),
+    path('admin-page/', include('medical.urls')),
     path('logs/', include('logs.urls')),  # Added question app URLs
     path("ckeditor5/", include('django_ckeditor_5.urls')),
     re_path(r'^static/(?P<path>.*)$', serve, {'document_root': settings.STATIC_ROOT}),
