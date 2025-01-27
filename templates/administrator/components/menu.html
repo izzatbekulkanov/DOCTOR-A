@@ -1,0 +1,100 @@
+{% load static %}
+<div class="app-menu navbar-menu">
+    <!-- LOGO -->
+    <div class="navbar-brand-box">
+      <!-- Dark Logo-->
+      <a href="index.html" class="logo logo-dark">
+                    <span class="logo-sm">
+                        <img src="{% static 'assets/images/logo-sm.png' %}" alt="" height="22">
+                    </span>
+        <span class="logo-lg">
+                        <img src="{% static 'assets/images/logo-dark.png' %}" alt="" height="17">
+                    </span>
+      </a>
+      <!-- Light Logo-->
+      <a href="index.html" class="logo logo-light">
+                    <span class="logo-sm">
+                        <img src="{% static 'assets/images/logo-sm.png' %}" alt="" height="22">
+                    </span>
+        <span class="logo-lg">
+                        <img src="{% static 'assets/images/logo-light.png' %}" alt="" height="17">
+                    </span>
+      </a>
+      <button type="button" class="btn btn-sm p-0 fs-20 header-item float-end btn-vertical-sm-hover"
+              id="vertical-hover">
+        <i class="ri-record-circle-line"></i>
+      </button>
+    </div>
+
+    <div id="scrollbar">
+      <div class="container-fluid">
+
+        <div id="two-column-menu">
+        </div>
+        <ul class="navbar-nav" id="navbar-nav">
+          <li class="menu-title"><span data-key="t-menu">Menyu</span></li>
+          <li class="nav-item">
+            <a class="nav-link menu-link" href="#sidebarDashboards" data-bs-toggle="collapse" role="button"
+               aria-expanded="false" aria-controls="sidebarDashboards">
+              <i class="ri-group-line"></i> <span data-key="t-dashboards">Foydalanuvchilar</span>
+            </a>
+            <div class="collapse menu-dropdown" id="sidebarDashboards">
+              <ul class="nav nav-sm flex-column">
+                <li class="nav-item">
+                  <a href="dashboard-analytics.html" class="nav-link" data-key="t-analytics"> <i class="ri-user-3-line"></i> Foydalanuvchilar </a>
+                </li>
+                <li class="nav-item">
+                  <a href="dashboard-crm.html" class="nav-link" data-key="t-crm"> <i class="ri-user-add-line"></i> Foydalanuvchi qo'shish </a>
+                </li>
+              </ul>
+            </div>
+          </li> <!-- end Dashboard Menu -->
+          <li class="nav-item">
+            <a class="nav-link menu-link" href="#sidebarApps" data-bs-toggle="collapse" role="button"
+               aria-expanded="false" aria-controls="sidebarApps">
+              <i class="ri-apps-line"></i> <span data-key="t-apps">Asosiy menyu</span>
+            </a>
+            <div class="collapse menu-dropdown" id="sidebarApps">
+              <ul class="nav nav-sm flex-column">
+                <li class="nav-item">
+                  <a href="apps-chat.html" class="nav-link" data-key="t-chat"> <i class="ri-newspaper-line"></i> Yangiliklar </a>
+                </li>
+                <li class="nav-item">
+                  <a href="apps-file-manager.html" class="nav-link"> <i class="ri-notification-line"></i> <span data-key="t-file-manager">E'lonlar</span></a>
+                </li>
+                <li class="nav-item">
+                  <a href="apps-todo.html" class="nav-link"> <i class="ri-team-line"></i> <span data-key="t-to-do">Hodimlar</span></a>
+                </li>
+                <li class="nav-item">
+                  <a href="apps-api-key.html" class="nav-link" data-key="t-api-key"> <i class="ri-hand-heart-line"></i> Hamkorlar</a>
+                </li>
+              </ul>
+            </div>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link menu-link" href="#sidebarSettings" data-bs-toggle="collapse" role="button"
+               aria-expanded="false" aria-controls="sidebarSettings">
+              <i class="ri-settings-2-line"></i> <span data-key="t-apps">Sayt sozlamalari</span>
+            </a>
+            <div class="collapse menu-dropdown" id="sidebarSettings">
+              <ul class="nav nav-sm flex-column">
+                <li class="nav-item">
+                  <a href="apps-chat.html" class="nav-link" data-key="t-chat"> <i class="ri-tools-line"></i> Sozlamalar </a>
+                </li>
+                <li class="nav-item">
+                  <a href="apps-file-manager.html" class="nav-link"> <i class="ri-file-list-line"></i> <span data-key="t-file-manager">Loglar</span></a>
+                </li>
+                <li class="nav-item">
+                  <a href="apps-todo.html" class="nav-link"> <i class="ri-database-2-line"></i> <span data-key="t-to-do">Ma'lumotlar</span></a>
+                </li>
+              </ul>
+            </div>
+          </li>
+
+        </ul>
+      </div>
+      <!-- Sidebar -->
+    </div>
+
+    <div class="sidebar-background"></div>
+  </div>
