@@ -1,104 +1,69 @@
-<!doctype html>
+<!DOCTYPE html>
 {% load static %}
-<html lang="en" data-layout="vertical" data-layout-style="detached" data-sidebar="light" data-topbar="dark"
-      data-sidebar-size="lg" data-sidebar-image="none" data-preloader="disable">
+<html lang="uz" dir="ltr" data-bs-theme="light" data-color-theme="Blue_Theme"  data-layout="vertical">
 
 <head>
+    {% include 'administrator/components/head.html' %}
+    {% block title %}
 
-  <meta charset="utf-8" />
-  <title>Dashboard | Doctor A Medcenter</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta content="Doctor A Medcenter - Hususiy klinika tizimi" name="description" />
-  <meta content="Doctor A Team" name="author" />
-  <!-- App favicon -->
-  <link rel="shortcut icon" href="{% static 'assets/images/favicon.ico' %}">
+    {% endblock title %}
 
-  <!-- jsvectormap css -->
-  <link href="{% static 'assets/libs/jsvectormap/jsvectormap.min.css' %}" rel="stylesheet" type="text/css" />
-
-  <!--Swiper slider css-->
-  <link href="{% static 'assets/libs/swiper/swiper-bundle.min.css' %}" rel="stylesheet" type="text/css" />
-
-  <!-- Layout config Js -->
-  <script src="{% static 'assets/js/layout.js' %}"></script>
-  <!-- Bootstrap Css -->
-  <link href="{% static 'assets/css/bootstrap.min.css' %}" rel="stylesheet" type="text/css" />
-  <!-- Icons Css -->
-  <link href="{% static 'assets/css/icons.min.css' %}" rel="stylesheet" type="text/css" />
-  <!-- App Css-->
-  <link href="{% static 'assets/css/app.min.css' %}" rel="stylesheet" type="text/css" />
-  <!-- custom Css-->
-  <link href="{% static 'assets/css/custom.min.css' %}" rel="stylesheet" type="text/css" />
-  <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
-
-  {% block style %}
-  {% endblock style %}
 
 </head>
 
 <body>
+<!-- Toast -->
+{% include 'administrator/components/toast.html' %}
+<!-- Preloader -->
+{% include 'administrator/components/preloader.html' %}
+<div id="main-wrapper">
+    <!-- Sidebar Start -->
+    {% include 'administrator/components/aside-vertical.html' %}
+    <!--  Sidebar End -->
+    <div class="page-wrapper">
+        <!--  Header Start -->
+        {% include 'administrator/components/header.html' %}
 
-<!-- Begin page -->
-<div id="layout-wrapper">
+        <!--  Header End -->
 
-  {% include 'administrator/components/header.html' %}
 
-  <!-- removeNotificationModal -->
-  {% include 'administrator/components/notification.html' %}
 
-  <!-- ========== App Menu ========== -->
-  {% include 'administrator/components/menu.html' %}
+        <div class="body-wrapper">
+            <div class="container-fluid">
+                {% block content %}
+                {% endblock content %}
+            </div>
+        </div>
 
-  <!-- Left Sidebar End -->
-  <!-- Vertical Overlay-->
-  <div class="vertical-overlay"></div>
 
-  <!-- ============================================================== -->
-  <!-- Start right Content here -->
-  <!-- ============================================================== -->
-  <div class="main-content">
+        {% include 'administrator/components/offcanvas.html' %}
 
-    {% block content %}
-    {% endblock content %}
-    <!-- End Page-content -->
-    {% include 'administrator/components/footer.html' %}
 
-  </div>
-  <!-- end main content-->
+        <script>
+            function handleColorTheme(e) {
+                document.documentElement.setAttribute("data-color-theme", e);
+            }
+        </script>
+    </div>
+
+        {% include 'administrator/components/search-modal.html' %}
+
 
 </div>
-<!-- END layout-wrapper -->
+<div class="dark-transparent sidebartoggler"></div>
+<script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
+<!-- Import Js Files -->
+<script src="{% static 'libs/bootstrap/dist/js/bootstrap.bundle.min.js' %}"></script>
+<script src="{% static 'libs/simplebar/dist/simplebar.min.js' %}"></script>
+<script src="{% static 'js/theme/app.init.js' %}"></script>
+<script src="{% static 'js/theme/theme.js' %}"></script>
+<script src="{% static 'js/theme/app.min.js' %}"></script>
+<script src="{% static 'js/theme/sidebarmenu.js' %}"></script>
 
-
-<!--start back-to-top-->
-{#{% include 'administrator/components/button.html' %}#}
-
-<!--end back-to-top-->
-
-<!--preloader-->
-{#{% include 'administrator/components/preloader.html' %}#}
-{#{% include 'administrator/components/customizer.html' %}#}
-
-
-<!-- Theme Settings -->
-{#{% include 'administrator/components/theme-settings.html' %}#}
-
-
-<!-- JAVASCRIPT -->
-<script src="{% static 'assets/libs/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
-<script src="{% static 'assets/libs/simplebar/simplebar.min.js' %}"></script>
-<script src="{% static 'assets/libs/node-waves/waves.min.js' %}"></script>
-<script src="{% static 'assets/libs/feather-icons/feather.min.js' %}"></script>
-<script src="{% static 'assets/js/pages/plugins/lord-icon-2.1.0.js' %}"></script>
-
-
-<!-- App js -->
-<script src="{% static 'assets/js/app.js' %}"></script>
-
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-{% block script %}
-{% endblock script %}
+<!-- solar icons -->
+<script src="{% static 'libs/fullcalendar/index.global.min.js' %}"></script>
+ {% block vendor_js %}
+ {% endblock vendor_js %}
 </body>
 
 </html>

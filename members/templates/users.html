@@ -1,0 +1,122 @@
+{% extends layout_path %}
+
+{% load static %}
+{% load i18n %}
+
+{% block title %}Dashboard - Analytics{% endblock %}
+
+{% block vendor_css %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'vendor/libs/apex-charts/apex-charts.css' %}" />
+<link rel="stylesheet" href="{% static 'vendor/libs/swiper/swiper.css' %}" />
+<link rel="stylesheet" href="{% static 'vendor/libs/datatables-bs5/datatables.bootstrap5.css' %}" />
+<link rel="stylesheet" href="{% static 'vendor/libs/datatables-responsive-bs5/responsive.bootstrap5.css' %}" />
+<link rel="stylesheet" href="{% static 'vendor/libs/datatables-checkboxes-jquery/datatables.checkboxes.css' %}" />
+{% endblock vendor_css %}
+
+{% block vendor_js %}
+{{ block.super }}
+<script src="{% static 'vendor/libs/apex-charts/apexcharts.js' %}"></script>
+<script src="{% static 'vendor/libs/swiper/swiper.js' %}"></script>
+<script src="{% static 'vendor/libs/datatables-bs5/datatables-bootstrap5.js' %}"></script>
+{% endblock vendor_js %}
+
+{% block page_css %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'vendor/css/pages/cards-advance.css' %}" />
+{% endblock page_css %}
+
+{% block page_js %}
+{{ block.super }}
+<script src="{% static 'js/dashboards-analytics.js' %}"></script>
+{% endblock page_js %}
+
+{% block content %}
+
+<div class="container mt-4">
+  <h2 class="mb-4">👥 Barcha foydalanuvchilar</h2>
+
+  <!-- 🔍 Qidiruv va filter -->
+  <form method="GET" class="mb-3 row g-3">
+    <div class="col-md-4">
+      <input type="text" name="search" class="form-control" placeholder="🔍 Username, Email, Telefon..." value="{{ request.GET.search }}">
+    </div>
+    <div class="col-md-3">
+      <select name="department" class="form-select">
+        <option value="">🏥 Bo‘limni tanlang</option>
+        {% for department in departments %}
+          <option value="{{ department }}" {% if request.GET.department == department %}selected{% endif %}>{{ department }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="col-md-3">
+      <select name="status" class="form-select">
+        <option value="">⚡ Holatni tanlang</option>
+        <option value="active" {% if request.GET.status == "active" %}selected{% endif %}>Faol</option>
+        <option value="inactive" {% if request.GET.status == "inactive" %}selected{% endif %}>Nofaol</option>
+      </select>
+    </div>
+    <div class="col-md-2">
+      <button type="submit" class="btn btn-primary w-100">🔎 Qidirish</button>
+    </div>
+  </form>
+
+  <!-- 📋 Foydalanuvchilar jadvali -->
+  <div class="card">
+    <div class="card-body">
+      <table class="table table-bordered">
+        <thead class="bg-info text-white">
+          <tr>
+            <th>#</th>
+            <th>👤 F.I.O</th>
+            <th>📧 Email</th>
+            <th>📞 Telefon</th>
+            <th>🏥 Bo‘lim</th>
+            <th>⚡ Holat</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for user in users %}
+          <tr>
+            <td>{{ forloop.counter }}</td>
+            <td>{{ user.full_name|default:user.username }}</td>
+            <td>{{ user.email|default:"❌" }}</td>
+            <td>{{ user.phone_number|default:"❌" }}</td>
+            <td>{{ user.department|default:"-" }}</td>
+            <td>
+              <span class="badge {% if user.is_active %} bg-success {% else %} bg-danger {% endif %}">
+                {% if user.is_active %} ✅ Faol {% else %} ❌ Nofaol {% endif %}
+              </span>
+            </td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="6" class="text-center">⛔ Hech qanday foydalanuvchi topilmadi.</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 🔄 Sahifalash (Pagination) -->
+  <nav>
+    <ul class="pagination justify-content-center mt-3">
+      {% if users.has_previous %}
+        <li class="page-item"><a class="page-link" href="?page=1">⏮ 1</a></li>
+        <li class="page-item"><a class="page-link" href="?page={{ users.previous_page_number }}">⬅</a></li>
+      {% endif %}
+
+      <li class="page-item active"><a class="page-link" href="#">{{ users.number }}</a></li>
+
+      {% if users.has_next %}
+        <li class="page-item"><a class="page-link" href="?page={{ users.next_page_number }}">➡</a></li>
+        <li class="page-item"><a class="page-link" href="?page={{ users.paginator.num_pages }}">⏭ {{ users.paginator.num_pages }}</a></li>
+      {% endif %}
+    </ul>
+  </nav>
+
+</div>
+
+</div>
+{% endblock %}

@@ -1,0 +1,201 @@
+{% extends 'administrator/main.html' %}
+{% load static %}
+{% load custom_filters %}
+{% block title %}
+    <title>Doctor A haqida ma'lumot</title>
+{% endblock title %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title">Doctor A haqida yangi ma'lumot qo‘shish</h4>
+                </div>
+                <div class="card-body">
+                    <form id="doctorAForm" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <input type="hidden" id="doctor_id" name="doctor_id">
+
+                        <!-- Rasm yuklash -->
+                        <div class="mb-3 text-center">
+                            <div class="position-relative d-inline-block">
+                                <input type="file" class="form-control d-none" id="image" name="image" accept="image/*"
+                                       onchange="previewImage(event)">
+                                <div class="image-preview" onclick="document.getElementById('image').click()">
+                                    <img id="image_preview" src="{% static 'images/placeholder.png' %}" class="img-thumbnail"
+                                         style="max-height: 200px; cursor: pointer;">
+                                    <div class="overlay">Rasm yuklang</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Tilga asoslangan tablar -->
+                        <ul class="nav nav-tabs">
+                            {% for code, name in LANGUAGES %}
+                                <li class="nav-item">
+                                    <button class="nav-link {% if forloop.first %}active{% endif %}" data-bs-toggle="tab"
+                                            data-bs-target="#{{ code }}">
+                                        <img src="{% static 'vendor/fonts/flags/1x1/' %}{{ code }}.svg" width="20"
+                                             class="me-1"> {{ name }}
+                                    </button>
+                                </li>
+                            {% endfor %}
+                        </ul>
+
+                        <div class="tab-content mt-3">
+                            {% for code, name in LANGUAGES %}
+                                <div class="tab-pane fade {% if forloop.first %}show active{% endif %}" id="{{ code }}">
+                                    <label class="form-label">
+                                        <img src="{% static 'vendor/fonts/flags/1x1/' %}{{ code }}.svg" width="20"
+                                             class="me-1">
+                                        Sarlavha ({{ name }})
+                                    </label>
+                                    <input type="text" class="form-control" id="title_{{ code }}"
+                                           name="title[{{ code }}]" required>
+
+                                    <label class="form-label mt-2">
+                                        <img src="{% static 'vendor/fonts/flags/1x1/' %}{{ code }}.svg" width="20"
+                                             class="me-1">
+                                        Tavsif ({{ name }})
+                                    </label>
+                                    <textarea class="form-control" id="description_{{ code }}"
+                                              name="description[{{ code }}]" required></textarea>
+                                </div>
+                            {% endfor %}
+                        </div>
+
+                        <div class="mt-4 d-flex justify-content-between">
+                            <button type="button" class="btn btn-success" onclick="submitDoctorAForm()">Saqlash</button>
+                            <button type="button" class="btn btn-secondary" onclick="resetDoctorAForm()">Tozalash</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Doctor A Ma'lumotlari Ro‘yxati -->
+    <div class="row mt-4">
+        {% for doctor in doctor_info_list %}
+            <div class="col-md-6">
+                <div class="card shadow-sm">
+                    <div class="card-header text-center">
+                        <h5 class="card-title">Doctor A haqida</h5>
+                    </div>
+                    <div class="card-body text-center">
+                        <img src="{{ doctor.image.url }}" class="img-fluid rounded mb-3"
+                             style="max-height: 200px; object-fit: cover;">
+
+                        <ul class="nav nav-tabs">
+                            {% for code, name in LANGUAGES %}
+                                <li class="nav-item">
+                                    <button class="nav-link {% if forloop.first %}active{% endif %}" data-bs-toggle="tab"
+                                            data-bs-target="#info-{{ doctor.id }}-{{ code }}">
+                                        <img src="{% static 'vendor/fonts/flags/1x1/' %}{{ code }}.svg" width="20"
+                                             class="me-1"> {{ name }}
+                                    </button>
+                                </li>
+                            {% endfor %}
+                        </ul>
+
+                        <div class="tab-content mt-3">
+                            {% for code, name in LANGUAGES %}
+                                <div class="tab-pane fade {% if forloop.first %}show active{% endif %}"
+                                     id="info-{{ doctor.id }}-{{ code }}">
+                                    <h5>{{ doctor.title|get_language_text:code }}</h5>
+                                    <p class="text-muted">{{ doctor.description|get_language_text:code }}</p>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="card-footer text-center">
+                        <button class="btn btn-primary" onclick="editDoctorA('{{ doctor.id }}')">Tahrirlash</button>
+                        <button class="btn btn-danger" onclick="deleteDoctorA('{{ doctor.id }}')">O‘chirish</button>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock content %}
+
+{% block vendor_js %}
+    <!-- jQuery CDN yuklash -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+    <!-- SweetAlert2 CDN yuklash -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        function previewImage(event) {
+    let reader = new FileReader();
+    reader.onload = function () {
+        document.getElementById('image_preview').src = reader.result;
+    }
+    reader.readAsDataURL(event.target.files[0]);
+}
+
+function resetDoctorAForm() {
+    document.getElementById('doctorAForm').reset();
+    document.getElementById('image_preview').src = "{% static 'images/placeholder.png' %}";
+}
+
+function submitDoctorAForm() {
+    let formData = new FormData(document.getElementById('doctorAForm'));
+    let doctorId = document.getElementById("doctor_id").value;
+
+    $.ajax({
+        url: "{% url 'doctor-info' %}",
+        type: "POST",
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function (response) {
+            Swal.fire("✅ Muvaffaqiyatli!", response.message, "success").then(() => location.reload());
+        },
+        error: function (xhr) {
+            Swal.fire("❌ Xatolik!", xhr.responseJSON?.error || "Noma’lum xatolik", "error");
+        }
+    });
+}
+
+function editDoctorA(doctorId) {
+    $.ajax({
+        url: "{% url 'doctor-info' %}?doctor_id=" + doctorId,
+        type: "GET",
+        success: function (data) {
+            document.getElementById('doctor_id').value = data.id;
+            document.getElementById('image_preview').src = data.image_url;
+
+            Object.keys(data.title).forEach(lang => {
+                document.getElementById(`title_${lang}`).value = data.title[lang];
+                document.getElementById(`description_${lang}`).value = data.description[lang];
+            });
+
+            Swal.fire("✏️ Tahrirlash!", "Doctor A ma'lumotlari formaga yuklandi.", "success");
+        },
+        error: function () {
+            Swal.fire("❌ Xatolik!", "Ma'lumot yuklanmadi.", "error");
+        }
+    });
+}
+
+function deleteDoctorA(doctorId) {
+    Swal.fire({
+        title: "O‘chirishni tasdiqlaysizmi?",
+        text: "Bu amalni bekor qilib bo‘lmaydi!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Ha, o‘chirish!"
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                url: "{% url 'doctor-info' %}",
+                type: "DELETE",
+                data: { doctor_id: doctorId },
+                success: function () { location.reload(); }
+            });
+        }
+    });
+}
+    </script>
+{% endblock vendor_js %}

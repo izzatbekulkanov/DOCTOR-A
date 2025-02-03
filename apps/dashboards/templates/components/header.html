@@ -1,0 +1,57 @@
+{% load static %}
+
+<header class="header header__style-02">
+    <div class="container">
+        <!-- Logo -->
+        <div class="header__logo">
+            <a href="">
+                <img src="{% static 'dashboard/img/logo.png' %}" alt="Doctor A Logo" />
+            </a>
+        </div>
+
+        <div class="header__toogleGroup">
+            <!-- Language Dropdown -->
+            <div class="header__chooseLanguage">
+                <div class="dropdown" data-init="dropdown">
+                    <a class="dropdown__toggle" href="javascript:void(0)">UZ <i class="fa fa-angle-down" aria-hidden="true"></i></a>
+                    <div class="dropdown__content" data-position="right">
+                        <ul class="list-style-none">
+                            <li><a href="#">UZ</a></li>
+                            <li><a href="#">EN</a></li>
+                            <li><a href="#">RU</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation Menu -->
+        <nav class="consult-nav">
+            <ul class="consult-menu">
+                <li class="current-menu-item">
+                    <a href="">Asosiy sahifa</a>
+                </li>
+                <li>
+                    <a href="">Yangiliklar</a>
+                </li>
+                <li>
+                    <a href="">E'lonlar</a>
+                </li>
+                <li>
+                    <a href="">Hodimlar</a>
+                </li>
+                <li>
+                    <a href="">Hamkorlar</a>
+                </li>
+                <li>
+                    <a href="">Bog'lanish</a>
+                </li>
+              <li>
+                    <a href="{% url 'admin-index' %}">Admin</a>
+                </li>
+                <!-- Admin Page -->
+            </ul>
+            <div class="navbar-toggle"><span></span><span></span><span></span></div>
+        </nav>
+    </div>
+</header>

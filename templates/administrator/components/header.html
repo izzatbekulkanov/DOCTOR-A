@@ -1,123 +1,137 @@
-{% load i18n %}
 {% load static %}
-<header id="page-topbar">
-  <div class="layout-width">
-    <div class="navbar-header">
-      <div class="d-flex">
-        <!-- LOGO -->
-        <div class="navbar-brand-box horizontal-logo">
-          <a href="" class="logo logo-dark">
-            <span class="logo-sm">
-              <img src="{% static 'assets/images/logo-sm.png' %}" alt="" height="22">
-            </span>
-            <span class="logo-lg">
-              <img src="{% static 'assets/images/logo-dark.png' %}" alt="" height="17">
-            </span>
-          </a>
-          <a href="" class="logo logo-light">
-            <span class="logo-sm">
-              <img src="{% static 'assets/images/logo-sm.png' %}" alt="" height="22">
-            </span>
-            <span class="logo-lg">
-              <img src="{% static 'assets/images/logo-light.png' %}" alt="" height="17">
-            </span>
-          </a>
-        </div>
-        <button type="button" class="btn btn-sm px-3 fs-16 header-item vertical-menu-btn topnav-hamburger"
-                id="topnav-hamburger-icon">
-          <span class="hamburger-icon">
-            <span></span>
-            <span></span>
-            <span></span>
-          </span>
-        </button>
-      </div>
 
-<div class="d-flex align-items-center">
-    <div class="dropdown ms-1 topbar-head-dropdown header-item">
-       <button type="button" class="btn btn-icon btn-topbar btn-ghost-secondary rounded-circle"
-               data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-         {% if request.LANGUAGE_CODE == 'uz' %}
-           <img id="header-lang-img" src="{% static 'assets/images/flags/uz.svg' %}" alt="Uzbek" height="20" class="rounded">
-         {% elif request.LANGUAGE_CODE == 'en' %}
-           <img id="header-lang-img" src="{% static 'assets/images/flags/en.svg' %}" alt="English" height="20" class="rounded">
-         {% elif request.LANGUAGE_CODE == 'ru' %}
-           <img id="header-lang-img" src="{% static 'assets/images/flags/russia.svg' %}" alt="Russian" height="20" class="rounded">
-         {% else %}
-           <img id="header-lang-img" src="{% static 'assets/images/flags/default.svg' %}" alt="Default" height="20" class="rounded">
-         {% endif %}
-       </button>
-       <div class="dropdown-menu dropdown-menu-end">
-          {% for lang_code, lang_name in LANGUAGES %}
-            <button type="button" class="dropdown-item notify-item language py-2"
-                    data-lang="{{ lang_code }}" onclick="changeLanguage(this)">
-              <img src="{% static 'assets/images/flags/'|add:lang_code|add:'.svg' %}" class="me-2 rounded" height="18">
-              <span class="align-middle">{{ lang_name }}</span>
-            </button>
-          {% endfor %}
-        </div>
+<header class="topbar">
+    <div class="with-vertical">
+        <!-- ---------------------------------- -->
+        <!-- Start Vertical Layout Header -->
+        <!-- ---------------------------------- -->
+        <nav class="navbar navbar-expand-lg p-0">
+            <ul class="navbar-nav">
+                <li class="nav-item d-flex d-xl-none">
+                    <a class="nav-link nav-icon-hover-bg rounded-circle  sidebartoggler " id="headerCollapse"
+                       href="javascript:void(0)">
+                        <iconify-icon icon="solar:hamburger-menu-line-duotone" class="fs-6"></iconify-icon>
+                    </a>
+                </li>
+            </ul>
 
+            <div class="d-block d-lg-none py-9 py-xl-0">
+                <img src="{% static 'images/logos/logo.svg' %}" alt="matdash-img"/>
+            </div>
+            <a class="navbar-toggler p-0 border-0 nav-icon-hover-bg rounded-circle" href="javascript:void(0)"
+               data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav"
+               aria-expanded="false" aria-label="Toggle navigation">
+                <iconify-icon icon="solar:menu-dots-bold-duotone" class="fs-6"></iconify-icon>
+            </a>
+            <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+                <div class="d-flex align-items-center justify-content-between">
+                    <ul class="navbar-nav flex-row mx-auto ms-lg-auto align-items-center justify-content-center">
+                        <li class="nav-item">
+                            <a class="nav-link moon dark-layout nav-icon-hover-bg rounded-circle"
+                               href="javascript:void(0)">
+                                <iconify-icon icon="solar:moon-line-duotone" class="moon fs-6"></iconify-icon>
+                            </a>
+                            <a class="nav-link sun light-layout nav-icon-hover-bg rounded-circle"
+                               href="javascript:void(0)" style="display: none">
+                                <iconify-icon icon="solar:sun-2-line-duotone" class="sun fs-6"></iconify-icon>
+                            </a>
+                        </li>
+
+                        <!-- ------------------------------- -->
+                        <!-- start language Dropdown -->
+                        <!-- ------------------------------- -->
+                        <li class="nav-item dropdown nav-icon-hover-bg rounded-circle">
+                            <a class="nav-link" href="javascript:void(0)" id="drop2" data-bs-toggle="dropdown" aria-expanded="false">
+                                <img id="selected-flag" src="{% static 'vendor/fonts/flags/1x1/' %}{{ request.LANGUAGE_CODE }}.svg"
+                                     alt="flag-{{ request.LANGUAGE_CODE }}" width="20px" height="20px"
+                                     class="rounded-circle object-fit-cover round-20"/>
+                            </a>
+                            <div class="dropdown-menu dropdown-menu-end dropdown-menu-animate-up" aria-labelledby="drop2">
+                                <div class="message-body">
+                                    <form id="languageForm" method="post" action="{% url 'set_language' %}">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="next" value="{{ request.path }}"/>  <!-- 📌 Foydalanuvchini o‘sha sahifada qoldirish -->
+                                        <input type="hidden" name="language" id="selectedLanguage"/>
+                                        {% for code, name in LANGUAGES %}
+                                        <a href="javascript:void(0)" class="d-flex align-items-center gap-2 py-3 px-4 dropdown-item"
+                                           onclick="changeLanguage('{{ code }}')">
+                                            <div class="position-relative">
+                                                <img src="{% static 'vendor/fonts/flags/1x1/' %}{{ code }}.svg" alt="flag-{{ code }}"
+                                                     width="20px" height="20px" class="rounded-circle object-fit-cover round-20"/>
+                                            </div>
+                                            <p class="mb-0 fs-3">{{ name }}</p>
+                                        </a>
+                                        {% endfor %}
+                                    </form>
+                                </div>
+                            </div>
+                        </li>
+
+
+                        <!-- ------------------------------- -->
+                        <!-- end language Dropdown -->
+                        <!-- ------------------------------- -->
+
+                        <!-- ------------------------------- -->
+                        <!-- start profile Dropdown -->
+                        <!-- ------------------------------- -->
+                        <li class="nav-item dropdown">
+                            <a class="nav-link" href="javascript:void(0)" id="drop1" aria-expanded="false">
+                                <div class="d-flex align-items-center gap-2 lh-base">
+                                    <img src="{% static 'images/profile/user-1.jpg' %}" class="rounded-circle"
+                                         width="35" height="35" alt="matdash-img"/>
+                                    <iconify-icon icon="solar:alt-arrow-down-bold" class="fs-2"></iconify-icon>
+                                </div>
+                            </a>
+                            <div class="dropdown-menu profile-dropdown dropdown-menu-end dropdown-menu-animate-up"
+                                 aria-labelledby="drop1">
+                                <div class="position-relative px-4 pt-3 pb-2">
+                                    <div class="d-flex align-items-center mb-3 pb-3 border-bottom gap-6">
+                                        <img src="{% static 'images/profile/user-1.jpg' %}"
+                                             class="rounded-circle" width="56" height="56" alt="matdash-img"/>
+                                        <div>
+                                            <h5 class="mb-0 fs-12">{{ request.user.first_name }} {{ request.user.second_name }}
+                                                <span
+                                                        class="text-success fs-11">Pro</span>
+                                            </h5>
+                                            <p class="mb-0 text-dark">
+                                                {{ request.user.email }}
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div class="message-body">
+                                        <a href="../main/page-user-profile.html"
+                                           class="p-2 dropdown-item h6 rounded-1">
+                                            Mening sahifam
+                                        </a>
+
+                                        <a href="../main/authentication-login2.html"
+                                           class="p-2 dropdown-item h6 rounded-1">
+                                            Chiqish
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                        <!-- ------------------------------- -->
+                        <!-- end profile Dropdown -->
+                        <!-- ------------------------------- -->
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <!-- ---------------------------------- -->
+        <!-- End Vertical Layout Header -->
+        <!-- ---------------------------------- -->
+        <!-- ------------------------------- -->
+        <!-- apps Dropdown in Small screen -->
+        <!-- ------------------------------- -->
     </div>
-
-    <div class="ms-1 header-item d-none d-sm-flex">
-      <button type="button" class="btn btn-icon btn-topbar btn-ghost-secondary rounded-circle light-dark-mode">
-        <i class='bx bx-moon fs-22'></i>
-      </button>
-    </div>
-
-    <div class="dropdown ms-sm-3 header-item topbar-user">
-      <button type="button" class="btn" id="page-header-user-dropdown" data-bs-toggle="dropdown"
-              aria-haspopup="true" aria-expanded="false">
-        <span class="d-flex align-items-center">
-          <img class="rounded-circle header-profile-user"
-               src="{% static 'assets/images/users/avatar-1.jpg' %}"
-               alt="Header Avatar">
-          <span class="text-start ms-xl-2">
-            <span
-              class="d-none d-xl-inline-block ms-1 fw-semibold user-name-text">{{ request.user.first_name }} {{ request.user.second_name }}</span>
-            <span class="d-none d-xl-block ms-1 fs-13 user-name-sub-text">{% if request.user.is_staff %}
-              {% trans "Active" %}{% else %}{% trans "Inactive" %}{% endif %}</span>
-          </span>
-        </span>
-      </button>
-      <div class="dropdown-menu dropdown-menu-end">
-        <a class="dropdown-item" href=""><i
-          class="mdi mdi-account-circle text-muted fs-16 align-middle me-1"></i> <span
-          class="align-middle">{% trans "Profile" %}</span></a>
-        <div class="dropdown-divider"></div>
-        <a class="dropdown-item" href=""><i
-          class="mdi mdi-wallet text-muted fs-16 align-middle me-1"></i> <span class="align-middle">{% trans "Balance" %}: <b>$5971.67</b></span></a>
-        <a class="dropdown-item" href=""><i
-          class="mdi mdi-logout text-muted fs-16 align-middle me-1"></i> <span class="align-middle"
-                                                                           data-key="t-logout">{% trans "Logout" %}</span></a>
-      </div>
-    </div>
-  </div>
-
-    </div>
-  </div>
 </header>
 
 <script>
-  function changeLanguage(button) {
-  const language = button.getAttribute('data-lang');
-  const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
-
-  fetch("{% url 'set_language' %}", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "X-CSRFToken": csrfToken
-    },
-    body: JSON.stringify({language: language})
-  })
-  .then(response => {
-    if (response.ok) {
-      location.reload();
-    } else {
-      console.error("Tilni o'zgartirishda xatolik yuz berdi.");
-    }
-  });
+function changeLanguage(langCode) {
+    document.getElementById("selectedLanguage").value = langCode;
+    document.getElementById("languageForm").submit();
 }
-
 </script>

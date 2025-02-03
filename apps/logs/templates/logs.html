@@ -1,0 +1,99 @@
+{% extends layout_path %}
+
+{% load static %}
+{% load i18n %}
+
+{% block title %}Loglar{% endblock %}
+
+{% block vendor_css %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'vendor/libs/apex-charts/apex-charts.css' %}" />
+<link rel="stylesheet" href="{% static 'vendor/libs/swiper/swiper.css' %}" />
+<link rel="stylesheet" href="{% static 'vendor/libs/datatables-bs5/datatables.bootstrap5.css' %}" />
+<link rel="stylesheet" href="{% static 'vendor/libs/datatables-responsive-bs5/responsive.bootstrap5.css' %}" />
+<link rel="stylesheet" href="{% static 'vendor/libs/datatables-checkboxes-jquery/datatables.checkboxes.css' %}" />
+{% endblock vendor_css %}
+
+{% block vendor_js %}
+{{ block.super }}
+<script src="{% static 'vendor/libs/apex-charts/apexcharts.js' %}"></script>
+<script src="{% static 'vendor/libs/swiper/swiper.js' %}"></script>
+<script src="{% static 'vendor/libs/datatables-bs5/datatables-bootstrap5.js' %}"></script>
+{% endblock vendor_js %}
+
+{% block page_css %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'vendor/css/pages/cards-advance.css' %}" />
+{% endblock page_css %}
+
+{% block page_js %}
+{{ block.super }}
+<script src="{% static 'js/dashboards-analytics.js' %}"></script>
+{% endblock page_js %}
+
+{% block content %}
+<div class="container mt-4">
+  <h2 class="mb-4">📜 Server loglari</h2>
+
+  <!-- 🔍 Qidiruv -->
+  <form method="GET" class="mb-3">
+    <input type="text" name="search" class="form-control" placeholder="🔍 URL, IP yoki foydalanuvchi bo‘yicha qidirish..." value="{{ request.GET.search }}">
+  </form>
+
+  <!-- 📋 Loglar jadvali -->
+  <div class="card">
+    <div class="card-body">
+      <table class="table table-bordered">
+        <thead class="bg-info text-white">
+          <tr>
+            <th>#</th>
+            <th>📅 Sana</th>
+            <th>🛠️ Usul</th>
+            <th>🔗 URL</th>
+            <th>📡 IP</th>
+            <th>👤 Foydalanuvchi</th>
+            <th>📋 Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for log in logs %}
+          <tr>
+            <td>{{ forloop.counter }}</td>
+            <td>{{ log.timestamp|date:"Y-m-d H:i:s" }}</td>
+            <td><span class="badge bg-primary">{{ log.method }}</span></td>
+            <td>{{ log.path }}</td>
+            <td>{{ log.ip_address|default:"❌" }}</td>
+            <td>{{ log.user.username|default:"Anonim" }}</td>
+            <td><span class="badge {% if log.status_code >= 400 %} bg-danger {% else %} bg-success {% endif %}">
+              {{ log.status_code }}
+            </span></td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="7" class="text-center">⛔ Hech qanday log mavjud emas.</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 🔄 Sahifalash (Pagination) -->
+  <nav>
+    <ul class="pagination justify-content-center mt-3">
+      {% if logs.has_previous %}
+        <li class="page-item"><a class="page-link" href="?page=1">⏮ 1</a></li>
+        <li class="page-item"><a class="page-link" href="?page={{ logs.previous_page_number }}">⬅</a></li>
+      {% endif %}
+
+      <li class="page-item active"><a class="page-link" href="#">{{ logs.number }}</a></li>
+
+      {% if logs.has_next %}
+        <li class="page-item"><a class="page-link" href="?page={{ logs.next_page_number }}">➡</a></li>
+        <li class="page-item"><a class="page-link" href="?page={{ logs.paginator.num_pages }}">⏭ {{ logs.paginator.num_pages }}</a></li>
+      {% endif %}
+    </ul>
+  </nav>
+
+</div>
+{% endblock %}

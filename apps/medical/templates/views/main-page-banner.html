@@ -1,0 +1,291 @@
+{% extends 'administrator/main.html' %}
+{% load static %}
+{% load custom_filters %}
+
+{% block title %}
+    <title>Asosiy sahifa bannerlari</title>
+{% endblock title %}
+
+{% block vendor_css %}
+{% endblock vendor_css %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title">Asosiy sahifa bannerlari</h4>
+                </div>
+                <div class="card-body">
+                    <form id="bannerForm" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="mb-3 text-center">
+                            <div class="position-relative d-inline-block">
+                                <input type="file" class="form-control d-none" id="banner_image" name="banner_image"
+                                       accept="image/*" onchange="previewBanner(event)">
+                                <div class="image-preview" onclick="document.getElementById('banner_image').click()">
+                                    <img id="banner_preview" src="{% static 'images/placeholder.png' %}"
+                                         class="img-thumbnail" style="max-height: 200px; cursor: pointer;">
+                                    <div class="overlay">Rasm yuklang</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Tilga asoslangan tablar -->
+                        <ul class="nav nav-tabs" id="languageTabs" role="tablist">
+                            {% for code, name in LANGUAGES %}
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link {% if forloop.first %}active{% endif %}" id="{{ code }}-tab"
+                                            data-bs-toggle="tab" data-bs-target="#{{ code }}" type="button" role="tab">
+                                        <img src="{% static 'vendor/fonts/flags/1x1/' %}{{ code }}.svg" width="20"
+                                             class="me-1"> {{ name }}
+                                    </button>
+                                </li>
+                            {% endfor %}
+                        </ul>
+
+                        <div class="tab-content mt-3" id="languageTabsContent">
+                            {% for code, name in LANGUAGES %}
+                                <div class="tab-pane fade {% if forloop.first %}show active{% endif %}" id="{{ code }}"
+                                     role="tabpanel">
+                                    <label for="description_{{ code }}" class="form-label">Banner tavsifi
+                                        ({{ name }})</label>
+                                    <textarea class="form-control" id="description_{{ code }}"
+                                              name="description[{{ code }}]"
+                                              required>{% if banner.description and code in banner.description %}
+                                        {{ banner.description|default_if_none:'' }}{% endif %}</textarea>
+                                </div>
+                            {% endfor %}
+                        </div>
+
+                        <div id="errorMessages" class="mt-3"></div>
+                        <div class="row mt-3 justify-content-center">
+                            <div class="col-6 col-md-4 d-flex justify-content-center">
+                                <button type="button" class="btn btn-secondary w-100" onclick="validateBannerForm()">
+                                    Tekshirish
+                                </button>
+                            </div>
+                            <div class="col-6 col-md-4 d-flex justify-content-center">
+                                <button type="button" class="btn btn-primary w-100" id="saveButton"
+                                        style="display: none;" onclick="submitBannerForm()">Saqlash
+                                </button>
+                            </div>
+                        </div>
+
+
+                    </form>
+
+                </div>
+                <div class="card-footer text-center">
+                    <h5>Joriy Bannerlar</h5>
+                    <div class="row">
+                        {% for banner in banners %}
+                            <div class="col-md-6 col-lg-6 mb-3">
+                                <div class="card shadow-sm">
+                                    <img src="{{ banner.image.url }}" class="card-img-top" style="max-height: 180px; object-fit: cover;">
+                                    <div class="card-body">
+                                        <h6 class="card-title">
+                                            {{ banner.description|get_language_text:request.LANGUAGE_CODE }}
+                                        </h6>
+                                        <div class="d-flex justify-content-between mt-2">
+                                            <button class="btn btn-sm btn-primary" onclick="editBanner({{ banner.id }})">
+                                                ✏️ Tahrirlash
+                                            </button>
+                                            <button class="btn btn-sm btn-danger" onclick="deleteBanner({{ banner.id }})">
+                                                🗑️ O‘chirish
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+{% endblock content %}
+
+{% block vendor_js %}
+<!-- jQuery CDN yuklash -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+<!-- SweetAlert2 CDN yuklash -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+    function previewBanner(event) {
+        let reader = new FileReader();
+        reader.onload = function () {
+            document.getElementById('banner_preview').src = reader.result;
+        }
+        reader.readAsDataURL(event.target.files[0]);
+    }
+
+    function validateBannerForm() {
+        let missingFields = [];
+        let image = document.getElementById('banner_image').files[0];
+        let uzbekDescriptionField = document.getElementById("description_uz");
+
+        if (!image && !document.getElementById("saveButton").hasAttribute("data-id")) {
+            missingFields.push("📌 Banner rasmi yuklanmagan.");
+        }
+
+        if (!uzbekDescriptionField || !uzbekDescriptionField.value.trim()) {
+            missingFields.push("📌 O'zbek tili uchun tavsif majburiy.");
+        }
+
+        {% for code, name in LANGUAGES %}
+            let desc_{{ code }} = document.getElementById("description_{{ code }}");
+            if (desc_{{ code }} && !desc_{{ code }}.value.trim()) {
+                missingFields.push(`📌 {{ name }} tili uchun tavsif kiritilmagan.`);
+            }
+        {% endfor %}
+
+        if (missingFields.length > 0) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Xatolik!',
+                html: missingFields.join("<br>"),
+                confirmButtonText: 'Yopish',
+                timer: 5000
+            });
+            return;
+        }
+
+        Swal.fire({
+            icon: 'success',
+            title: 'Hammasi tayyor!',
+            text: 'Barcha maydonlar to‘ldirildi. Saqlash mumkin.',
+            confirmButtonText: 'Davom etish',
+            timer: 3000
+        });
+
+        document.getElementById("saveButton").style.display = "block";
+    }
+
+    function submitBannerForm() {
+    let formData = new FormData(document.getElementById('bannerForm'));
+    let bannerId = document.getElementById("saveButton").getAttribute("data-id");
+
+    if (bannerId) {
+        formData.append("banner_id", bannerId);
+    }
+
+    $.ajax({
+        url: "{% url 'page-banner' %}",
+        type: "POST",
+        data: formData,
+        processData: false,
+        contentType: false,
+        headers: {
+            "X-CSRFToken": document.querySelector("[name=csrfmiddlewaretoken]").value
+        },
+        beforeSend: function() {
+            Swal.fire({
+                title: "Yuborilmoqda...",
+                text: "Iltimos kuting",
+                allowOutsideClick: false,
+                showConfirmButton: false,
+                willOpen: () => Swal.showLoading()
+            });
+        },
+        success: function (response) {
+            Swal.fire({
+                icon: 'success',
+                title: '✅ Muvaffaqiyatli!',
+                text: response.message,
+                confirmButtonText: 'OK'
+            }).then(() => {
+                location.reload();
+            });
+        },
+        error: function (xhr) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Xatolik yuz berdi!',
+                text: xhr.responseJSON?.error || "Noma’lum xatolik",
+                confirmButtonText: 'Yopish'
+            });
+        }
+    });
+}
+
+    function editBanner(bannerId) {
+        let url = "{% url 'get_banner' 0 %}".replace("0", bannerId);
+
+        $.ajax({
+            url: url,
+            type: "GET",
+            success: function (data) {
+                if (data.success) {
+                    document.getElementById('banner_preview').src = data.image_url;
+                    document.getElementById('banner_image').value = "";
+
+                    Object.keys(data.description).forEach(lang => {
+                        let inputField = document.getElementById(`description_${lang}`);
+                        if (inputField) {
+                            inputField.value = data.description[lang];
+                        }
+                    });
+
+                    document.getElementById("saveButton").setAttribute("data-id", bannerId);
+                    document.getElementById("saveButton").style.display = "block";
+
+                    Swal.fire("Tahrirlash!", "Banner ma’lumotlari formaga yuklandi.", "success");
+                } else {
+                    Swal.fire("Xatolik!", "Banner ma’lumotlarini yuklab bo‘lmadi.", "error");
+                }
+            },
+            error: function () {
+                Swal.fire("Xatolik!", "Server bilan aloqa yo‘q.", "error");
+            }
+        });
+    }
+
+    function deleteBanner(bannerId) {
+        let url = "{% url 'delete_banner' 0 %}".replace("0", bannerId);  // URL ni dinamik yaratish
+
+        Swal.fire({
+            title: "O‘chirishni tasdiqlaysizmi?",
+            text: "Bu amalni bekor qilib bo‘lmaydi!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#d33",
+            cancelButtonColor: "#3085d6",
+            confirmButtonText: "Ha, o‘chirish!",
+            cancelButtonText: "Bekor qilish"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: url,
+                    type: "DELETE",
+                    headers: {
+                        "X-CSRFToken": document.querySelector("[name=csrfmiddlewaretoken]").value
+                    },
+                    success: function (data) {
+                        if (data.success) {
+                            Swal.fire("O‘chirildi!", "Banner muvaffaqiyatli o‘chirildi.", "success").then(() => {
+                                location.reload();
+                            });
+                        } else {
+                            Swal.fire("Xatolik!", "Banner o‘chirilmadi.", "error");
+                        }
+                    },
+                    error: function () {
+                        Swal.fire("Xatolik!", "Server bilan aloqa yo‘q.", "error");
+                    }
+                });
+            }
+        });
+    }
+</script>
+{% endblock vendor_js %}
+
+
+
+
+
+
