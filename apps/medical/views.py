@@ -427,6 +427,18 @@ class UsersView(TemplateView):
         return context
 
 
+@method_decorator(login_required, name='dispatch')
+class AddUsersView(TemplateView):
+    template_name = 'havfsizlik/add-users.html'
+
+    def get_context_data(self, **kwargs):
+        """ Foydalanuvchilar uchun context yaratish """
+        context = super().get_context_data(**kwargs)
+
+        return context
+
+
+
 
 
 

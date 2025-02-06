@@ -14,50 +14,81 @@
                         <h4 class="card-title">Foydalanuvchilar</h4>
 
                         <!-- Yangi foydalanuvchi qo'shish tugmasi -->
-                        <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addUserModal">
+                        <button class="btn btn-success" onclick="window.location.href='{% url 'add-users-view' %}'">
                             <i class="fas fa-user-plus"></i> Yangi foydalanuvchi qo‘shish
                         </button>
+
                     </div>
 
                     <!-- Qidirish maydoni -->
                     <div class="p-3">
-                        <input type="text" class="form-control w-100" id="searchUser" placeholder="🔍 Foydalanuvchini qidiring...">
+                        <input type="text" class="form-control w-100" id="searchUser"
+                               placeholder="🔍 Foydalanuvchini qidiring...">
                     </div>
 
                     <div class="card-body">
-                        <table class="table table-hover">
+                        <table class="table table-hover table-responsive-sm">
                             <thead>
                             <tr>
+                                <th>#</th>
                                 <th>Rasm</th>
                                 <th>F.I.O</th>
                                 <th>Telefon</th>
                                 <th>Bo‘lim</th>
                                 <th>Lavozim</th>
                                 <th>Faol</th>
+                                <th>Amallar</th>
                             </tr>
                             </thead>
                             <tbody>
                             {% for user in users %}
                                 <tr>
+                                    <td>{{ forloop.counter }}</td>
                                     <td>
-                                        <img src="{% if user.profile_picture %}{{ user.profile_picture.url }}{% else %}{% static 'images/profile/user-1.jpg' %}{% endif %}"
+                                        <img src="
+                                                {% if user.profile_picture %}{{ user.profile_picture.url }}{% else %}{% static 'images/profile/user-1.jpg' %}{% endif %}"
                                              class="rounded-circle" width="40">
                                     </td>
                                     <td>{{ user.full_name }}</td>
-                                    <td>{{ user.phone_number }}</td>
-                                    <td>{{ user.department }}</td>
-                                    <td>{{ user.job_title }}</td>
+                                    <td>
+                                        {% if user.phone_number %}
+                                            {{ user.phone_number }}
+                                        {% else %}
+                                            <span class="badge bg-secondary">Ma'lumot mavjud emas</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if user.department %}
+                                            {{ user.department }}
+                                        {% else %}
+                                            <span class="badge bg-secondary">Ma'lumot mavjud emas</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if user.job_title %}
+                                            {{ user.job_title }}
+                                        {% else %}
+                                            <span class="badge bg-secondary">Ma'lumot mavjud emas</span>
+                                        {% endif %}
+                                    </td>
                                     <td>{% if user.is_active %}✅{% else %}❌{% endif %}</td>
+                                    <td>
+                                        <button class="btn btn-primary btn-sm" onclick="viewUser('{{ user.id }}')">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                        <button class="btn btn-danger btn-sm" onclick="deleteUser('{{ user.id }}')">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </button>
+                                    </td>
                                 </tr>
                             {% empty %}
                                 <tr>
-                                    <td colspan="6" class="text-center">Foydalanuvchilar topilmadi.</td>
+                                    <td colspan="8" class="text-center">Foydalanuvchilar topilmadi.</td>
                                 </tr>
                             {% endfor %}
-
-
                             </tbody>
                         </table>
+
                     </div>
                     <div class="card-footer text-center">
                         {% if has_previous %}

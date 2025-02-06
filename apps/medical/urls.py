@@ -1,6 +1,6 @@
 from django.urls import path
 from .views import MainView, MainPageBannerView, get_banner, delete_banner, DoctorAInfoView, get_doctor_info, \
-    ContactPhoneView, get_contact_phone, UsersView, RolesView, LogsView
+    ContactPhoneView, get_contact_phone, UsersView, RolesView, LogsView, AddUsersView
 from django.contrib.auth.decorators import login_required
 
 viewspatterns = [
@@ -18,6 +18,7 @@ viewspatterns = [
 
 havsizlikpatterns = [
     path("users", login_required(UsersView.as_view()), name="users-view", ),
+    path("add-users", login_required(AddUsersView.as_view()), name="add-users-view", ),
 
     path("logs", login_required(RolesView.as_view()), name="roles-view", ),
     path("roles", login_required(LogsView.as_view()), name="logs-view", ),

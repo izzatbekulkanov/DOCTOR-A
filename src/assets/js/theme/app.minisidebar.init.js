@@ -4,6 +4,6 @@ var userSettings = {
   BoxedLayout: true, // true | false
   Direction: "ltr", // ltr | rtl
   Theme: "light", // light | dark
-  ColorTheme: "Blue_Theme", // Blue_Theme | Aqua_Theme | Purple_Theme | Green_Theme | Cyan_Theme | Orange_Theme
-  cardBorder: false, // true | false
+  ColorTheme: "Aqua_Theme", // Blue_Theme | Aqua_Theme | Purple_Theme | Green_Theme | Cyan_Theme | Orange_Theme
+  cardBorder: true, // true | false
 };
