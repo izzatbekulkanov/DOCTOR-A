@@ -170,7 +170,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # 🔹 **Login va Logout sozlamalari**
 LOGIN_URL = "/login/"  # 📌 Agar foydalanuvchi login qilmagan bo‘lsa, shu sahifaga yo‘naltiriladi
-LOGOUT_REDIRECT_URL = "/login/"  # 📌 Logout bo‘lgandan keyin qayta yo‘naltiriladi
+LOGOUT_REDIRECT_URL = "/"  # 📌 Logout bo‘lgandan keyin qayta yo‘naltiriladi
 
 
 # 🔹 **Session sozlamalari**

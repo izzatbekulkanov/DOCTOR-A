@@ -2,55 +2,64 @@
 {% load static %}
 <html>
 <head>
-  <title>Home</title>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <meta name="format-detection" content="telephone=no">
-  <meta name="apple-mobile-web-app-capable" content="yes">
+    <title>
+        {% block title %}
+        {% endblock title %}
+    </title>
 
-  <!-- Fonts -->
-  <link rel="stylesheet" type="text/css" href="{% static 'dashboard/fonts/fontawesome/font-awesome.min.css' %}">
-  <link rel="stylesheet" type="text/css" href="{% static 'dashboard/fonts/themify-icons/themify-icons.css' %}">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
 
-  <!-- Vendors -->
-  <link rel="stylesheet" type="text/css" href="{% static 'dashboard/vendors/bootstrap4/bootstrap-grid.min.css' %}">
-  <link rel="stylesheet" type="text/css" href="{% static 'dashboard/vendors/magnific-popup/magnific-popup.min.css' %}">
-  <link rel="stylesheet" type="text/css" href="{% static 'dashboard/vendors/owl.carousel/owl.carousel.css' %}">
-  <link rel="stylesheet" type="text/css" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.min.css">
+    <!-- Fonts -->
+    <link rel="stylesheet" type="text/css" href="{% static 'dashboard/fonts/fontawesome/font-awesome.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'dashboard/fonts/themify-icons/themify-icons.css' %}">
 
-  <!-- Google Fonts -->
-  <link rel="stylesheet" type="text/css"
-        href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i&amp;subset=latin-ext">
+    <!-- Vendors -->
+    <link rel="stylesheet" type="text/css" href="{% static 'dashboard/vendors/bootstrap4/bootstrap-grid.min.css' %}">
+    <link rel="stylesheet" type="text/css"
+          href="{% static 'dashboard/vendors/magnific-popup/magnific-popup.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'dashboard/vendors/owl.carousel/owl.carousel.css' %}">
+    <link rel="stylesheet" type="text/css" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.min.css">
 
-  <!-- App Styles -->
-  <link rel="stylesheet" type="text/css" href="{% static 'dashboard/css/main.css' %}">
+    <link rel="shortcut icon" type="image/png" href="{% static 'images/logos/favicon.png' %}"/>
 
-  <!--[if lt IE 9]>
-  <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
 
-  <![endif]-->
+    <!-- Google Fonts -->
+    <link rel="stylesheet" type="text/css"
+          href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i&amp;subset=latin-ext">
 
-  {% block style %}
-  {% endblock style %}
+    <!-- App Styles -->
+    <link rel="stylesheet" type="text/css" href="{% static 'dashboard/css/main.css' %}">
+
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+
+    <![endif]-->
+
+
+    {% block style %}
+    {% endblock style %}
 </head>
 
 <body>
 <div class="page-wrap">
 
-  <!-- header -->
-{% include 'components/header.html' %}
-  <!-- End / header -->
+    <!-- header -->
+    {% include 'components/header.html' %}
+    <!-- End / header -->
 
-  <!-- Content-->
-  <div class="md-content">
-{% block content %}
-{% endblock content %}
-  </div>
-  <!-- End / Content-->
+    <!-- Content-->
+    <div class="md-content">
+        {% block content %}
+        {% endblock content %}
+    </div>
+    <!-- End / Content-->
 
-  <!-- footer -->
-{% include 'components/footer.html' %}
-  <!-- End / footer -->
+    <!-- footer -->
+    {% include 'components/footer.html' %}
+    <!-- End / footer -->
 
 </div>
 <!-- Vendors-->
@@ -60,9 +69,12 @@
 <script type="text/javascript" src="{% static 'dashboard/vendors/jquery.countdown/jquery.countdown.min.js' %}"></script>
 <script type="text/javascript" src="{% static 'dashboard/vendors/jquery.countTo/jquery.countTo.min.js' %}"></script>
 <script type="text/javascript" src="{% static 'dashboard/vendors/jquery.countUp/jquery.countup.min.js' %}"></script>
-<script type="text/javascript" src="{% static 'dashboard/vendors/jquery.matchHeight/jquery.matchHeight.min.js' %}"></script>
-<script type="text/javascript" src="{% static 'dashboard/vendors/jquery.mb.ytplayer/jquery.mb.YTPlayer.min.js' %}"></script>
-<script type="text/javascript" src="{% static 'dashboard/vendors/magnific-popup/jquery.magnific-popup.min.js' %}"></script>
+<script type="text/javascript"
+        src="{% static 'dashboard/vendors/jquery.matchHeight/jquery.matchHeight.min.js' %}"></script>
+<script type="text/javascript"
+        src="{% static 'dashboard/vendors/jquery.mb.ytplayer/jquery.mb.YTPlayer.min.js' %}"></script>
+<script type="text/javascript"
+        src="{% static 'dashboard/vendors/magnific-popup/jquery.magnific-popup.min.js' %}"></script>
 <script type="text/javascript" src="{% static 'dashboard/vendors/masonry-layout/masonry.pkgd.js' %}"></script>
 <script type="text/javascript" src="{% static 'dashboard/vendors/owl.carousel/owl.carousel.js' %}"></script>
 <script type="text/javascript" src="{% static 'dashboard/vendors/jquery.waypoints/jquery.waypoints.min.js' %}"></script>
@@ -70,7 +82,7 @@
 {#		<script type="text/javascript" src="{% static 'vendors/smoothscroll/SmoothScroll.min.js' %}"></script>#}
 <!-- App-->
 <script type="text/javascript" src="{% static 'dashboard/js/main.js' %}"></script>
-  {% block script %}
-  {% endblock script %}
+{% block script %}
+{% endblock script %}
 </body>
 </html>

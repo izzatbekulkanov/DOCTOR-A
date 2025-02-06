@@ -1,11 +1,12 @@
 {% load static %}
+{% load i18n %}
 
 <header class="header header__style-02">
     <div class="container">
         <!-- Logo -->
         <div class="header__logo">
             <a href="">
-                <img src="{% static 'dashboard/img/logo.png' %}" alt="Doctor A Logo" />
+                <img src="{% static 'dashboard/img/logo.png' %}" alt="Doctor A Logo"/>
             </a>
         </div>
 
@@ -13,17 +14,27 @@
             <!-- Language Dropdown -->
             <div class="header__chooseLanguage">
                 <div class="dropdown" data-init="dropdown">
-                    <a class="dropdown__toggle" href="javascript:void(0)">UZ <i class="fa fa-angle-down" aria-hidden="true"></i></a>
+                    <a class="dropdown__toggle d-flex align-items-center" href="javascript:void(0)">
+                            <img src="{% static 'vendor/fonts/flags/1x1/' %}{{ request.LANGUAGE_CODE }}.svg" width="20" class="me-2">
+                            {{ request.LANGUAGE_CODE|upper }}
+                            <i class="fa fa-angle-down ms-2" aria-hidden="true"></i>
+                        </a>
+
                     <div class="dropdown__content" data-position="right">
                         <ul class="list-style-none">
-                            <li><a href="#">UZ</a></li>
-                            <li><a href="#">EN</a></li>
-                            <li><a href="#">RU</a></li>
+                            {% for code, name in LANGUAGES %}
+                                <li>
+                                    <a href="javascript:void(0)" onclick="changeLanguage('{{ code }}')">
+                                        <img src="{% static 'vendor/fonts/flags/1x1/' %}{{ code }}.svg" width="20"> <span class="w-50"> {{ name }}</span>
+                                    </a>
+                                </li>
+                            {% endfor %}
                         </ul>
                     </div>
                 </div>
             </div>
         </div>
+
 
         <!-- Navigation Menu -->
         <nav class="consult-nav">
@@ -46,7 +57,7 @@
                 <li>
                     <a href="">Bog'lanish</a>
                 </li>
-              <li>
+                <li>
                     <a href="{% url 'admin-index' %}">Admin</a>
                 </li>
                 <!-- Admin Page -->
@@ -55,3 +66,14 @@
         </nav>
     </div>
 </header>
+
+
+<script>
+    function changeLanguage(langCode) {
+        fetch("{% url 'set_language' %}", {
+            method: "POST",
+            headers: {"Content-Type": "application/x-www-form-urlencoded"},
+            body: `language=${langCode}&csrfmiddlewaretoken={{ csrf_token }}`
+        }).then(() => location.reload()); // 🔄 Sahifani qayta yuklash
+    }
+</script>

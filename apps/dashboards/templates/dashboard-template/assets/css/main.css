@@ -1546,7 +1546,7 @@ mark, .mark {
     top: 100%;
     right: 0;
     position: absolute;
-    background-color: white;
+    background-color: rgba(255, 255, 255, 0);
     box-shadow: 0 0 30px rgba(0, 0, 0, .1);
     display: block !important;
     padding: 20px;
@@ -3898,7 +3898,7 @@ mark, .mark {
 }
 
 .header__style-02:not(.shrink) .dropdown__toggle {
-    color: #c2c2c2;
+
 }
 
 .header__style-02:not(.shrink) .search-form__toggle {

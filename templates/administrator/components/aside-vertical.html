@@ -101,7 +101,7 @@
                                 </a>
                             </li>
                             <li class="sidebar-item">
-                                <a class="sidebar-link" href="../main/index3.html" aria-expanded="false">
+                                <a class="sidebar-link" href="{% url 'contact-phone' %}" aria-expanded="false">
                                     <iconify-icon icon="mdi:phone-outline"></iconify-icon>
                                     <span class="hide-menu">Aloqa telefonlari</span>
                                 </a>
@@ -160,19 +160,19 @@
                             <!-- Dashboard -->
                             <!-- ---------------------------------- -->
                             <li class="sidebar-item">
-                                <a href="../main/authentication-error.html" class="sidebar-link">
+                                <a href="{% url 'users-view' %}" class="sidebar-link">
                                     <iconify-icon icon="mdi:account-group-outline"></iconify-icon>
                                     <span class="hide-menu">Foydalanuvchilar</span>
                                 </a>
                             </li>
                             <li class="sidebar-item">
-                                <a href="../main/authentication-login.html" class="sidebar-link">
+                                <a href="{% url 'roles-view' %}" class="sidebar-link">
                                     <iconify-icon icon="mdi:shield-account-outline"></iconify-icon>
                                     <span class="hide-menu">Rollar</span>
                                 </a>
                             </li>
                             <li class="sidebar-item">
-                                <a href="../main/authentication-login2.html" class="sidebar-link">
+                                <a href="{% url 'logs-view' %}" class="sidebar-link">
                                     <iconify-icon icon="mdi:file-document-outline"></iconify-icon>
                                     <span class="hide-menu">Loglar</span>
                                 </a>
@@ -189,7 +189,7 @@
                                 <span class="hide-menu">Landing sahifa</span>
                             </li>
                             <li class="sidebar-item">
-                                <a href="../docs/index.html" class="sidebar-link">
+                                <a href="{% url 'main-dashboard' %}" class="sidebar-link">
                                     <iconify-icon icon="mdi:arrow-left-circle-outline"></iconify-icon>
                                     <span class="hide-menu">Sahifaga qaytish</span>
                                 </a>

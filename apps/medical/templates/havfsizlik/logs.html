@@ -1,0 +1,100 @@
+{% extends 'administrator/main.html' %}
+{% load static %}
+{% load custom_filters %}
+{% block title %}
+    <title>Loglar</title>
+{% endblock title %}
+{% block content %}
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title">Doctor A haqida yangi ma'lumot qo‘shish</h4>
+                </div>
+                <div class="card-body">
+                    <form id="doctorAForm" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <input type="hidden" id="doctor_id" name="doctor_id">
+                        <!-- Rasm yuklash -->
+                        <div class="mb-3 text-center">
+                            <div class="position-relative d-inline-block">
+                                <input type="file" class="form-control d-none" id="image" name="image" accept="image/*"
+                                       onchange="previewImage(event)">
+                                <div class="image-preview" onclick="document.getElementById('image').click()">
+                                    <img id="image_preview" src="{% static 'images/placeholder.png' %}"
+                                         class="img-thumbnail"
+                                         style="max-height: 200px; cursor: pointer;">
+                                    <div class="overlay">Rasm yuklang</div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Tilga asoslangan tablar -->
+                        <ul class="nav nav-tabs">
+                            {% for code, name in LANGUAGES %}
+                                <li class="nav-item">
+                                    <button class="nav-link {% if forloop.first %}active{% endif %}"
+                                            data-bs-toggle="tab"
+                                            data-bs-target="#{{ code }}">
+                                        <img src="{% static 'vendor/fonts/flags/1x1/' %}{{ code }}.svg" width="20"
+                                             class="me-1"> {{ name }}
+                                    </button>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                        <div class="tab-content mt-3">
+                            {% for code, name in LANGUAGES %}
+                                <div class="tab-pane fade {% if forloop.first %}show active{% endif %}" id="{{ code }}">
+                                    <label class="form-label">
+                                        <img src="{% static 'vendor/fonts/flags/1x1/' %}{{ code }}.svg" width="20"
+                                             class="me-1">
+                                        Sarlavha ({{ name }})
+                                    </label>
+                                    <input type="text" class="form-control" id="title_{{ code }}"
+                                           name="title[{{ code }}]" required>
+                                    <label class="form-label mt-2">
+                                        <img src="{% static 'vendor/fonts/flags/1x1/' %}{{ code }}.svg" width="20"
+                                             class="me-1">
+                                        Tavsif ({{ name }})
+                                    </label>
+                                    <textarea class="form-control" id="description_{{ code }}"
+                                              name="description[{{ code }}]" required></textarea>
+                                </div>
+                            {% endfor %}
+                        </div>
+                        <div class="mt-4 d-flex justify-content-between">
+                            <button type="button" class="btn btn-success" onclick="submitDoctorAForm()">Saqlash</button>
+                            <button type="button" class="btn btn-secondary" onclick="resetDoctorAForm()">Tozalash
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock content %}
+{% block vendor_js %}
+<script>
+    var LANGUAGES = {{ LANGUAGES_JSON|safe }};
+    console.log("🟢 LANGUAGES:", LANGUAGES); // Debug uchun
+</script>
+
+    <!-- jQuery CDN yuklash -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <!-- SweetAlert2 CDN yuklash -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+// 🔹 CSRF tokenni AJAX so‘rovlariga avtomatik qo‘shish
+function getCSRFToken() {
+    return document.querySelector("[name=csrfmiddlewaretoken]").value;
+}
+
+$(document).ajaxSend(function (event, xhr, settings) {
+    if (!/^https?:.*/.test(settings.url)) {
+        xhr.setRequestHeader("X-CSRFToken", getCSRFToken());
+    }
+});
+
+
+    </script>
+{% endblock vendor_js %}
