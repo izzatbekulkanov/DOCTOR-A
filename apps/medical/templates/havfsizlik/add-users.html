@@ -6,9 +6,9 @@
 {% endblock title %}
 
 {% block content %}
-<div class="container">
-    <div class="row justify-content-center mt-4">
-        <div class="col-md-8">
+<div class="">
+    <div class="row justify-content-center ">
+        <div class="col-md-10">
             <div class="card shadow-sm">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h4 class="card-title">Yangi foydalanuvchi qo‘shish</h4>
@@ -17,63 +17,149 @@
                     </a>
                 </div>
                 <div class="card-body">
-                    <form id="addUserForm" enctype="multipart/form-data">
+                    <form id="addUserForm" method="post" enctype="multipart/form-data">
                         {% csrf_token %}
 
-                        <!-- F.I.O -->
-                        <div class="mb-3">
-                            <label class="form-label">F.I.O</label>
-                            <input type="text" class="form-control" id="full_name" name="full_name" required>
+                        <div class="row">
+                            <!-- F.I.O -->
+                            <div class="mb-3 col-4">
+                                <label class="form-label">F.I.O</label>
+                                <input type="text" class="form-control" id="full_name" name="full_name" required>
+                            </div>
+
+                            <!-- Username -->
+                            <div class="mb-3 col-4">
+                                <label class="form-label">Foydalanuvchi nomi (username)</label>
+                                <input type="text" class="form-control" id="username" name="username" required>
+                            </div>
+
+                            <!-- Telefon raqami -->
+                            <div class="mb-3 col-4">
+                                <label class="form-label">Telefon raqami</label>
+                                <input type="text" class="form-control" id="phone_number" name="phone_number" placeholder="+998 90 123 45 67">
+                            </div>
                         </div>
 
-                        <!-- Telefon raqami -->
+                        <!-- Manzil -->
                         <div class="mb-3">
-                            <label class="form-label">Telefon raqami</label>
-                            <input type="text" class="form-control" id="phone_number" name="phone_number" placeholder="+998 90 123 45 67" required>
+                            <label class="form-label">Manzil</label>
+                            <textarea class="form-control" id="address" name="address" rows="2"></textarea>
                         </div>
 
-                        <!-- Email -->
-                        <div class="mb-3">
-                            <label class="form-label">Email</label>
-                            <input type="email" class="form-control" id="email" name="email" required>
-                        </div>
+                        <div class="row">
+                            <!-- Tug‘ilgan sana -->
+                            <div class="mb-3 col-3">
+                                <label class="form-label">Tug‘ilgan sana</label>
+                                <input type="date" class="form-control" id="date_of_birth" name="date_of_birth">
+                            </div>
 
-                        <!-- Parol -->
-                        <div class="mb-3">
-                            <label class="form-label">Parol</label>
-                            <input type="password" class="form-control" id="password" name="password" required>
-                        </div>
+                            <!-- Jins -->
+                            <div class="mb-3 col-3">
+                                <label class="form-label">Jins</label>
+                                <select class="form-select" id="gender" name="gender">
+                                    <option value="male">Erkak</option>
+                                    <option value="female">Ayol</option>
+                                </select>
+                            </div>
 
-                        <!-- Jins -->
-                        <div class="mb-3">
-                            <label class="form-label">Jins</label>
-                            <select class="form-select" id="gender" name="gender">
-                                <option value="male">Erkak</option>
-                                <option value="female">Ayol</option>
-                            </select>
-                        </div>
+                            <!-- Millati -->
+                            <div class="mb-3 col-3">
+                                <label class="form-label">Millati</label>
+                                <input type="text" class="form-control" id="nationality" name="nationality">
+                            </div>
 
-                        <!-- Tug‘ilgan sana -->
-                        <div class="mb-3">
-                            <label class="form-label">Tug‘ilgan sana</label>
-                            <input type="date" class="form-control" id="date_of_birth" name="date_of_birth">
+                            <!-- Xodim ID -->
+                            <div class="mb-3 col-3">
+                                <label class="form-label">Xodim ID</label>
+                                <input type="text" class="form-control" id="employee_id" name="employee_id">
+                            </div>
                         </div>
 
                         <!-- Profil rasmi -->
-                        <div class="mb-3 text-center">
+                        <div class="mb-3">
                             <label class="form-label">Profil rasmi</label>
                             <input type="file" class="form-control" id="profile_picture" name="profile_picture" accept="image/*">
                         </div>
 
-                        <!-- Ish joyi va lavozim -->
+
+
+                        <!-- Biografiya -->
                         <div class="mb-3">
-                            <label class="form-label">Bo‘lim</label>
-                            <input type="text" class="form-control" id="department" name="department">
+                            <label class="form-label">Qo‘shimcha ma’lumot</label>
+                            <textarea class="form-control" id="bio" name="bio" rows="3"></textarea>
                         </div>
 
+
+
+                        <div class="row">
+
+                            <!-- Favqulodda aloqa raqami -->
+                            <div class="mb-3 col-4">
+                                <label class="form-label">Favqulodda aloqa raqami</label>
+                                <input type="text" class="form-control" id="emergency_contact" name="emergency_contact">
+                            </div>
+                            <!-- Ish joyi va lavozim -->
+                            <div class="mb-3 col-4">
+                                <label class="form-label">Bo‘lim</label>
+                                <input type="text" class="form-control" id="department" name="department">
+                            </div>
+
+                            <div class="mb-3 col-4">
+                                <label class="form-label">Lavozim</label>
+                                <input type="text" class="form-control" id="job_title" name="job_title">
+                            </div>
+                        </div>
+
+
+
+                        <div class="row">
+                            <!-- Ish boshlash va shartnoma tugash sanasi -->
+                            <div class="mb-3 col-4">
+                                <label class="form-label">Ish boshlash sanasi</label>
+                                <input type="date" class="form-control" id="employment_date" name="employment_date">
+                            </div>
+
+                            <div class="mb-3 col-4">
+                                <label class="form-label">Shartnoma tugash sanasi</label>
+                                <input type="date" class="form-control" id="contract_end_date" name="contract_end_date">
+                            </div>
+
+                            <div class="mb-3 col-4">
+                                <label class="form-label">Litsenziya raqami</label>
+                                <input type="text" class="form-control" id="professional_license_number" name="professional_license_number">
+                            </div>
+                        </div>
+
+                        <!-- Tibbiyot mutaxassisligi -->
                         <div class="mb-3">
-                            <label class="form-label">Lavozim</label>
-                            <input type="text" class="form-control" id="job_title" name="job_title">
+                            <label class="form-label">Tibbiyot mutaxassisligi</label>
+                            <input type="text" class="form-control" id="medical_specialty" name="medical_specialty">
+                        </div>
+
+
+
+                        <div class="row">
+                            <!-- Ish jadvali -->
+                            <div class="mb-3 col-3">
+                                <label class="form-label">Ish jadvali</label>
+                                <input type="text" class="form-control" id="shift_schedule" name="shift_schedule">
+                            </div>
+
+                            <!-- Moliyaviy ma’lumotlar -->
+                            <div class="mb-3 col-3">
+                                <label class="form-label">Bank hisob raqami</label>
+                                <input type="text" class="form-control" id="bank_account_number" name="bank_account_number">
+                            </div>
+
+                            <div class="mb-3 col-3">
+                                <label class="form-label">STIR</label>
+                                <input type="text" class="form-control" id="tax_identification_number" name="tax_identification_number">
+                            </div>
+
+                            <div class="mb-3 col-3">
+                                <label class="form-label">Sug‘urta raqami</label>
+                                <input type="text" class="form-control" id="insurance_number" name="insurance_number">
+                            </div>
                         </div>
 
                         <!-- Faollik statusi -->
@@ -84,7 +170,7 @@
 
                         <!-- Tugmalar -->
                         <div class="d-flex justify-content-between">
-                            <button type="button" class="btn btn-success" onclick="submitUserForm()">Saqlash</button>
+                            <button type="submit" class="btn btn-success">Saqlash</button>
                             <button type="reset" class="btn btn-secondary">Tozalash</button>
                         </div>
                     </form>
@@ -96,26 +182,26 @@
 {% endblock content %}
 
 
-{% block vendor_js %}
 
+{% block vendor_js %}
 <script>
     function submitUserForm() {
         let formData = new FormData(document.getElementById('addUserForm'));
 
         $.ajax({
-            url: "",  // Django API URL
+            url: "{% url 'add-users-view' %}",
             type: "POST",
             contentType: false,
             processData: false,
             data: formData,
-            headers: { "X-CSRFToken": getCSRFToken() }, // CSRF token
+            headers: { "X-CSRFToken": getCSRFToken() }, // CSRF token qo‘shish
             success: function(response) {
                 Swal.fire("✅ Muvaffaqiyatli!", response.message, "success").then(() => {
-                    window.location.href = "{% url 'users-view' %}";  // Foydalanuvchilar sahifasiga yo‘naltirish
+                    window.location.href = "{% url 'users-view' %}";
                 });
             },
             error: function(xhr) {
-                Swal.fire("❌ Xatolik!", xhr.responseJSON?.error || "Noma’lum xatolik", "error");
+                Swal.fire("❌ Xatolik!", xhr.responseJSON?.message || "Noma’lum xatolik", "error");
             }
         });
     }

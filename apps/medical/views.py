@@ -428,18 +428,73 @@ class UsersView(TemplateView):
 
 
 @method_decorator(login_required, name='dispatch')
-class AddUsersView(TemplateView):
+class AddUsersView(View):
     template_name = 'havfsizlik/add-users.html'
 
-    def get_context_data(self, **kwargs):
-        """ Foydalanuvchilar uchun context yaratish """
-        context = super().get_context_data(**kwargs)
+    def get(self, request, *args, **kwargs):
+        """ GET so‘rovni qabul qiladi va sahifani qaytaradi """
+        print("\n📌 DEBUG: GET so‘rovi kelib tushdi!")
+        print(f"🌍 URL: {request.build_absolute_uri()}")
+        print(f"🔍 GET Parametrlari: {dict(request.GET)}")
+        return render(request, self.template_name)
 
-        return context
+    def post(self, request, *args, **kwargs):
+        """ POST so‘rov bilan foydalanuvchini yaratish """
+
+        # ✅ So‘rov turini aniqlab, debugging uchun chiqarish
+        print("\n📌 DEBUG: POST so‘rovi qabul qilindi!")
+        print(f"🌍 URL: {request.build_absolute_uri()}")
+        print(f"📨 So‘rov turi: {request.method}")
+
+        # ✅ Yuborilgan `POST` ma’lumotlarini chiqarish
+        print("📩 Yuborilgan POST ma’lumotlari:")
+        for key, value in request.POST.items():
+            print(f"  - {key}: {value}")
+
+        # ✅ Agar `FILES` mavjud bo‘lsa, chiqaramiz
+        if request.FILES:
+            print("🖼 Yuklangan fayllar:")
+            for key, file in request.FILES.items():
+                print(f"  - {key}: {file.name} ({file.content_type})")
+
+        # ✅ Majburiy maydonlarni olish
+        full_name = request.POST.get("full_name")
+        phone_number = request.POST.get("phone_number")
+
+
+        gender = request.POST.get("gender")
+        date_of_birth = request.POST.get("date_of_birth")
+        department = request.POST.get("department")
+        job_title = request.POST.get("job_title")
+        is_active = request.POST.get("is_active") == "true"
+        profile_picture = request.FILES.get("profile_picture")  # Agar rasm yuklangan bo‘lsa
 
 
 
+        # ✅ Majburiy maydonlarni tekshirish
+        if not full_name :
+            print("❌ Xatolik: Majburiy maydonlar to‘ldirilmagan!")
+            return JsonResponse({"status": "error", "message": "Majburiy maydonlarni to‘ldiring!"}, status=400)
 
+
+
+        # ✅ Foydalanuvchi yaratish
+        print("🚀 Yangi foydalanuvchi yaratish jarayoni boshlandi...")
+        user = CustomUser(
+            full_name=full_name,
+            phone_number=phone_number,
+            gender=gender,
+            date_of_birth=date_of_birth,
+            department=department,
+            job_title=job_title,
+            is_active=is_active,
+            profile_picture=profile_picture
+        )
+
+        user.save()
+
+        print(f"✅ Foydalanuvchi qo‘shildi: {user.full_name} (ID: {user.id})")
+        return JsonResponse({"status": "success", "message": "Foydalanuvchi muvaffaqiyatli qo‘shildi!"})
 
 
 @method_decorator(login_required, name='dispatch')
