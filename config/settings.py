@@ -40,6 +40,7 @@ LOCAL_APPS = [
     "apps.logs",  # Loglar
     "apps.bot",  # Telegram bot uchun
     "apps.common",  # Templatetaglar uchun
+    "apps.news",  # Templatetaglar uchun
     "members",  # Foydalanuvchilar
 ]
 DYNAMIC_APPS = [

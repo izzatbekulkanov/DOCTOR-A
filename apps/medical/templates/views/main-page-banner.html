@@ -31,14 +31,14 @@
                             </div>
                         </div>
 
-                        <!-- Tilga asoslangan tablar -->
-                        <ul class="nav nav-tabs" id="languageTabs" role="tablist">
+                        <!-- 🌍 Tillar uchun tab menyu -->
+                        <ul class="nav nav-tabs" id="langTabs" role="tablist">
                             {% for code, name in LANGUAGES %}
                                 <li class="nav-item" role="presentation">
                                     <button class="nav-link {% if forloop.first %}active{% endif %}" id="{{ code }}-tab"
                                             data-bs-toggle="tab" data-bs-target="#{{ code }}" type="button" role="tab">
-                                        <img src="{% static 'vendor/fonts/flags/1x1/' %}{{ code }}.svg" width="20"
-                                             class="me-1"> {{ name }}
+                                        <img src="{% static 'vendor/fonts/flags/1x1/' %}{{ code }}.svg" width="20" class="me-1">
+                                        {{ name }}
                                     </button>
                                 </li>
                             {% endfor %}

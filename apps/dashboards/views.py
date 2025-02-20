@@ -5,11 +5,13 @@ from django.utils.decorators import method_decorator
 from django.conf import settings
 import json
 
-from apps.medical.models import MainPageBanner, DoctorAInfo, ContactPhone
-
+from apps.medical.models import MainPageBanner, DoctorAInfo, ContactPhone, News
 
 from django.utils.translation import get_language
 from django.conf import settings
+
+from members.models import CustomUser
+
 
 class DashboardsView(TemplateView):
     template_name = "views/main-dashboard.html"
@@ -31,10 +33,18 @@ class DashboardsView(TemplateView):
         context["LANGUAGES"] = settings.LANGUAGES  # 🔹 Django settings ichidagi tillar
 
         # 5️⃣ Joriy tilni olish
-        context["CURRENT_LANGUAGE"] = get_language()
+        current_language = get_language()
+        context["CURRENT_LANGUAGE"] = current_language
 
         # 6️⃣ JSON formatda tillar ma'lumotlari
         languages_list = [(code, str(name)) for code, name in settings.LANGUAGES]
         context["LANGUAGES_JSON"] = json.dumps(languages_list)
 
+        # 7️⃣ Oxirgi 5 ta yangilik
+        context["latest_news"] = News.objects.filter(is_published=True).order_by('-published_date')[:5]
+
+        # 8️⃣ SuperAdmin bo'lmagan oxirgi 4 ta foydalanuvchi
+        context["recent_users"] = CustomUser.objects.exclude(is_superuser=True).order_by('-date_joined')[:4]
+
         return context
+

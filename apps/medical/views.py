@@ -18,6 +18,7 @@ import sys
 
 from config import settings
 from config.settings import LANGUAGES
+from config.telegram_bot import send_message
 from members.models import CustomUser
 from .models import SiteSettings, MainPageBanner, DoctorAInfo, ContactPhone
 
@@ -460,13 +461,26 @@ class AddUsersView(View):
         # ✅ Majburiy maydonlarni olish
         full_name = request.POST.get("full_name")
         phone_number = request.POST.get("phone_number")
-
-
         gender = request.POST.get("gender")
+        username = request.POST.get("username")
+        address = request.POST.get("address")
+        emergency_contact = request.POST.get("emergency_contact")
+        employment_date = request.POST.get("employment_date")
+        employee_id = request.POST.get("employee_id")
+        bio = request.POST.get("bio")
+        nationality = request.POST.get("nationality")
+        professional_license_number = request.POST.get("professional_license_number")
+        bank_account_number = request.POST.get("bank_account_number")
+        tax_identification_number = request.POST.get("tax_identification_number")
+        insurance_number = request.POST.get("insurance_number")
+        shift_schedule = request.POST.get("shift_schedule")
+        medical_specialty = request.POST.get("medical_specialty")
         date_of_birth = request.POST.get("date_of_birth")
+        contract_end_date = request.POST.get("contract_end_date")
         department = request.POST.get("department")
         job_title = request.POST.get("job_title")
-        is_active = request.POST.get("is_active") == "true"
+        is_active = request.POST.get("is_active") == "on"
+
         profile_picture = request.FILES.get("profile_picture")  # Agar rasm yuklangan bo‘lsa
 
 
@@ -482,14 +496,57 @@ class AddUsersView(View):
         print("🚀 Yangi foydalanuvchi yaratish jarayoni boshlandi...")
         user = CustomUser(
             full_name=full_name,
+            username=username,
+            address=address,
+            emergency_contact=emergency_contact,
+            insurance_number=insurance_number,
+            shift_schedule=shift_schedule,
+            employment_date=employment_date,
+            tax_identification_number=tax_identification_number,
+            medical_specialty=medical_specialty,
+            bank_account_number=bank_account_number,
+            contract_end_date=contract_end_date,
+            professional_license_number=professional_license_number,
+            department=department,
+            bio=bio,
+            nationality=nationality,
+            employee_id=employee_id,
             phone_number=phone_number,
             gender=gender,
             date_of_birth=date_of_birth,
-            department=department,
             job_title=job_title,
             is_active=is_active,
             profile_picture=profile_picture
         )
+
+        # ✅ Telegram kanaliga xabar yuborish
+        message_text = (
+            f"👤 <b>Yangi foydalanuvchi qo‘shildi!</b>\n"
+            f"#_<b>ADD_USER</b>\n"
+            f"📌 Ismi: {full_name}\n"
+            f"📛 Foydalanuvchi nomi: {username}\n"
+            f"📞 Telefon: {phone_number}\n"
+            f"🏠 Manzil: {address}\n"
+            f"🎂 Tug‘ilgan sana: {date_of_birth}\n"
+            f"⚥ Jinsi: {'Erkak' if gender == 'male' else 'Ayol'}\n"
+            f"🌍 Millati: {nationality}\n"
+            f"🆔 Xodim ID: {employee_id}\n"
+            f"📝 Bio: {bio}\n"
+            f"🚑 Favqulodda aloqa: {emergency_contact}\n"
+            f"🏢 Bo‘lim: {department}\n"
+            f"💼 Lavozim: {job_title}\n"
+            f"📅 Ishga kirgan sana: {employment_date}\n"
+            f"📆 Shartnoma muddati: {contract_end_date}\n"
+            f"🔢 Professional litsenziya raqami: {professional_license_number}\n"
+            f"🩺 Tibbiy mutaxassisligi: {medical_specialty}\n"
+            f"⏰ Ish jadvali: {shift_schedule}\n"
+            f"🏦 Bank hisobi: {bank_account_number}\n"
+            f"🆔 Soliq identifikatsiya raqami: {tax_identification_number}\n"
+            f"🛡 Sug‘urta raqami: {insurance_number}\n"
+            f"🟢 Holati: {'Faol' if is_active == 'True' else 'Faol emas'}"
+        )
+
+        send_message(message_text)
 
         user.save()
 

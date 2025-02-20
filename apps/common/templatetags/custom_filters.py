@@ -3,15 +3,14 @@ from django import template
 register = template.Library()
 
 @register.filter
-def get_language_text(description, lang_code):
+def get_language_text(data, lang_code):
     """
-    JSON tavsiflardan joriy tilga mos bo'lganini olish.
-    Agar joriy til yo‘q bo‘lsa, O‘zbekcha ('uz') olinadi.
+    JSON formatidagi matndan joriy tilga mosini chiqaradi.
+    Agar mavjud bo‘lmasa, 'uz' tilidagi matn olinadi.
     """
-    if isinstance(description, dict):
-        return description.get(lang_code, description.get('uz', 'Tavsif mavjud emas'))
-    return description  # Agar JSON bo‘lmasa, o‘zini qaytaradi.
-
+    if isinstance(data, dict):
+        return data.get(lang_code, data.get('uz', 'Tavsif mavjud emas'))
+    return data  # Agar JSON bo‘lmasa, o‘zini qaytaradi.
 
 
 @register.filter

@@ -239,35 +239,6 @@
                         </div>
                     </div><!-- End / Hodim -->
 
-                    <!-- Hodim -->
-                    <div class="testimonial">
-                        <div class="testimonial__info">
-                            <a class="testimonial__avatar" href="#"><img
-                                    src="{% static 'dashboard/img/avatars/avatar-02.jpg' %}" alt="Hodim rasmi"/></a>
-                            <h5 class="testimonial__name">Gulnoza Karimova</h5>
-                            <span class="testimonial__position">Moliyaviy menejer</span>
-                        </div>
-                        <div class="testimonial__content">
-                            <div class="testimonial__text">Bizning jamoamiz har doim sizning muvaffaqiyatingiz uchun
-                                ishlaydi. Moliyaviy echimlarni innovatsion yondashuv bilan taqdim etamiz.
-                            </div>
-                        </div>
-                    </div><!-- End / Hodim -->
-
-                    <!-- Hodim -->
-                    <div class="testimonial">
-                        <div class="testimonial__info">
-                            <a class="testimonial__avatar" href="#"><img
-                                    src="{% static 'dashboard/img/avatars/1.jpg' %}" alt="Hodim rasmi"/></a>
-                            <h5 class="testimonial__name">Rustam Tursunov</h5>
-                            <span class="testimonial__position">Dizayn bo'limi yetakchisi</span>
-                        </div>
-                        <div class="testimonial__content">
-                            <div class="testimonial__text">Dizayn bo'limimiz zamonaviy va jozibador yechimlarni taqdim
-                                etadi, bu esa sizning mahsulotlaringizni boshqalardan ajratib turadi.
-                            </div>
-                        </div>
-                    </div><!-- End / Hodim -->
 
                 </div><!-- End / carousel__element owl-carousel -->
 
@@ -355,75 +326,42 @@
                 </div>
             </div>
 
-            <!-- carousel__element owl-carousel -->
+
+            <!-- Yangiliklar Carousel -->
             <div class="carousel__element owl-carousel"
                  data-options='{"loop":false,"dots":false,"nav":true,"margin":30,"responsive":{"0":{"items":1},"768":{"items":2},"992":{"items":3}}}'>
 
-                <!-- Yangilik -->
-                <div>
-                    <div class="post-01__media">
-                        <a href="#"><img src="{% static 'dashboard/img/blogs/related-1.jpg' %}"
-                                         alt="Yangilik rasmi"/></a>
-                    </div>
+                {% for news in latest_news %}
                     <div>
-                        <ul class="post-01__categories">
-                            <li><a href="#">Xizmatlar</a></li>
-                        </ul>
-                        <h2 class="post-01__title"><a href="#">Vue.Js bilan boshlash</a></h2>
-                        <div class="post-01__time">16-noyabr, 2017</div>
-                        <div class="post-01__note">Muallif: Bryan Ryan</div>
+                        <div class="post-01__media">
+                            <a href="#">
+                                {% if news.image %}
+                                    <img src="{{ news.image.url }}"
+                                         alt="{{ news.title|get_language_text:CURRENT_LANGUAGE }}"/>
+                                {% else %}
+                                    <img src="{% static 'dashboard/img/default-news.jpg' %}" alt="No Image"/>
+                                {% endif %}
+                            </a>
+                        </div>
+                        <div>
+                            <ul class="post-01__categories">
+                                <li><a href="#">Yangilik</a></li>
+                            </ul>
+                            <h2 class="post-01__title">
+                                <a href="#">{{ news.title|get_language_text:CURRENT_LANGUAGE }}</a>
+                            </h2>
+                            <div class="post-01__time">
+                                {{ news.published_date|date:"d-m-Y" }}
+                            </div>
+                            <div class="post-01__note">
+                                Muallif: {{ news.author.get_full_name|default:"Noma'lum" }}
+                            </div>
+                        </div>
                     </div>
-                </div><!-- End / Yangilik -->
-
-                <!-- Yangilik -->
-                <div>
-                    <div class="post-01__media">
-                        <a href="#"><img src="{% static 'dashboard/img/blogs/related-2.jpg' %}"
-                                         alt="Yangilik rasmi"/></a>
-                    </div>
-                    <div>
-                        <ul class="post-01__categories">
-                            <li><a href="#">Xizmatlar</a></li>
-                        </ul>
-                        <h2 class="post-01__title"><a href="#">Vue.Js bilan boshlash</a></h2>
-                        <div class="post-01__time">4-noyabr, 2017</div>
-                        <div class="post-01__note">Muallif: Ashley Mills</div>
-                    </div>
-                </div><!-- End / Yangilik -->
-
-                <!-- Yangilik -->
-                <div>
-                    <div class="post-01__media">
-                        <a href="#"><img src="{% static 'dashboard/img/blogs/related-3.jpg' %}"
-                                         alt="Yangilik rasmi"/></a>
-                    </div>
-                    <div>
-                        <ul class="post-01__categories">
-                            <li><a href="#">Xizmatlar</a></li>
-                        </ul>
-                        <h2 class="post-01__title"><a href="#">SVG sprite yaratish va boshqarish</a></h2>
-                        <div class="post-01__time">21-noyabr, 2017</div>
-                        <div class="post-01__note">Muallif: Alan Lane</div>
-                    </div>
-                </div><!-- End / Yangilik -->
-
-                <!-- Yangilik -->
-                <div>
-                    <div class="post-01__media">
-                        <a href="#"><img src="{% static 'dashboard/img/blogs/related-4.jpg' %}"
-                                         alt="Yangilik rasmi"/></a>
-                    </div>
-                    <div>
-                        <ul class="post-01__categories">
-                            <li><a href="#">Biznes</a></li>
-                        </ul>
-                        <h2 class="post-01__title"><a href="#">Bepul Sketch plaginlari</a></h2>
-                        <div class="post-01__time">2-noyabr, 2017</div>
-                        <div class="post-01__note">Muallif: Alan Lane</div>
-                    </div>
-                </div><!-- End / Yangilik -->
+                {% endfor %}
 
             </div><!-- End / carousel__element owl-carousel -->
+
 
         </div>
     </section>

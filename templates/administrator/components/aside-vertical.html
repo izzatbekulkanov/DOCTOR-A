@@ -125,9 +125,15 @@
                                 <span class="hide-menu">Yangiliklar va e'lonlar</span>
                             </li>
                             <li class="sidebar-item">
-                                <a href="../landingpage/index.html" class="sidebar-link">
+                                <a href="{% url 'news-view' %}" class="sidebar-link">
                                     <iconify-icon icon="mdi:newspaper-variant-outline"></iconify-icon>
                                     <span class="hide-menu">Yangiliklar</span>
+                                </a>
+                            </li>
+                            <li class="sidebar-item">
+                                <a href="{% url 'add-news-view' %}" class="sidebar-link">
+                                    <iconify-icon icon="mdi:newspaper-variant-outline"></iconify-icon>
+                                    <span class="hide-menu">Yangilik qo'shish</span>
                                 </a>
                             </li>
                             <li class="sidebar-item">
@@ -163,6 +169,18 @@
                                 <a href="{% url 'users-view' %}" class="sidebar-link">
                                     <iconify-icon icon="mdi:account-group-outline"></iconify-icon>
                                     <span class="hide-menu">Foydalanuvchilar</span>
+                                </a>
+                            </li>
+                            <li class="sidebar-item d-none">
+                                <a href="{% url 'add-users-view' %}" class="sidebar-link">
+                                    <iconify-icon icon="mdi:account-group-outline"></iconify-icon>
+                                    <span class="hide-menu">Foydalanuvchi qo'shish</span>
+                                </a>
+                            </li>
+                            <li class="sidebar-item d-none">
+                                <a href="{% url 'news-detail' %}" class="sidebar-link">
+                                    <iconify-icon icon="mdi:account-group-outline"></iconify-icon>
+                                    <span class="hide-menu">Yangilik haqida</span>
                                 </a>
                             </li>
                             <li class="sidebar-item">

@@ -1,0 +1,97 @@
+{% extends 'administrator/main.html' %}
+{% load i18n %}
+{% load custom_filters %}  {# get_language_text filtrini yuklash #}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card shadow-sm border rounded">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h2 class="mb-0">{% trans "📰 Yangilik tafsilotlari" %}</h2>
+            <a href="{% url 'news-view' %}" class="btn btn-secondary btn-sm">{% trans "⬅️ Ortga" %}</a>
+        </div>
+
+        <div class="card-body">
+            <!-- 🔀 Tillarni o‘z ichiga olgan tabs (yorliqlar) -->
+            <ul class="nav nav-tabs" id="lang-tabs">
+                {% for lang_code, lang_name in LANGUAGES %}
+                    <li class="nav-item">
+                        <a class="nav-link {% if forloop.first %}active{% endif %}" data-bs-toggle="tab" href="#lang-{{ lang_code }}">
+                            {{ lang_name }}
+                        </a>
+                    </li>
+                {% endfor %}
+            </ul>
+
+            <!-- 📜 Har bir til uchun alohida ma’lumotlar -->
+            <div class="tab-content mt-3">
+                {% for lang_code, lang_name in LANGUAGES %}
+                    <div class="tab-pane fade {% if forloop.first %}show active{% endif %}" id="lang-{{ lang_code }}">
+                        <form class="news-form" data-lang="{{ lang_code }}" method="POST" enctype="multipart/form-data">
+                            {% csrf_token %}
+
+                            <!-- 📝 Sarlavha -->
+                            <div class="mb-3">
+                                <label class="form-label">{% trans "Sarlavha" %} ({{ lang_name }})</label>
+                                <input type="text" name="title_{{ lang_code }}" class="form-control"
+                                       value="{{ news.title|get_language_text:lang_code }}">
+                            </div>
+
+                            <!-- 📜 Matn -->
+                            <div class="mb-3">
+                                <label class="form-label">{% trans "Matn" %} ({{ lang_name }})</label>
+                                <textarea name="content_{{ lang_code }}" class="form-control" rows="4">{{ news.content|get_language_text:lang_code }}</textarea>
+                            </div>
+
+                            <!-- 📷 Rasm (har bir til uchun) -->
+                            <div class="mb-3">
+                                <label class="form-label">{% trans "Rasm" %} ({{ lang_name }})</label>
+                                <input type="file" name="image_{{ lang_code }}" class="form-control">
+                                {% if news.image %}
+                                    <div class="mt-2">
+                                        <img src="{{ news.image.url }}" class="img-fluid rounded" style="max-height: 300px;">
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <!-- 💾 Saqlash tugmasi -->
+                            <button type="button" class="btn btn-primary save-news" data-lang="{{ lang_code }}">
+                                {% trans "💾 Saqlash" %}
+                            </button>
+                        </form>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+{% block vendor_js %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $(".save-news").click(function () {
+            var lang = $(this).data("lang"); // 🌍 Tanlangan til
+            var form = $(".news-form[data-lang='" + lang + "']")[0]; // Formani olish
+            var formData = new FormData(form); // FormData yaratish
+
+            formData.append("lang", lang); // 🏷 Tanlangan tilni qo'shish
+
+            $.ajax({
+                url: "{% url 'news-detail' %}", // 🔗 Django view'ga so‘rov yuborish
+                type: "POST",
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    alert("✅ " + response.message); // Muvaffaqiyat xabari
+                },
+                error: function (xhr) {
+                    alert("❌ Xatolik yuz berdi: " + xhr.responseText);
+                }
+            });
+        });
+    });
+</script>
+
+{% endblock vendor_js %}
