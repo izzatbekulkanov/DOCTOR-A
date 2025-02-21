@@ -19,7 +19,7 @@
         <!-- 📰 Yangiliklar ro‘yxati -->
         <div id="news-list" class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
             {% for news in news_list %}
-                <div class="col">
+                <div class="col" id="news-{{ news.id }}"> <!-- 🔹 Yangilikni ID bilan o'rash -->
                     <div class="card h-100 shadow-sm">
                         {% if news.image %}
                             <img src="{{ news.image.url }}" class="card-img-top news-image"
@@ -31,9 +31,18 @@
                                 {{ news.content|get_language_text:request.LANGUAGE_CODE|truncatewords:20 }}
                             </p>
                             <p class="text-muted small">{% trans "Chop etilgan" %}: {{ news.published_date }}</p>
-                            <button class="btn btn-info mt-auto" onclick="setSelectedNews({{ news.id }})">
-                                {% trans "Batafsil" %}
-                            </button>
+
+                            <div class="d-flex gap-2 mt-auto">
+                                <!-- 📌 Batafsil tugmasi -->
+                                <button class="btn btn-info" onclick="setSelectedNews({{ news.id }})">
+                                    {% trans "Batafsil" %}
+                                </button>
+
+                                <!-- ❌ O‘chirish tugmasi -->
+                                <button class="btn btn-danger" onclick="deleteNews({{ news.id }})">
+                                    {% trans "O‘chirish" %}
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -110,21 +119,74 @@
 
     <script>
         function setSelectedNews(newsId) {
-            fetch("{% url 'news-detail' %}", {
+            fetch("{% url 'set-selected-news' %}", {  // ✅ Yangilikni sessionga saqlash uchun maxsus endpoint
                 method: "POST",
                 headers: {
                     "Content-Type": "application/x-www-form-urlencoded",
                     "X-CSRFToken": "{{ csrf_token }}"
                 },
-                body: "news_id=" + newsId
-            }).then(response => response.json()).then(data => {
-                if (data.status === "success") {
-                    window.location.href = "{% url 'news-detail' %}";  // 📌 Yangilik sahifasiga o'tish
-                } else {
-                    alert("❌ Xatolik: " + data.error);
+                body: "news_id=" + encodeURIComponent(newsId)
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === "success") {
+                        window.location.href = "{% url 'news-detail' %}";  // ✅ Endi to‘g‘ri ishlaydi
+                    } else {
+                        alert("❌ Xatolik: " + data.error);
+                    }
+                })
+                .catch(error => {
+                    alert("❌ Xatolik yuz berdi: " + error);
+                });
+        }
+    </script>
+
+    <!-- ✅ Yangilikni o‘chirish funksiyasi -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        function deleteNews(newsId) {
+            Swal.fire({
+                title: "⚠️ Ishonchingiz komilmi?",
+                text: "Bu yangilikni o‘chirishni xohlaysizmi?",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#d33",
+                cancelButtonColor: "#3085d6",
+                confirmButtonText: "Ha, o‘chirish!",
+                cancelButtonText: "Bekor qilish"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: "{% url 'news-delete' %}", // 🔗 Django view'ga DELETE so‘rov yuborish
+                        type: "POST",
+                        data: {
+                            "news_id": newsId,
+                            "csrfmiddlewaretoken": "{{ csrf_token }}"
+                        },
+                        success: function (response) {
+                            Swal.fire({
+                                icon: "success",
+                                title: "✅ O‘chirildi!",
+                                text: response.message,
+                                confirmButtonText: "OK"
+                            }).then(() => {
+                                $("#news-" + newsId).remove(); // 🔥 Yangilikni sahifadan olib tashlash
+                            });
+                        },
+                        error: function (xhr) {
+                            Swal.fire({
+                                icon: "error",
+                                title: "❌ Xatolik!",
+                                text: xhr.responseText,
+                                confirmButtonText: "OK"
+                            });
+                        }
+                    });
                 }
             });
         }
     </script>
+
 
 {% endblock vendor_js %}

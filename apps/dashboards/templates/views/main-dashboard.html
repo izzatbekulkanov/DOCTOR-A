@@ -224,25 +224,33 @@
                 <div class="carousel__element owl-carousel"
                      data-options='{"loop":true,"dots":true,"nav":false,"margin":30,"responsive":{"0":{"items":1},"992":{"items":2}}}'>
 
-                    <!-- Hodim -->
-                    <div class="testimonial">
-                        <div class="testimonial__info">
-                            <a class="testimonial__avatar" href="#"><img
-                                    src="{% static 'dashboard/img/avatars/avatar-01.jpg' %}" alt="Hodim rasmi"/></a>
-                            <h5 class="testimonial__name">Abdulloh Qodirov</h5>
-                            <span class="testimonial__position">Dasturiy ta'minot bo'limi rahbari</span>
-                        </div>
-                        <div class="testimonial__content">
-                            <div class="testimonial__text">Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                                Yuksak sifatli xizmatlarimiz bilan sizning biznesingizni rivojlantiramiz.
-                            </div>
-                        </div>
-                    </div><!-- End / Hodim -->
+                    {% for user in recent_users %}
+                        <!-- Hodim -->
+                        <div class="testimonial">
+                            <div class="testimonial__info">
+                                <a class="testimonial__avatar" href="#">
+                                    {% if user.profile_picture and user.profile_picture.url %}
+                                        <img src="{{ user.profile_picture.url }}" alt="{{ user.get_full_name }} rasmi"/>
+                                    {% else %}
+                                        <img src="{% static 'dashboard/img/avatars/default-avatar.png' %}" alt="Default avatar"/>
+                                    {% endif %}
 
+                                </a>
+                                <h5 class="testimonial__name">{{ user.full_name }}</h5>
+                                <span class="testimonial__position">{{ user.job_title }}</span>
+                            </div>
+                            <div class="testimonial__content">
+                                <div class="testimonial__text">
+                                    {{ user.bio|default:"Ma'lumot mavjud emas" }}
+                                </div>
+                            </div>
+                        </div><!-- End / Hodim -->
+                    {% endfor %}
 
                 </div><!-- End / carousel__element owl-carousel -->
 
             </div>
+
         </div>
     </section>
 

@@ -27,6 +27,8 @@
                 {% for lang_code, lang_name in LANGUAGES %}
                     <div class="tab-pane fade {% if forloop.first %}show active{% endif %}" id="lang-{{ lang_code }}">
                         <form class="news-form" data-lang="{{ lang_code }}" method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+                            <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
                             {% csrf_token %}
 
                             <!-- 📝 Sarlavha -->
@@ -45,7 +47,7 @@
                             <!-- 📷 Rasm (har bir til uchun) -->
                             <div class="mb-3">
                                 <label class="form-label">{% trans "Rasm" %} ({{ lang_name }})</label>
-                                <input type="file" name="image_{{ lang_code }}" class="form-control">
+                                <input type="file" name="image" class="form-control">
                                 {% if news.image %}
                                     <div class="mt-2">
                                         <img src="{{ news.image.url }}" class="img-fluid rounded" style="max-height: 300px;">
@@ -68,30 +70,69 @@
 
 {% block vendor_js %}
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> <!-- ✅ SweetAlert kutubxonasi -->
+
 <script>
-    $(document).ready(function () {
-        $(".save-news").click(function () {
-            var lang = $(this).data("lang"); // 🌍 Tanlangan til
-            var form = $(".news-form[data-lang='" + lang + "']")[0]; // Formani olish
-            var formData = new FormData(form); // FormData yaratish
+$(document).ready(function () {
+    $(".save-news").click(function () {
+        var news_id = "{{ news.id }}"; // 🔹 Yangilik ID'ni olish
+        var formData = new FormData(); // 🔹 FormData obyektini yaratish
 
-            formData.append("lang", lang); // 🏷 Tanlangan tilni qo'shish
+        // 🔹 CSRF tokenni olish
+        var csrf_token = $('input[name="csrfmiddlewaretoken"]').val();
+        formData.append("csrfmiddlewaretoken", csrf_token); // 🔹 CSRF token qo'shish
+        formData.append("news_id", news_id); // 🔹 Yangilik ID'ni qo'shish
 
-            $.ajax({
-                url: "{% url 'news-detail' %}", // 🔗 Django view'ga so‘rov yuborish
-                type: "POST",
-                data: formData,
-                processData: false,
-                contentType: false,
-                success: function (response) {
-                    alert("✅ " + response.message); // Muvaffaqiyat xabari
-                },
-                error: function (xhr) {
-                    alert("❌ Xatolik yuz berdi: " + xhr.responseText);
-                }
+        // 🌍 Barcha tillardagi formani olish
+        $(".news-form").each(function () {
+            var lang = $(this).data("lang"); // 🔹 Til kodini olish
+            var form = $(this)[0]; // 🔹 Formni olish
+
+            // 📌 Har bir input maydonini qo‘shish
+            $(form).find("input[type='text'], textarea").each(function () {
+                formData.append($(this).attr("name"), $(this).val());
             });
+
+            // 📸 Rasm fayllarini qo'shish
+            var imageInput = $(form).find("input[type='file']")[0];
+            if (imageInput.files.length > 0) {
+                formData.append(imageInput.name, imageInput.files[0]);
+            }
+        });
+
+        console.log("📤 Yuborilayotgan ma'lumotlar:", Object.fromEntries(formData.entries())); // ✅ Debug uchun
+
+        // 📡 AJAX so‘rovni yuborish
+        $.ajax({
+            url: "{% url 'news-detail' %}", // 🔗 Django view'ga so‘rov yuborish
+            type: "POST",
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function (response) {
+                Swal.fire({
+                    icon: 'success',
+                    title: "✅ Muvaffaqiyat!",
+                    text: response.message,
+                    confirmButtonText: "OK"
+                }).then(() => {
+                    location.reload(); // 🔄 Sahifani yangilash
+                });
+            },
+            error: function (xhr) {
+                Swal.fire({
+                    icon: 'error',
+                    title: "❌ Xatolik!",
+                    text: xhr.responseText,
+                    confirmButtonText: "Yopish"
+                });
+            }
         });
     });
+});
 </script>
+
+
+
 
 {% endblock vendor_js %}
