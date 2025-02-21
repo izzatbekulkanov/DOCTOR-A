@@ -185,4 +185,5 @@ SESSION_COOKIE_AGE = 3600  # 📌 Sessiyaning amal qilish vaqti (1 soat)
 # 🔹 **CSRF Trusted Origins**
 CSRF_TRUSTED_ORIGINS = [
     "http://localhost:5050",
+    "https://updatehub.namspi.uz",
 ]
