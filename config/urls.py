@@ -5,7 +5,7 @@ from django.conf.urls.static import static
 from django.views.i18n import set_language
 from django.views.defaults import page_not_found, permission_denied, bad_request, server_error
 from django.views.static import serve
-from django.conf.urls import re_path
+from django.urls import re_path
 
 urlpatterns = [
     path("admin/", admin.site.urls),
