@@ -4,6 +4,8 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.views.i18n import set_language
 from django.views.defaults import page_not_found, permission_denied, bad_request, server_error
+from django.views.static import serve
+from django.conf.urls import re_path
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -29,15 +31,14 @@ urlpatterns = [
 ]
 
 # 📌 Xatolik sahifalarini sozlash
-if settings.DEBUG:
-    urlpatterns += [
-        path("404/", lambda request: page_not_found(request, Exception()), name="error_404"),
-        path("403/", lambda request: permission_denied(request, Exception()), name="error_403"),
-        path("400/", lambda request: bad_request(request, Exception()), name="error_400"),
-        path("500/", lambda request: server_error(request), name="error_500"),
-    ]
+handler404 = "apps.core.views.custom_404"
+handler403 = "apps.core.views.custom_403"
+handler400 = "apps.core.views.custom_400"
+handler500 = "apps.core.views.custom_500"
 
-# 📌 Statik va Media fayllarni xizmat qilish (DEBUG=True holatida)
-if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+# 📌 Production muhitida Media va Static fayllarni xizmat qilish
+if not settings.DEBUG:
+    urlpatterns += [
+        re_path(r"^media/(?P<path>.*)$", serve, {"document_root": settings.MEDIA_ROOT}),
+        re_path(r"^static/(?P<path>.*)$", serve, {"document_root": settings.STATIC_ROOT}),
+    ]

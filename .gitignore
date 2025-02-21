@@ -1,12 +1,4 @@
-# Ignoring src and assets folders
-
-# Exclude everything from vendors
-/src/assets/vendor
-
-# Ignoring static/assets folders
-./assets/
-static/
-staticfiles/
+# Ignoring src and assets folder
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
