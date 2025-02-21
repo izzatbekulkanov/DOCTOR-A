@@ -23,7 +23,7 @@ DEBUG = os.environ.get("DEBUG", 'True').lower() in ['true', 'yes', '1']
 
 # 📌 **Ruxsat etilgan hostlar (`ALLOWED_HOSTS`)**
 # Server ishlashi uchun qabul qilinadigan domen yoki IP manzillar
-ALLOWED_HOSTS = ["localhost", "0.0.0.0", "127.0.0.1"]
+ALLOWED_HOSTS = ["localhost", "0.0.0.0", "127.0.0.1", 'updatehub.namspi.uz']
 
 # 📌 **Joriy muhit (`ENVIRONMENT`)**
 # Django qaysi muhitda ishlayotganini aniqlaydi: `local`, `staging`, `production`
