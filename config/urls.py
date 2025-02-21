@@ -1,11 +1,10 @@
 from django.contrib import admin
-from django.urls import include, path
+from django.urls import include, path, re_path  # 🔹 re_path to‘g‘ri joydan import qilindi
 from django.conf import settings
 from django.conf.urls.static import static
 from django.views.i18n import set_language
 from django.views.defaults import page_not_found, permission_denied, bad_request, server_error
 from django.views.static import serve
-from django.urls import re_path
 
 urlpatterns = [
     path("admin/", admin.site.urls),
