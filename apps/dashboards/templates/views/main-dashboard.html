@@ -6,375 +6,653 @@
     Asosiy sahifa
 {% endblock title %}
 {% block style %}
-    <style>
-        .textbox__image {
-            width: 100%; /* To‘liq kenglik */
-            height: 200px; /* Rasmning maksimal balandligi */
-            overflow: hidden; /* Oshib ketgan joylarni yashirish */
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .textbox__image img {
-            width: 100%; /* To‘liq kenglik */
-            height: 100%; /* To‘liq balandlik */
-            object-fit: cover; /* Rasmni muvofiqlashtirish */
-            border-radius: 8px; /* Yaxshi ko‘rinishi uchun */
-        }
-    </style>
 {% endblock style %}
 
 
 {% block content %}
-    <!-- About Start -->
-
-    <!-- slider -->
-    <div class="slider">
-
-        <!-- carousel__element owl-carousel -->
-        <div class="carousel__element owl-carousel"
-             data-options='{"items":1,"loop":true,"dots":false,"nav":false,"margin":0, "autoplay": true, "autoplayTimeout": 3000}'>
-
-            {% for banner in banners %}
-                <!-- Slider Item -->
-                <div class="slider__item" style="position: relative; overflow: hidden;">
-                    <!-- Background Image with Blur Effect -->
-                    <div class="slider__background"
-                         style="background-image: url('{{ banner.image.url }}');
-                                 filter: blur(8px);
-                                 position: absolute;
-                                 top: 0;
-                                 left: 0;
-                                 width: 100%;
-                                 height: 100%;
-                                 background-size: cover;
-                                 background-position: center;
-                                 z-index: -1;">
+    <div class="hero-banner style-1"
+         style="background-image: url({% static 'dashboard/images/hero-banner/bg1.webp' %}); background-size: cover;">
+        <div class="container">
+            <div class="inner-wrapper">
+                <span class="text-vertical text-secondary">24/7 Shoshilinch Xizmat</span>
+                <div class="row align-items-end h-100">
+                    <div class="col-lg-6 align-self-center">
+                        <div class="hero-content">
+                            <h1 class="title wow fadeInUp" data-wow-delay="0.2s" data-wow-duration="0.8s">
+                                <span class="text-primary">DOCTOR A</span> KLINIKASI
+                                <img src="{% static 'dashboard/images/hero-banner/line.png' %}" alt="">
+                            </h1>
+                            <p class="text wow fadeInUp" data-wow-delay="0.4s" data-wow-duration="0.8s">
+                                Sog‘lig‘ingiz – bizning ustuvor maqsadimiz.
+                                Malakali shifokorlarimiz bilan bog‘laning va bugunoq qabulga yoziling!
+                            </p>
+                        </div>
                     </div>
 
-                    <div class="md-tb">
-                        <div class="md-tb__cell">
-                            <div class="slider__content">
-                                <div class="container">
-                                    <h2>{{ banner.description|get_language_text:request.LANGUAGE_CODE }}</h2>
+                    <div class="col-lg-6 wow fadeInRight" data-wow-delay="0.8s" data-wow-duration="0.8s">
+                        <div class="hero-thumbnail" data-bottom-top="transform: translateY(-50px)"
+                             data-top-bottom="transform: translateY(50px)">
+                            <img class="thumbnail" src="{% static 'dashboard/images/hero-banner/img1.webp' %}"
+                                 alt="">
+                            <div class="circle-wrapper">
+                                <span class="circle1"></span>
+                                <span class="circle2"></span>
+                                <span class="circle3"></span>
+
+                                <div class="item1">
+                                    <img src="{% static 'dashboard/images/hero-banner/heart.png' %}" alt="">
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            {% endfor %}
+                <div class="item5" data-bottom-top="transform: translateY(-30px)"
+                     data-top-bottom="transform: translateY(30px)">
+                    <div class="info-widget style-4 move-4">
+                        <div class="widget-media">
+                            <img src="{% static 'dashboard/images/avatar/small/avatar6.webp' %}" alt="">
+                        </div>
+                        <div class="widget-content">
+                            <h6 class="title">Savol va murojaatlar?</h6>
+                            <a href="mailto:info@example.com">info@doctora.uz</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-        </div><!-- End / carousel__element owl-carousel -->
 
-
-    </div><!-- End / slider -->
-    <!-- Service-->
-
-    <!-- Section -->
-    <!-- Section -->
-    <section class="md-section" style="background-color:#f7f7f7;padding:0;">
+    <section class="content-inner-3 bg-secondary background-blend-multiply bg-img-fix"
+             style="background-image: url({% static 'dashboard/images/background/bg2.webp' %}); background-repeat: no-repeat; background-position: right center; background-size: cover;">
         <div class="container">
-            <div class="textbox-group">
-                <div class="row">
-                    {% for doctor in doctor_info_list %}
-                        <div class="col-md-4 col-lg-4">
-                            <!-- textbox -->
-                            <div class="textbox">
-                                <div class="textbox__image">
-                                    <a href="#">
-                                        <img src="{{ doctor.image.url }}" class="doctor-img"
-                                             alt="{{ doctor.title|get_language_text:request.LANGUAGE_CODE }}">
-                                    </a>
-                                </div>
-                                <div class="textbox__body">
-                                    <h2 class="textbox__title">
-                                        <a href="#">{{ doctor.title|get_language_text:request.LANGUAGE_CODE }}</a>
-                                    </h2>
-                                    <div class="textbox__description">
-                                        {{ doctor.description|get_language_text:request.LANGUAGE_CODE }}
+            <div class="row align-items-sm-center">
+                <div class="col-lg-3 col-12 m-b30 wow fadeInUp" data-wow-delay="0.2s" data-wow-duration="0.8s">
+                    <h2 class="text-white font-20 m-b0 fw-medium">Bizning yutuqlarimiz</h2>
+                </div>
+                <div class="col-lg-3 col-4 m-b30 d-flex wow fadeInUp" data-wow-delay="0.4s" data-wow-duration="0.8s">
+                    <div class="content-bx style-1 mx-auto">
+                        <span class="content-text text-white"><span class="counter">200</span>+</span>
+                        <h3 class="title text-white m-b0">Tajribali Shifokorlar</h3>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-4 m-b30 d-flex wow fadeInUp" data-wow-delay="0.6s" data-wow-duration="0.8s">
+                    <div class="content-bx style-1 mx-auto">
+                        <span class="content-text text-white"><span class="counter">45</span>K</span>
+                        <h3 class="title text-white m-b0">Mamnun Bemorlar</h3>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-4 m-b30 d-flex wow fadeInUp" data-wow-delay="0.8s" data-wow-duration="0.8s">
+                    <div class="content-bx style-1 mx-auto">
+                        <span class="content-text text-white"><span class="counter">150</span>+</span>
+                        <h3 class="title text-white m-b0">Mukofotlar</h3>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <section class="content-inner-2 bg-light z-2"
+             style="background-image: url({% static 'dashboard/images/background/bg5.png' %});">
+        <div class="container">
+            <div class="row align-items-end content-wrapper style-8">
+                <div class="col-lg-6 text-center wow fadeInUp" data-wow-delay="0.2s" data-wow-duration="0.8s">
+                    <img src="{% static 'dashboard/images/about/img3.png' %}" alt="/">
+                </div>
+                <div class="col-lg-6" data-bottom-top="transform: translateY(100px)"
+                     data-top-bottom="transform: translateY(-10px)">
+                    <div class="form-wrapper style-1 text-vr-wrapper">
+                        <div class="text-vertical">Hozir Ro‘yxatdan O‘ting</div>
+                        <div class="form-body bg-primary background-blend-burn"
+                             style="background-image: url({% static 'dashboard/images/background/bg2.png' %}); background-size: cover">
+                            <div class="title-head">
+                                <h2 class="form-title m-b0">Tibbiy <span>Ko‘rik</span> <br> Uchun Ariza Topsiring</h2>
+                            </div>
+                            <form action="" method="POST" class="dzForm">
+                                {% csrf_token %}
+                                <input type="hidden" class="form-control" name="dzToDo" value="Appointment">
+                                <input type="hidden" class="form-control" name="reCaptchaEnable" value="0">
+                                <div class="dzFormMsg"></div>
+                                <div class="row">
+                                    <div class="col-sm-6 m-b30">
+                                        <div class="form-floating floating-underline input-light">
+                                            <input name="name" type="text" class="form-control" id="inputYourName"
+                                                   placeholder="Ismingiz" required>
+                                            <label for="inputYourName">Ismingiz</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6 m-b30">
+                                        <div class="form-floating floating-underline input-light">
+                                            <input name="email" type="email" class="form-control" id="inputYourEmail"
+                                                   placeholder="Email Manzilingiz" required>
+                                            <label for="inputYourEmail">Email Manzilingiz</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6 m-b30">
+                                        <div class="form-floating floating-underline input-light">
+                                            <input name="phone" type="text" class="form-control dz-number"
+                                                   id="inputPhoneNumber" placeholder="Telefon Raqamingiz" required>
+                                            <label for="inputPhoneNumber">Telefon Raqamingiz</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6 m-b30">
+                                        <div class="form-floating floating-underline input-light">
+                                            <select name="service" class="bs-select form-control"
+                                                    title="Xizmatni Tanlang" required>
+                                                <option value="" disabled selected>Xizmatni tanlang</option>
+                                                <option value="Angioplasty">Angioplastika</option>
+                                                <option value="Cardiology">Kardiologiya</option>
+                                                <option value="Dental">Stomatologiya</option>
+                                                <option value="Eye Care">Ko‘z Davolash</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-12 m-b30">
+                                        <div class="form-floating floating-underline input-light">
+                                            <textarea name="message" class="form-control" id="inputMessage" rows="6"
+                                                      placeholder="Xabar yozing" required></textarea>
+                                            <label for="inputMessage">Xabar</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-12">
+                                        <button type="submit" name="submit" value="submit"
+                                                class="btn btn-lg btn-icon btn-white hover-secondary btn-shadow">
+                                            Ariza Yuborish <span class="right-icon"><i
+                                                class="feather icon-arrow-right"></i></span>
+                                        </button>
                                     </div>
                                 </div>
-                            </div><!-- End / textbox -->
+                            </form>
                         </div>
-                    {% endfor %}
-                </div>
 
-
-            </div>
-        </div>
-    </section>
-    <!-- End / Section -->
-
-    <!-- End / Section -->
-
-    <!-- Section -->
-    <section class="md-section" style="background-color:#f7f7f7;padding-top:0;">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-10 col-lg-8 offset-0 offset-sm-0 offset-md-1 offset-lg-2 ">
-
-                    <!-- iconbox -->
-                    <div class="iconbox">
-                        <div class="iconbox__icon"><i class="ti-world"></i></div>
-                        <div>
-                            <h2 class="iconbox__title"><a href="#">Bizning ijtimoiy tarmoqlar</a></h2>
-                            <div class="iconbox__description">
-                                Bizni ijtimoiy tarmoqlarda kuzatib boring va eng so'nggi yangiliklardan xabardor
-                                bo'ling. Bizning sahifalarimizda ko'plab foydali ma'lumotlar va xizmatlar mavjud.
-                            </div>
-                        </div>
-                    </div><!-- End / iconbox -->
-
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-sm-6 col-md-6 col-lg-3 ">
-
-                    <!-- iconbox -->
-                    <div class="iconbox iconbox__style-02">
-                        <div class="iconbox__icon"><i class="ti-facebook"></i></div>
-                        <div>
-                            <h2 class="iconbox__title"><a href="https://www.facebook.com" target="_blank">Facebook</a>
-                            </h2>
-                            <div class="iconbox__description">
-                                Bizning Facebook sahifamizga obuna bo'ling va biz haqimizda eng so'nggi yangiliklardan
-                                xabardor bo'ling.
-                            </div>
-                        </div>
-                    </div><!-- End / iconbox -->
-
-                </div>
-                <div class="col-sm-6 col-md-6 col-lg-3 ">
-
-                    <!-- iconbox -->
-                    <div class="iconbox iconbox__style-02">
-                        <div class="iconbox__icon"><i class="ti-twitter"></i></div>
-                        <div>
-                            <h2 class="iconbox__title"><a href="https://www.twitter.com" target="_blank">Twitter</a>
-                            </h2>
-                            <div class="iconbox__description">
-                                Bizning Twitter akkauntimiz orqali tezkor ma'lumotlarni oling va biz bilan aloqada
-                                bo'ling.
-                            </div>
-                        </div>
-                    </div><!-- End / iconbox -->
-
-                </div>
-                <div class="col-sm-6 col-md-6 col-lg-3 ">
-
-                    <!-- iconbox -->
-                    <div class="iconbox iconbox__style-02">
-                        <div class="iconbox__icon"><i class="ti-instagram"></i></div>
-                        <div>
-                            <h2 class="iconbox__title"><a href="https://www.instagram.com" target="_blank">Instagram</a>
-                            </h2>
-                            <div class="iconbox__description">
-                                Instagram sahifamizda bizning yangiliklar, xizmatlar va loyihalarimiz haqida bilib
-                                oling.
-                            </div>
-                        </div>
-                    </div><!-- End / iconbox -->
-
-                </div>
-                <div class="col-sm-6 col-md-6 col-lg-3 ">
-
-                    <!-- iconbox -->
-                    <div class="iconbox iconbox__style-02">
-                        <div class="iconbox__icon"><i class="ti-linkedin"></i></div>
-                        <div>
-                            <h2 class="iconbox__title"><a href="https://www.linkedin.com" target="_blank">LinkedIn</a>
-                            </h2>
-                            <div class="iconbox__description">
-                                LinkedIn profilimizda jamoamizning professional faoliyati va hamkorlik imkoniyatlari
-                                haqida bilib oling.
-                            </div>
-                        </div>
-                    </div><!-- End / iconbox -->
-
+                    </div>
                 </div>
             </div>
         </div>
     </section>
-    <!-- End / Section -->
 
-    <!-- End / Section -->
-
-    <!-- About-->
-
-
-    <!-- What’s Client Say ?-->
-
-    <!-- Hodimlar -->
-    <section class="md-section" style="padding-bottom:0;">
+    <section class="content-inner">
         <div class="container">
+<div class="section-head style-1 m-b30 row align-items-end">
+    <div class="col-sm-7 wow fadeInUp" data-wow-delay="0.2s" data-wow-duration="0.8s">
+        <h2 class="title m-b0">Biz faqat <br> Mutaxassislarni Ishga Olamiz</h2>
+    </div>
+    <div class="col-sm-5 text-sm-end d-sm-block d-none wow fadeInUp" data-wow-delay="0.4s" data-wow-duration="0.8s">
+        <a href="" class="btn btn-icon btn-primary btn-shadow">
+            Barchasini Ko‘rish
+            <span class="right-icon"><i class="feather icon-arrow-right"></i></span>
+        </a>
+    </div>
+</div>
+
             <div class="row">
-                <div class="col-md-8 col-lg-8 offset-0 offset-sm-0 offset-md-2 offset-lg-2">
-
-                    <!-- title-01 -->
-                    <div class="title-01" style="margin-bottom:50px;">
-                        <h2 class="title-01__title">Hodimlarimiz</h2>
-                    </div><!-- End / title-01 -->
-
-                </div>
-            </div>
-            <div class="consult-slide">
-
-                <!-- carousel__element owl-carousel -->
-                <div class="carousel__element owl-carousel"
-                     data-options='{"loop":true,"dots":true,"nav":false,"margin":30,"responsive":{"0":{"items":1},"992":{"items":2}}}'>
-
-                    {% for user in recent_users %}
-                        <!-- Hodim -->
-                        <div class="testimonial">
-                            <div class="testimonial__info">
-                                <a class="testimonial__avatar" href="#">
-                                    {% if user.profile_picture and user.profile_picture.url %}
-                                        <img src="{{ user.profile_picture.url }}" alt="{{ user.get_full_name }} rasmi"/>
-                                    {% else %}
-                                        <img src="{% static 'dashboard/img/avatars/default-avatar.png' %}" alt="Default avatar"/>
-                                    {% endif %}
-
-                                </a>
-                                <h5 class="testimonial__name">{{ user.full_name }}</h5>
-                                <span class="testimonial__position">{{ user.job_title }}</span>
-                            </div>
-                            <div class="testimonial__content">
-                                <div class="testimonial__text">
-                                    {{ user.bio|default:"Ma'lumot mavjud emas" }}
-                                </div>
-                            </div>
-                        </div><!-- End / Hodim -->
-                    {% endfor %}
-
-                </div><!-- End / carousel__element owl-carousel -->
-
-            </div>
-
-        </div>
-    </section>
-
-    <!-- End / Hodimlar -->
-
-    <!-- Hamkorlar-->
-
-    <!-- Hamkorlar -->
-    <section class="md-section">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-8 col-lg-8 offset-0 offset-sm-0 offset-md-2 offset-lg-2">
-
-                    <!-- title-01 -->
-                    <div class="title-01">
-                        <h2 class="title-01__title">Bizning hamkorlar</h2>
-                    </div><!-- End / title-01 -->
-
-                </div>
-            </div>
-
-            <!-- carousel__element owl-carousel -->
-            <div class="carousel__element owl-carousel"
-                 data-options='{"loop":true,"dots":false,"nav":true,"margin":30,"responsive":{"0":{"items":2},"768":{"items":3},"992":{"items":5}}}'>
-
-                <!-- Hamkor -->
-                <div>
-                    <div class="brand-01__image">
-                        <img src="{% static 'dashboard/img/brands/1.png' %}" alt="Hamkor 1"/>
-                    </div>
-                </div><!-- End / Hamkor -->
-
-                <!-- Hamkor -->
-                <div>
-                    <div class="brand-01__image">
-                        <img src="{% static 'dashboard/img/brands/2.png' %}" alt="Hamkor 2"/>
-                    </div>
-                </div><!-- End / Hamkor -->
-
-                <!-- Hamkor -->
-                <div>
-                    <div class="brand-01__image">
-                        <img src="{% static 'dashboard/img/brands/3.png' %}" alt="Hamkor 3"/>
-                    </div>
-                </div><!-- End / Hamkor -->
-
-                <!-- Hamkor -->
-                <div>
-                    <div class="brand-01__image">
-                        <img src="{% static 'dashboard/img/brands/4.png' %}" alt="Hamkor 4"/>
-                    </div>
-                </div><!-- End / Hamkor -->
-
-                <!-- Hamkor -->
-                <div>
-                    <div class="brand-01__image">
-                        <img src="{% static 'dashboard/img/brands/5.png' %}" alt="Hamkor 5"/>
-                    </div>
-                </div><!-- End / Hamkor -->
-
-            </div><!-- End / carousel__element owl-carousel -->
-
-        </div>
-    </section>
-
-    <!-- End / Hamkorlar -->
-
-    <!-- Oxirgi yangiliklar -->
-
-    <!-- yangiliklar -->
-    <section class="md-section consult-background">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-8 col-lg-8 offset-0 offset-sm-0 offset-md-2 offset-lg-2">
-
-                    <!-- title-01 -->
-                    <div class="title-01">
-                        <h2 class="title-01__title">Oxirgi yangiliklar</h2>
-                    </div><!-- End / title-01 -->
-
-                </div>
-            </div>
-
-
-            <!-- Yangiliklar Carousel -->
-            <div class="carousel__element owl-carousel"
-                 data-options='{"loop":false,"dots":false,"nav":true,"margin":30,"responsive":{"0":{"items":1},"768":{"items":2},"992":{"items":3}}}'>
-
-                {% for news in latest_news %}
-                    <div>
-                        <div class="post-01__media">
-                            <a href="#">
-                                {% if news.image %}
-                                    <img src="{{ news.image.url }}"
-                                         alt="{{ news.title|get_language_text:CURRENT_LANGUAGE }}"/>
-                                {% else %}
-                                    <img src="{% static 'dashboard/img/default-news.jpg' %}" alt="No Image"/>
-                                {% endif %}
+                <div class="col-xl-3 col-sm-6 wow fadeInUp" data-wow-delay="0.2s" data-wow-duration="0.8s">
+                    <div class="dz-team style-1 active box-hover">
+                        <div class="dz-media">
+                            <img src="{% static 'dashboard/images/team/img1.webp' %}" alt="/">
+                            <a href="appointment.html" class="btn btn-primary">
+                                <i class="feather icon-calendar m-r5"></i>
+                                Appointment Now
                             </a>
                         </div>
-                        <div>
-                            <ul class="post-01__categories">
-                                <li><a href="#">Yangilik</a></li>
-                            </ul>
-                            <h2 class="post-01__title">
-                                <a href="#">{{ news.title|get_language_text:CURRENT_LANGUAGE }}</a>
-                            </h2>
-                            <div class="post-01__time">
-                                {{ news.published_date|date:"d-m-Y" }}
+                        <div class="dz-content">
+                            <div class="clearfix">
+                                <h3 class="dz-name"><a href="team-detail.html">Nashid Martines</a></h3>
+                                <span class="dz-position">Cardiac Surgery</span>
                             </div>
-                            <div class="post-01__note">
-                                Muallif: {{ news.author.get_full_name|default:"Noma'lum" }}
-                            </div>
+                            <a href="team-detail.html" class="btn btn-square btn-secondary">
+                                <i class="feather icon-arrow-right"></i>
+                            </a>
                         </div>
+                        <ul class="dz-social">
+                            <li>
+                                <a href="https://www.linkedin.com" target="_blank">
+                                    <i class="fa-brands fa-linkedin"></i>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="https://www.instagram.com" target="_blank">
+                                    <i class="fa-brands fa-instagram"></i>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="https://www.facebook.com" target="_blank">
+                                    <i class="fa-brands fa-facebook-f"></i>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="https://twitter.com" target="_blank">
+                                    <i class="fa-brands fa-x-twitter"></i>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="https://www.youtube.com" target="_blank">
+                                    <i class="fa-brands fa-youtube"></i>
+                                </a>
+                            </li>
+                        </ul>
                     </div>
-                {% endfor %}
-
-            </div><!-- End / carousel__element owl-carousel -->
-
-
+                </div>
+                <div class="col-xl-3 col-sm-6 wow fadeInUp" data-wow-delay="0.4s" data-wow-duration="0.8s">
+                    <div class="dz-team style-1 box-hover">
+                        <div class="dz-media">
+                            <img src="{% static 'dashboard/images/team/img2.webp' %}" alt="/">
+                            <a href="appointment.html" class="btn btn-primary">
+                                <i class="feather icon-calendar m-r5"></i>
+                                Appointment Now
+                            </a>
+                        </div>
+                        <div class="dz-content">
+                            <div class="clearfix">
+                                <h3 class="dz-name"><a href="team-detail.html">Danial Frankie</a></h3>
+                                <span class="dz-position">Pediatric Clinic</span>
+                            </div>
+                            <a href="team-detail.html" class="btn btn-square btn-secondary">
+                                <i class="feather icon-arrow-right"></i>
+                            </a>
+                        </div>
+                        <ul class="dz-social">
+                            <li>
+                                <a href="https://www.linkedin.com" target="_blank">
+                                    <i class="fa-brands fa-linkedin"></i>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="https://www.instagram.com" target="_blank">
+                                    <i class="fa-brands fa-instagram"></i>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="https://www.facebook.com" target="_blank">
+                                    <i class="fa-brands fa-facebook-f"></i>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="https://twitter.com" target="_blank">
+                                    <i class="fa-brands fa-x-twitter"></i>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="https://www.youtube.com" target="_blank">
+                                    <i class="fa-brands fa-youtube"></i>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-xl-3 col-sm-6 wow fadeInUp" data-wow-delay="0.6s" data-wow-duration="0.8s">
+                    <div class="dz-team style-1 box-hover">
+                        <div class="dz-media">
+                            <img src="{% static 'dashboard/images/team/img3.webp' %}" alt="/">
+                            <a href="appointment.html" class="btn btn-primary">
+                                <i class="feather icon-calendar m-r5"></i>
+                                Appointment Now
+                            </a>
+                        </div>
+                        <div class="dz-content">
+                            <div class="clearfix">
+                                <h3 class="dz-name"><a href="team-detail.html">Rihana Roy</a></h3>
+                                <span class="dz-position">Gynecology</span>
+                            </div>
+                            <a href="team-detail.html" class="btn btn-square btn-secondary">
+                                <i class="feather icon-arrow-right"></i>
+                            </a>
+                        </div>
+                        <ul class="dz-social">
+                            <li>
+                                <a href="https://www.linkedin.com" target="_blank">
+                                    <i class="fa-brands fa-linkedin"></i>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="https://www.instagram.com" target="_blank">
+                                    <i class="fa-brands fa-instagram"></i>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="https://www.facebook.com" target="_blank">
+                                    <i class="fa-brands fa-facebook-f"></i>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="https://twitter.com" target="_blank">
+                                    <i class="fa-brands fa-x-twitter"></i>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="https://www.youtube.com" target="_blank">
+                                    <i class="fa-brands fa-youtube"></i>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-xl-3 col-sm-6 wow fadeInUp" data-wow-delay="0.8s" data-wow-duration="0.8s">
+                    <div class="dz-team style-1 box-hover">
+                        <div class="dz-media">
+                            <img src="{% static 'dashboard/images/team/img4.webp' %}" alt="/">
+                            <a href="appointment.html" class="btn btn-primary">
+                                <i class="feather icon-calendar m-r5"></i>
+                                Appointment Now
+                            </a>
+                        </div>
+                        <div class="dz-content">
+                            <div class="clearfix">
+                                <h3 class="dz-name"><a href="team-detail.html">Kenneth Fong</a></h3>
+                                <span class="dz-position">Neurology</span>
+                            </div>
+                            <a href="team-detail.html" class="btn btn-square btn-secondary">
+                                <i class="feather icon-arrow-right"></i>
+                            </a>
+                        </div>
+                        <ul class="dz-social">
+                            <li>
+                                <a href="https://www.linkedin.com" target="_blank">
+                                    <i class="fa-brands fa-linkedin"></i>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="https://www.instagram.com" target="_blank">
+                                    <i class="fa-brands fa-instagram"></i>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="https://www.facebook.com" target="_blank">
+                                    <i class="fa-brands fa-facebook-f"></i>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="https://twitter.com" target="_blank">
+                                    <i class="fa-brands fa-x-twitter"></i>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="https://www.youtube.com" target="_blank">
+                                    <i class="fa-brands fa-youtube"></i>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
         </div>
     </section>
 
-    <!-- End / yangiliklar -->
+    <section class="content-inner-1 bg-light overflow-hidden">
+        <div class="container-left">
+            <div class="row g-0 align-items-center">
+                <div class="col-xxl-3">
+                    <div class="section-head style-1 m-b30">
+                        <h2 class="title wow fadeInUp" data-wow-delay="0.2s" data-wow-duration="0.8s">Hamkorlarimiz</h2>
+                        <p class="wow fadeInUp" data-wow-delay="0.4s" data-wow-duration="0.8s">
+                            Bizning ishonchli hamkorlarimiz bilan birgalikda yuqori sifatli xizmatlarni taqdim etamiz.
+                        </p>
+                    </div>
+                    <a href="javascript:void(0);" class="btn btn-outline-light btn-rounded m-r5 m-b10 wow fadeInUp"
+                       data-wow-delay="0.5s" data-wow-duration="0.8s">2024</a>
+                    <a href="javascript:void(0);" class="btn btn-outline-light btn-rounded m-r5 m-b10 wow fadeInUp"
+                       data-wow-delay="0.6s" data-wow-duration="0.8s">2023</a>
+                    <a href="javascript:void(0);" class="btn btn-outline-light btn-rounded m-r5 m-b10 wow fadeInUp"
+                       data-wow-delay="0.7s" data-wow-duration="0.8s">2022</a>
+                    <a href="javascript:void(0);" class="btn btn-outline-light btn-rounded m-r5 m-b10 wow fadeInUp"
+                       data-wow-delay="0.8s" data-wow-duration="0.8s">2021</a>
+                    <a href="javascript:void(0);" class="btn btn-outline-light btn-rounded m-r5 m-b10 wow fadeInUp"
+                       data-wow-delay="0.9s" data-wow-duration="0.8s">2020</a>
+                    <a href="javascript:void(0);" class="btn btn-outline-light btn-rounded m-r5 m-b10 wow fadeInUp"
+                       data-wow-delay="1.0s" data-wow-duration="0.8s">2019</a>
+
+                </div>
+                <div class="col-xxl-9">
+                    <div class="swiper awards-swiper wow fadeInUp" data-wow-delay="0.4s" data-wow-duration="0.8s">
+                        <div class="swiper-wrapper">
+                            <div class="swiper-slide">
+                                <div class="dz-img-box style-1 box-lg grid-bx text-center">
+                                    <div class="dz-media">
+                                        <img src="{% static 'dashboard/images/logo/logo1.png' %}" alt="">
+                                    </div>
+                                    <div class="dz-content">
+                                        <h3 class="title">ClinicMaster 2024</h3>
+                                        <p>Quality and Accreditation Institute</p>
+                                        <a href="javascript:void(0);" class="btn-link">Save the Childern</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="swiper-slide">
+                                <div class="dz-img-box style-1 box-lg grid-bx text-center">
+                                    <div class="dz-media">
+                                        <img src="{% static 'dashboard/images/logo/logo2.png' %}" alt="">
+                                    </div>
+                                    <div class="dz-content">
+                                        <h3 class="title">ClinicMaster 2024</h3>
+                                        <p>Quality and Accreditation Institute</p>
+                                        <a href="javascript:void(0);" class="btn-link">Save the Childern</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="swiper-slide">
+                                <div class="dz-img-box style-1 box-lg grid-bx text-center">
+                                    <div class="dz-media">
+                                        <img src="{% static 'dashboard/images/logo/logo3.png' %}" alt="">
+                                    </div>
+                                    <div class="dz-content">
+                                        <h3 class="title">ClinicMaster 2024</h3>
+                                        <p>Quality and Accreditation Institute</p>
+                                        <a href="javascript:void(0);" class="btn-link">Save the Childern</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="swiper-slide">
+                                <div class="dz-img-box style-1 box-lg grid-bx text-center">
+                                    <div class="dz-media">
+                                        <img src="{% static 'dashboard/images/logo/logo1.png' %}" alt="">
+                                    </div>
+                                    <div class="dz-content">
+                                        <h3 class="title">ClinicMaster 2024</h3>
+                                        <p>Quality and Accreditation Institute</p>
+                                        <a href="javascript:void(0);" class="btn-link">Save the Childern</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="swiper-slide">
+                                <div class="dz-img-box style-1 box-lg grid-bx text-center">
+                                    <div class="dz-media">
+                                        <img src="{% static 'dashboard/images/logo/logo2.png' %}" alt="">
+                                    </div>
+                                    <div class="dz-content">
+                                        <h3 class="title">ClinicMaster 2024</h3>
+                                        <p>Quality and Accreditation Institute</p>
+                                        <a href="javascript:void(0);" class="btn-link">Save the Childern</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="swiper-slide">
+                                <div class="dz-img-box style-1 box-lg grid-bx text-center">
+                                    <div class="dz-media">
+                                        <img src="{% static 'dashboard/images/logo/logo3.png' %}" alt="">
+                                    </div>
+                                    <div class="dz-content">
+                                        <h3 class="title">ClinicMaster 2024</h3>
+                                        <p>Quality and Accreditation Institute</p>
+                                        <a href="javascript:void(0);" class="btn-link">Save the Childern</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="content-inner-1">
+        <div class="container">
+            <div class="section-head style-1 m-b30 row align-items-end">
+                <div class="col-lg-7 col-md-8 wow fadeInUp" data-wow-delay="0.2s" data-wow-duration="0.8s">
+                    <h2 class="title m-b0">Yangiliklar <br> Oxirgi yangiliklar</h2>
+                </div>
+                <div class="col-lg-5 col-md-4 text-md-end d-none d-md-block wow fadeInUp" data-wow-delay="0.4s"
+                     data-wow-duration="0.8s">
+                    <a href="blog-grid.html" class="btn btn-icon btn-primary btn-shadow">
+                        View All
+                        <span class="right-icon"><i class="feather icon-arrow-right"></i></span>
+                    </a>
+                </div>
+            </div>
+            <div class="row g-20">
+                <div class="col-lg-4 wow fadeInUp" data-wow-delay="0.2s" data-wow-duration="0.8s">
+                    <div class="dz-card style-2 dz-card-overlay overlay-none"
+                         style="background-image: url({% static 'dashboard/images/blog/overlay/img1.webp' %} );">
+                        <div class=" dz-info
+                ">
+                            <div class="content-half">
+                                <div class="post-date">12 Jan 2024</div>
+                                <h3 class="dz-title">
+                                    <a href="blog-details.html">The Art of Managing Business and Patient Care</a>
+                                </h3>
+                            </div>
+                            <div class="bottom-info">
+                                <a href="blog-details.html" class="btn btn-icon btn-lg btn-primary btn-shadow">
+                                    Read More
+                                    <span class="right-icon"><i class="feather icon-arrow-right"></i></span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-5 col-lg-8 wow fadeInUp" data-wow-delay="0.4s" data-wow-duration="0.8s">
+                    <div class="dz-card style-2 dz-card-overlay"
+                         style="background-image: url({% static 'dashboard/images/blog/overlay/large/img1.webp' %});">
+                        <div class=" dz-info">
+                            <div class="post-date">12 Jan 2024</div>
+                            <div class="bottom-info">
+                                <h3 class="dz-title">
+                                    <a href="blog-details.html">The Art of Managing Business and Patient Care</a>
+                                </h3>
+                                <a href="blog-details.html" class="btn btn-square btn-white rounded-circle">
+                                    <i class="feather icon-arrow-up-right"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-3 col-lg-12">
+                    <div class="row g-20">
+                        <div class="col-xl-12 col-md-6 wow fadeInUp" data-wow-delay="0.6s" data-wow-duration="0.8s">
+                            <div class="dz-card style-2 dz-card-overlay card-sm no-image">
+                                <div class="dz-info">
+                                    <div class="post-date">12 Jan 2024</div>
+                                    <h3 class="dz-title">
+                                        <a href="blog-details.html">Strategies for Balancing Business Demands with
+                                            Optimal</a>
+                                    </h3>
+                                    <div class="bottom-info ms-auto">
+                                        <a href="blog-details.html" class="btn btn-square btn-white rounded-circle">
+                                            <i class="feather icon-arrow-up-right"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-12 col-md-6 wow fadeInUp" data-wow-delay="0.8s" data-wow-duration="0.8s">
+                            <div class="dz-card style-2 dz-card-overlay card-sm"
+                                 style="background-image: url({% static 'dashboard/images/blog/overlay/small/img1.webp' %});">
+                                <div class=" dz-info
+                ">
+                                    <div class="post-date">12 Jan 2024</div>
+                                    <div class="bottom-info">
+                                        <h3 class="dz-title">
+                                            <a href="blog-details.html">Effective Healthcare Tips</a>
+                                        </h3>
+                                        <a href="blog-details.html" class="btn btn-square btn-white rounded-circle">
+                                            <i class="feather icon-arrow-up-right"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="content-wrapper style-4">
+        <div class="container">
+            <div class="map-wrapper">
+                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2995.472878512315!2d71.57892527635666!3d40.99803177139225!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x38bb4ef520c03a23%3A0x70fecc9518980de2!2sBoburshox%20ko%E2%80%98chasi%2C%20Namangan%2C%20Uzbekistan!5e0!3m2!1sen!2suz!4v1719221707984!5m2!1sen!2suz"
+                        width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy"
+                        referrerpolicy="no-referrer-when-downgrade"></iframe>
+            </div>
+  <div class="row">
+    <div class="col-xxl-4 col-xl-5 col-lg-6 col-md-6 col-sm-8">
+        <div class="content-info bg-secondary">
+            <div class="section-head style-1 wow fadeInUp" data-wow-delay="0.2s"
+                 data-wow-duration="0.8s">
+                <h2 class="title m-b0 text-white">Biz bilan bog‘laning</h2>
+                <p class="text-white">Savollaringiz bo'lsa, biz bilan bog‘laning</p>
+            </div>
+            <div class="icon-bx-wraper style-1 m-b20 wow fadeInUp" data-wow-delay="0.4s"
+                 data-wow-duration="0.8s">
+                <div class="icon-bx">
+						<span class="icon-cell">
+							<i class="feather icon-map-pin"></i>
+						</span>
+                </div>
+                <div class="icon-content">
+                    <h5 class="dz-title">Manzil</h5>
+                    <p>O‘zbekiston, 160100, Namangan viloyati, Boburshox ko‘chasi</p>
+                </div>
+            </div>
+            <div class="icon-bx-wraper style-1 m-b20 wow fadeInUp" data-wow-delay="0.6s"
+                 data-wow-duration="0.8s">
+                <div class="icon-bx">
+						<span class="icon-cell">
+							<i class="feather icon-phone"></i>
+						</span>
+                </div>
+                <div class="icon-content">
+                    <h5 class="dz-title">Bizga qo‘ng‘iroq qiling</h5>
+                    <p><a href="tel:+998901234567">+998 90 123 45 67</a></p>
+                </div>
+            </div>
+            <div class="icon-bx-wraper style-1 m-b20 wow fadeInUp" data-wow-delay="0.8s"
+                 data-wow-duration="0.8s">
+                <div class="icon-bx">
+						<span class="icon-cell">
+							<i class="feather icon-mail"></i>
+						</span>
+                </div>
+                <div class="icon-content">
+                    <h5 class="dz-title">Bizga xat yuboring</h5>
+                    <p><a href="mailto:info@namanganclinic.uz">info@namanganclinic.uz</a></p>
+                </div>
+            </div>
+            <div class="icon-bx-wraper style-1 m-b20 wow fadeInUp" data-wow-delay="1.0s"
+                 data-wow-duration="0.8s">
+                <div class="icon-bx">
+						<span class="icon-cell">
+							<i class="feather icon-clock"></i>
+						</span>
+                </div>
+                <div class="icon-content">
+                    <h5 class="dz-title">Ish vaqti</h5>
+                    <p>Dushanba-Payshanba: 8:00 - 17:00 <br> Juma: 8:00 - 13:00</p>
+                </div>
+            </div>
+            <a href="appointment.html"
+               class="btn btn-lg btn-icon btn-primary w-100 m-t20 btn-shadow wow fadeInUp"
+               data-wow-delay="1.2s"
+               data-wow-duration="0.8s">
+                <span class="w-100">Qabulga yozilish</span>
+                <span class="right-icon"><i class="feather icon-arrow-right"></i></span>
+            </a>
+        </div>
+    </div>
+</div>
+
+        </div>
+    </section>
 
     <!-- Testimonial End -->
 {% endblock content %}
@@ -382,4 +660,9 @@
 
 
 {% block script %}
+
+
+
+
+
 {% endblock script %}

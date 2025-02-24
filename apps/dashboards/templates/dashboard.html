@@ -1,88 +1,101 @@
 <!DOCTYPE html>
+<html lang="en" data-theme-color="skin-1">
 {% load static %}
-<html>
 <head>
+
+    <!-- Title -->
     <title>
         {% block title %}
         {% endblock title %}
     </title>
 
+    <!-- Meta -->
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="author" content="Doctor A Team">
+    <meta name="robots" content="index, follow">
     <meta name="format-detection" content="telephone=no">
-    <meta name="apple-mobile-web-app-capable" content="yes">
 
-    <!-- Fonts -->
-    <link rel="stylesheet" type="text/css" href="{% static 'dashboard/fonts/fontawesome/font-awesome.min.css' %}">
-    <link rel="stylesheet" type="text/css" href="{% static 'dashboard/fonts/themify-icons/themify-icons.css' %}">
+    <meta name="keywords"
+          content="doctor, healthcare, tibbiyot, shifokor, klinika, tibbiy xizmat, onlayn qabul, shifokor maslahatlari, zamonaviy tibbiyot, sog'liqni saqlash, tibbiy portal">
+    <meta name="description"
+          content="Doctor A — bu zamonaviy va foydalanuvchilarga qulay tibbiyot platformasi. Klinikalar, shifokorlar va bemorlar uchun onlayn qabul, maslahatlar va sog'liqni saqlash xizmatlarini taklif etamiz.">
 
-    <!-- Vendors -->
-    <link rel="stylesheet" type="text/css" href="{% static 'dashboard/vendors/bootstrap4/bootstrap-grid.min.css' %}">
+    <meta property="og:title" content="Doctor A - Shifokor va Klinikalar Uchun Tibbiy Platforma">
+    <meta property="og:description"
+          content="Doctor A — bu zamonaviy va foydalanuvchilarga qulay tibbiyot platformasi. Klinikalar, shifokorlar va bemorlar uchun onlayn qabul, maslahatlar va sog'liqni saqlash xizmatlarini taklif etamiz.">
+    <meta property="og:image" content="https://doctor-a.com/social-image.png">
+
+    <!-- TWITTER META -->
+    <meta name="twitter:title" content="Doctor A - Shifokor va Klinikalar Uchun Tibbiy Platforma">
+    <meta name="twitter:description"
+          content="Doctor A — bu zamonaviy va foydalanuvchilarga qulay tibbiyot platformasi. Klinikalar, shifokorlar va bemorlar uchun onlayn qabul, maslahatlar va sog'liqni saqlash xizmatlarini taklif etamiz.">
+    <meta name="twitter:image" content="https://doctor-a.com/social-image.png">
+    <meta name="twitter:card" content="summary_large_image">
+
+
+    <!-- CANONICAL URL -->
+    <link rel="canonical" href="index.html">
+
+    <!-- MOBILE SPECIFIC -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- FAVICONS ICON -->
+    <link rel="icon" type="image/x-icon" href="{% static 'dashboard/images/favicon.png' %}">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
+          rel="stylesheet">
+
+    <link rel="stylesheet" type="text/css" href="{% static 'dashboard/vendors/swiper/swiper-bundle.min.css' %}">
+    <link rel="stylesheet" type="text/css"
+          href="{% static 'dashboard/vendors/bootstrap-select/css/bootstrap-select.min.css' %}">
     <link rel="stylesheet" type="text/css"
           href="{% static 'dashboard/vendors/magnific-popup/magnific-popup.min.css' %}">
-    <link rel="stylesheet" type="text/css" href="{% static 'dashboard/vendors/owl.carousel/owl.carousel.css' %}">
-    <link rel="stylesheet" type="text/css" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.min.css">
 
-    <link rel="shortcut icon" type="image/png" href="{% static 'images/logos/favicon.png' %}"/>
-
-
-    <!-- Google Fonts -->
-    <link rel="stylesheet" type="text/css"
-          href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i&amp;subset=latin-ext">
-
-    <!-- App Styles -->
-    <link rel="stylesheet" type="text/css" href="{% static 'dashboard/css/main.css' %}">
-
-    <!--[if lt IE 9]>
-    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-
-    <![endif]-->
-
+    <!-- Custom Stylesheet -->
+    <link rel="stylesheet" type="text/css" href="{% static 'dashboard/css/style.css' %}">
 
     {% block style %}
     {% endblock style %}
+
 </head>
+<body id="bg">
+<div class="page-wraper">
+    <!-- Header Star -->
+    {% include 'components/preloader.html' %}
+    <!-- Preloader End -->
 
-<body>
-<div class="page-wrap">
-
-    <!-- header -->
+    <!-- Header Star -->
     {% include 'components/header.html' %}
-    <!-- End / header -->
 
-    <!-- Content-->
-    <div class="md-content">
+    <!-- Header End -->
+
+    <main class="page-content">
         {% block content %}
         {% endblock content %}
-    </div>
-    <!-- End / Content-->
 
-    <!-- footer -->
-    {% include 'components/footer.html' %}
-    <!-- End / footer -->
-
+    </main>
 </div>
-<!-- Vendors-->
-<script type="text/javascript" src="{% static 'dashboard/vendors/jquery/jquery.min.js' %}"></script>
-<script type="text/javascript" src="{% static 'dashboard/vendors/imagesloaded/imagesloaded.pkgd.js' %}"></script>
-<script type="text/javascript" src="{% static 'dashboard/vendors/isotope-layout/isotope.pkgd.js' %}"></script>
-<script type="text/javascript" src="{% static 'dashboard/vendors/jquery.countdown/jquery.countdown.min.js' %}"></script>
-<script type="text/javascript" src="{% static 'dashboard/vendors/jquery.countTo/jquery.countTo.min.js' %}"></script>
-<script type="text/javascript" src="{% static 'dashboard/vendors/jquery.countUp/jquery.countup.min.js' %}"></script>
-<script type="text/javascript"
-        src="{% static 'dashboard/vendors/jquery.matchHeight/jquery.matchHeight.min.js' %}"></script>
-<script type="text/javascript"
-        src="{% static 'dashboard/vendors/jquery.mb.ytplayer/jquery.mb.YTPlayer.min.js' %}"></script>
-<script type="text/javascript"
-        src="{% static 'dashboard/vendors/magnific-popup/jquery.magnific-popup.min.js' %}"></script>
-<script type="text/javascript" src="{% static 'dashboard/vendors/masonry-layout/masonry.pkgd.js' %}"></script>
-<script type="text/javascript" src="{% static 'dashboard/vendors/owl.carousel/owl.carousel.js' %}"></script>
-<script type="text/javascript" src="{% static 'dashboard/vendors/jquery.waypoints/jquery.waypoints.min.js' %}"></script>
-<script type="text/javascript" src="{% static 'dashboard/vendors/menu/menu.min.js' %}"></script>
-{#		<script type="text/javascript" src="{% static 'vendors/smoothscroll/SmoothScroll.min.js' %}"></script>#}
-<!-- App-->
-<script type="text/javascript" src="{% static 'dashboard/js/main.js' %}"></script>
+
+<!-- Footer -->
+{% include 'components/footer.html' %}
+<!-- Footer End -->
+
+<button class="scroltop" type="button"><i class="fas fa-arrow-up"></i></button>
+
+
+<!-- JAVASCRIPT FILES ========================================= -->
+<script src="{% static 'dashboard/js/global.min.js' %}"></script>
+<script src="{% static 'dashboard/vendors/swiper/swiper-bundle.min.js' %}"></script>
+<script src="{% static 'dashboard/vendors/imagesloaded/imagesloaded.js' %}"></script>
+<script src="{% static 'dashboard/vendors/apexchart/apexchart.js' %}"></script>
+<script src="{% static 'dashboard/js/dz.carousel.js' %}"></script>
+<script src="{% static 'dashboard/js/dz.ajax.js' %}"></script>
+<script src="{% static 'dashboard/js/custom.js' %}"></script>
 {% block script %}
 {% endblock script %}
+
 </body>
 </html>

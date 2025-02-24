@@ -48,3 +48,42 @@ class DashboardsView(TemplateView):
 
         return context
 
+class NewsView(TemplateView):
+    template_name = "views/news-dashboard.html"
+
+    def get_context_data(self, **kwargs):
+        """ Asosiy sahifa uchun barcha ma'lumotlarni olish """
+        context = super().get_context_data(**kwargs)
+
+
+        return context
+
+class AnnouncementView(TemplateView):
+    template_name = "views/announcement-dashboard.html"
+
+    def get_context_data(self, **kwargs):
+        """ Asosiy sahifa uchun barcha ma'lumotlarni olish """
+        context = super().get_context_data(**kwargs)
+
+
+        return context
+
+class EmployeeView(TemplateView):
+    template_name = "views/employee-dashboard.html"
+
+    def get_context_data(self, **kwargs):
+        """ Asosiy sahifa uchun barcha ma'lumotlarni olish """
+        context = super().get_context_data(**kwargs)
+
+
+        return context
+
+class VideosView(TemplateView):
+    template_name = "views/videos-dashboard.html"
+
+    def get_context_data(self, **kwargs):
+        """ Asosiy sahifa uchun barcha ma'lumotlarni olish """
+        context = super().get_context_data(**kwargs)
+
+
+        return context

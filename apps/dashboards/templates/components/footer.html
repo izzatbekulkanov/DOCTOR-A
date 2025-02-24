@@ -1,85 +1,78 @@
 {% load static %}
-<footer class="footer">
-    <div class="footer__main">
-        <div class="row row-eq-height">
-            <!-- Logo and Description -->
-            <div class="col-8 col-sm-7 col-md-9 col-lg-3">
-                <div class="footer__item">
-                    <a class="consult_logo" href="#">
-                        <img src="{% static 'img/logo.png' %}" alt="Doctor A Logo" />
-                    </a>
-                    <p>Doctor A - sog'liqni saqlash va tibbiy xizmatlar bo'yicha innovatsion yechimlar.</p>
-                </div>
-            </div>
 
-            <!-- Useful Links -->
-            <div class="col-sm-6 col-md-4 col-lg-3 col-xl-2 offset-0 offset-sm-0 offset-md-0 offset-lg-0 offset-xl-1">
-                <div class="footer__item">
-                    <section class="widget-text__widget widget">
-                        <h4 style="color: red;">Foydali havolalar</h4>
-                        <div class="widget-text__content">
-                            <ul>
-                                <li><a href="#">Xizmat shartlari</a></li>
-                                <li><a href="#">Maxfiylik siyosati</a></li>
-                                <li><a href="#">Sayt xaritasi</a></li>
-                                <li><a href="#">Yordam</a></li>
-                            </ul>
-                        </div>
-                    </section>
-                </div>
-            </div>
 
-            <!-- Additional Links -->
-            <div class="col-sm-6 col-md-4 col-lg-2 col-xl-2">
-                <div class="footer__item">
-                    <section class="widget-text__widget widget">
-                        <h4 class="text-bg-danger" style="color: red;"> Qo'shimcha</h4>
-                        <div class="widget-text__content">
-                            <ul>
-                                <li><a href="#">Qanday ishlaydi</a></li>
-                                <li><a href="#">Karyera</a></li>
-                                <li><a href="#">Narxlar</a></li>
-                                <li><a href="#">Qo'llab-quvvatlash</a></li>
-                            </ul>
-                        </div>
-                    </section>
-                </div>
-            </div>
-
-            <!-- Newsletter Form -->
-            <div class="col-md-4 col-lg-2 col-xl-2">
-                <div class="footer__item">
-                    <div class="form-sub">
-                        <h4 class="form-sub__title">Bizning yangiliklar</h4>
-                        <form class="form-sub__form">
-                            <div class="form-item">
-                                <input class="form-control" type="email" placeholder="Email manzilingizni kiriting..." />
-                            </div>
-                            <div class="form-submit">
-                                <button class="form-button" type="submit">
-                                    <i class="fa fa-paper-plane" aria-hidden="true"></i>
-                                </button>
-                            </div>
-                        </form>
+<footer class="site-footer style-1 overlay-primary-light"
+        style="background-image: url({% static 'dashboard/images/background/bg4.webp' %})">
+    <div class="footer-head">
+        <div class="container">
+            <div class="fh-inner">
+                <div class="row g-3 align-items-center">
+                    <div class="col-xl-3 col-md-12 col-sm-6">
+                        <h3 class="title">Biz bilan bog‘laning</h3>
+                        <p class="text">Sizning sog‘lig‘ingiz biz uchun muhim. Har qanday savollaringiz bo‘lsa, bizga murojaat qiling.</p>
                     </div>
-                </div>
-            </div>
-
-            <!-- Back to Top -->
-            <div class="col-sm-6 col-md-4 col-lg-2 col-xl-2 consult_backToTop">
-                <div class="footer__item">
-                    <a href="#" id="back-to-top">
-                        <i class="fa fa-angle-up" aria-hidden="true"></i>
-                        <span>Yuqoriga qaytish</span>
-                    </a>
+                    <div class="col-xl-3 col-md-4 col-sm-6">
+                        <div class="icon-bx-wraper style-1">
+                            <div class="icon-bx bg-secondary">
+                                <span class="icon-cell">
+                                    <i class="feather icon-phone"></i>
+                                </span>
+                            </div>
+                            <div class="icon-content">
+                                <h5 class="dz-title">Telefon</h5>
+                                <p><a href="tel:+998901234567" class="text-body">+998 90 123 45 67</a></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-3 col-md-4 col-sm-6">
+                        <div class="icon-bx-wraper style-1">
+                            <div class="icon-bx bg-secondary">
+                                <span class="icon-cell">
+                                    <i class="feather icon-mail"></i>
+                                </span>
+                            </div>
+                            <div class="icon-content">
+                                <h5 class="dz-title">Email</h5>
+                                <p><a href="mailto:info@doctor.uz" class="text-body">info@doctor.uz</a></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-3 col-md-4 col-sm-6">
+                        <div class="icon-bx-wraper style-1">
+                            <div class="icon-bx bg-secondary">
+                                <span class="icon-cell">
+                                    <i class="feather icon-clock"></i>
+                                </span>
+                            </div>
+                            <div class="icon-content">
+                                <h5 class="dz-title">Ish vaqti</h5>
+                                <p>D-Sh: 08:00 - 20:00</p>
+                                <p>Yakshanba: Dam olish kuni</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Footer Copyright -->
-    <div class="footer__copyright">
-        <p>2025 &copy; Doctor A. Barcha huquqlar himoyalangan.</p>
-        <p>Dasturchi: <strong>Izzatbek Ulkanov</strong></p>
+    <!-- Footer Bottom -->
+    <div class="footer-bottom">
+        <div class="container">
+            <div class="fb-inner">
+                <div class="row">
+                    <div class="col-lg-6 col-md-12 text-start">
+                        <p class="copyright-text">© <span class="current-year">2024</span> <a href="https://doctor.uz" target="_blank">Doctor.uz</a> Barcha huquqlar himoyalangan.</p>
+                    </div>
+                    <div class="col-lg-6 col-md-12 text-end">
+                        <div class="social-icons">
+                            <a href="https://facebook.com/doctoruz" target="_blank"><i class="fa-brands fa-facebook"></i></a>
+                            <a href="https://instagram.com/doctoruz" target="_blank"><i class="fa-brands fa-instagram"></i></a>
+                            <a href="https://telegram.me/doctoruz" target="_blank"><i class="fa-brands fa-telegram"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </footer>

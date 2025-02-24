@@ -1,0 +1,307 @@
+{% extends 'dashboard.html' %}
+{% load static %}
+{% load custom_filters %}
+
+{% block title %}
+    E'lonlar
+{% endblock title %}
+{% block style %}
+{% endblock style %}
+
+
+{% block content %}
+
+
+        <div class="dz-bnr-inr dz-banner-dark overlay-secondary-middle dz-bnr-inr-md"
+         style="background-image:url({% static 'dashboard/images/banner/bnr2.webp' %});">
+        <div class="container">
+            <div class="dz-bnr-inr-entry d-table-cell">
+                <h1 class="wow fadeInUp" data-wow-delay="0.2s" data-wow-duration="0.8s">E'lonlar</h1>
+                <nav aria-label="breadcrumb" class="breadcrumb-row wow fadeInUp" data-wow-delay="0.4s"
+                     data-wow-duration="0.8s">
+                    <ul class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{% url 'main-dashboard' %}">Asosiy sahifa</a></li>
+                        <li class="breadcrumb-item">E'lonlar</li>
+                    </ul>
+                </nav>
+                <div class="dz-btn">
+                    <a href="tel:+11234567890"
+                       class="btn btn-lg btn-icon btn-primary radius-xl btn-shadow mb-3 mb-sm-0">
+						<span class="left-icon">
+							<i class="feather icon-phone-call"></i>
+						</span>
+                        +1 123 456 7890
+                    </a>
+                </div>
+            </div>
+        </div>
+        <span class="text-vertical">24/7 Shoshilinch Xizmat</span>
+        <ul class="dz-social">
+            <li>
+                <a href="https://www.instagram.com" target="_blank">
+                    <i class="fa-brands fa-instagram"></i>
+                </a>
+            </li>
+            <li>
+                <a href="https://www.facebook.com" target="_blank">
+                    <i class="fa-brands fa-facebook-f"></i>
+                </a>
+            </li>
+            <li>
+                <a href="https://twitter.com" target="_blank">
+                    <i class="fa-brands fa-x-twitter"></i>
+                </a>
+            </li>
+            <li>
+                <a href="https://www.youtube.com" target="_blank">
+                    <i class="fa-brands fa-youtube"></i>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <section class="content-inner">
+        <div class="container">
+            <div class="row ">
+                <div class="col-xl-9 col-lg-12 m-b30 pe-xl-5">
+                    <div class="row loadmore-content">
+                        <div class="col-lg-6 col-md-6 m-b25 wow fadeInUp" data-wow-delay="0.1s"
+                             data-wow-duration="0.5s">
+                            <div class="dz-card style-2 dz-card-overlay"
+                                 style="background-image: url({% static 'dashboard/images/blog/overlay/large/img1.webp' %});">
+                                <div class="dz-info">
+                                    <div class="post-date">12 Jan 2024</div>
+                                    <div class="bottom-info">
+                                        <h3 class="dz-title">
+                                            <a href="blog-details.html">The Art of Managing Business and Patient
+                                                Care</a>
+                                        </h3>
+                                        <a href="blog-details.html" class="btn btn-square btn-white rounded-circle">
+                                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                                 xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M7 17L17 7" stroke="var(--bs-secondary)" stroke-width="1.5"
+                                                      stroke-linecap="round" stroke-linejoin="round"></path>
+                                                <path d="M7 7H17V17" stroke="var(--bs-secondary)" stroke-width="1.5"
+                                                      stroke-linecap="round" stroke-linejoin="round"></path>
+                                            </svg>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6 col-md-6 m-b25 wow fadeInUp" data-wow-delay="0.2s"
+                             data-wow-duration="0.5s">
+                            <div class="dz-card style-2 dz-card-overlay"
+                                 style="background-image: url({% static 'dashboard/images/blog/overlay/large/img2.webp' %});">
+                                <div class="dz-info">
+                                    <div class="post-date">12 Jan 2024</div>
+                                    <div class="bottom-info">
+                                        <h3 class="dz-title">
+                                            <a href="blog-details.html">Successful Transitional Rehab: More Than Just
+                                                Exercise</a>
+                                        </h3>
+                                        <a href="blog-details.html" class="btn btn-square btn-white rounded-circle">
+                                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                                 xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M7 17L17 7" stroke="var(--bs-secondary)" stroke-width="1.5"
+                                                      stroke-linecap="round" stroke-linejoin="round"></path>
+                                                <path d="M7 7H17V17" stroke="var(--bs-secondary)" stroke-width="1.5"
+                                                      stroke-linecap="round" stroke-linejoin="round"></path>
+                                            </svg>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6 col-md-6 m-b25 wow fadeInUp" data-wow-delay="0.3s"
+                             data-wow-duration="0.5s">
+                            <div class="dz-card style-2 dz-card-overlay"
+                                 style="background-image: url({% static 'dashboard/images/blog/overlay/large/img3.webp' %});">
+                                <div class="dz-info">
+                                    <div class="post-date">12 Jan 2024</div>
+                                    <div class="bottom-info">
+                                        <h3 class="dz-title">
+                                            <a href="blog-details.html">What is Respite Care and Why is it
+                                                Important?</a>
+                                        </h3>
+                                        <a href="blog-details.html" class="btn btn-square btn-white rounded-circle">
+                                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                                 xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M7 17L17 7" stroke="var(--bs-secondary)" stroke-width="1.5"
+                                                      stroke-linecap="round" stroke-linejoin="round"></path>
+                                                <path d="M7 7H17V17" stroke="var(--bs-secondary)" stroke-width="1.5"
+                                                      stroke-linecap="round" stroke-linejoin="round"></path>
+                                            </svg>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6 col-md-6 m-b25 wow fadeInUp" data-wow-delay="0.4s"
+                             data-wow-duration="0.5s">
+                            <div class="dz-card style-2 dz-card-overlay"
+                                 style="background-image: url({% static 'dashboard/images/blog/overlay/large/img4.webp' %});">
+                                <div class="dz-info">
+                                    <div class="post-date">12 Jan 2024</div>
+                                    <div class="bottom-info">
+                                        <h3 class="dz-title">
+                                            <a href="blog-details.html">The Art of Managing Business and Patient
+                                                Care</a>
+                                        </h3>
+                                        <a href="blog-details.html" class="btn btn-square btn-white rounded-circle">
+                                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                                 xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M7 17L17 7" stroke="var(--bs-secondary)" stroke-width="1.5"
+                                                      stroke-linecap="round" stroke-linejoin="round"></path>
+                                                <path d="M7 7H17V17" stroke="var(--bs-secondary)" stroke-width="1.5"
+                                                      stroke-linecap="round" stroke-linejoin="round"></path>
+                                            </svg>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6 col-md-6 m-b25 wow fadeInUp" data-wow-delay="0.5s"
+                             data-wow-duration="0.5s">
+                            <div class="dz-card style-2 dz-card-overlay"
+                                 style="background-image: url({% static 'dashboard/images/blog/overlay/large/img5.webp' %});">
+                                <div class="dz-info">
+                                    <div class="post-date">12 Jan 2024</div>
+                                    <div class="bottom-info">
+                                        <h3 class="dz-title">
+                                            <a href="blog-details.html">Three Years Post Injury: Persistence and
+                                                Progress</a>
+                                        </h3>
+                                        <a href="blog-details.html" class="btn btn-square btn-white rounded-circle">
+                                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                                 xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M7 17L17 7" stroke="var(--bs-secondary)" stroke-width="1.5"
+                                                      stroke-linecap="round" stroke-linejoin="round"></path>
+                                                <path d="M7 7H17V17" stroke="var(--bs-secondary)" stroke-width="1.5"
+                                                      stroke-linecap="round" stroke-linejoin="round"></path>
+                                            </svg>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6 col-md-6 m-b25 wow fadeInUp" data-wow-delay="0.6s"
+                             data-wow-duration="0.5s">
+                            <div class="dz-card style-2 dz-card-overlay"
+                                 style="background-image: url({% static 'dashboard/images/blog/overlay/large/img6.webp' %});">
+                                <div class="dz-info">
+                                    <div class="post-date">12 Jan 2024</div>
+                                    <div class="bottom-info">
+                                        <h3 class="dz-title">
+                                            <a href="blog-details.html">How Transitional Rehabilitation Aids in Stroke
+                                                Recovery</a>
+                                        </h3>
+                                        <a href="javascript:void(0);" class="btn btn-square btn-white rounded-circle">
+                                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                                 xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M7 17L17 7" stroke="var(--bs-secondary)" stroke-width="1.5"
+                                                      stroke-linecap="round" stroke-linejoin="round"></path>
+                                                <path d="M7 7H17V17" stroke="var(--bs-secondary)" stroke-width="1.5"
+                                                      stroke-linecap="round" stroke-linejoin="round"></path>
+                                            </svg>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-center m-t30 m-lg-t0 wow fadeInUp" data-wow-delay="0.7s" data-wow-duration="0.5s">
+                        <a href="javascript:void(0);" class="btn btn-lg btn-icon btn-primary dz-load-more"
+                           rel="ajax/blog-grid.html">
+                            Koproq yuklash
+                            <span class="right-icon"><i class="feather icon-refresh-ccw"></i></span>
+                        </a>
+                    </div>
+                </div>
+                <div class="col-xl-3 col-lg-12">
+                    <aside class="side-bar sticky-top @@dir m-b30 p-0">
+                        <div class="widget wow fadeInUp" data-wow-delay="0.1s" data-wow-duration="0.5s">
+                            <div class="widget-title">
+                                <h4 class="title">Qidirish</h4>
+                            </div>
+                            <div class="search-bx">
+                                <form role="search" method="post">
+                                    <div class="input-group">
+                                        <input name="text" class="form-control" placeholder="Qidirish" type="text">
+                                        <div class="input-group-btn">
+                                            <button type="submit">
+                                                <i class="feather icon-search"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                        <div class="widget recent-posts-entry wow fadeInUp" data-wow-delay="0.3s"
+                             data-wow-duration="0.5s">
+                            <div class="widget-title">
+                                <h4 class="title">Oxirgi e'lonlar</h4>
+                            </div>
+                            <div class="widget-post-bx">
+                                <div class="widget-post clearfix">
+                                    <div class="dz-media">
+                                        <img src="{% static 'dashboard/images/blog/small/img1.webp' %}" alt="/">
+                                    </div>
+                                    <div class="dz-info">
+                                        <div class="dz-meta">
+                                            <ul>
+                                                <li class="post-date"><a href="javascript:void(0);">17 May 2022</a></li>
+                                            </ul>
+                                        </div>
+                                        <h6 class="title"><a href="blog-details.html">The Art of Managing Business and
+                                            Patient Care</a></h6>
+                                    </div>
+                                </div>
+                                <div class="widget-post clearfix">
+                                    <div class="dz-media">
+                                        <img src="{% static 'dashboard/images/blog/small/img2.webp' %}" alt="/">
+                                    </div>
+                                    <div class="dz-info">
+                                        <div class="dz-meta">
+                                            <ul>
+                                                <li class="post-date"><a href="javascript:void(0);">17 May 2022</a></li>
+                                            </ul>
+                                        </div>
+                                        <h6 class="title"><a href="blog-details.html">The Art of Managing Business and
+                                            Patient Care</a></h6>
+                                    </div>
+                                </div>
+                                <div class="widget-post clearfix">
+                                    <div class="dz-media">
+                                        <img src="{% static 'dashboard/images/blog/small/img3.webp' %}" alt="/">
+                                    </div>
+                                    <div class="dz-info">
+                                        <div class="dz-meta">
+                                            <ul>
+                                                <li class="post-date"><a href="javascript:void(0);">17 May 2022</a></li>
+                                            </ul>
+                                        </div>
+                                        <h6 class="title"><a href="blog-details.html">The Art of Managing Business and
+                                            Patient Care</a></h6>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </aside>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+{% endblock content %}
+
+
+
+{% block script %}
+
+
+
+
+
+{% endblock script %}

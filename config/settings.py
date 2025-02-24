@@ -4,34 +4,20 @@ from pathlib import Path
 from django.utils.translation import gettext_lazy as _
 from dotenv import load_dotenv
 
-
-# 📌 `.env` fayldagi muhit o'zgaruvchilarini yuklash
 load_dotenv()
 
-# 📌 **Loyiha asosiy katalogi (`BASE_DIR`)**
-# Loyiha joylashgan asosiy papkani avtomatik aniqlaydi
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
-# 🔹 **Xavfsizlik (Security)**
-# 📌 **Maxfiy kalit (`SECRET_KEY`)** – Django tomonidan ishlatiladi, `.env` faylda saqlanadi.
 SECRET_KEY = os.environ.get("SECRET_KEY", default='')
 
-# 📌 **Ishlab chiqish (`DEBUG`) rejimi**
-# Agar `DEBUG=True` bo‘lsa, xatolar ko‘rsatiladi (faqat dev uchun).
 DEBUG = os.environ.get("DEBUG", 'True').lower() in ['true', 'yes', '1']
 
-# 📌 **Ruxsat etilgan hostlar (`ALLOWED_HOSTS`)**
-# Server ishlashi uchun qabul qilinadigan domen yoki IP manzillar
-ALLOWED_HOSTS = ["localhost", "0.0.0.0", "127.0.0.1", 'updatehub.namspi.uz']
 
-# 📌 **Joriy muhit (`ENVIRONMENT`)**
-# Django qaysi muhitda ishlayotganini aniqlaydi: `local`, `staging`, `production`
+ALLOWED_HOSTS = ["localhost", "0.0.0.0", "127.0.0.1", 'updatehub.namspi.uz', 'webtest.namspi.uz']
+
+
 ENVIRONMENT = os.environ.get("DJANGO_ENVIRONMENT", default="local")
 
-
-# 🔹 **Django ilovalari (`INSTALLED_APPS`)**
-# 📌 Bu yerda barcha ilovalar (apps) ro'yxati keltirilgan
 LOCAL_APPS = [
     # 📌 **Loyiha ichidagi ilovalar**
     "apps.dashboards",   # Dashboard ilovasi
@@ -148,17 +134,18 @@ USE_TZ = True  # 📌 Django vaqtni `timezone-aware` qilish
 # 🔹 **Til fayllar joylashgan katalog (`LOCALE_PATHS`)**
 LOCALE_PATHS = [BASE_DIR / "locale"]
 
+# 📌 Statik fayllar sozlamasi
+STATIC_URL = "/static/"
+STATIC_ROOT = BASE_DIR / "staticfiles"  # `collectstatic` bu yerni to'ldiradi
 
-# 📌 Statik fayllar sozlamalari
-STATIC_URL = "/static/"  # Statik fayllarning URL yo‘li
-STATIC_ROOT = BASE_DIR / "staticfiles"  # Statik fayllar yig‘iladigan joy
-STATICFILES_DIRS = [
-    BASE_DIR / "src" / "assets",  # Statik fayllarning asosiy manbasi
-]
+MEDIA_URL = "/media/"
+MEDIA_ROOT = BASE_DIR / "media"
 
-# 📌 Media fayllar (foydalanuvchi yuklagan fayllar)
-MEDIA_URL = "/media/"  # Media fayllarning URL yo‘li
-MEDIA_ROOT = BASE_DIR / "media"  # Media fayllar saqlanadigan katalog
+# 📌 DEBUG=True bo'lsa, qo'shimcha static fayllar katalogini qo'shamiz
+if DEBUG:
+    STATICFILES_DIRS = [BASE_DIR / "src" / "assets"]
+else:
+    STATICFILES_DIRS = []
 
 # 🔹 **Saytning asosiy URL manzili (`BASE_URL`)**
 BASE_URL = os.environ.get("BASE_URL", default="http://127.0.0.1:8000")
@@ -186,4 +173,5 @@ SESSION_COOKIE_AGE = 3600  # 📌 Sessiyaning amal qilish vaqti (1 soat)
 CSRF_TRUSTED_ORIGINS = [
     "http://localhost:5050",
     "https://updatehub.namspi.uz",
+    "https://webtest.namspi.uz/",
 ]
