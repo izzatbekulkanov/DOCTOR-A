@@ -9,7 +9,8 @@
                 <div class="row g-3 align-items-center">
                     <div class="col-xl-3 col-md-12 col-sm-6">
                         <h3 class="title">Biz bilan bog‘laning</h3>
-                        <p class="text">Sizning sog‘lig‘ingiz biz uchun muhim. Har qanday savollaringiz bo‘lsa, bizga murojaat qiling.</p>
+                        <p class="text">Sizning sog‘lig‘ingiz biz uchun muhim. Har qanday savollaringiz bo‘lsa, bizga
+                            murojaat qiling.</p>
                     </div>
                     <div class="col-xl-3 col-md-4 col-sm-6">
                         <div class="icon-bx-wraper style-1">
@@ -20,7 +21,8 @@
                             </div>
                             <div class="icon-content">
                                 <h5 class="dz-title">Telefon</h5>
-                                <p><a href="tel:{{ site_settings.contact_phone }}" class="text-body">{{ site_settings.contact_phone }}</a></p>
+                                <p><a href="tel:{{ site_settings.contact_phone }}"
+                                      class="text-body">{{ site_settings.contact_phone }}</a></p>
                             </div>
                         </div>
                     </div>
@@ -33,7 +35,8 @@
                             </div>
                             <div class="icon-content">
                                 <h5 class="dz-title">Email</h5>
-                                <p><a href="mailto:{{ site_settings.contact_email }}" class="text-body">{{ site_settings.contact_email }}</a></p>
+                                <p><a href="mailto:{{ site_settings.contact_email }}"
+                                      class="text-body">{{ site_settings.contact_email }}</a></p>
                             </div>
                         </div>
                     </div>
@@ -59,19 +62,42 @@
     <div class="footer-bottom">
         <div class="container">
             <div class="fb-inner">
-                <div class="row">
+                <div class="row align-items-center">
                     <div class="col-lg-6 col-md-12 text-start">
-                        <p class="copyright-text">© <span class="current-year">2024</span> <a href="https://doctor.uz" target="_blank" class="text-danger">Doctor.uz</a> Barcha huquqlar himoyalangan.</p>
+                        <p class="copyright-text">
+                            © <span class="current-year">2025</span>
+                            <a href="https://doctoramedical.uz" target="_blank" class="text-danger">
+                                doctoramedical.uz
+                            </a>
+                            Barcha huquqlar himoyalangan.
+                        </p>
                     </div>
                     <div class="col-lg-6 col-md-12 text-end">
                         <div class="social-icons">
-                            <a href="https://facebook.com/doctoruz" target="_blank"><i class="fa-brands fa-facebook text-danger"></i></a>
-                            <a href="https://instagram.com/doctoruz" target="_blank"><i class="fa-brands fa-instagram text-danger"></i></a>
-                            <a href="https://telegram.me/doctoruz" target="_blank"><i class="fa-brands fa-telegram text-danger"></i></a>
+                            <a href="{{ site_settings.facebook_url }}" target="_blank">
+                                <i class="fa-brands fa-facebook text-secondary"></i>
+                            </a>
+                            <a href="{{ site_settings.telegram_url }}" target="_blank">
+                                <i class="fa-brands fa-telegram text-secondary"></i>
+                            </a>
+                            <a href="{{ site_settings.instagram_url }}" target="_blank">
+                                <i class="fa-brands fa-instagram text-secondary"></i>
+                            </a>
+                            <a href="{{ site_settings.youtube_url }}" target="_blank">
+                                <i class="fa-brands fa-youtube text-secondary"></i>
+                            </a>
                         </div>
+                    </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col-12 text-center">
+                        <p class="text-muted">
+                            <small>Dasturchi: <strong>Izzatbek Ulkanov</strong></small>
+                        </p>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
 </footer>

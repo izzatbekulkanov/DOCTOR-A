@@ -26,8 +26,13 @@ LOCAL_APPS = [
     "apps.logs",  # Loglar
     "apps.bot",  # Telegram bot uchun
     "apps.common",  # Templatetaglar uchun
-    "apps.news",  # Templatetaglar uchun
+    "apps.news",  # Yangiliklar uchun
+    "apps.api",  # API uchun
     "members",  # Foydalanuvchilar
+]
+
+WEB_APPS = [
+    'rest_framework',
 ]
 DYNAMIC_APPS = [
     "django.contrib.admin",  # Django admin paneli
@@ -44,7 +49,7 @@ DYNAMIC_APPS = [
 AUTH_USER_MODEL = "members.CustomUser"  # ✅ To‘g‘ri yozish
 
 
-INSTALLED_APPS = LOCAL_APPS + DYNAMIC_APPS
+INSTALLED_APPS = LOCAL_APPS + DYNAMIC_APPS + WEB_APPS
 
 # 🔹 **Middleware (`MIDDLEWARE`)**
 # 📌 Django request va response (so‘rov va javob) o‘rtasida ishlov beruvchi vositalar.

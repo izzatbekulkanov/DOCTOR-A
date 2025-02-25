@@ -7,14 +7,39 @@
 {% endblock title %}
 {% block style %}
 
+
     <style>
-        .flag-icon {
-            width: 20px;
-            height: 15px;
-            margin-right: 5px;
-            object-fit: contain;
+        .news-card {
+            position: relative;
+            overflow: hidden;
+            background-size: cover;
+            background-position: center;
+            border-radius: 10px;
         }
+
+        .news-card::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.4); /* 🔹 Engil qoramtir fon */
+            backdrop-filter: blur(1px); /* 🔹 Blur effekt */
+            z-index: 1;
+        }
+
+        .news-card .dz-info {
+            position: relative;
+            z-index: 2;
+            padding: 20px;
+            color: #fff;
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3); /* 🔹 Matnni yaxshiroq o‘qish */
+        }
+
     </style>
+
+
 {% endblock style %}
 
 
@@ -32,16 +57,16 @@
                                 <img src="{% static 'dashboard/images/hero-banner/line.png' %}" alt="">
                             </h1>
                             <p class="text wow fadeInUp" data-wow-delay="0.4s" data-wow-duration="0.8s">
-                                Sog‘lig‘ingiz – bizning ustuvor maqsadimiz.
-                                Malakali shifokorlarimiz bilan bog‘laning va bugunoq qabulga yoziling!
+                                {{ banner.description|get_language_text:CURRENT_LANGUAGE }}!
                             </p>
+
                         </div>
                     </div>
 
                     <div class="col-lg-6 wow fadeInRight" data-wow-delay="0.8s" data-wow-duration="0.8s">
                         <div class="hero-thumbnail" data-bottom-top="transform: translateY(-50px)"
                              data-top-bottom="transform: translateY(50px)">
-                            <img class="thumbnail" src="{% static 'dashboard/images/hero-banner/img1.webp' %}"
+                            <img class="thumbnail" src="{{ banner.image.url }}"
                                  alt="">
                             <div class="circle-wrapper">
                                 <span class="circle1"></span>
@@ -139,25 +164,14 @@
                                             <label for="inputYourEmail">Email Manzilingiz</label>
                                         </div>
                                     </div>
-                                    <div class="col-sm-6 m-b30">
+                                    <div class="col-sm-12 m-b30">
                                         <div class="form-floating floating-underline input-light">
                                             <input name="phone" type="text" class="form-control dz-number"
                                                    id="inputPhoneNumber" placeholder="Telefon Raqamingiz" required>
                                             <label for="inputPhoneNumber">Telefon Raqamingiz</label>
                                         </div>
                                     </div>
-                                    <div class="col-sm-6 m-b30">
-                                        <div class="form-floating floating-underline input-dark">
-                                            <select name="service" class="bs-select form-control"
-                                                    title="Xizmatni Tanlang" required>
-                                                <option value="" disabled selected>Xizmatni tanlang</option>
-                                                <option value="Angioplasty">Angioplastika</option>
-                                                <option value="Cardiology">Kardiologiya</option>
-                                                <option value="Dental">Stomatologiya</option>
-                                                <option value="Eye Care">Ko‘z Davolash</option>
-                                            </select>
-                                        </div>
-                                    </div>
+
                                     <div class="col-sm-12 m-b30">
                                         <div class="form-floating floating-underline input-light">
                                             <textarea name="message" class="form-control" id="inputMessage" rows="6"
@@ -346,7 +360,7 @@
         <div class="container">
             <div class="section-head style-1 m-b30 row align-items-end">
                 <div class="col-lg-7 col-md-8 wow fadeInUp" data-wow-delay="0.2s" data-wow-duration="0.8s">
-                    <h2 class="title m-b0">Yangiliklar <br> Oxirgi yangiliklar</h2>
+                    <h2 class="title m-b0">Oxirgi <br> yangiliklar va e'lonlar</h2>
                 </div>
                 <div class="col-lg-5 col-md-4 text-md-end d-none d-md-block wow fadeInUp" data-wow-delay="0.4s"
                      data-wow-duration="0.8s">
@@ -357,77 +371,60 @@
                 </div>
             </div>
             <div class="row g-20">
-                <div class="col-lg-4 wow fadeInUp" data-wow-delay="0.2s" data-wow-duration="0.8s">
-                    <div class="dz-card style-2 dz-card-overlay overlay-none"
-                         style="background-image: url({% static 'dashboard/images/blog/overlay/img1.webp' %} );">
-                        <div class=" dz-info
-                ">
-                            <div class="content-half">
-                                <div class="post-date">12 Jan 2024</div>
-                                <h3 class="dz-title">
-                                    <a href="blog-details.html">The Art of Managing Business and Patient Care</a>
-                                </h3>
-                            </div>
-                            <div class="bottom-info">
-                                <a href="blog-details.html" class="btn btn-icon btn-lg btn-secondary btn-shadow">
-                                    Ko'proq
-                                    <span class="right-icon"><i class="feather icon-arrow-right"></i></span>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-xl-5 col-lg-8 wow fadeInUp" data-wow-delay="0.4s" data-wow-duration="0.8s">
-                    <div class="dz-card style-2 dz-card-overlay"
-                         style="background-image: url({% static 'dashboard/images/blog/overlay/large/img1.webp' %});">
-                        <div class=" dz-info">
-                            <div class="post-date">12 Jan 2024</div>
-                            <div class="bottom-info">
-                                <h3 class="dz-title">
-                                    <a href="blog-details.html">The Art of Managing Business and Patient Care</a>
-                                </h3>
-                                <a href="blog-details.html" class="btn btn-square btn-white rounded-circle">
-                                    <i class="feather icon-arrow-up-right"></i>
-                                </a>
+                {% for news in latest_news %}
+                    <div class="col-lg-4 wow fadeInUp" data-wow-delay="0.{{ forloop.counter }}s"
+                         data-wow-duration="0.8s">
+                        <div class="dz-card style-2 dz-card-overlay overlay-none news-card"
+                             style="background-image: url({{ news.image.url }});">
+                            <div class="dz-info">
+                                <div class="content-half">
+                                    <div class="post-date">
+                                        {{ news.published_date|date:"d M Y" }} | Yangilik <!-- 📅 Sanani formatlash -->
+                                    </div>
+                                    <h3 class="dz-title">
+                                        <a href="">
+                                            {{ news.title|get_language_text:CURRENT_LANGUAGE }}
+                                        </a>
+                                    </h3>
+                                </div>
+                                <div class="bottom-info">
+                                    <a href="" class="btn btn-icon btn-lg btn-secondary btn-shadow">
+                                        Ko'proq
+                                        <span class="right-icon"><i class="feather icon-arrow-right"></i></span>
+                                    </a>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
+                {% endfor %}
+
+
+
                 <div class="col-xl-3 col-lg-12">
                     <div class="row g-20">
-                        <div class="col-xl-12 col-md-6 wow fadeInUp" data-wow-delay="0.6s" data-wow-duration="0.8s">
-                            <div class="dz-card style-2 dz-card-overlay card-sm no-image">
-                                <div class="dz-info">
-                                    <div class="post-date">12 Jan 2024</div>
-                                    <h3 class="dz-title">
-                                        <a href="blog-details.html">Strategies for Balancing Business Demands with
-                                            Optimal</a>
-                                    </h3>
-                                    <div class="bottom-info ms-auto">
-                                        <a href="blog-details.html" class="btn btn-square btn-white rounded-circle">
-                                            <i class="feather icon-arrow-up-right"></i>
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-xl-12 col-md-6 wow fadeInUp" data-wow-delay="0.8s" data-wow-duration="0.8s">
-                            <div class="dz-card style-2 dz-card-overlay card-sm"
-                                 style="background-image: url({% static 'dashboard/images/blog/overlay/small/img1.webp' %});">
-                                <div class=" dz-info
-                ">
-                                    <div class="post-date">12 Jan 2024</div>
-                                    <div class="bottom-info">
+                        {% for announcement in latest_announcements %}
+                            <div class="col-xl-12 col-md-6 wow fadeInUp" data-wow-delay="0.{{ forloop.counter }}s"
+                                 data-wow-duration="0.8s">
+                                <div class="dz-card style-2 dz-card-overlay card-sm no-image">
+                                    <div class="dz-info">
+                                        <div class="post-date">
+                                            {{ announcement.published_date|date:"d M Y" }} | E'lon <!-- 📅 Sanani formatlash -->
+                                        </div>
                                         <h3 class="dz-title">
-                                            <a href="blog-details.html">Effective Healthcare Tips</a>
+                                            <a href="#">
+                                                {{ announcement.title|get_language_text:CURRENT_LANGUAGE }}
+                                            </a>
                                         </h3>
-                                        <a href="blog-details.html" class="btn btn-square btn-white rounded-circle">
-                                            <i class="feather icon-arrow-up-right"></i>
-                                        </a>
+                                        <div class="bottom-info ms-auto">
+                                            <a href="#" class="btn btn-square btn-white rounded-circle">
+                                                <i class="feather icon-arrow-up-right"></i>
+                                            </a>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        {% endfor %}
+
                     </div>
                 </div>
             </div>

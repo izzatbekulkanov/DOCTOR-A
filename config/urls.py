@@ -16,19 +16,15 @@ urlpatterns = [
     # Dashboard URLs
     path("", include("apps.dashboards.urls")),
     path("", include("apps.news.urls")),
-
+    path("api/", include("apps.api.urls")),
     # Auth URLs
     path("", include("apps.auth.urls")),
-
     # Medical URLs
     path("administrator/", include("apps.medical.urls")),
-
     # Members (foydalanuvchilar)
     path("members/", include("members.urls")),
-
     # Logs
     path("logs/", include("apps.logs.urls")),
-
     # Til sozlamalari
     path("i18n/set_language/", set_language, name="set_language"),
 ]

@@ -93,21 +93,23 @@
                             <a href="{% url 'videos-dashboard' %}"><span>Videolar</span></a>
                         </li>
                         <li class="sub-menu-down">
-                            <a href="javascript:void(0);">|
+                            <a href="javascript:void(0);" style="display: flex; align-items: center; gap: 8px; padding: 5px 10px; margin-top:22px; border: 2px solid #ccc; border-radius: 5px; background: #f8f9fa; color: #333; font-weight: bold;">
                                 <img src="{% static 'fonts/flag-icon-css/flags/' %}{{ CURRENT_LANGUAGE }}.svg"
-                                     alt="{{ CURRENT_LANGUAGE }}" class="flag-icon">
+                                     alt="{{ CURRENT_LANGUAGE }}" class="flag-icon" style="width: 20px; height: 15px; border-radius: 2px;">
                                 <span>
                                     {% for code, name in LANGUAGES %}
                                         {% if code == CURRENT_LANGUAGE %}
                                             {{ name }}
                                         {% endif %}
-                                    {% endfor %}|
+                                    {% endfor %}
                                 </span>
+                                <i class="fas fa-chevron-down" style="margin-left: auto; color: #555;"></i>
                             </a>
+
                             <ul class="sub-menu">
                                 {% for code, name in LANGUAGES %}
                                     <li>
-                                        <a href="?lang={{ code }}"
+                                        <a href="javascript:void(0);" onclick="changeLanguage('{{ code }}')"
                                            class="{% if code == CURRENT_LANGUAGE %}active{% endif %} border-bottom">
                                             <img src="{% static 'fonts/flag-icon-css/flags/' %}{{ code }}.svg"
                                                  alt="{{ name }}" class="flag-icon">
@@ -116,7 +118,9 @@
                                     </li>
                                 {% endfor %}
                             </ul>
+
                         </li>
+
 
                     </ul>
 
@@ -132,14 +136,6 @@
                                     Admin Sahifasi
                                 </a>
                             </li>
-                            <li class="nav-item">
-                                <button type="button" class="toggle-nav-btn" data-bs-toggle="offcanvas"
-                                        data-bs-target="#headerSidebar" aria-controls="offcanvasLeft">
-                                    <span></span>
-                                    <span></span>
-                                    <span></span>
-                                </button>
-                            </li>
                         </ul>
                     </div>
                 </div>
@@ -148,111 +144,19 @@
         </div>
     </div>
     <!-- Main Header End -->
-
-    <!-- Sidebar -->
-    <!-- Sidebar -->
-    <div class="offcanvas dz-offcanvas offcanvas offcanvas-end " tabindex="-1" id="headerSidebar">
-        <button type="button" class="btn-close m-t10 m-l10" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-        <div class="offcanvas-body" style="background-color: red">
-            <div class="widget ">
-                <div class="sidebar-header m-b20">
-                    <a href=""><img src="{% static 'dashboard/images/logo.svg' %}" alt="Doctor.uz"></a>
-                </div>
-                <p class="text-white">
-                    <strong>Doctor.uz</strong> – bu shifoxonalar, klinikalar va tibbiyot mutaxassislari uchun
-                    mo‘ljallangan zamonaviy va qulay veb-platforma.
-                    Bizning xizmatlarimiz yordamida bemorlar shifokorlarni topish, maslahat olish va qabulga
-                    yozilishlari mumkin.
-                </p>
-            </div>
-
-            <div class="widget">
-                <div class="widget-title">
-                    <h4 class="title">Biz bilan bog‘laning</h4>
-                </div>
-                <ul class="list-check text-white">
-                    <li>{{ site_settings.address }}</li>
-                    <li><a href="mailto:info@doctor.uz" class="text-white">{{ site_settings.contact_email }}</a></li>
-                    <li><a href="tel:+998901234567" class="text-white">{{ site_settings.contact_phone }}</a></li>
-                </ul>
-            </div>
-
-            <div class="widget">
-                <div class="widget-title">
-                    <h4 class="title">Yangiliklardan xabardor bo‘ling</h4>
-                </div>
-                <form class="dzSubscribe style-2"
-                      method="post">
-                    <div class="dzSubscribeMsg"></div>
-                    <div class="form-group">
-                        <div class="input-group mb-0">
-                            <input name="dzEmail" required="required" type="email" class="form-control"
-                                   placeholder="Email manzilingiz">
-                            <div class="input-group-addon">
-                                <button name="submit" value="Submit" type="submit"
-                                        class="btn text-primary btn-transparent p-2">
-                                    <i class="fa-solid fa-paper-plane text-secondary"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </form>
-            </div>
-
-            <div class="widget">
-                <div class="widget-title">
-                    <h4 class="title">Bizni kuzatib boring</h4>
-                </div>
-                <div class="dz-social-icon style-1">
-                    <ul>
-                        {% if site_settings.facebook_url %}
-                            <li>
-                                <a href="{{ site_settings.facebook_url }}" target="_blank">
-                                    <i class="fa-brands fa-facebook-f text-secondary"></i> <!-- Facebook -->
-                                </a>
-                            </li>
-                        {% endif %}
-
-                        {% if site_settings.youtube_url %}
-                            <li>
-                                <a href="{{ site_settings.youtube_url }}" target="_blank">
-                                    <i class="fa-brands fa-youtube text-secondary"></i> <!-- YouTube -->
-                                </a>
-                            </li>
-                        {% endif %}
-
-                        {% if site_settings.instagram_url %}
-                            <li>
-                                <a href="{{ site_settings.instagram_url }}" target="_blank">
-                                    <i class="fa-brands fa-instagram text-secondary"></i> <!-- Instagram -->
-                                </a>
-                            </li>
-                        {% endif %}
-
-                        {% if site_settings.telegram_url %}
-                            <li>
-                                <a href="{{ site_settings.telegram_url }}" target="_blank">
-                                    <i class="fa-brands fa-telegram text-secondary"></i> <!-- Telegram -->
-                                </a>
-                            </li>
-                        {% endif %}
-                    </ul>
-
-
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Sidebar -->
-
 </header>
 <script>
     function changeLanguage(langCode) {
         fetch("{% url 'set_language' %}", {
             method: "POST",
-            headers: {"Content-Type": "application/x-www-form-urlencoded"},
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded"
+            },
             body: `language=${langCode}&csrfmiddlewaretoken={{ csrf_token }}`
-        }).then(() => location.reload()); // 🔄 Sahifani qayta yuklash
+        }).then(response => {
+            if (response.ok) {
+                location.reload(); // 🔄 Sahifani qayta yuklash
+            }
+        }).catch(error => console.error("Language change failed:", error));
     }
 </script>

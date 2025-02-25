@@ -8,7 +8,11 @@
 {% block style %}
 {% endblock style %}
 
-
+<style>
+    #load-more-btn .right-icon {
+        display: none; /* 🔥 Boshlang‘ichda ikonani yashiramiz */
+    }
+</style>
 {% block content %}
 
 
@@ -25,39 +29,16 @@
                     </ul>
                 </nav>
                 <div class="dz-btn">
-                    <a href="tel:+11234567890"
+                    <a href="tel: {{ site_settings.contact_phone }}"
                        class="btn btn-lg btn-icon btn-primary radius-xl btn-shadow mb-3 mb-sm-0">
 						<span class="left-icon">
 							<i class="feather icon-phone-call"></i>
 						</span>
-                        +1 123 456 7890
+                        {{ site_settings.contact_phone }}
                     </a>
                 </div>
             </div>
         </div>
-        <span class="text-vertical">24/7 EMERGENCY SERVICE</span>
-        <ul class="dz-social">
-            <li>
-                <a href="https://www.instagram.com" target="_blank">
-                    <i class="fa-brands fa-instagram"></i>
-                </a>
-            </li>
-            <li>
-                <a href="https://www.facebook.com" target="_blank">
-                    <i class="fa-brands fa-facebook-f"></i>
-                </a>
-            </li>
-            <li>
-                <a href="https://twitter.com" target="_blank">
-                    <i class="fa-brands fa-x-twitter"></i>
-                </a>
-            </li>
-            <li>
-                <a href="https://www.youtube.com" target="_blank">
-                    <i class="fa-brands fa-youtube"></i>
-                </a>
-            </li>
-        </ul>
     </div>
 
     <section class="content-inner">
@@ -65,145 +46,13 @@
             <div class="row">
                 <div class="col-xl-9 col-lg-12 m-b30 pe-xl-5">
                     <div class="loadmore-content">
-                        <div class="dz-card style-2 blog-half m-b35 wow fadeInUp" data-wow-delay="0.1s"
-                             data-wow-duration="0.5s">
-                            <div class="dz-media">
-                                <img src="{% static 'dashboard/images/blog/grid/img1.webp' %}" alt="">
-                            </div>
-                            <div class="dz-info">
-                                <div class="dz-meta">
-                                    <ul>
-                                        <li class="post-date">AUGUST 5, 2024</li>
-                                        <li class="post-author">By <a href="javascript:void(0);">ClinicMaster</a></li>
-                                        <li class="post-comments">2 COMMENTS</li>
-                                    </ul>
-                                </div>
-                                <h3 class="dz-title"><a href="blog-details.html">The Art of Managing Business and
-                                    Patient Care</a></h3>
-                                <p>It is a long established fact that a reader will be distracted by the readable
-                                    content of a page when looking at its layout.</p>
-                                <a href="blog-details.html" class="btn icon-link-hover-end btn-primary radius-sm">
-                                    Read More <i class="feather icon-arrow-right"></i>
-                                </a>
-                            </div>
-                        </div>
-                        <div class="dz-card style-2 blog-half m-b35 wow fadeInUp" data-wow-delay="0.2s"
-                             data-wow-duration="0.5s">
-                            <div class="dz-media">
-                                <img src="{% static 'dashboard/images/blog/grid/img2.webp' %}" alt="">
-                            </div>
-                            <div class="dz-info">
-                                <div class="dz-meta">
-                                    <ul>
-                                        <li class="post-date">AUGUST 5, 2024</li>
-                                        <li class="post-author">By <a href="javascript:void(0);">ClinicMaster</a></li>
-                                        <li class="post-comments">2 COMMENTS</li>
-                                    </ul>
-                                </div>
-                                <h3 class="dz-title"><a href="blog-details.html">Strategies for Balancing Business
-                                    Demands with Optimal</a></h3>
-                                <p>It is a long established fact that a reader will be distracted by the readable
-                                    content of a page when looking at its layout.</p>
-                                <a href="blog-details.html" class="btn icon-link-hover-end btn-primary radius-sm">
-                                    Read More <i class="feather icon-arrow-right"></i>
-                                </a>
-                            </div>
-                        </div>
-                        <div class="dz-card style-2 blog-half m-b35 wow fadeInUp" data-wow-delay="0.3s"
-                             data-wow-duration="0.5s">
-                            <div class="dz-media">
-                                <img src="{% static 'dashboard/images/blog/grid/img3.webp' %}" alt="">
-                            </div>
-                            <div class="dz-info">
-                                <div class="dz-meta">
-                                    <ul>
-                                        <li class="post-date">AUGUST 5, 2024</li>
-                                        <li class="post-author">By <a href="javascript:void(0);">ClinicMaster</a></li>
-                                        <li class="post-comments">2 COMMENTS</li>
-                                    </ul>
-                                </div>
-                                <h3 class="dz-title"><a href="blog-details.html">What is Future of Blood Pressure
-                                    Monitoring?</a></h3>
-                                <p>It is a long established fact that a reader will be distracted by the readable
-                                    content of a page when looking at its layout.</p>
-                                <a href="blog-details.html" class="btn icon-link-hover-end btn-primary radius-sm">
-                                    Read More <i class="feather icon-arrow-right"></i>
-                                </a>
-                            </div>
-                        </div>
-                        <div class="dz-card style-2 blog-half m-b35 wow fadeInUp" data-wow-delay="0.4s"
-                             data-wow-duration="0.5s">
-                            <div class="dz-media">
-                                <img src="{% static 'dashboard/images/blog/grid/img4.webp' %}" alt="">
-                            </div>
-                            <div class="dz-info">
-                                <div class="dz-meta">
-                                    <ul>
-                                        <li class="post-date">AUGUST 5, 2024</li>
-                                        <li class="post-author">By <a href="javascript:void(0);">ClinicMaster</a></li>
-                                        <li class="post-comments">2 COMMENTS</li>
-                                    </ul>
-                                </div>
-                                <h3 class="dz-title"><a href="blog-details.html">How Transitional Rehabilitation Aids in
-                                    Stroke Recovery</a></h3>
-                                <p>It is a long established fact that a reader will be distracted by the readable
-                                    content of a page when looking at its layout.</p>
-                                <a href="blog-details.html" class="btn icon-link-hover-end btn-primary radius-sm">
-                                    Read More <i class="feather icon-arrow-right"></i>
-                                </a>
-                            </div>
-                        </div>
-                        <div class="dz-card style-2 blog-half m-b35 wow fadeInUp" data-wow-delay="0.5s"
-                             data-wow-duration="0.5s">
-                            <div class="dz-media">
-                                <img src="{% static 'dashboard/images/blog/grid/img5.webp' %}" alt="">
-                            </div>
-                            <div class="dz-info">
-                                <div class="dz-meta">
-                                    <ul>
-                                        <li class="post-date">AUGUST 5, 2024</li>
-                                        <li class="post-author">By <a href="javascript:void(0);">ClinicMaster</a></li>
-                                        <li class="post-comments">2 COMMENTS</li>
-                                    </ul>
-                                </div>
-                                <h3 class="dz-title"><a href="blog-details.html">The Art of Managing Business and
-                                    Patient Care</a></h3>
-                                <p>It is a long established fact that a reader will be distracted by the readable
-                                    content of a page when looking at its layout.</p>
-                                <a href="blog-details.html" class="btn icon-link-hover-end btn-primary radius-sm">
-                                    Read More <i class="feather icon-arrow-right"></i>
-                                </a>
-                            </div>
-                        </div>
-                        <div class="dz-card style-2 blog-half m-b35 wow fadeInUp" data-wow-delay="0.6s"
-                             data-wow-duration="0.5s">
-                            <div class="dz-media">
-                                <img src="{% static 'dashboard/images/blog/grid/img6.webp' %}" alt="">
-                            </div>
-                            <div class="dz-info">
-                                <div class="dz-meta">
-                                    <ul>
-                                        <li class="post-date">AUGUST 5, 2024</li>
-                                        <li class="post-author">By <a href="blog-details.html">ClinicMaster</a></li>
-                                        <li class="post-comments">2 COMMENTS</li>
-                                    </ul>
-                                </div>
-                                <h3 class="dz-title"><a href="blog-details.html">Successful Transitional Rehab: More
-                                    Than Just Exercise</a></h3>
-                                <p>It is a long established fact that a reader will be distracted by the readable
-                                    content of a page when looking at its layout.</p>
-                                <a href="blog-details.html" class="btn icon-link-hover-end btn-primary radius-sm">
-                                    Read More <i class="feather icon-arrow-right"></i>
-                                </a>
-                            </div>
-                        </div>
+                        <!-- 📌 AJAX orqali yangiliklar shu yerga qo‘shiladi -->
                     </div>
                     <div class="text-center m-t30 m-lg-t0 wow fadeInUp" data-wow-delay="0.7s" data-wow-duration="0.5s">
-                        <a href="javascript:void(0);" class="btn btn-lg btn-icon btn-primary dz-load-more"
-                           rel="ajax/blog-list.html">
+                        <button id="load-more-btn" class="btn btn-lg btn-icon btn-primary dz-load-more">
                             Ko'proq yuklash
                             <span class="right-icon"><i class="feather icon-refresh-ccw"></i></span>
-                        </a>
+                        </button>
                     </div>
                 </div>
                 <div class="col-xl-3 col-lg-12">
@@ -215,9 +64,10 @@
                             <div class="search-bx">
                                 <form role="search" method="post">
                                     <div class="input-group">
-                                        <input name="text" class="form-control" placeholder="Qidirish" type="text">
+                                        <input name="search_text" class="form-control" placeholder="Qidirish"
+                                               type="text">
                                         <div class="input-group-btn">
-                                            <button type="submit">
+                                            <button type="submit" id="search-btn">
                                                 <i class="feather icon-search"></i>
                                             </button>
                                         </div>
@@ -228,18 +78,19 @@
                         <div class="widget widget_categories style-1 wow fadeInUp" data-wow-delay="0.2s"
                              data-wow-duration="0.5s">
                             <div class="widget-title">
-                                <h4 class="title">Yangilik turlari</h4>
+                                <h4 class="title">Oy boyicha qidirish</h4>
                             </div>
                             <ul>
-                                <li class="cat-item"><a href="javascript:void(0);">Acupressure</a> (10)</li>
-                                <li class="cat-item"><a href="javascript:void(0);">Allgemein</a> (5)</li>
-                                <li class="cat-item"><a href="javascript:void(0);">Blood</a> (17)</li>
-                                <li class="cat-item"><a href="javascript:void(0);">Food</a> (13)</li>
-                                <li class="cat-item"><a href="javascript:void(0);">Health</a> (06)</li>
-                                <li class="cat-item"><a href="javascript:void(0);">Mental Health</a> (17)</li>
-                                <li class="cat-item"><a href="javascript:void(0);">Therapy</a> (13)</li>
-                                <li class="cat-item"><a href="javascript:void(0);">Walking</a> (06)</li>
+                                {% for entry in monthly_news_data %}
+                                    <li class="cat-item">
+                                        <a href="?month={{ entry.month_number }}">{{ entry.month }}</a>
+                                        ({{ entry.count }})
+                                    </li>
+                                {% empty %}
+                                    <li class="cat-item">Hozircha yangiliklar mavjud emas</li>
+                                {% endfor %}
                             </ul>
+
                         </div>
                         <div class="widget recent-posts-entry wow fadeInUp" data-wow-delay="0.3s"
                              data-wow-duration="0.5s">
@@ -247,50 +98,36 @@
                                 <h4 class="title">Oxirgi yangiliklar</h4>
                             </div>
                             <div class="widget-post-bx">
-                                <div class="widget-post clearfix">
-                                    <div class="dz-media">
-                                        <img src="{% static 'dashboard/images/blog/small/img1.webp' %}" alt="/">
-                                    </div>
-                                    <div class="dz-info">
-                                        <div class="dz-meta">
-                                            <ul>
-                                                <li class="post-date"><a href="javascript:void(0);">17 May 2022</a></li>
-                                            </ul>
+                                {% for news in latest_news %}
+                                    <div class="widget-post clearfix">
+                                        <div class="dz-media">
+                                            <img src="{{ news.image.url }}"
+                                                 alt="{{ news.title|get_language_text:CURRENT_LANGUAGE }}">
                                         </div>
-                                        <h6 class="title"><a href="blog-details.html">The Art of Managing Business and
-                                            Patient Care</a></h6>
-                                    </div>
-                                </div>
-                                <div class="widget-post clearfix">
-                                    <div class="dz-media">
-                                        <img src="{% static 'dashboard/images/blog/small/img2.webp' %}" alt="/">
-                                    </div>
-                                    <div class="dz-info">
-                                        <div class="dz-meta">
-                                            <ul>
-                                                <li class="post-date"><a href="javascript:void(0);">17 May 2022</a></li>
-                                            </ul>
+                                        <div class="dz-info">
+                                            <div class="dz-meta">
+                                                <ul>
+                                                    <li class="post-date">
+                                                        <a href="javascript:void(0);">
+                                                            {{ news.published_date|date:"d F Y" }}
+                                                        </a>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                            <h6 class="title">
+                                                <a href="">
+                                                    {{ news.title|get_language_text:CURRENT_LANGUAGE }}
+                                                </a>
+                                            </h6>
                                         </div>
-                                        <h6 class="title"><a href="blog-details.html">The Art of Managing Business and
-                                            Patient Care</a></h6>
                                     </div>
-                                </div>
-                                <div class="widget-post clearfix">
-                                    <div class="dz-media">
-                                        <img src="{% static 'dashboard/images/blog/small/img3.webp' %}" alt="/">
-                                    </div>
-                                    <div class="dz-info">
-                                        <div class="dz-meta">
-                                            <ul>
-                                                <li class="post-date"><a href="javascript:void(0);">17 May 2022</a></li>
-                                            </ul>
-                                        </div>
-                                        <h6 class="title"><a href="blog-details.html">The Art of Managing Business and
-                                            Patient Care</a></h6>
-                                    </div>
-                                </div>
+                                {% empty %}
+                                    <p>Oxirgi yangiliklar mavjud emas</p>
+                                {% endfor %}
+
                             </div>
                         </div>
+
                     </aside>
                 </div>
             </div>
@@ -301,6 +138,162 @@
 
 
 {% block script %}
+
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script>
+        // CSRF tokenni olish funksiyasi
+        function getCSRFToken() {
+            return document.querySelector("[name=csrfmiddlewaretoken]").value;
+        }
+
+        // AJAX so‘rovlarini CSRF bilan yuborish
+        $.ajaxSetup({
+            beforeSend: function (xhr, settings) {
+                if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type)) {
+                    xhr.setRequestHeader("X-CSRFToken", getCSRFToken());
+                }
+            }
+        });
+
+    </script>
+    <script>
+
+
+        $(document).ready(function () {
+            let page = 1;
+            let loadedNewsIds = new Set();
+            let isLoading = false;
+
+            // 🌍 Joriy tilni aniqlash
+            function getCurrentLang() {
+                return document.documentElement.lang || "uz"; // Standart til: o‘zbekcha
+            }
+
+            // 🌍 JSON formatidagi matndan joriy til bo‘yicha ma’lumot olish
+            function getLocalizedText(data) {
+                let lang = getCurrentLang();
+                if (typeof data === "string") {
+                    try {
+                        data = JSON.parse(data);
+                    } catch (error) {
+                        return data; // JSON bo‘lmasa, o‘zini qaytarish
+                    }
+                }
+                return data[lang] || data["uz"] || "Tavsif mavjud emas"; // 🔄 Til bo‘yicha mos matnni chiqarish
+            }
+
+            // 📌 Yangiliklarni yuklash funksiyasi
+            function loadNews(page = 1, search = "", month = "") {
+                if (isLoading) return;
+                isLoading = true;
+
+                $("#load-more-btn .right-icon").show(); // 🔄 Yuklanayotganini ko‘rsatish
+
+                $.ajax({
+                    url: `/api/news/?page=${page}&search=${encodeURIComponent(search)}&month=${month}`,
+                    method: "GET",
+                    success: function (data) {
+                        if (data?.results?.length) {
+                            if (page === 1) $(".loadmore-content").html(""); // 🔄 Eski ma’lumotni tozalash
+
+                            data.results.forEach(news => {
+                                if (!loadedNewsIds.has(news.id)) {
+                                    loadedNewsIds.add(news.id);
+                                    let newsHtml = `
+                                <div class="dz-card style-2 blog-half m-b35">
+                                    <div class="dz-media">
+                                        <img src="${news.image || '/static/dashboard/images/blog/grid/default-image.webp'}"
+                                             alt="${getLocalizedText(news.title)}">
+                                    </div>
+                                    <div class="dz-info">
+                                        <div class="dz-meta">
+                                            <ul>
+                                                <li class="post-date">
+                                                    ${new Date(news.published_date).toLocaleDateString(getCurrentLang(), {
+                                        year: 'numeric', month: 'long', day: 'numeric'
+                                    })}
+                                                </li>
+                                                <li class="post-author">By <a href="#">${news.author_name || 'ClinicMaster'}</a></li>
+                                                <li class="post-comments">0 COMMENTS</li>
+                                            </ul>
+                                        </div>
+                                        <h3 class="dz-title">
+                                            <a href="#">${getLocalizedText(news.title)}</a>
+                                        </h3>
+                                        <p>${getLocalizedText(news.content).substring(0, 100)}...</p>
+
+                                            <!-- Read More tugmasi -->
+                                            <a href="" class="btn icon-link-hover-end btn-primary radius-sm">
+                                                Koproq <i class="feather icon-arrow-right"></i>
+                                            </a>
+                                    </div>
+
+                                </div>
+                            `;
+                                    $(".loadmore-content").append(newsHtml);
+                                }
+                            });
+
+                            page++; // 📌 Keyingi sahifaga o‘tish
+                            $("#load-more-btn").show();
+                        } else {
+                            $("#load-more-btn").hide();
+                        }
+                    },
+                    complete: function () {
+                        isLoading = false;
+                        $("#load-more-btn .right-icon").hide();
+                    }
+                });
+            }
+
+            // 🔎 Qidirish funksiyasi
+            $(".search-bx form").on("submit", function (e) {
+                e.preventDefault();
+                let searchText = $(this).find("input[name='search_text']").val().trim();
+                page = 1;
+                loadedNewsIds.clear();
+                loadNews(page, searchText, "");
+            });
+
+            // 📅 Oyni tanlash (Filter)
+            $(".widget_categories ul li a").on("click", function () {
+                let monthName = $(this).text().trim();
+                let monthMap = {
+                    "Yanvar": "1",
+                    "Fevral": "2",
+                    "Mart": "3",
+                    "Aprel": "4",
+                    "May": "5",
+                    "Iyun": "6",
+                    "Iyul": "7",
+                    "Avgust": "8",
+                    "Sentabr": "9",
+                    "Oktabr": "10",
+                    "Noyabr": "11",
+                    "Dekabr": "12"
+                };
+
+                let monthNumber = monthMap[monthName] || "";
+                loadNews(1, "", monthNumber);
+            });
+
+            // 📌 "Ko‘proq yuklash" tugmasi
+            $("#load-more-btn").on("click", function () {
+                let searchText = $(".search-bx input[name='text']").val();
+                let selectedMonth = $(".widget_categories ul li a.active").text().trim();
+                let monthNumber = monthMap[selectedMonth] || "";
+
+                loadNews(page, searchText, monthNumber);
+            });
+
+            // 🔄 Boshlang‘ich yuklash
+            loadNews();
+        });
+
+    </script>
 
 
 

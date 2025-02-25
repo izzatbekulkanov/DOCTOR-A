@@ -4,7 +4,7 @@ import json
 from django.conf import settings
 from django.utils.translation import get_language
 
-from apps.medical.models import SiteSettings, MainPageBanner, DoctorAInfo, ContactPhone, News
+from apps.medical.models import SiteSettings, MainPageBanner, DoctorAInfo, ContactPhone, News, Announcement
 from members.models import CustomUser
 
 
@@ -15,7 +15,8 @@ def global_context(request):
     site_settings = SiteSettings.objects.first()
 
     # 2️⃣ Asosiy bannerlar
-    banners = MainPageBanner.objects.all()
+    # 2️⃣ Asosiy bannerlar
+    banner = MainPageBanner.objects.last()
 
     # 3️⃣ Doctor A haqida ma'lumotlar (faqat 3 ta)
     doctor_info_list = DoctorAInfo.objects.order_by('-created_at')[:3]
@@ -34,19 +35,22 @@ def global_context(request):
     languages_json = json.dumps(languages_list)
 
     # 8️⃣ Oxirgi 5 ta yangilik
-    latest_news = News.objects.filter(is_published=True).order_by('-published_date')[:5]
+    latest_news = News.objects.filter(is_published=True).order_by('-published_date')[:2]
+    latest_announcements = Announcement.objects.filter(is_published=True).order_by('-published_date')[:2]
+
 
     # 9️⃣ SuperAdmin bo'lmagan oxirgi 4 ta foydalanuvchi
     recent_users = CustomUser.objects.exclude(is_superuser=True).order_by('-date_joined')[:4]
 
     return {
         "site_settings": site_settings,
-        "banners": banners,
+        "banner": banner,
         "doctor_info_list": doctor_info_list,
         "contact_phones": contact_phones,
         "LANGUAGES": languages,
         "CURRENT_LANGUAGE": current_language,
         "LANGUAGES_JSON": languages_json,
         "latest_news": latest_news,
+        "latest_announcements": latest_announcements,
         "employees": recent_users,
     }

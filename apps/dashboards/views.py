@@ -1,16 +1,8 @@
+from django.db.models import Count
 from django.views.generic import TemplateView
-from django.contrib.auth.decorators import login_required
-from django.utils.decorators import method_decorator
-
-from django.conf import settings
-import json
-
+from django.utils.translation import gettext_lazy as _
 from apps.medical.models import MainPageBanner, DoctorAInfo, ContactPhone, News, SiteSettings
 
-from django.utils.translation import get_language
-from django.conf import settings
-
-from members.models import CustomUser
 
 
 class DashboardsView(TemplateView):
@@ -19,37 +11,6 @@ class DashboardsView(TemplateView):
     def get_context_data(self, **kwargs):
         """ Asosiy sahifa uchun barcha ma'lumotlarni olish """
         context = super().get_context_data(**kwargs)
-
-        # 1️⃣ Asosiy bannerlar
-        context["banners"] = MainPageBanner.objects.all()
-
-        # 2️⃣ Doctor A haqida ma'lumotlar (faqat 3 ta)
-        context["doctor_info_list"] = DoctorAInfo.objects.order_by('-created_at')[:3]
-
-        # 3️⃣ Aloqa telefonlari
-        context["contact_phones"] = ContactPhone.objects.all()
-
-        # 4️⃣ Tillar ma'lumotlari
-        context["LANGUAGES"] = settings.LANGUAGES  # 🔹 Django settings ichidagi tillar
-
-        # 5️⃣ Joriy tilni olish
-        current_language = get_language()
-        context["CURRENT_LANGUAGE"] = current_language
-
-        # 6️⃣ JSON formatda tillar ma'lumotlari
-        languages_list = [(code, str(name)) for code, name in settings.LANGUAGES]
-        context["LANGUAGES_JSON"] = json.dumps(languages_list)
-
-        # 7️⃣ Oxirgi 5 ta yangilik
-        context["latest_news"] = News.objects.filter(is_published=True).order_by('-published_date')[:5]
-
-        # 8️⃣ SuperAdmin bo'lmagan oxirgi 4 ta foydalanuvchi
-        context["recent_users"] = CustomUser.objects.exclude(is_superuser=True).order_by('-date_joined')[:4]
-
-        # 9️⃣ Sayt sozlamalarini olish
-        site_settings = SiteSettings.objects.first()  # Agar faqat bitta yozuv bo‘lsa
-        context["site_settings"] = site_settings
-
         return context
 
 
@@ -60,8 +21,47 @@ class NewsView(TemplateView):
         """ Asosiy sahifa uchun barcha ma'lumotlarni olish """
         context = super().get_context_data(**kwargs)
 
+        # 📌 Oxirgi 4 ta yangilikni olish
+        latest_news = News.objects.filter(is_published=True).order_by('-published_date')[:4]
+
+        # 📌 Oylik yangiliklar sonini hisoblash
+        monthly_news_counts = (
+            News.objects.filter(is_published=True)
+            .values('published_date__month')
+            .annotate(count=Count('id'))
+            .order_by('-published_date__month')
+        )
+
+        # 📌 O'zbekcha oy nomlari
+        MONTH_NAMES = {
+            1: _("Yanvar"),
+            2: _("Fevral"),
+            3: _("Mart"),
+            4: _("Aprel"),
+            5: _("May"),
+            6: _("Iyun"),
+            7: _("Iyul"),
+            8: _("Avgust"),
+            9: _("Sentabr"),
+            10: _("Oktabr"),
+            11: _("Noyabr"),
+            12: _("Dekabr"),
+        }
+
+        # 📌 Oylik yangiliklar sonini o'zbekcha formatda chiqarish
+        monthly_news_data = [
+            {"month": MONTH_NAMES.get(entry['published_date__month'], "Noma'lum"),
+             "count": entry["count"],
+             "month_number": entry['published_date__month']}
+            for entry in monthly_news_counts
+        ]
+
+        context['latest_news'] = latest_news
+        context['monthly_news_data'] = monthly_news_data  # 📌 Oylik statistikani kontekstga qo'shish
 
         return context
+
+
 
 class AnnouncementView(TemplateView):
     template_name = "views/announcement-dashboard.html"
