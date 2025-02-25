@@ -6,6 +6,15 @@
     Asosiy sahifa
 {% endblock title %}
 {% block style %}
+
+    <style>
+        .flag-icon {
+            width: 20px;
+            height: 15px;
+            margin-right: 5px;
+            object-fit: contain;
+        }
+    </style>
 {% endblock style %}
 
 
@@ -19,7 +28,7 @@
                     <div class="col-lg-6 align-self-center">
                         <div class="hero-content">
                             <h1 class="title wow fadeInUp" data-wow-delay="0.2s" data-wow-duration="0.8s">
-                                <span class="text-primary">DOCTOR A</span> KLINIKASI
+                                <span class="text-danger">{{ site_settings.site_name }}</span> KLINIKASI
                                 <img src="{% static 'dashboard/images/hero-banner/line.png' %}" alt="">
                             </h1>
                             <p class="text wow fadeInUp" data-wow-delay="0.4s" data-wow-duration="0.8s">
@@ -54,7 +63,7 @@
                         </div>
                         <div class="widget-content">
                             <h6 class="title">Savol va murojaatlar?</h6>
-                            <a href="mailto:info@example.com">info@doctora.uz</a>
+                            <a href="mailto:{{ site_settings.contact_email }}">{{ site_settings.contact_email }}</a>
                         </div>
                     </div>
                 </div>
@@ -103,11 +112,12 @@
                 <div class="col-lg-6" data-bottom-top="transform: translateY(100px)"
                      data-top-bottom="transform: translateY(-10px)">
                     <div class="form-wrapper style-1 text-vr-wrapper">
-                        <div class="text-vertical">Hozir Ro‘yxatdan O‘ting</div>
-                        <div class="form-body bg-primary background-blend-burn"
+                        <div class="text-vertical bg-danger">Hozir Ro‘yxatdan O‘ting</div>
+                        <div class="form-body bg-secondary background-blend-burn"
                              style="background-image: url({% static 'dashboard/images/background/bg2.png' %}); background-size: cover">
                             <div class="title-head">
-                                <h2 class="form-title m-b0">Tibbiy <span>Ko‘rik</span> <br> Uchun Ariza Topsiring</h2>
+                                <h2 class="form-title m-b0">Tibbiy <span class="text-danger">Ko‘rik</span> <br> Uchun
+                                    Ariza Topshiring</h2>
                             </div>
                             <form action="" method="POST" class="dzForm">
                                 {% csrf_token %}
@@ -137,7 +147,7 @@
                                         </div>
                                     </div>
                                     <div class="col-sm-6 m-b30">
-                                        <div class="form-floating floating-underline input-light">
+                                        <div class="form-floating floating-underline input-dark">
                                             <select name="service" class="bs-select form-control"
                                                     title="Xizmatni Tanlang" required>
                                                 <option value="" disabled selected>Xizmatni tanlang</option>
@@ -174,207 +184,54 @@
 
     <section class="content-inner">
         <div class="container">
-<div class="section-head style-1 m-b30 row align-items-end">
-    <div class="col-sm-7 wow fadeInUp" data-wow-delay="0.2s" data-wow-duration="0.8s">
-        <h2 class="title m-b0">Biz faqat <br> Mutaxassislarni Ishga Olamiz</h2>
-    </div>
-    <div class="col-sm-5 text-sm-end d-sm-block d-none wow fadeInUp" data-wow-delay="0.4s" data-wow-duration="0.8s">
-        <a href="" class="btn btn-icon btn-primary btn-shadow">
-            Barchasini Ko‘rish
-            <span class="right-icon"><i class="feather icon-arrow-right"></i></span>
-        </a>
-    </div>
-</div>
+            <div class="section-head style-1 m-b30 row align-items-end">
+                <div class="col-sm-7 wow fadeInUp" data-wow-delay="0.2s" data-wow-duration="0.8s">
+                    <h2 class="title m-b0">Malakali hodimlar</h2>
+                </div>
+                <div class="col-sm-5 text-sm-end d-sm-block d-none wow fadeInUp" data-wow-delay="0.4s"
+                     data-wow-duration="0.8s">
+                    <a href="" class="btn btn-icon btn-secondary btn-shadow">
+                        Barchasini Ko‘rish
+                        <span class="right-icon"><i class="feather icon-arrow-right"></i></span>
+                    </a>
+                </div>
+            </div>
 
             <div class="row">
-                <div class="col-xl-3 col-sm-6 wow fadeInUp" data-wow-delay="0.2s" data-wow-duration="0.8s">
-                    <div class="dz-team style-1 active box-hover">
-                        <div class="dz-media">
-                            <img src="{% static 'dashboard/images/team/img1.webp' %}" alt="/">
-                            <a href="appointment.html" class="btn btn-primary">
-                                <i class="feather icon-calendar m-r5"></i>
-                                Appointment Now
-                            </a>
-                        </div>
-                        <div class="dz-content">
-                            <div class="clearfix">
-                                <h3 class="dz-name"><a href="team-detail.html">Nashid Martines</a></h3>
-                                <span class="dz-position">Cardiac Surgery</span>
+                {% for employee in employees %}
+                    <div class="col-xl-3 col-sm-6 wow fadeInUp" data-wow-delay="0.2s" data-wow-duration="0.8s">
+                        <div class="dz-team style-1 active box-hover">
+                            <div class="dz-media">
+                                <img src="{{ employee.profile_picture.url }}" alt="{{ employee.full_name }}"
+                                     onerror="this.src='{% static 'dashboard/images/team/img1.webp' %}'">
+                                <a href="" class="btn btn-primary">
+                                    <i class="feather icon-calendar m-r5"></i>
+                                    Qabuliga yozilish
+                                </a>
                             </div>
-                            <a href="team-detail.html" class="btn btn-square btn-secondary">
-                                <i class="feather icon-arrow-right"></i>
-                            </a>
-                        </div>
-                        <ul class="dz-social">
-                            <li>
-                                <a href="https://www.linkedin.com" target="_blank">
-                                    <i class="fa-brands fa-linkedin"></i>
+                            <div class="dz-content">
+                                <div class="clearfix">
+                                    <h3 class="dz-name"><a
+                                            href="">{{ employee.full_name }}</a>
+                                    </h3>
+                                    <span class="dz-position">{{ employee.job_title }}</span>
+                                </div>
+                                <a href="" class="btn btn-square btn-secondary">
+                                    <i class="feather icon-arrow-right"></i>
                                 </a>
-                            </li>
-                            <li>
-                                <a href="https://www.instagram.com" target="_blank">
-                                    <i class="fa-brands fa-instagram"></i>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="https://www.facebook.com" target="_blank">
-                                    <i class="fa-brands fa-facebook-f"></i>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="https://twitter.com" target="_blank">
-                                    <i class="fa-brands fa-x-twitter"></i>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="https://www.youtube.com" target="_blank">
-                                    <i class="fa-brands fa-youtube"></i>
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="col-xl-3 col-sm-6 wow fadeInUp" data-wow-delay="0.4s" data-wow-duration="0.8s">
-                    <div class="dz-team style-1 box-hover">
-                        <div class="dz-media">
-                            <img src="{% static 'dashboard/images/team/img2.webp' %}" alt="/">
-                            <a href="appointment.html" class="btn btn-primary">
-                                <i class="feather icon-calendar m-r5"></i>
-                                Appointment Now
-                            </a>
-                        </div>
-                        <div class="dz-content">
-                            <div class="clearfix">
-                                <h3 class="dz-name"><a href="team-detail.html">Danial Frankie</a></h3>
-                                <span class="dz-position">Pediatric Clinic</span>
                             </div>
-                            <a href="team-detail.html" class="btn btn-square btn-secondary">
-                                <i class="feather icon-arrow-right"></i>
-                            </a>
+                            <ul class="dz-social">
+                                {% if employee.phone_number %}
+                                    <li>
+                                        <p>{{ employee.phone_number }}</p>
+                                    </li>
+                                {% endif %}
+                            </ul>
                         </div>
-                        <ul class="dz-social">
-                            <li>
-                                <a href="https://www.linkedin.com" target="_blank">
-                                    <i class="fa-brands fa-linkedin"></i>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="https://www.instagram.com" target="_blank">
-                                    <i class="fa-brands fa-instagram"></i>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="https://www.facebook.com" target="_blank">
-                                    <i class="fa-brands fa-facebook-f"></i>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="https://twitter.com" target="_blank">
-                                    <i class="fa-brands fa-x-twitter"></i>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="https://www.youtube.com" target="_blank">
-                                    <i class="fa-brands fa-youtube"></i>
-                                </a>
-                            </li>
-                        </ul>
                     </div>
-                </div>
-                <div class="col-xl-3 col-sm-6 wow fadeInUp" data-wow-delay="0.6s" data-wow-duration="0.8s">
-                    <div class="dz-team style-1 box-hover">
-                        <div class="dz-media">
-                            <img src="{% static 'dashboard/images/team/img3.webp' %}" alt="/">
-                            <a href="appointment.html" class="btn btn-primary">
-                                <i class="feather icon-calendar m-r5"></i>
-                                Appointment Now
-                            </a>
-                        </div>
-                        <div class="dz-content">
-                            <div class="clearfix">
-                                <h3 class="dz-name"><a href="team-detail.html">Rihana Roy</a></h3>
-                                <span class="dz-position">Gynecology</span>
-                            </div>
-                            <a href="team-detail.html" class="btn btn-square btn-secondary">
-                                <i class="feather icon-arrow-right"></i>
-                            </a>
-                        </div>
-                        <ul class="dz-social">
-                            <li>
-                                <a href="https://www.linkedin.com" target="_blank">
-                                    <i class="fa-brands fa-linkedin"></i>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="https://www.instagram.com" target="_blank">
-                                    <i class="fa-brands fa-instagram"></i>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="https://www.facebook.com" target="_blank">
-                                    <i class="fa-brands fa-facebook-f"></i>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="https://twitter.com" target="_blank">
-                                    <i class="fa-brands fa-x-twitter"></i>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="https://www.youtube.com" target="_blank">
-                                    <i class="fa-brands fa-youtube"></i>
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="col-xl-3 col-sm-6 wow fadeInUp" data-wow-delay="0.8s" data-wow-duration="0.8s">
-                    <div class="dz-team style-1 box-hover">
-                        <div class="dz-media">
-                            <img src="{% static 'dashboard/images/team/img4.webp' %}" alt="/">
-                            <a href="appointment.html" class="btn btn-primary">
-                                <i class="feather icon-calendar m-r5"></i>
-                                Appointment Now
-                            </a>
-                        </div>
-                        <div class="dz-content">
-                            <div class="clearfix">
-                                <h3 class="dz-name"><a href="team-detail.html">Kenneth Fong</a></h3>
-                                <span class="dz-position">Neurology</span>
-                            </div>
-                            <a href="team-detail.html" class="btn btn-square btn-secondary">
-                                <i class="feather icon-arrow-right"></i>
-                            </a>
-                        </div>
-                        <ul class="dz-social">
-                            <li>
-                                <a href="https://www.linkedin.com" target="_blank">
-                                    <i class="fa-brands fa-linkedin"></i>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="https://www.instagram.com" target="_blank">
-                                    <i class="fa-brands fa-instagram"></i>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="https://www.facebook.com" target="_blank">
-                                    <i class="fa-brands fa-facebook-f"></i>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="https://twitter.com" target="_blank">
-                                    <i class="fa-brands fa-x-twitter"></i>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="https://www.youtube.com" target="_blank">
-                                    <i class="fa-brands fa-youtube"></i>
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
+                {% empty %}
+                    <p>Hozircha hech qanday xodim mavjud emas.</p>
+                {% endfor %}
             </div>
         </div>
     </section>
@@ -389,17 +246,17 @@
                             Bizning ishonchli hamkorlarimiz bilan birgalikda yuqori sifatli xizmatlarni taqdim etamiz.
                         </p>
                     </div>
-                    <a href="javascript:void(0);" class="btn btn-outline-light btn-rounded m-r5 m-b10 wow fadeInUp"
+                    <a href="javascript:void(0);" class="btn btn-outline-secondary btn-rounded m-r5 m-b10 wow fadeInUp"
                        data-wow-delay="0.5s" data-wow-duration="0.8s">2024</a>
-                    <a href="javascript:void(0);" class="btn btn-outline-light btn-rounded m-r5 m-b10 wow fadeInUp"
+                    <a href="javascript:void(0);" class="btn btn-outline-secondary btn-rounded m-r5 m-b10 wow fadeInUp"
                        data-wow-delay="0.6s" data-wow-duration="0.8s">2023</a>
-                    <a href="javascript:void(0);" class="btn btn-outline-light btn-rounded m-r5 m-b10 wow fadeInUp"
+                    <a href="javascript:void(0);" class="btn btn-outline-secondary btn-rounded m-r5 m-b10 wow fadeInUp"
                        data-wow-delay="0.7s" data-wow-duration="0.8s">2022</a>
-                    <a href="javascript:void(0);" class="btn btn-outline-light btn-rounded m-r5 m-b10 wow fadeInUp"
+                    <a href="javascript:void(0);" class="btn btn-outline-secondary btn-rounded m-r5 m-b10 wow fadeInUp"
                        data-wow-delay="0.8s" data-wow-duration="0.8s">2021</a>
-                    <a href="javascript:void(0);" class="btn btn-outline-light btn-rounded m-r5 m-b10 wow fadeInUp"
+                    <a href="javascript:void(0);" class="btn btn-outline-secondary btn-rounded m-r5 m-b10 wow fadeInUp"
                        data-wow-delay="0.9s" data-wow-duration="0.8s">2020</a>
-                    <a href="javascript:void(0);" class="btn btn-outline-light btn-rounded m-r5 m-b10 wow fadeInUp"
+                    <a href="javascript:void(0);" class="btn btn-outline-secondary btn-rounded m-r5 m-b10 wow fadeInUp"
                        data-wow-delay="1.0s" data-wow-duration="0.8s">2019</a>
 
                 </div>
@@ -493,8 +350,8 @@
                 </div>
                 <div class="col-lg-5 col-md-4 text-md-end d-none d-md-block wow fadeInUp" data-wow-delay="0.4s"
                      data-wow-duration="0.8s">
-                    <a href="blog-grid.html" class="btn btn-icon btn-primary btn-shadow">
-                        View All
+                    <a href="blog-grid.html" class="btn btn-icon btn-secondary btn-shadow">
+                        Barchasini ko'rish
                         <span class="right-icon"><i class="feather icon-arrow-right"></i></span>
                     </a>
                 </div>
@@ -512,8 +369,8 @@
                                 </h3>
                             </div>
                             <div class="bottom-info">
-                                <a href="blog-details.html" class="btn btn-icon btn-lg btn-primary btn-shadow">
-                                    Read More
+                                <a href="blog-details.html" class="btn btn-icon btn-lg btn-secondary btn-shadow">
+                                    Ko'proq
                                     <span class="right-icon"><i class="feather icon-arrow-right"></i></span>
                                 </a>
                             </div>
@@ -584,72 +441,75 @@
                         width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy"
                         referrerpolicy="no-referrer-when-downgrade"></iframe>
             </div>
-  <div class="row">
-    <div class="col-xxl-4 col-xl-5 col-lg-6 col-md-6 col-sm-8">
-        <div class="content-info bg-secondary">
-            <div class="section-head style-1 wow fadeInUp" data-wow-delay="0.2s"
-                 data-wow-duration="0.8s">
-                <h2 class="title m-b0 text-white">Biz bilan bog‘laning</h2>
-                <p class="text-white">Savollaringiz bo'lsa, biz bilan bog‘laning</p>
-            </div>
-            <div class="icon-bx-wraper style-1 m-b20 wow fadeInUp" data-wow-delay="0.4s"
-                 data-wow-duration="0.8s">
-                <div class="icon-bx">
+            <div class="row">
+                <div class="col-xxl-4 col-xl-5 col-lg-6 col-md-6 col-sm-8">
+                    <div class="content-info bg-danger">
+                        <div class="section-head style-1 wow fadeInUp" data-wow-delay="0.2s"
+                             data-wow-duration="0.8s">
+                            <h2 class="title m-b0 text-white">Biz bilan bog‘laning</h2>
+                            <p class="text-white">Savollaringiz bo'lsa, biz bilan bog‘laning</p>
+                        </div>
+                        <div class="icon-bx-wraper style-1 m-b20 wow fadeInUp" data-wow-delay="0.4s"
+                             data-wow-duration="0.8s">
+                            <div class="icon-bx">
 						<span class="icon-cell">
-							<i class="feather icon-map-pin"></i>
+							<i class="feather icon-map-pin text-secondary"></i>
 						</span>
-                </div>
-                <div class="icon-content">
-                    <h5 class="dz-title">Manzil</h5>
-                    <p>O‘zbekiston, 160100, Namangan viloyati, Boburshox ko‘chasi</p>
-                </div>
-            </div>
-            <div class="icon-bx-wraper style-1 m-b20 wow fadeInUp" data-wow-delay="0.6s"
-                 data-wow-duration="0.8s">
-                <div class="icon-bx">
+                            </div>
+                            <div class="icon-content">
+                                <h5 class="dz-title">Manzil</h5>
+                                <p class="text-white">{{ site_settings.address }}</p>
+                            </div>
+                        </div>
+                        <div class="icon-bx-wraper style-1 m-b20 wow fadeInUp " data-wow-delay="0.6s"
+                             data-wow-duration="0.8s">
+                            <div class="icon-bx">
 						<span class="icon-cell">
-							<i class="feather icon-phone"></i>
+							<i class="feather icon-phone text-secondary"></i>
 						</span>
-                </div>
-                <div class="icon-content">
-                    <h5 class="dz-title">Bizga qo‘ng‘iroq qiling</h5>
-                    <p><a href="tel:+998901234567">+998 90 123 45 67</a></p>
-                </div>
-            </div>
-            <div class="icon-bx-wraper style-1 m-b20 wow fadeInUp" data-wow-delay="0.8s"
-                 data-wow-duration="0.8s">
-                <div class="icon-bx">
+                            </div>
+                            <div class="icon-content">
+                                <h5 class="dz-title">Bizga qo‘ng‘iroq qiling</h5>
+                                <p><a href="tel:{{ site_settings.contact_phone }}"
+                                      class="text-white">{{ site_settings.contact_phone }}</a></p>
+                            </div>
+                        </div>
+                        <div class="icon-bx-wraper style-1 m-b20 wow fadeInUp" data-wow-delay="0.8s"
+                             data-wow-duration="0.8s">
+                            <div class="icon-bx">
 						<span class="icon-cell">
-							<i class="feather icon-mail"></i>
+							<i class="feather icon-mail text-secondary"></i>
 						</span>
-                </div>
-                <div class="icon-content">
-                    <h5 class="dz-title">Bizga xat yuboring</h5>
-                    <p><a href="mailto:info@namanganclinic.uz">info@namanganclinic.uz</a></p>
-                </div>
-            </div>
-            <div class="icon-bx-wraper style-1 m-b20 wow fadeInUp" data-wow-delay="1.0s"
-                 data-wow-duration="0.8s">
-                <div class="icon-bx">
+                            </div>
+                            <div class="icon-content">
+                                <h5 class="dz-title">Bizga xat yuboring</h5>
+                                <p><a href="mailto:{{ site_settings.contact_email }}"
+                                      class="text-white">{{ site_settings.contact_email }}</a>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="icon-bx-wraper style-1 m-b20 wow fadeInUp" data-wow-delay="1.0s"
+                             data-wow-duration="0.8s">
+                            <div class="icon-bx">
 						<span class="icon-cell">
-							<i class="feather icon-clock"></i>
+							<i class="feather icon-clock text-secondary"></i>
 						</span>
-                </div>
-                <div class="icon-content">
-                    <h5 class="dz-title">Ish vaqti</h5>
-                    <p>Dushanba-Payshanba: 8:00 - 17:00 <br> Juma: 8:00 - 13:00</p>
+                            </div>
+                            <div class="icon-content">
+                                <h5 class="dz-title">Ish vaqti</h5>
+                                <p class="text-white">{{ site_settings.working_hours }}</p>
+                            </div>
+                        </div>
+                        <a href="appointment.html"
+                           class="btn btn-lg btn-icon btn-secondary w-100 m-t20 btn-shadow wow fadeInUp"
+                           data-wow-delay="1.2s"
+                           data-wow-duration="0.8s">
+                            <span class="w-100">Qabulga yozilish</span>
+                            <span class="right-icon"><i class="feather icon-arrow-right"></i></span>
+                        </a>
+                    </div>
                 </div>
             </div>
-            <a href="appointment.html"
-               class="btn btn-lg btn-icon btn-primary w-100 m-t20 btn-shadow wow fadeInUp"
-               data-wow-delay="1.2s"
-               data-wow-duration="0.8s">
-                <span class="w-100">Qabulga yozilish</span>
-                <span class="right-icon"><i class="feather icon-arrow-right"></i></span>
-            </a>
-        </div>
-    </div>
-</div>
 
         </div>
     </section>

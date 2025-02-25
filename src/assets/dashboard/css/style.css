@@ -80,7 +80,7 @@ html[data-theme-color="skin-1"] {
   --bs-body-color:              #566593;
   --bs-heading-color:           #031B4E;
   --bs-heading-color-rgb:       3, 27, 78;
-  --bs-primary:                 #00BDE0;
+  --bs-primary: rgba(3, 27, 78, 0.85);
   --bs-secondary:               #031B4E;
   --bs-light:                   #ECF5FB;
   --bs-primary-rgb:             0, 189, 224;
@@ -95,8 +95,8 @@ html[data-theme-color="skin-1"] {
   --bs-primary-border-subtle:   #ccf2f9;
   --bs-secondary-border-subtle: #cdd1dc;
   --bs-light-border-subtle:     #fbfdfe;
-  --bs-primary-btn-hover-bg: #00a1be;
-  --bs-primary-btn-hover-border-color: #00a1be;
+  --bs-primary-btn-hover-bg: #153c65;
+  --bs-primary-btn-hover-border-color: #09223c;
   --bs-secondary-btn-hover-bg: #031742;
   --bs-secondary-btn-hover-border-color: #031742;
   --bs-light-btn-hover-bg: #c9d0d5;
@@ -32341,7 +32341,7 @@ table.wishlist_table {
   margin-bottom: 0;
   margin-left: 0;
   margin-right: 0;
-  width: 165px;
+  width: 500px;
   height: 80px;
   position: relative;
   z-index: 9; }
@@ -32365,6 +32365,10 @@ table.wishlist_table {
     -webkit-transition: all 0.5s;
     -ms-transition: all 0.5s;
     transition: all 0.5s; }
+
+  .logo-header>a>main_logo_header {
+      width: 400px;
+  }
 
 .top-bar {
   background-color: #fff;
@@ -33809,7 +33813,7 @@ table.wishlist_table {
       height: 85px; } }
 
 .site-header.style-2 .logo-header {
-  margin-right: 30px; }
+  margin-right: 35px; }
 
 @media only screen and (min-width: 1199px) {
   .site-header.style-2.header-toggle .main-bar {

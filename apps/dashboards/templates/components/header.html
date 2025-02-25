@@ -14,8 +14,8 @@
                     </span>
                         </div>
                         <div class="icon-content">
-                            <h2 class="dz-title text-primary">Biz bilan bog‘laning</h2>
-                            <p><a href="tel:+11234567890" class="text-secondary">+1 123 456 7890</a></p>
+                            <h2 class="dz-title text-secondary">Biz bilan bog‘laning</h2>
+                            <p><a href="tel:+11234567890" class="text-danger">{{ site_settings.contact_phone }}</a></p>
                         </div>
                     </div>
                 </div>
@@ -27,8 +27,9 @@
                     </span>
                         </div>
                         <div class="icon-content">
-                            <h2 class="dz-title text-primary">Email qo‘llab-quvvatlash</h2>
-                            <p><a href="mailto:email@domain.com" class="text-secondary">email@domain.com</a></p>
+                            <h2 class="dz-title text-secondary">Email qo‘llab-quvvatlash</h2>
+                            <p><a href="mailto:doctoramedclinik2025@gmail.com"
+                                  class="text-danger"> {{ site_settings.contact_email }}</a></p>
                         </div>
                     </div>
                 </div>
@@ -40,8 +41,8 @@
                     </span>
                         </div>
                         <div class="icon-content">
-                            <h2 class="dz-title text-primary">Qo‘llab-quvvatlash</h2>
-                            <p>24/7 xizmat</p>
+                            <h2 class="dz-title text-secondary">MRT MCKT Rengten</h2>
+                            <p class="text-danger">24/7 xizmat</p>
                         </div>
                     </div>
                 </div>
@@ -52,12 +53,14 @@
 
     <!-- Main Header -->
     <div class="sticky-header main-bar-wraper">
-        <div class="main-bar clearfix bg-secondary text-white">
+        <div class="main-bar clearfix bg-danger text-white">
             <div class="container-fluid clearfix inner-bar">
 
                 <!-- Website Logo -->
                 <div class="logo-header logo-dark">
-                    <a href="index.html"><img src="{% static 'dashboard/images/logo-white.svg' %}" alt="logo"></a>
+                    <a href="{% url 'main-dashboard' %}">
+                        <img src="{{ site_settings.logo_light.url }}" class="main_logo_header" alt="logo">
+                    </a>
                 </div>
 
                 <!-- Nav Toggle Button -->
@@ -90,17 +93,32 @@
                             <a href="{% url 'videos-dashboard' %}"><span>Videolar</span></a>
                         </li>
                         <li class="sub-menu-down">
-                            <a href="javascript:void(0);"><span>Til</span> <i class="fas fa-chevron-down tabindex"></i></a>
+                            <a href="javascript:void(0);">|
+                                <img src="{% static 'fonts/flag-icon-css/flags/' %}{{ CURRENT_LANGUAGE }}.svg"
+                                     alt="{{ CURRENT_LANGUAGE }}" class="flag-icon">
+                                <span>
+                                    {% for code, name in LANGUAGES %}
+                                        {% if code == CURRENT_LANGUAGE %}
+                                            {{ name }}
+                                        {% endif %}
+                                    {% endfor %}|
+                                </span>
+                            </a>
                             <ul class="sub-menu">
-                                <li><a href="#">O'zbek</a></li>
-                                <li><a href="#">Rus</a></li>
-                                <li><a href="#">Ingliz</a></li>
-                                <li><a href="#">Nemis</a></li>
-                                <li><a href="#">Turk</a></li>
+                                {% for code, name in LANGUAGES %}
+                                    <li>
+                                        <a href="?lang={{ code }}"
+                                           class="{% if code == CURRENT_LANGUAGE %}active{% endif %} border-bottom">
+                                            <img src="{% static 'fonts/flag-icon-css/flags/' %}{{ code }}.svg"
+                                                 alt="{{ name }}" class="flag-icon">
+                                            {{ name }}
+                                        </a>
+                                    </li>
+                                {% endfor %}
                             </ul>
                         </li>
-                    </ul>
 
+                    </ul>
 
 
                 </div>
@@ -110,7 +128,7 @@
                     <div class="extra-cell">
                         <ul class="header-right">
                             <li class="nav-item">
-                                <a href="{% url 'admin-index' %}" class="btn btn-primary btn-hover1">
+                                <a href="{% url 'admin-index' %}" class="btn btn-secondary btn-hover1">
                                     Admin Sahifasi
                                 </a>
                             </li>
@@ -133,14 +151,14 @@
 
     <!-- Sidebar -->
     <!-- Sidebar -->
-    <div class="offcanvas dz-offcanvas offcanvas offcanvas-end" tabindex="-1" id="headerSidebar">
+    <div class="offcanvas dz-offcanvas offcanvas offcanvas-end " tabindex="-1" id="headerSidebar">
         <button type="button" class="btn-close m-t10 m-l10" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-        <div class="offcanvas-body">
-            <div class="widget">
+        <div class="offcanvas-body" style="background-color: red">
+            <div class="widget ">
                 <div class="sidebar-header m-b20">
-                    <a href="index.html"><img src="{% static 'dashboard/images/logo.svg' %}" alt="Doctor.uz"></a>
+                    <a href=""><img src="{% static 'dashboard/images/logo.svg' %}" alt="Doctor.uz"></a>
                 </div>
-                <p>
+                <p class="text-white">
                     <strong>Doctor.uz</strong> – bu shifoxonalar, klinikalar va tibbiyot mutaxassislari uchun
                     mo‘ljallangan zamonaviy va qulay veb-platforma.
                     Bizning xizmatlarimiz yordamida bemorlar shifokorlarni topish, maslahat olish va qabulga
@@ -152,10 +170,10 @@
                 <div class="widget-title">
                     <h4 class="title">Biz bilan bog‘laning</h4>
                 </div>
-                <ul class="list-check">
-                    <li>Toshkent, Mustaqillik shoh ko‘chasi, 15, Ofis 478</li>
-                    <li><a href="mailto:info@doctor.uz" class="text-body">info@doctor.uz</a></li>
-                    <li><a href="tel:+998901234567" class="text-body">+998 90 123 45 67</a></li>
+                <ul class="list-check text-white">
+                    <li>{{ site_settings.address }}</li>
+                    <li><a href="mailto:info@doctor.uz" class="text-white">{{ site_settings.contact_email }}</a></li>
+                    <li><a href="tel:+998901234567" class="text-white">{{ site_settings.contact_phone }}</a></li>
                 </ul>
             </div>
 
@@ -164,7 +182,6 @@
                     <h4 class="title">Yangiliklardan xabardor bo‘ling</h4>
                 </div>
                 <form class="dzSubscribe style-2"
-                      action="https://doctor.uz/subscribe"
                       method="post">
                     <div class="dzSubscribeMsg"></div>
                     <div class="form-group">
@@ -174,7 +191,7 @@
                             <div class="input-group-addon">
                                 <button name="submit" value="Submit" type="submit"
                                         class="btn text-primary btn-transparent p-2">
-                                    <i class="fa-solid fa-paper-plane"></i>
+                                    <i class="fa-solid fa-paper-plane text-secondary"></i>
                                 </button>
                             </div>
                         </div>
@@ -188,32 +205,40 @@
                 </div>
                 <div class="dz-social-icon style-1">
                     <ul>
-                        <li>
-                            <a href="https://www.linkedin.com" target="_blank">
-                                <i class="fa-brands fa-linkedin"></i>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="https://www.instagram.com" target="_blank">
-                                <i class="fa-brands fa-instagram"></i>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="https://www.facebook.com" target="_blank">
-                                <i class="fa-brands fa-facebook-f"></i>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="https://twitter.com" target="_blank">
-                                <i class="fa-brands fa-x-twitter"></i>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="https://www.youtube.com" target="_blank">
-                                <i class="fa-brands fa-youtube"></i>
-                            </a>
-                        </li>
+                        {% if site_settings.facebook_url %}
+                            <li>
+                                <a href="{{ site_settings.facebook_url }}" target="_blank">
+                                    <i class="fa-brands fa-facebook-f text-secondary"></i> <!-- Facebook -->
+                                </a>
+                            </li>
+                        {% endif %}
+
+                        {% if site_settings.youtube_url %}
+                            <li>
+                                <a href="{{ site_settings.youtube_url }}" target="_blank">
+                                    <i class="fa-brands fa-youtube text-secondary"></i> <!-- YouTube -->
+                                </a>
+                            </li>
+                        {% endif %}
+
+                        {% if site_settings.instagram_url %}
+                            <li>
+                                <a href="{{ site_settings.instagram_url }}" target="_blank">
+                                    <i class="fa-brands fa-instagram text-secondary"></i> <!-- Instagram -->
+                                </a>
+                            </li>
+                        {% endif %}
+
+                        {% if site_settings.telegram_url %}
+                            <li>
+                                <a href="{{ site_settings.telegram_url }}" target="_blank">
+                                    <i class="fa-brands fa-telegram text-secondary"></i> <!-- Telegram -->
+                                </a>
+                            </li>
+                        {% endif %}
                     </ul>
+
+
                 </div>
             </div>
         </div>

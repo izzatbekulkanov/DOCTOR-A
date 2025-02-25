@@ -8,11 +8,11 @@
 
 [data-bs-theme=light][data-color-theme=Blue_Theme]:root,
 [data-bs-theme=dark][data-color-theme=Blue_Theme]:root {
-  --bs-primary: #5d87ff;
+  --bs-primary: #031b4e;
   --bs-primary-rgb: 93, 135, 255;
   --bs-light-primary: rgba(93, 135, 255, 0.1);
   --bs-primary-bg-subtle: rgba(93, 135, 255, 0.1);
-  --bs-secondary: #49beff;
+  --bs-secondary: #4973ff;
   --bs-secondary-rgb: 73, 190, 255;
   --bs-light-secondary: rgba(73, 190, 255, 0.1);
   --bs-secondary-bg-subtle: rgba(73, 190, 255, 0.1);

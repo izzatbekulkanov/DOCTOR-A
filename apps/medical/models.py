@@ -21,11 +21,19 @@ class SiteSettings(models.Model):
     maintenance_mode = models.BooleanField(default=False,
                                            help_text="Saytni texnik xizmat ko'rsatish rejimiga o'tkazish")
 
+    # Ish vaqti
+    working_hours = models.CharField(
+        max_length=255,
+        null=True,
+        blank=True,
+        help_text="Ish vaqti (masalan: Dushanba - Juma 9:00 - 17:00)"
+    )
+
     # Ijtimoiy tarmoqlar uchun havolalar
     facebook_url = models.URLField(null=True, blank=True, help_text="Facebook sahifa URL")
-    twitter_url = models.URLField(null=True, blank=True, help_text="Twitter sahifa URL")
+    youtube_url = models.URLField(null=True, blank=True, help_text="YouTube sahifa URL")
     instagram_url = models.URLField(null=True, blank=True, help_text="Instagram sahifa URL")
-    linkedin_url = models.URLField(null=True, blank=True, help_text="LinkedIn sahifa URL")
+    telegram_url = models.URLField(null=True, blank=True, help_text="Telegram sahifa URL")
 
     # Foydalanuvchi tomonidan yaratilgan va yangilangan vaqt
     created_at = models.DateTimeField(auto_now_add=True)

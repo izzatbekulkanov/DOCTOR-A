@@ -5,7 +5,7 @@ from django.utils.decorators import method_decorator
 from django.conf import settings
 import json
 
-from apps.medical.models import MainPageBanner, DoctorAInfo, ContactPhone, News
+from apps.medical.models import MainPageBanner, DoctorAInfo, ContactPhone, News, SiteSettings
 
 from django.utils.translation import get_language
 from django.conf import settings
@@ -46,7 +46,12 @@ class DashboardsView(TemplateView):
         # 8️⃣ SuperAdmin bo'lmagan oxirgi 4 ta foydalanuvchi
         context["recent_users"] = CustomUser.objects.exclude(is_superuser=True).order_by('-date_joined')[:4]
 
+        # 9️⃣ Sayt sozlamalarini olish
+        site_settings = SiteSettings.objects.first()  # Agar faqat bitta yozuv bo‘lsa
+        context["site_settings"] = site_settings
+
         return context
+
 
 class NewsView(TemplateView):
     template_name = "views/news-dashboard.html"
