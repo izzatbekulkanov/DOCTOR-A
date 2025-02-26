@@ -62,7 +62,7 @@
                                 <h4 class="title">Qidirish</h4>
                             </div>
                             <div class="search-bx">
-                                <form role="search" method="post">
+                                <form role="search" > {% csrf_token %}
                                     <div class="input-group">
                                         <input name="search_text" class="form-control" placeholder="Qidirish"
                                                type="text">
@@ -133,6 +133,8 @@
             </div>
         </div>
     </section>
+
+    <input type="hidden" name="csrfmiddlewaretoken" value="{% csrf_token %}">
 {% endblock content %}
 
 
@@ -143,155 +145,173 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     <script>
-        // CSRF tokenni olish funksiyasi
-        function getCSRFToken() {
-            return document.querySelector("[name=csrfmiddlewaretoken]").value;
+        // Oldindan tanlab olish
+        const $loadMoreContent = $(".loadmore-content");
+        const $loadMoreBtn = $("#load-more-btn");
+        const $searchForm = $(".search-bx form");
+        const $monthLinks = $(".widget_categories ul li a");
+
+        // CSRF token
+        const getCSRFToken = () =>
+            document.querySelector("input[name='csrfmiddlewaretoken']")?.value || null;
+
+        // Tilni keshlash bilan
+        let cachedLang = null;
+        const getCurrentLang = () => {
+            if (!cachedLang) {
+                cachedLang = document.cookie
+                    .split("; ")
+                    .find(row => row.startsWith("django_language="))
+                    ?.split("=")[1] || "uz";
+            }
+            return cachedLang;
         }
 
-        // AJAX so‘rovlarini CSRF bilan yuborish
-        $.ajaxSetup({
-            beforeSend: function (xhr, settings) {
-                if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type)) {
-                    xhr.setRequestHeader("X-CSRFToken", getCSRFToken());
+        // Sana formati
+        const formatDate = dateString => {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('en-GB'); // 01-05-2024
+        };
+
+        // Lokalizatsiya
+        const parseLocalized = data => {
+            if (typeof data === 'string') {
+                try {
+                    return JSON.parse(data);
+                } catch {
+                    return {uz: data};
                 }
             }
-        });
+            return data;
+        };
 
-    </script>
-    <script>
+        const getLocalizedText = (data, lang = getCurrentLang()) =>
+            parseLocalized(data)[lang] || data.uz || "Tavsif mavjud emas";
 
+        const makeRequest = (url, options = {}) =>
+            $.ajax({
+                url,
+                method: options.method || 'GET',
+                headers: {'X-CSRFToken': getCSRFToken()},
+                ...options
+            });
 
-        $(document).ready(function () {
-            let page = 1;
-            let loadedNewsIds = new Set();
-            let isLoading = false;
+        const createNewsElement = news => {
+            const content = getLocalizedText(news.content);
+            return `
+   <div class="dz-card style-2 blog-half m-b35">
+                                            <div class="dz-media">
+                                                <img src="${news.image || '/static/dashboard/images/blog/grid/default-image.webp'}"
+                                                     alt="${getLocalizedText(news.title)}">
+                                            </div>
+                                            <div class="dz-info">
+                                                <div class="dz-meta">
+                                                    <ul>
+                                                        <li class="post-date">
+                                                            ${formatDate(news.published_date)}
+                                                        </li>
+                                                        <li class="post-author">By <a href="#">${news.author_name || 'DOCTOR-A'}</a></li>
+                                                        <li class="post-comments">0 COMMENTS</li>
+                                                    </ul>
+                                                </div>
+                                                <h3 class="dz-title">
+                                                    <a href="#">${getLocalizedText(news.title)}</a>
+                                                </h3>
+                                                <p>${getLocalizedText(news.content).substring(0, 500)}...</p>
 
-            // 🌍 Joriy tilni aniqlash
-            function getCurrentLang() {
-                return document.documentElement.lang || "uz"; // Standart til: o‘zbekcha
-            }
-
-            // 🌍 JSON formatidagi matndan joriy til bo‘yicha ma’lumot olish
-            function getLocalizedText(data) {
-                let lang = getCurrentLang();
-                if (typeof data === "string") {
-                    try {
-                        data = JSON.parse(data);
-                    } catch (error) {
-                        return data; // JSON bo‘lmasa, o‘zini qaytarish
-                    }
-                }
-                return data[lang] || data["uz"] || "Tavsif mavjud emas"; // 🔄 Til bo‘yicha mos matnni chiqarish
-            }
-
-            // 📌 Yangiliklarni yuklash funksiyasi
-            function loadNews(page = 1, search = "", month = "") {
-                if (isLoading) return;
-                isLoading = true;
-
-                $("#load-more-btn .right-icon").show(); // 🔄 Yuklanayotganini ko‘rsatish
-
-                $.ajax({
-                    url: `/api/news/?page=${page}&search=${encodeURIComponent(search)}&month=${month}`,
-                    method: "GET",
-                    success: function (data) {
-                        if (data?.results?.length) {
-                            if (page === 1) $(".loadmore-content").html(""); // 🔄 Eski ma’lumotni tozalash
-
-                            data.results.forEach(news => {
-                                if (!loadedNewsIds.has(news.id)) {
-                                    loadedNewsIds.add(news.id);
-                                    let newsHtml = `
-                                <div class="dz-card style-2 blog-half m-b35">
-                                    <div class="dz-media">
-                                        <img src="${news.image || '/static/dashboard/images/blog/grid/default-image.webp'}"
-                                             alt="${getLocalizedText(news.title)}">
-                                    </div>
-                                    <div class="dz-info">
-                                        <div class="dz-meta">
-                                            <ul>
-                                                <li class="post-date">
-                                                    ${new Date(news.published_date).toLocaleDateString(getCurrentLang(), {
-                                        year: 'numeric', month: 'long', day: 'numeric'
-                                    })}
-                                                </li>
-                                                <li class="post-author">By <a href="#">${news.author_name || 'ClinicMaster'}</a></li>
-                                                <li class="post-comments">0 COMMENTS</li>
-                                            </ul>
+                                                <!-- Read More tugmasi -->
+                                                <a href="/news/${news.id}/" class="btn icon-link-hover-end btn-primary radius-sm">
+                                                    Ko‘proq <i class="feather icon-arrow-right"></i>
+                                                </a>
+                                            </div>
                                         </div>
-                                        <h3 class="dz-title">
-                                            <a href="#">${getLocalizedText(news.title)}</a>
-                                        </h3>
-                                        <p>${getLocalizedText(news.content).substring(0, 100)}...</p>
+  `;
+        };
 
-                                            <!-- Read More tugmasi -->
-                                            <a href="" class="btn icon-link-hover-end btn-primary radius-sm">
-                                                Koproq <i class="feather icon-arrow-right"></i>
-                                            </a>
-                                    </div>
+        const handleSearch = e => {
+            e.preventDefault();
+            const searchText = $(e.target).find("input[name='search_text']").val().trim();
+            resetPagination();
+            loadNews(1, searchText);
+        };
 
-                                </div>
-                            `;
-                                    $(".loadmore-content").append(newsHtml);
-                                }
-                            });
+        const handleMonthFilter = e => {
+            const monthMap = { /* ... */};
+            const monthNumber = monthMap[e.target.textContent.trim()] || "";
+            resetPagination();
+            loadNews(1, "", monthNumber);
+        };
 
-                            page++; // 📌 Keyingi sahifaga o‘tish
-                            $("#load-more-btn").show();
-                        } else {
-                            $("#load-more-btn").hide();
-                        }
-                    },
-                    complete: function () {
-                        isLoading = false;
-                        $("#load-more-btn .right-icon").hide();
+
+        let state = {
+            page: 1,
+            loadedIds: new Set(),
+            isLoading: false,
+            hasMore: true
+        };
+
+        const loadNews = async (search = "", month = "") => {
+            if (state.isLoading || !state.hasMore) return;
+
+            state.isLoading = true;
+            toggleLoader(true);
+
+            try {
+                const {results, next} = await makeRequest(
+                    `/api/news/?${new URLSearchParams({
+                        page: state.page,
+                        search,
+                        month,
+                        lang: getCurrentLang()
+                    })}`
+                );
+
+                if (!results.length) return;
+
+                const fragment = document.createDocumentFragment();
+                results.forEach(news => {
+                    if (!state.loadedIds.has(news.id)) {
+                        fragment.appendChild($(createNewsElement(news))[0]);
+                        state.loadedIds.add(news.id);
                     }
                 });
+
+                $loadMoreContent.append(fragment);
+                state.hasMore = !!next;
+                state.page++;
+            } finally {
+                state.isLoading = false;
+                toggleLoader(false);
+                $loadMoreBtn.toggle(!!state.hasMore);
             }
+        };
 
-            // 🔎 Qidirish funksiyasi
-            $(".search-bx form").on("submit", function (e) {
-                e.preventDefault();
-                let searchText = $(this).find("input[name='search_text']").val().trim();
-                page = 1;
-                loadedNewsIds.clear();
-                loadNews(page, searchText, "");
-            });
+        const toggleLoader = show =>
+            $("#load-more-btn .right-icon").toggle(show);
 
-            // 📅 Oyni tanlash (Filter)
-            $(".widget_categories ul li a").on("click", function () {
-                let monthName = $(this).text().trim();
-                let monthMap = {
-                    "Yanvar": "1",
-                    "Fevral": "2",
-                    "Mart": "3",
-                    "Aprel": "4",
-                    "May": "5",
-                    "Iyun": "6",
-                    "Iyul": "7",
-                    "Avgust": "8",
-                    "Sentabr": "9",
-                    "Oktabr": "10",
-                    "Noyabr": "11",
-                    "Dekabr": "12"
-                };
+        const resetPagination = () => {
+            state.page = 1;
+            state.loadedIds.clear();
+            state.hasMore = true;
+            $loadMoreContent.empty();
+        };
 
-                let monthNumber = monthMap[monthName] || "";
-                loadNews(1, "", monthNumber);
-            });
-
-            // 📌 "Ko‘proq yuklash" tugmasi
-            $("#load-more-btn").on("click", function () {
-                let searchText = $(".search-bx input[name='text']").val();
-                let selectedMonth = $(".widget_categories ul li a.active").text().trim();
-                let monthNumber = monthMap[selectedMonth] || "";
-
-                loadNews(page, searchText, monthNumber);
-            });
-
-            // 🔄 Boshlang‘ich yuklash
-            loadNews();
+        $(document).ready(() => {
+            $searchForm.on("submit", debounce(handleSearch, 300));
+            $monthLinks.on("click", handleMonthFilter);
+            $loadMoreBtn.on("click", () => loadNews());
+            loadNews(); // Initial load
         });
+
+        // Qidiruv uchun debounce
+        const debounce = (fn, delay) => {
+            let timer;
+            return (...args) => {
+                clearTimeout(timer);
+                timer = setTimeout(() => fn(...args), delay);
+            };
+        };
+
 
     </script>
 

@@ -1,8 +1,8 @@
 from django.db.models import Count
-from django.views.generic import TemplateView
+from django.http import JsonResponse
+from django.views.generic import TemplateView, DetailView
 from django.utils.translation import gettext_lazy as _
-from apps.medical.models import MainPageBanner, DoctorAInfo, ContactPhone, News, SiteSettings
-
+from apps.medical.models import News, Comment
 
 
 class DashboardsView(TemplateView):
@@ -61,6 +61,51 @@ class NewsView(TemplateView):
 
         return context
 
+
+class NewsDetailDashboard(DetailView):
+    model = News
+    template_name = "views/news-detail-dashboard.html"
+    context_object_name = "news"
+
+    def get_context_data(self, **kwargs):
+        """ Yangilik tafsilotlarini olish """
+        context = super().get_context_data(**kwargs)
+
+        # 📌 O'xshash yangiliklarni olish
+        related_news = News.objects.filter(
+            is_published=True
+        ).exclude(id=self.object.id).order_by('-published_date')[:4]
+
+        # 📌 Izohlarni olish
+        comments = self.object.comments.all().order_by('-created_at')
+
+        context["related_news"] = related_news  # 📌 O'xshash yangiliklar
+        context["comments"] = comments  # 📌 Yangilik izohlari
+        context["comments_count"] = comments.count()  # 📌 Izohlar soni
+
+        return context
+
+    def post(self, request, *args, **kwargs):
+        """ Foydalanuvchi yangi izoh qoldirsa, uni saqlash """
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':  # AJAX ekanligini tekshirish
+            print(request.POST)
+            try:
+                news = self.get_object()
+                full_name = request.POST.get("author")
+                phone_number = request.POST.get("phone_number")
+                comment_text = request.POST.get("comment")
+
+                if not (full_name and phone_number and comment_text):
+                    return JsonResponse({"success": False, "message": "Barcha maydonlarni to‘ldiring!"}, status=400)
+
+                # Yangi izohni saqlash
+                Comment.objects.create(news=news, full_name=full_name, phone_number=phone_number, text=comment_text)
+
+                return JsonResponse({"success": True, "message": "Izoh muvaffaqiyatli qo‘shildi!"})
+            except Exception as e:
+                return JsonResponse({"success": False, "message": f"Xatolik yuz berdi: {str(e)}"}, status=500)
+        else:
+            return JsonResponse({"success": False, "message": "Faqat AJAX so‘rov qabul qilinadi!"}, status=400)
 
 
 class AnnouncementView(TemplateView):

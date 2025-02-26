@@ -88,7 +88,7 @@
                         </div>
                         <div class="widget-content">
                             <h6 class="title">Savol va murojaatlar?</h6>
-                            <a href="mailto:{{ site_settings.contact_email }}">{{ site_settings.contact_email }}</a>
+                            <a href="#ariza_section">Yuborish</a>
                         </div>
                     </div>
                 </div>
@@ -127,7 +127,7 @@
         </div>
     </section>
 
-    <section class="content-inner-2 bg-light z-2"
+    <section class="content-inner-2 bg-light z-2" id="ariza_section"
              style="background-image: url({% static 'dashboard/images/background/bg5.png' %});">
         <div class="container">
             <div class="row align-items-end content-wrapper style-8">
@@ -150,27 +150,22 @@
                                 <input type="hidden" class="form-control" name="reCaptchaEnable" value="0">
                                 <div class="dzFormMsg"></div>
                                 <div class="row">
-                                    <div class="col-sm-6 m-b30">
-                                        <div class="form-floating floating-underline input-light">
-                                            <input name="name" type="text" class="form-control" id="inputYourName"
-                                                   placeholder="Ismingiz" required>
-                                            <label for="inputYourName">Ismingiz</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-6 m-b30">
-                                        <div class="form-floating floating-underline input-light">
-                                            <input name="email" type="email" class="form-control" id="inputYourEmail"
-                                                   placeholder="Email Manzilingiz" required>
-                                            <label for="inputYourEmail">Email Manzilingiz</label>
-                                        </div>
-                                    </div>
                                     <div class="col-sm-12 m-b30">
                                         <div class="form-floating floating-underline input-light">
-                                            <input name="phone" type="text" class="form-control dz-number"
-                                                   id="inputPhoneNumber" placeholder="Telefon Raqamingiz" required>
-                                            <label for="inputPhoneNumber">Telefon Raqamingiz</label>
+                                            <input name="full_name" type="text" class="form-control" id="full_name"
+                                                   placeholder="To'liq ismingiz" required>
+                                            <label for="full_name">To'liq ismingiz</label>
                                         </div>
                                     </div>
+                                    <div class="col-sm-6 m-b30">
+                                        <div class="form-floating floating-underline input-light">
+                                            <input name="phone_number" type="text" class="form-control"
+                                                   id="phone_number"
+                                                   placeholder="Telefon raqamingiz" required>
+                                            <label for="phone_number">Telefon raqamingiz</label>
+                                        </div>
+                                    </div>
+
 
                                     <div class="col-sm-12 m-b30">
                                         <div class="form-floating floating-underline input-light">
@@ -408,7 +403,8 @@
                                 <div class="dz-card style-2 dz-card-overlay card-sm no-image">
                                     <div class="dz-info">
                                         <div class="post-date">
-                                            {{ announcement.published_date|date:"d M Y" }} | E'lon <!-- 📅 Sanani formatlash -->
+                                            {{ announcement.published_date|date:"d M Y" }} | E'lon
+                                            <!-- 📅 Sanani formatlash -->
                                         </div>
                                         <h3 class="dz-title">
                                             <a href="#">
@@ -497,13 +493,6 @@
                                 <p class="text-white">{{ site_settings.working_hours }}</p>
                             </div>
                         </div>
-                        <a href="appointment.html"
-                           class="btn btn-lg btn-icon btn-secondary w-100 m-t20 btn-shadow wow fadeInUp"
-                           data-wow-delay="1.2s"
-                           data-wow-duration="0.8s">
-                            <span class="w-100">Qabulga yozilish</span>
-                            <span class="right-icon"><i class="feather icon-arrow-right"></i></span>
-                        </a>
                     </div>
                 </div>
             </div>
@@ -520,6 +509,52 @@
 
 
 
+    <script>
+        $(document).ready(function () {
+            $(".dzForm").submit(function (event) {
+                event.preventDefault();
 
+                let formData = {
+                    full_name: $("#full_name").val(),
+                    phone_number: $("#phone_number").val(),
+                    message: $("#inputMessage").val(),
+                };
+
+                $.ajax({
+                    url: "/api/submit-application/",
+                    type: "POST",
+                    contentType: "application/json",
+                    data: JSON.stringify(formData),
+                    beforeSend: function (xhr) {
+                        xhr.setRequestHeader("X-CSRFToken", getCookie("csrftoken"));
+                    },
+                    success: function (response) {
+                        alert(response.message);
+                        $(".dzForm")[0].reset(); // Formani tozalash
+                    },
+                    error: function (xhr) {
+                        alert("Xatolik yuz berdi! Iltimos, qayta urinib ko'ring.");
+                    },
+                });
+            });
+
+            // 🍪 CSRF tokenni olish uchun funksiya
+            function getCookie(name) {
+                let cookieValue = null;
+                if (document.cookie && document.cookie !== "") {
+                    let cookies = document.cookie.split(";");
+                    for (let i = 0; i < cookies.length; i++) {
+                        let cookie = cookies[i].trim();
+                        if (cookie.substring(0, name.length + 1) === name + "=") {
+                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                            break;
+                        }
+                    }
+                }
+                return cookieValue;
+            }
+        });
+
+    </script>
 
 {% endblock script %}

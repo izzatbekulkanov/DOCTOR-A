@@ -13,7 +13,13 @@ SECRET_KEY = os.environ.get("SECRET_KEY", default='')
 DEBUG = os.environ.get("DEBUG", 'True').lower() in ['true', 'yes', '1']
 
 
-ALLOWED_HOSTS = ["localhost", "0.0.0.0", "127.0.0.1", 'updatehub.namspi.uz', 'webtest.namspi.uz']
+ALLOWED_HOSTS = [
+    "localhost",
+    "0.0.0.0",
+    "127.0.0.1",
+    "updatehub.namspi.uz",
+    "webtest.namspi.uz"
+]
 
 
 ENVIRONMENT = os.environ.get("DJANGO_ENVIRONMENT", default="local")
@@ -177,7 +183,5 @@ SESSION_COOKIE_AGE = 3600  # 📌 Sessiyaning amal qilish vaqti (1 soat)
 
 # 🔹 **CSRF Trusted Origins**
 CSRF_TRUSTED_ORIGINS = [
-    "http://localhost:5050",
-    "https://updatehub.namspi.uz",
-    "https://webtest.namspi.uz/",
+    "https://webtest.namspi.uz"
 ]

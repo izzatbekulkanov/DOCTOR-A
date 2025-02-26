@@ -1,5 +1,5 @@
 from django.utils.decorators import method_decorator
-from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.csrf import csrf_exempt, ensure_csrf_cookie
 from rest_framework.generics import ListAPIView
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.filters import SearchFilter
@@ -13,8 +13,7 @@ class NewsPagination(PageNumberPagination):
     page_size_query_param = "page_size"
 
 # 📌 API orqali yangiliklarni olish
-
-@method_decorator(csrf_exempt, name="dispatch")
+@method_decorator(ensure_csrf_cookie, name="dispatch")  # ✅ CSRF cookie qo'shish
 class NewsListView(ListAPIView):
     serializer_class = NewsSerializer
     pagination_class = NewsPagination

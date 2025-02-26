@@ -5,7 +5,7 @@ from django.db import models
 
 from .models import (
     SiteSettings, MainPageBanner, DoctorAInfo, ContactPhone,
-    News, Announcement, Partner
+    News, Announcement, Partner, MedicalCheckupApplication, Comment
 )
 
 
@@ -145,3 +145,21 @@ class PartnerAdmin(admin.ModelAdmin):
     preview_logo.short_description = "Logotip"
 
 
+
+
+@admin.register(MedicalCheckupApplication)
+class MedicalCheckupApplicationAdmin(admin.ModelAdmin):
+    list_display = ("full_name", "phone_number", "created_at")
+    search_fields = ("full_name", "phone_number")
+    list_filter = ("created_at",)
+
+
+@admin.register(Comment)
+class CommentAdmin(admin.ModelAdmin):
+    list_display = ('id', 'full_name', 'phone_number', 'news_title', 'created_at')
+    list_filter = ('created_at',)
+    search_fields = ('full_name', 'phone_number', 'text')
+
+    def news_title(self, obj):
+        return obj.news.title.get('uz', 'Noma’lum yangilik')
+    news_title.short_description = "Yangilik"
