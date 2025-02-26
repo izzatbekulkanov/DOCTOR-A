@@ -137,7 +137,7 @@
                 <div class="col-lg-6" data-bottom-top="transform: translateY(100px)"
                      data-top-bottom="transform: translateY(-10px)">
                     <div class="form-wrapper style-1 text-vr-wrapper">
-                        <div class="text-vertical bg-danger">Hozir Ro‘yxatdan O‘ting</div>
+                        <div class="text-vertical bg-danger">Ariza topshiring</div>
                         <div class="form-body bg-secondary background-blend-burn"
                              style="background-image: url({% static 'dashboard/images/background/bg2.png' %}); background-size: cover">
                             <div class="title-head">
@@ -383,10 +383,11 @@
                                     </h3>
                                 </div>
                                 <div class="bottom-info">
-                                    <a href="" class="btn btn-icon btn-lg btn-secondary btn-shadow">
+                                    <a href="{% url 'news_detail_dashboard' pk=news.id %}" class="btn btn-icon btn-lg btn-secondary btn-shadow">
                                         Ko'proq
                                         <span class="right-icon"><i class="feather icon-arrow-right"></i></span>
                                     </a>
+
                                 </div>
                             </div>
                         </div>

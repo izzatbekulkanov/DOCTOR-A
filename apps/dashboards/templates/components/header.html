@@ -2,7 +2,11 @@
 {% load i18n %}
 
 <header class="site-header header style-1">
-
+    <div class="row">
+        <div class="alert alert-warning text-center" role="alert">
+            Sayt test rejimida ishlamoqda 🚧
+        </div>
+    </div>
     <div class="header-info-bar d-none d-xxl-block">
         <div class="container-fluid">
             <div class="row">
@@ -46,8 +50,26 @@
                         </div>
                     </div>
                 </div>
+                <!-- Ijtimoiy tarmoqlar -->
+                <div class="col d-flex align-items-center gap-2">
+                    <a href="{{ site_settings.facebook_url }}" target="_blank">
+                        <i class="fa-brands fa-facebook fs-1 text-primary"></i> <!-- Ko'k Facebook -->
+                    </a>
+                    <a href="{{ site_settings.telegram_url }}" target="_blank">
+                        <i class="fa-brands fa-telegram fs-1 text-info"></i> <!-- Havorang Telegram -->
+                    </a>
+                    <a href="{{ site_settings.instagram_url }}" target="_blank">
+                        <i class="fa-brands fa-instagram fs-1 text-danger"></i> <!-- Pushti Instagram -->
+                    </a>
+                    <a href="{{ site_settings.youtube_url }}" target="_blank">
+                        <i class="fa-brands fa-youtube fs-1 text-danger"></i> <!-- Qizil YouTube -->
+                    </a>
+                </div>
+
             </div>
+
         </div>
+
 
     </div>
 
@@ -93,9 +115,11 @@
                             <a href="{% url 'videos-dashboard' %}"><span>Videolar</span></a>
                         </li>
                         <li class="sub-menu-down">
-                            <a href="javascript:void(0);" style="display: flex; align-items: center; gap: 8px; padding: 5px 10px; margin-top:22px; border: 2px solid #ccc; border-radius: 5px; background: #f8f9fa; color: #333; font-weight: bold;">
+                            <a href="javascript:void(0);"
+                               style="display: flex; align-items: center; gap: 8px; padding: 5px 10px; margin-top:22px; border: 2px solid #ccc; border-radius: 5px; background: #f8f9fa; color: #333; font-weight: bold;">
                                 <img src="{% static 'fonts/flag-icon-css/flags/' %}{{ CURRENT_LANGUAGE }}.svg"
-                                     alt="{{ CURRENT_LANGUAGE }}" class="flag-icon" style="width: 20px; height: 15px; border-radius: 2px;">
+                                     alt="{{ CURRENT_LANGUAGE }}" class="flag-icon"
+                                     style="width: 20px; height: 15px; border-radius: 2px;">
                                 <span>
                                     {% for code, name in LANGUAGES %}
                                         {% if code == CURRENT_LANGUAGE %}
@@ -132,10 +156,13 @@
                     <div class="extra-cell">
                         <ul class="header-right">
                             <li class="nav-item">
-                                <a href="{% url 'admin-index' %}" class="btn btn-secondary btn-hover1">
-                                    Admin Sahifasi
+                                <a href="{% url 'admin-index' %}"
+                                   class="btn btn-secondary btn-hover1 d-flex align-items-center">
+
+                                    <i class="fas fa-chevron-right text-white fs-6"></i> <!-- Kichik ikon -->
                                 </a>
                             </li>
+
                         </ul>
                     </div>
                 </div>

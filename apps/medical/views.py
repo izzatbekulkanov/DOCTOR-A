@@ -70,20 +70,16 @@ class MainPageBannerView(TemplateView):
         return context
 
     def post(self, request, *args, **kwargs):
-        """ Bannerni qo‘shish yoki yangilash """
+        """ Bannerni faqat bitta nusxada saqlash va mavjud bo‘lsa yangilash """
 
         if request.headers.get('X-Requested-With') == 'XMLHttpRequest':  # AJAX so‘rovi tekshiriladi
-            banner_id = request.POST.get('banner_id')
             image = request.FILES.get('banner_image')  # Yangi yuklangan rasm
             description = {code: request.POST.get(f'description[{code}]', "").strip() for code, name in LANGUAGES}
 
-            print(f"🟢 So‘rov qabul qilindi! banner_id={banner_id}, image={'bor' if image else 'yo‘q'}")
+            print(f"🟢 So‘rov qabul qilindi! image={'bor' if image else 'yo‘q'}")
 
-            # Xatoliklarni tekshirish
+            # **Xatoliklarni tekshirish**
             missing_fields = []
-
-            if not banner_id and not image:
-                missing_fields.append("📌 Banner rasmi yuklanmagan.")
 
             if not description.get('uz'):
                 missing_fields.append("📌 O'zbek tili uchun tavsif majburiy.")
@@ -96,31 +92,22 @@ class MainPageBannerView(TemplateView):
                 print("❌ Xatoliklar ro‘yxati:", missing_fields)
                 return JsonResponse({"success": False, "error": "<br>".join(missing_fields)}, status=400)
 
-            # **Tahrirlash yoki yangi banner qo‘shish**
-            if banner_id:  # **Tahrirlash**
-                banner = MainPageBanner.objects.filter(id=banner_id).first()
+            # **Bazada mavjud banner bor yoki yo‘qligini tekshiramiz**
+            banner, created = MainPageBanner.objects.get_or_create(id=1, defaults={"description": description,
+                                                                                   "image": image})
 
-                if not banner:
-                    print(f"❌ Xatolik: Banner ID {banner_id} topilmadi!")
-                    return JsonResponse({"success": False, "error": "❌ Bunday banner topilmadi!"}, status=404)
-
-                print(f"✏️ Tahrirlash: Banner ID {banner_id} topildi, yangilanmoqda...")
-
+            if not created:  # **Agar mavjud bo‘lsa, uni yangilaymiz**
+                print(f"✏️ Mavjud banner yangilanmoqda... ID: {banner.id}")
                 banner.description = description
-                if image:  # **Yangi rasm bo‘lsa, almashtirish**
+                if image:  # **Agar yangi rasm bo‘lsa, uni almashtiramiz**
                     print("📸 Yangi rasm yuklandi, almashtirildi.")
                     banner.image = image
-
                 banner.save()
                 print("✅ Banner muvaffaqiyatli yangilandi!")
                 return JsonResponse({"success": True, "message": "✅ Banner muvaffaqiyatli yangilandi!"})
 
-            else:  # **Yangi banner qo‘shish**
-                print("🆕 Yangi banner qo‘shilmoqda...")
-                banner = MainPageBanner(image=image, description=description)
-                banner.save()
-                print(f"✅ Yangi banner qo‘shildi! ID: {banner.id}")
-                return JsonResponse({"success": True, "message": "✅ Banner muvaffaqiyatli qo‘shildi!"})
+            print(f"✅ Yangi banner yaratildi! ID: {banner.id}")
+            return JsonResponse({"success": True, "message": "✅ Banner muvaffaqiyatli qo‘shildi!"})
 
         print("❌ Noto‘g‘ri so‘rov keldi!")
         return JsonResponse({"success": False, "error": "❌ Noto‘g‘ri so‘rov!"}, status=400)
@@ -394,7 +381,6 @@ def get_contact_phone(request):
     })
 
 
-
 @method_decorator(login_required, name='dispatch')
 class UsersView(TemplateView):
     template_name = 'havfsizlik/users.html'
@@ -483,14 +469,10 @@ class AddUsersView(View):
 
         profile_picture = request.FILES.get("profile_picture")  # Agar rasm yuklangan bo‘lsa
 
-
-
         # ✅ Majburiy maydonlarni tekshirish
-        if not full_name :
+        if not full_name:
             print("❌ Xatolik: Majburiy maydonlar to‘ldirilmagan!")
             return JsonResponse({"status": "error", "message": "Majburiy maydonlarni to‘ldiring!"}, status=400)
-
-
 
         # ✅ Foydalanuvchi yaratish
         print("🚀 Yangi foydalanuvchi yaratish jarayoni boshlandi...")

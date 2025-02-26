@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 
+
 class CustomUser(AbstractUser):
     full_name = models.CharField(max_length=255, blank=True)
     phone_number = models.CharField(max_length=15, blank=True)
@@ -23,10 +24,18 @@ class CustomUser(AbstractUser):
     professional_license_number = models.CharField(max_length=100, blank=True, help_text="Litsenziya raqami")
     shift_schedule = models.CharField(max_length=100, blank=True, help_text="Ish jadvali")
 
+    # ✅ Ish vaqti
+    work_start_time = models.TimeField(null=True, blank=True, help_text="Ish boshlanish vaqti")
+    work_end_time = models.TimeField(null=True, blank=True, help_text="Ish tugash vaqti")
+
     # ✅ Qo‘shimcha maydonlar
     bank_account_number = models.CharField(max_length=50, blank=True, help_text="Bank hisob raqami")
     tax_identification_number = models.CharField(max_length=20, blank=True, help_text="STIR")
     insurance_number = models.CharField(max_length=50, blank=True, help_text="Sug'urta raqami")
+
+    # ✅ Ijtimoiy tarmoqlar
+    telegram_username = models.CharField(max_length=100, blank=True, help_text="Telegram foydalanuvchi nomi")
+    instagram_username = models.CharField(max_length=100, blank=True, help_text="Instagram foydalanuvchi nomi")
 
     # ✅ Django standart maydonlari
     is_active = models.BooleanField(default=True, help_text="Foydalanuvchi faol yoki faol emas")
@@ -39,3 +48,42 @@ class CustomUser(AbstractUser):
         if not self.full_name and self.first_name and self.last_name:
             self.full_name = f"{self.first_name} {self.last_name}"
         super().save(*args, **kwargs)
+
+    def get_work_schedule(self):
+        """ Ish jadvalini formatda qaytaradi """
+        if self.work_start_time and self.work_end_time:
+            return f"{self.work_start_time.strftime('%H:%M')} - {self.work_end_time.strftime('%H:%M')}"
+        return "Ish vaqti belgilanmagan"
+
+
+class Appointment(models.Model):
+    """Hodim qabuliga yozilish modeli"""
+    full_name = models.CharField(max_length=255, help_text="Foydalanuvchi ismi familiyasi")
+    phone_number = models.CharField(max_length=15, help_text="Telefon raqami")
+    message = models.TextField(help_text="So‘rov")
+    employee = models.ForeignKey(
+        CustomUser,
+        on_delete=models.CASCADE,
+        limit_choices_to={'is_active_employee': True},  # Faqat faol hodimlar
+        related_name="appointments",
+        help_text="Qabul qiluvchi hodim"
+    )
+    created_at = models.DateTimeField(auto_now_add=True, help_text="Yaratilgan sana")
+    status = models.CharField(
+        max_length=20,
+        choices=[
+            ('pending', 'Kutilmoqda'),
+            ('approved', 'Tasdiqlangan'),
+            ('canceled', 'Bekor qilingan')
+        ],
+        default='pending',
+        help_text="Qabul holati"
+    )
+
+    class Meta:
+        ordering = ['-created_at']
+        verbose_name = "Qabul"
+        verbose_name_plural = "Qabullar"
+
+    def __str__(self):
+        return f"{self.full_name} → {self.employee.full_name} ({self.get_status_display()})"

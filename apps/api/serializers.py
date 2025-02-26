@@ -4,9 +4,12 @@ from apps.medical.models import News, MedicalCheckupApplication
 
 
 class NewsSerializer(serializers.ModelSerializer):
+    comments_count = serializers.IntegerField(source='comments.count', read_only=True)
+
     class Meta:
         model = News
-        fields = ['id', 'title', 'content', 'image', 'published_date', 'views_count']
+        fields = ['id', 'title', 'content', 'image', 'published_date', 'views_count', 'comments_count']
+
 
 
 

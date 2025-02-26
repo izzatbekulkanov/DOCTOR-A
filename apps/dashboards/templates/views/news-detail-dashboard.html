@@ -51,7 +51,10 @@
                                 <blockquote class="wp-block-quote is-style-default">
                                     <p>{{ news.title|get_language_text:CURRENT_LANGUAGE }}</p>
                                     <cite>{{ news.author.full_name|default:"DOCTOR-A" }}</cite>
+<figure class="wp-container-5 wp-block-gallery-3 wp-block-gallery has-nested-images columns-3 is-cropped alignwide">
+										<figure class="wp-block-image size-large"><img src="{{ news.image.url }}" alt="/"></figure>
 
+									</figure>
                                     <i class="flaticon-right-quote"></i>
                                 </blockquote>
                                 <p>{{ news.content|get_language_text:CURRENT_LANGUAGE }}</p>

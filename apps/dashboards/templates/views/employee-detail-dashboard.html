@@ -1,0 +1,253 @@
+{% extends 'dashboard.html' %}
+{% load static %}
+{% load custom_filters %}
+
+{% block title %}
+    Hodim
+{% endblock title %}
+{% block style %}
+{% endblock style %}
+
+{% block content %}
+
+
+    <div class="dz-bnr-inr dz-banner-dark overlay-secondary-middle dz-bnr-inr-md"
+         style="background-image:url({% static 'dashboard/images/banner/bnr2.webp' %});">
+        <div class="container">
+            <div class="dz-bnr-inr-entry d-table-cell">
+                <h1 class="wow fadeInUp" data-wow-delay="0.2s" data-wow-duration="0.8s">{{ employee.full_name }}</h1>
+                <nav aria-label="breadcrumb" class="breadcrumb-row wow fadeInUp" data-wow-delay="0.4s"
+                     data-wow-duration="0.8s">
+                    <ul class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{% url 'employee-dashboard' %}">Hodimlar</a></li>
+                        <li class="breadcrumb-item">Hodim haqida ma'lumot</li>
+                    </ul>
+                </nav>
+                <div class="dz-btn">
+                    <a href="tel:{{ site_settings.contact_phone }}"
+                       class="btn btn-lg btn-icon btn-primary radius-xl btn-shadow mb-3 mb-sm-0">
+						<span class="left-icon">
+							<i class="feather icon-phone-call"></i>
+						</span>
+                        {{ site_settings.contact_phone }}
+                    </a>
+                </div>
+            </div>
+        </div>
+        <span class="text-vertical">Hodim</span>
+    </div>
+
+    <section class="content-inner">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4 m-b30">
+                    <aside class="side-bar sticky-top">
+                        <div class="widget wow fadeInUp" data-wow-delay="0.1s" data-wow-duration="0.7s">
+                            <div class="dz-team style-5">
+                                <div class="dz-media">
+                                    <img src="{{ employee.profile_picture.url }}" alt="{{ employee.full_name }}">
+                                </div>
+                                <ul class="dz-social">
+                                    <li>
+                                        <p>{{ employee.job_title }}</p>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="widget widget_schedule bg-secondary text-white wow fadeInUp" data-wow-delay="0.2s"
+                             data-wow-duration="0.7s">
+                            <div class="widget-title">
+                                <h4 class="title text-white">Ish vaqti</h4>
+                            </div>
+                            <table class="table table-border-bottom m-b0">
+                                <tr>
+                                    <th>Dushanba - Shanba</th>
+                                    <td class="text-end">{{ employee.work_start_time }}
+                                        - {{ employee.work_end_time }}</td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="widget widget_info bg-light wow fadeInUp" data-wow-delay="0.3s"
+                             data-wow-duration="0.7s">
+                            <div class="icon-bx-wraper style-1 m-b20">
+                                <div class="icon-bx bg-primary">
+										<span class="icon-cell">
+											<i class="feather icon-map-pin"></i>
+										</span>
+                                </div>
+                                <div class="icon-content">
+                                    <h5 class="dz-title fw-semibold">Manzil</h5>
+                                    <p class="fw-normal">{{ employee.address }}</p>
+                                </div>
+                            </div>
+                            <div class="icon-bx-wraper style-1 m-b20">
+                                <div class="icon-bx bg-primary">
+										<span class="icon-cell">
+											<i class="feather icon-phone"></i>
+										</span>
+                                </div>
+                                <div class="icon-content">
+                                    <h5 class="dz-title fw-semibold">Telefon</h5>
+                                    <p class="fw-normal"><a href="tel:{{ employee.phone_number }}"
+                                                            class="text-body">{{ employee.phone_number }}</a></p>
+                                </div>
+                            </div>
+                            <div class="icon-bx-wraper style-1 m-b15">
+                                <div class="icon-bx bg-primary">
+										<span class="icon-cell">
+											<i class="feather icon-mail"></i>
+										</span>
+                                </div>
+                                <div class="icon-content">
+                                    <h5 class="dz-title fw-semibold">Email</h5>
+                                    <p class="fw-normal"><a href="mailto:{{ employee.email }}"
+                                                            class="text-body">{{ employee.email }}</a></p>
+                                </div>
+                            </div>
+                        </div>
+                    </aside>
+                </div>
+                <div class="col-lg-8 ps-xl-5 m-b30">
+                    <div class="section-head style-1 mb-30">
+                        <h2 class="titlev fw-semibold m-b0 wow fadeInUp" data-wow-delay="0.1s"
+                            data-wow-duration="0.7s">{{ employee.full_name }}</h2>
+                        <p class="text-primary m-b20 fw-normal font-16 wow fadeInUp" data-wow-delay="0.2s"
+                           data-wow-duration="0.7s">{{ employee.job_title }}</p>
+                        <p class="fw-normal m-b0 wow fadeInUp" data-wow-delay="0.3s"
+                           data-wow-duration="0.7s">{{ employee.bio }}</p>
+                    </div>
+                    <table class="table table-striped table-striped-rounded m-b40 wow fadeInUp" data-wow-delay="0.4s"
+                           data-wow-duration="0.7s">
+                        <tr>
+                            <th>Lavozim</th>
+                            <td>{{ employee.job_title }}</td>
+                        </tr>
+                        <tr>
+                            <th>Bo'lim</th>
+                            <td>{{ employee.department }}</td>
+                        </tr>
+                        <tr>
+                            <th>Telefon</th>
+                            <td><a href="tel:{{ employee.phone_number }}">{{ employee.phone_number }}</a></td>
+                        </tr>
+                        <tr>
+                            <th>Tug'ilgan sana</th>
+                            <td>{{ employee.date_of_birth }}</td>
+                        </tr>
+                        <tr>
+                            <th>Jinsi</th>
+                            <td>{{ employee.get_gender_display }}</td>
+                        </tr>
+                        <tr>
+                            <th>Millati</th>
+                            <td>{{ employee.nationality }}</td>
+                        </tr>
+                        <tr>
+                            <th>Tibbiyot mutaxassisligi</th>
+                            <td>{{ employee.medical_specialty }}</td>
+                        </tr>
+                        <tr>
+                            <th>Diplom</th>
+                            <td>{{ employee.professional_license_number }}</td>
+                        </tr>
+                        <tr>
+                            <th>Ish tajribasi</th>
+                            <td>{{ employee.experience|default:"Ma'lumot yo'q" }}</td>
+                        </tr>
+                        <tr>
+                            <th>Ish boshlash sanasi</th>
+                            <td>{{ employee.employment_date }}</td>
+                        </tr>
+                        <tr>
+                            <th>Shartnoma tugash sanasi</th>
+                            <td>{{ employee.contract_end_date|default:"Mavjud emas" }}</td>
+                        </tr>
+                        <tr>
+                            <th>Ish jadvali</th>
+                            <td>{{ employee.get_work_schedule }}</td>
+                        </tr>
+                        <tr>
+                            <th>Telegram</th>
+                            <td>
+                                {% if employee.telegram_username %}
+                                    <a href="https://t.me/{{ employee.telegram_username }}"
+                                       target="_blank">@{{ employee.telegram_username }}</a>
+                                {% else %}
+                                    Mavjud emas
+                                {% endif %}
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>Instagram</th>
+                            <td>
+                                {% if employee.instagram_username %}
+                                    <a href="https://instagram.com/{{ employee.instagram_username }}"
+                                       target="_blank">@{{ employee.instagram_username }}</a>
+                                {% else %}
+                                    Mavjud emas
+                                {% endif %}
+                            </td>
+                        </tr>
+                    </table>
+
+
+{#                    <div class="form-wrapper style-1 wow fadeInUp" data-wow-delay="0.7s" data-wow-duration="0.7s">#}
+{#                        <div class="form-body bg-primary background-blend-burn"#}
+{#                             style="background-image: url({% static 'dashboard/images/background/bg2.png' %});">#}
+{#                            <div class="title-head">#}
+{#                                <h2 class="form-title m-b0">Qabulga yozilish</h2>#}
+{#                            </div>#}
+{#                            <form action="" class="dzForm" method="POST">#}
+{#                                <input type="hidden" class="form-control" name="dzToDo" value="Contact">#}
+{#                                <input type="hidden" class="form-control" name="reCaptchaEnable" value="0">#}
+{#                                <div class="dzFormMsg"></div>#}
+{#                                <div class="row">#}
+{#                                    <div class="col-sm-6 m-b30">#}
+{#                                        <div class="form-floating floating-underline input-light">#}
+{#                                            <input name="dzName" type="text" class="form-control" id="inputYourName"#}
+{#                                                   placeholder="Ism Familiya" required>#}
+{#                                            <label for="inputYourName">Ism Familiya</label>#}
+{#                                        </div>#}
+{#                                    </div>#}
+{#                                    <div class="col-sm-6 m-b30">#}
+{#                                        <div class="form-floating floating-underline input-light">#}
+{#                                            <input name="dzPhoneNumber" type="text" class="form-control dz-number"#}
+{#                                                   id="inputPhoneNumber" placeholder="Telefon raqami" required>#}
+{#                                            <label for="inputPhoneNumber">Telefon raqami</label>#}
+{#                                        </div>#}
+{#                                    </div>#}
+{#                                    <div class="col-sm-12 m-b30">#}
+{#                                        <div class="form-floating floating-underline input-light">#}
+{#                                            <textarea name="dzMessage" class="form-control" id="inputMessage" rows="6"#}
+{#                                                      placeholder="So‘rov" required></textarea>#}
+{#                                            <label for="inputMessage">So‘rov</label>#}
+{#                                        </div>#}
+{#                                    </div>#}
+{#                                    <div class="col-sm-12">#}
+{#                                        <button type="submit" name="submit" value="submit"#}
+{#                                                class="btn btn-lg btn-icon btn-white hover-secondary btn-shadow">#}
+{#                                            Yuborish <span class="right-icon"><i#}
+{#                                                class="feather icon-arrow-right"></i></span>#}
+{#                                        </button>#}
+{#                                    </div>#}
+{#                                </div>#}
+{#                            </form>#}
+{##}
+{#                        </div>#}
+{#                    </div>#}
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+
+{% endblock %}
+
+
+{% block script %}
+
+
+
+
+{% endblock script %}

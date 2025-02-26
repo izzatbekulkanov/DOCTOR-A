@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.utils.translation import gettext_lazy as _
 
-from members.models import CustomUser
+from members.models import CustomUser, Appointment
 
 
 # Register your models here.
@@ -13,7 +13,8 @@ class CustomUserAdmin(UserAdmin):
     list_filter = ("is_staff", "is_active", "is_superuser", "gender", "date_joined")
     fieldsets = (
         (_("Asosiy ma'lumotlar"), {"fields": ("username", "email", "password")}),
-        (_("Shaxsiy ma'lumotlar"), {"fields": ("first_name", "last_name", "full_name", "phone_number", "profile_picture")}),
+        (_("Shaxsiy ma'lumotlar"),
+         {"fields": ("first_name", "last_name", "full_name", "phone_number", "profile_picture")}),
         (_("Qo'shimcha ma'lumotlar"), {"fields": ("nationality", "bio", "gender", "date_of_birth")}),
         (_("Xavfsizlik"), {"fields": ("is_active", "is_staff", "is_superuser", "groups", "user_permissions")}),
         (_("Tizim ma'lumotlari"), {"fields": ("last_login", "date_joined")}),
@@ -28,3 +29,10 @@ admin.site.register(CustomUser, CustomUserAdmin)
 admin.site.site_header = "Doctor A - Admin Panel"
 admin.site.site_title = "Doctor A"
 admin.site.index_title = "Boshqaruv paneli"
+
+
+@admin.register(Appointment)
+class AppointmentAdmin(admin.ModelAdmin):
+    list_display = ('full_name', 'phone_number', 'employee', 'status', 'created_at')
+    list_filter = ('status', 'created_at')
+    search_fields = ('full_name', 'phone_number', 'employee__full_name')
