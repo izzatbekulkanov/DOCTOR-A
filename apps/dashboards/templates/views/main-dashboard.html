@@ -199,7 +199,7 @@
                 </div>
                 <div class="col-sm-5 text-sm-end d-sm-block d-none wow fadeInUp" data-wow-delay="0.4s"
                      data-wow-duration="0.8s">
-                    <a href="" class="btn btn-icon btn-secondary btn-shadow">
+                    <a href="{% url 'employee-dashboard' %}" class="btn btn-icon btn-secondary btn-shadow">
                         Barchasini Ko‘rish
                         <span class="right-icon"><i class="feather icon-arrow-right"></i></span>
                     </a>
@@ -255,96 +255,43 @@
                             Bizning ishonchli hamkorlarimiz bilan birgalikda yuqori sifatli xizmatlarni taqdim etamiz.
                         </p>
                     </div>
-                    <a href="javascript:void(0);" class="btn btn-outline-secondary btn-rounded m-r5 m-b10 wow fadeInUp"
-                       data-wow-delay="0.5s" data-wow-duration="0.8s">2024</a>
-                    <a href="javascript:void(0);" class="btn btn-outline-secondary btn-rounded m-r5 m-b10 wow fadeInUp"
-                       data-wow-delay="0.6s" data-wow-duration="0.8s">2023</a>
-                    <a href="javascript:void(0);" class="btn btn-outline-secondary btn-rounded m-r5 m-b10 wow fadeInUp"
-                       data-wow-delay="0.7s" data-wow-duration="0.8s">2022</a>
-                    <a href="javascript:void(0);" class="btn btn-outline-secondary btn-rounded m-r5 m-b10 wow fadeInUp"
-                       data-wow-delay="0.8s" data-wow-duration="0.8s">2021</a>
-                    <a href="javascript:void(0);" class="btn btn-outline-secondary btn-rounded m-r5 m-b10 wow fadeInUp"
-                       data-wow-delay="0.9s" data-wow-duration="0.8s">2020</a>
-                    <a href="javascript:void(0);" class="btn btn-outline-secondary btn-rounded m-r5 m-b10 wow fadeInUp"
-                       data-wow-delay="1.0s" data-wow-duration="0.8s">2019</a>
+                    {% for partner in active_partners %}
+                        <span class="btn btn-outline-secondary btn-rounded m-r5 m-b10 wow fadeInUp"
+                              data-wow-delay="0.{{ forloop.counter }}s" data-wow-duration="0.8s">
+                            {{ partner.name|get_language_text:CURRENT_LANGUAGE }}
+                        </span>
+                    {% endfor %}
+
 
                 </div>
                 <div class="col-xxl-9">
                     <div class="swiper awards-swiper wow fadeInUp" data-wow-delay="0.4s" data-wow-duration="0.8s">
                         <div class="swiper-wrapper">
-                            <div class="swiper-slide">
-                                <div class="dz-img-box style-1 box-lg grid-bx text-center">
-                                    <div class="dz-media">
-                                        <img src="{% static 'dashboard/images/logo/logo1.png' %}" alt="">
-                                    </div>
-                                    <div class="dz-content">
-                                        <h3 class="title">ClinicMaster 2024</h3>
-                                        <p>Quality and Accreditation Institute</p>
-                                        <a href="javascript:void(0);" class="btn-link">Save the Childern</a>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="swiper-slide">
-                                <div class="dz-img-box style-1 box-lg grid-bx text-center">
-                                    <div class="dz-media">
-                                        <img src="{% static 'dashboard/images/logo/logo2.png' %}" alt="">
-                                    </div>
-                                    <div class="dz-content">
-                                        <h3 class="title">ClinicMaster 2024</h3>
-                                        <p>Quality and Accreditation Institute</p>
-                                        <a href="javascript:void(0);" class="btn-link">Save the Childern</a>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="swiper-slide">
-                                <div class="dz-img-box style-1 box-lg grid-bx text-center">
-                                    <div class="dz-media">
-                                        <img src="{% static 'dashboard/images/logo/logo3.png' %}" alt="">
-                                    </div>
-                                    <div class="dz-content">
-                                        <h3 class="title">ClinicMaster 2024</h3>
-                                        <p>Quality and Accreditation Institute</p>
-                                        <a href="javascript:void(0);" class="btn-link">Save the Childern</a>
+                            {% for partner in active_partners %}
+                                <div class="swiper-slide">
+                                    <div class="dz-img-box style-1 box-lg grid-bx text-center">
+                                        <div class="dz-media">
+                                            {% if partner.logo %}
+                                                <img src="{{ partner.logo.url }}" alt="{{ partner.name.uz }}">
+                                            {% else %}
+                                                <img src="{% static 'dashboard/images/logo/default-logo.png' %}"
+                                                     alt="Hamkor logosi">
+                                            {% endif %}
+                                        </div>
+                                        <div class="dz-content">
+                                            <h3 class="title">{{ partner.name.uz }}</h3>
+                                            <p>{{ partner.description.uz }}</p>
+                                            {% if partner.website_url %}
+                                                <a href="{{ partner.website_url }}" target="_blank" class="btn-link">
+                                                    {{ partner.website_url }}
+                                                </a>
+                                            {% endif %}
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="swiper-slide">
-                                <div class="dz-img-box style-1 box-lg grid-bx text-center">
-                                    <div class="dz-media">
-                                        <img src="{% static 'dashboard/images/logo/logo1.png' %}" alt="">
-                                    </div>
-                                    <div class="dz-content">
-                                        <h3 class="title">ClinicMaster 2024</h3>
-                                        <p>Quality and Accreditation Institute</p>
-                                        <a href="javascript:void(0);" class="btn-link">Save the Childern</a>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="swiper-slide">
-                                <div class="dz-img-box style-1 box-lg grid-bx text-center">
-                                    <div class="dz-media">
-                                        <img src="{% static 'dashboard/images/logo/logo2.png' %}" alt="">
-                                    </div>
-                                    <div class="dz-content">
-                                        <h3 class="title">ClinicMaster 2024</h3>
-                                        <p>Quality and Accreditation Institute</p>
-                                        <a href="javascript:void(0);" class="btn-link">Save the Childern</a>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="swiper-slide">
-                                <div class="dz-img-box style-1 box-lg grid-bx text-center">
-                                    <div class="dz-media">
-                                        <img src="{% static 'dashboard/images/logo/logo3.png' %}" alt="">
-                                    </div>
-                                    <div class="dz-content">
-                                        <h3 class="title">ClinicMaster 2024</h3>
-                                        <p>Quality and Accreditation Institute</p>
-                                        <a href="javascript:void(0);" class="btn-link">Save the Childern</a>
-                                    </div>
-                                </div>
-                            </div>
+                            {% endfor %}
                         </div>
+
                     </div>
                 </div>
             </div>
@@ -359,7 +306,7 @@
                 </div>
                 <div class="col-lg-5 col-md-4 text-md-end d-none d-md-block wow fadeInUp" data-wow-delay="0.4s"
                      data-wow-duration="0.8s">
-                    <a href="blog-grid.html" class="btn btn-icon btn-secondary btn-shadow">
+                    <a href="{% url 'news-dashboard' %}" class="btn btn-icon btn-secondary btn-shadow">
                         Barchasini ko'rish
                         <span class="right-icon"><i class="feather icon-arrow-right"></i></span>
                     </a>
@@ -383,7 +330,8 @@
                                     </h3>
                                 </div>
                                 <div class="bottom-info">
-                                    <a href="{% url 'news_detail_dashboard' pk=news.id %}" class="btn btn-icon btn-lg btn-secondary btn-shadow">
+                                    <a href="{% url 'news_detail_dashboard' pk=news.id %}"
+                                       class="btn btn-icon btn-lg btn-secondary btn-shadow">
                                         Ko'proq
                                         <span class="right-icon"><i class="feather icon-arrow-right"></i></span>
                                     </a>

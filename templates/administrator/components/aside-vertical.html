@@ -90,14 +90,7 @@
                             <li class="sidebar-item">
                                 <a class="sidebar-link" href="{% url 'page-banner' %}" aria-expanded="false">
                                     <iconify-icon icon="mdi:image-multiple-outline"></iconify-icon>
-                                    <span class="hide-menu">Asosiy rasmlar</span>
-                                </a>
-                            </li>
-
-                            <li class="sidebar-item">
-                                <a class="sidebar-link" href="{% url 'doctor-info' %}" aria-expanded="false">
-                                    <iconify-icon icon="mdi:doctor"></iconify-icon>
-                                    <span class="hide-menu">Doctorlar haqida</span>
+                                    <span class="hide-menu">Asosiy rasm</span>
                                 </a>
                             </li>
                             <li class="sidebar-item">
@@ -143,7 +136,7 @@
                                 </a>
                             </li>
                             <li class="sidebar-item">
-                                <a href="../main/pages-search-result.html" class="sidebar-link">
+                                <a href="{% url 'partners-info' %}" class="sidebar-link">
                                     <iconify-icon icon="mdi:handshake-outline"></iconify-icon>
                                     <span class="hide-menu">Hamkorlar</span>
                                 </a>
@@ -189,10 +182,17 @@
                                     <span class="hide-menu">Rollar</span>
                                 </a>
                             </li>
+
                             <li class="sidebar-item">
                                 <a href="{% url 'logs-view' %}" class="sidebar-link">
                                     <iconify-icon icon="mdi:file-document-outline"></iconify-icon>
                                     <span class="hide-menu">Loglar</span>
+                                </a>
+                            </li>
+                            <li class="sidebar-item">
+                                <a href="{% url 'appointmentView-view' %}" class="sidebar-link">
+                                    <iconify-icon icon="mdi:file-document-outline"></iconify-icon>
+                                    <span class="hide-menu">Arizalar</span>
                                 </a>
                             </li>
                         </ul>

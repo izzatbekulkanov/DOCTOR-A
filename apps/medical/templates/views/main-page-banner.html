@@ -37,7 +37,8 @@
                                 <li class="nav-item" role="presentation">
                                     <button class="nav-link {% if forloop.first %}active{% endif %}" id="{{ code }}-tab"
                                             data-bs-toggle="tab" data-bs-target="#{{ code }}" type="button" role="tab">
-                                        <img src="{% static 'vendor/fonts/flags/1x1/' %}{{ code }}.svg" width="20" class="me-1">
+                                        <img src="{% static 'vendor/fonts/flags/1x1/' %}{{ code }}.svg" width="20"
+                                             class="me-1">
                                         {{ name }}
                                     </button>
                                 </li>
@@ -79,26 +80,36 @@
                 <div class="card-footer text-center">
                     <h5>Joriy Bannerlar</h5>
                     <div class="row">
-                        {% for banner in banners %}
-                            <div class="col-md-6 col-lg-6 mb-3">
+                        {% if banner %}
+                            <div class="col-md-12 col-lg-12 mb-3">
                                 <div class="card shadow-sm">
-                                    <img src="{{ banner.image.url }}" class="card-img-top" style="max-height: 180px; object-fit: cover;">
+                                    {% if banner.image %}
+                                        <img src="{{ banner.image.url }}" class="card-img-top"
+                                             style="max-height: 900px; object-fit: cover;">
+                                    {% else %}
+                                        <p class="text-muted text-center p-3">🚫 Rasm yuklanmagan</p>
+                                    {% endif %}
                                     <div class="card-body">
                                         <h6 class="card-title">
                                             {{ banner.description|get_language_text:request.LANGUAGE_CODE }}
                                         </h6>
                                         <div class="d-flex justify-content-between mt-2">
-                                            <button class="btn btn-sm btn-primary" onclick="editBanner({{ banner.id }})">
+                                            <button class="btn btn-sm btn-primary"
+                                                    onclick="editBanner({{ banner.id }})">
                                                 ✏️ Tahrirlash
                                             </button>
-                                            <button class="btn btn-sm btn-danger" onclick="deleteBanner({{ banner.id }})">
+                                            <button class="btn btn-sm btn-danger"
+                                                    onclick="deleteBanner({{ banner.id }})">
                                                 🗑️ O‘chirish
                                             </button>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        {% endfor %}
+                        {% else %}
+                            <p class="text-muted">🚫 Banner mavjud emas.</p>
+                        {% endif %}
+
                     </div>
                 </div>
 
@@ -109,179 +120,179 @@
 {% endblock content %}
 
 {% block vendor_js %}
-<!-- jQuery CDN yuklash -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <!-- jQuery CDN yuklash -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 
-<!-- SweetAlert2 CDN yuklash -->
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- SweetAlert2 CDN yuklash -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-<script>
-    function previewBanner(event) {
-        let reader = new FileReader();
-        reader.onload = function () {
-            document.getElementById('banner_preview').src = reader.result;
-        }
-        reader.readAsDataURL(event.target.files[0]);
-    }
-
-    function validateBannerForm() {
-        let missingFields = [];
-        let image = document.getElementById('banner_image').files[0];
-        let uzbekDescriptionField = document.getElementById("description_uz");
-
-        if (!image && !document.getElementById("saveButton").hasAttribute("data-id")) {
-            missingFields.push("📌 Banner rasmi yuklanmagan.");
-        }
-
-        if (!uzbekDescriptionField || !uzbekDescriptionField.value.trim()) {
-            missingFields.push("📌 O'zbek tili uchun tavsif majburiy.");
-        }
-
-        {% for code, name in LANGUAGES %}
-            let desc_{{ code }} = document.getElementById("description_{{ code }}");
-            if (desc_{{ code }} && !desc_{{ code }}.value.trim()) {
-                missingFields.push(`📌 {{ name }} tili uchun tavsif kiritilmagan.`);
+    <script>
+        function previewBanner(event) {
+            let reader = new FileReader();
+            reader.onload = function () {
+                document.getElementById('banner_preview').src = reader.result;
             }
-        {% endfor %}
-
-        if (missingFields.length > 0) {
-            Swal.fire({
-                icon: 'error',
-                title: 'Xatolik!',
-                html: missingFields.join("<br>"),
-                confirmButtonText: 'Yopish',
-                timer: 5000
-            });
-            return;
+            reader.readAsDataURL(event.target.files[0]);
         }
 
-        Swal.fire({
-            icon: 'success',
-            title: 'Hammasi tayyor!',
-            text: 'Barcha maydonlar to‘ldirildi. Saqlash mumkin.',
-            confirmButtonText: 'Davom etish',
-            timer: 3000
-        });
+        function validateBannerForm() {
+            let missingFields = [];
+            let image = document.getElementById('banner_image').files[0];
+            let uzbekDescriptionField = document.getElementById("description_uz");
 
-        document.getElementById("saveButton").style.display = "block";
-    }
+            if (!image && !document.getElementById("saveButton").hasAttribute("data-id")) {
+                missingFields.push("📌 Banner rasmi yuklanmagan.");
+            }
 
-    function submitBannerForm() {
-    let formData = new FormData(document.getElementById('bannerForm'));
-    let bannerId = document.getElementById("saveButton").getAttribute("data-id");
+            if (!uzbekDescriptionField || !uzbekDescriptionField.value.trim()) {
+                missingFields.push("📌 O'zbek tili uchun tavsif majburiy.");
+            }
 
-    if (bannerId) {
-        formData.append("banner_id", bannerId);
-    }
+            {% for code, name in LANGUAGES %}
+                let desc_{{ code }} = document.getElementById("description_{{ code }}");
+                if (desc_{{ code }} && !desc_{{ code }}.value.trim()) {
+                    missingFields.push(`📌 {{ name }} tili uchun tavsif kiritilmagan.`);
+                }
+            {% endfor %}
 
-    $.ajax({
-        url: "{% url 'page-banner' %}",
-        type: "POST",
-        data: formData,
-        processData: false,
-        contentType: false,
-        headers: {
-            "X-CSRFToken": document.querySelector("[name=csrfmiddlewaretoken]").value
-        },
-        beforeSend: function() {
-            Swal.fire({
-                title: "Yuborilmoqda...",
-                text: "Iltimos kuting",
-                allowOutsideClick: false,
-                showConfirmButton: false,
-                willOpen: () => Swal.showLoading()
-            });
-        },
-        success: function (response) {
+            if (missingFields.length > 0) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Xatolik!',
+                    html: missingFields.join("<br>"),
+                    confirmButtonText: 'Yopish',
+                    timer: 5000
+                });
+                return;
+            }
+
             Swal.fire({
                 icon: 'success',
-                title: '✅ Muvaffaqiyatli!',
-                text: response.message,
-                confirmButtonText: 'OK'
-            }).then(() => {
-                location.reload();
+                title: 'Hammasi tayyor!',
+                text: 'Barcha maydonlar to‘ldirildi. Saqlash mumkin.',
+                confirmButtonText: 'Davom etish',
+                timer: 3000
             });
-        },
-        error: function (xhr) {
-            Swal.fire({
-                icon: 'error',
-                title: 'Xatolik yuz berdi!',
-                text: xhr.responseJSON?.error || "Noma’lum xatolik",
-                confirmButtonText: 'Yopish'
+
+            document.getElementById("saveButton").style.display = "block";
+        }
+
+        function submitBannerForm() {
+            let formData = new FormData(document.getElementById('bannerForm'));
+            let bannerId = document.getElementById("saveButton").getAttribute("data-id");
+
+            if (bannerId) {
+                formData.append("banner_id", bannerId);
+            }
+
+            $.ajax({
+                url: "{% url 'page-banner' %}",
+                type: "POST",
+                data: formData,
+                processData: false,
+                contentType: false,
+                headers: {
+                    "X-CSRFToken": document.querySelector("[name=csrfmiddlewaretoken]").value
+                },
+                beforeSend: function () {
+                    Swal.fire({
+                        title: "Yuborilmoqda...",
+                        text: "Iltimos kuting",
+                        allowOutsideClick: false,
+                        showConfirmButton: false,
+                        willOpen: () => Swal.showLoading()
+                    });
+                },
+                success: function (response) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: '✅ Muvaffaqiyatli!',
+                        text: response.message,
+                        confirmButtonText: 'OK'
+                    }).then(() => {
+                        location.reload();
+                    });
+                },
+                error: function (xhr) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Xatolik yuz berdi!',
+                        text: xhr.responseJSON?.error || "Noma’lum xatolik",
+                        confirmButtonText: 'Yopish'
+                    });
+                }
             });
         }
-    });
-}
 
-    function editBanner(bannerId) {
-        let url = "{% url 'get_banner' 0 %}".replace("0", bannerId);
+        function editBanner(bannerId) {
+            let url = "{% url 'get_banner' 0 %}".replace("0", bannerId);
 
-        $.ajax({
-            url: url,
-            type: "GET",
-            success: function (data) {
-                if (data.success) {
-                    document.getElementById('banner_preview').src = data.image_url;
-                    document.getElementById('banner_image').value = "";
+            $.ajax({
+                url: url,
+                type: "GET",
+                success: function (data) {
+                    if (data.success) {
+                        document.getElementById('banner_preview').src = data.image_url;
+                        document.getElementById('banner_image').value = "";
 
-                    Object.keys(data.description).forEach(lang => {
-                        let inputField = document.getElementById(`description_${lang}`);
-                        if (inputField) {
-                            inputField.value = data.description[lang];
+                        Object.keys(data.description).forEach(lang => {
+                            let inputField = document.getElementById(`description_${lang}`);
+                            if (inputField) {
+                                inputField.value = data.description[lang];
+                            }
+                        });
+
+                        document.getElementById("saveButton").setAttribute("data-id", bannerId);
+                        document.getElementById("saveButton").style.display = "block";
+
+                        Swal.fire("Tahrirlash!", "Banner ma’lumotlari formaga yuklandi.", "success");
+                    } else {
+                        Swal.fire("Xatolik!", "Banner ma’lumotlarini yuklab bo‘lmadi.", "error");
+                    }
+                },
+                error: function () {
+                    Swal.fire("Xatolik!", "Server bilan aloqa yo‘q.", "error");
+                }
+            });
+        }
+
+        function deleteBanner(bannerId) {
+            let url = "{% url 'delete_banner' 0 %}".replace("0", bannerId);  // URL ni dinamik yaratish
+
+            Swal.fire({
+                title: "O‘chirishni tasdiqlaysizmi?",
+                text: "Bu amalni bekor qilib bo‘lmaydi!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#d33",
+                cancelButtonColor: "#3085d6",
+                confirmButtonText: "Ha, o‘chirish!",
+                cancelButtonText: "Bekor qilish"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: url,
+                        type: "DELETE",
+                        headers: {
+                            "X-CSRFToken": document.querySelector("[name=csrfmiddlewaretoken]").value
+                        },
+                        success: function (data) {
+                            if (data.success) {
+                                Swal.fire("O‘chirildi!", "Banner muvaffaqiyatli o‘chirildi.", "success").then(() => {
+                                    location.reload();
+                                });
+                            } else {
+                                Swal.fire("Xatolik!", "Banner o‘chirilmadi.", "error");
+                            }
+                        },
+                        error: function () {
+                            Swal.fire("Xatolik!", "Server bilan aloqa yo‘q.", "error");
                         }
                     });
-
-                    document.getElementById("saveButton").setAttribute("data-id", bannerId);
-                    document.getElementById("saveButton").style.display = "block";
-
-                    Swal.fire("Tahrirlash!", "Banner ma’lumotlari formaga yuklandi.", "success");
-                } else {
-                    Swal.fire("Xatolik!", "Banner ma’lumotlarini yuklab bo‘lmadi.", "error");
                 }
-            },
-            error: function () {
-                Swal.fire("Xatolik!", "Server bilan aloqa yo‘q.", "error");
-            }
-        });
-    }
-
-    function deleteBanner(bannerId) {
-        let url = "{% url 'delete_banner' 0 %}".replace("0", bannerId);  // URL ni dinamik yaratish
-
-        Swal.fire({
-            title: "O‘chirishni tasdiqlaysizmi?",
-            text: "Bu amalni bekor qilib bo‘lmaydi!",
-            icon: "warning",
-            showCancelButton: true,
-            confirmButtonColor: "#d33",
-            cancelButtonColor: "#3085d6",
-            confirmButtonText: "Ha, o‘chirish!",
-            cancelButtonText: "Bekor qilish"
-        }).then((result) => {
-            if (result.isConfirmed) {
-                $.ajax({
-                    url: url,
-                    type: "DELETE",
-                    headers: {
-                        "X-CSRFToken": document.querySelector("[name=csrfmiddlewaretoken]").value
-                    },
-                    success: function (data) {
-                        if (data.success) {
-                            Swal.fire("O‘chirildi!", "Banner muvaffaqiyatli o‘chirildi.", "success").then(() => {
-                                location.reload();
-                            });
-                        } else {
-                            Swal.fire("Xatolik!", "Banner o‘chirilmadi.", "error");
-                        }
-                    },
-                    error: function () {
-                        Swal.fire("Xatolik!", "Server bilan aloqa yo‘q.", "error");
-                    }
-                });
-            }
-        });
-    }
-</script>
+            });
+        }
+    </script>
 {% endblock vendor_js %}
 
 

@@ -15,12 +15,13 @@ from django.utils.translation import gettext_lazy as _
 from io import BytesIO
 from django.core.files.uploadedfile import InMemoryUploadedFile
 import sys
+from urllib.parse import urlparse
 
 from config import settings
 from config.settings import LANGUAGES
 from config.telegram_bot import send_message
-from members.models import CustomUser
-from .models import SiteSettings, MainPageBanner, DoctorAInfo, ContactPhone
+from members.models import CustomUser, Appointment
+from .models import SiteSettings, MainPageBanner, DoctorAInfo, ContactPhone, Partner
 
 
 class MainView(TemplateView):
@@ -75,7 +76,7 @@ class MainPageBannerView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['banners'] = MainPageBanner.objects.all()
+        context['banner'] = MainPageBanner.objects.first()  # Faqat eng birinchi bannerni olish
         context['LANGUAGES'] = LANGUAGES
         return context
 
@@ -103,10 +104,9 @@ class MainPageBannerView(TemplateView):
                 return JsonResponse({"success": False, "error": "<br>".join(missing_fields)}, status=400)
 
             # **Bazada mavjud banner bor yoki yo‘qligini tekshiramiz**
-            banner, created = MainPageBanner.objects.get_or_create(id=1, defaults={"description": description,
-                                                                                   "image": image})
+            banner = MainPageBanner.objects.first()  # Faqat eng birinchi banner
 
-            if not created:  # **Agar mavjud bo‘lsa, uni yangilaymiz**
+            if banner:  # **Agar mavjud bo‘lsa, uni yangilaymiz**
                 print(f"✏️ Mavjud banner yangilanmoqda... ID: {banner.id}")
                 banner.description = description
                 if image:  # **Agar yangi rasm bo‘lsa, uni almashtiramiz**
@@ -115,9 +115,12 @@ class MainPageBannerView(TemplateView):
                 banner.save()
                 print("✅ Banner muvaffaqiyatli yangilandi!")
                 return JsonResponse({"success": True, "message": "✅ Banner muvaffaqiyatli yangilandi!"})
-
-            print(f"✅ Yangi banner yaratildi! ID: {banner.id}")
-            return JsonResponse({"success": True, "message": "✅ Banner muvaffaqiyatli qo‘shildi!"})
+            else:  # **Agar banner mavjud bo‘lmasa, yangisini qo‘shamiz**
+                print("🆕 Yangi banner qo‘shilmoqda...")
+                banner = MainPageBanner(image=image, description=description)
+                banner.save()
+                print(f"✅ Yangi banner qo‘shildi! ID: {banner.id}")
+                return JsonResponse({"success": True, "message": "✅ Banner muvaffaqiyatli qo‘shildi!"})
 
         print("❌ Noto‘g‘ri so‘rov keldi!")
         return JsonResponse({"success": False, "error": "❌ Noto‘g‘ri so‘rov!"}, status=400)
@@ -151,18 +154,18 @@ def delete_banner(request, banner_id):
 
 
 @method_decorator(login_required, name='dispatch')
-class DoctorAInfoView(TemplateView):
-    template_name = 'views/doctor_a.html'
+class PartnerInfoView(TemplateView):
+    template_name = 'news/partner.html'
 
     def get_context_data(self, **kwargs):
         """ Sahifa uchun kontekst ma'lumotlari """
         context = super().get_context_data(**kwargs)
-        doctor_id = self.request.GET.get("doctor_id")
+        partner_id = self.request.GET.get("partner_id")
 
-        if doctor_id:
-            context["doctor_info"] = DoctorAInfo.objects.filter(id=doctor_id).first()
+        if partner_id:
+            context["partner_info"] = Partner.objects.filter(id=partner_id).first()
         else:
-            context["doctor_info_list"] = DoctorAInfo.objects.all()  # Barcha ma'lumotlarni olish
+            context["partner_list"] = Partner.objects.all()  # Barcha ma'lumotlarni olish
 
         context["LANGUAGES"] = settings.LANGUAGES  # Tilni HTML-ga uzatish
         context["LANGUAGES_JSON"] = json.dumps([(code, str(name)) for code, name in settings.LANGUAGES])
@@ -171,69 +174,100 @@ class DoctorAInfoView(TemplateView):
 
     def post(self, request):
         """ Yangi Doctor A ma'lumotini qo‘shish yoki mavjudini yangilash """
-        doctor_id = request.POST.get("doctor_id")
-        image = request.FILES.get("image")
-        title = {code: request.POST.get(f'title[{code}]', "").strip() for code, _ in settings.LANGUAGES}
+        partner_id = request.POST.get("partner_id")
+        logo = request.FILES.get("logo")
+        website_url = request.POST.get("website_url", "").strip()  # ✅ Website URL ni olish
+        is_active = request.POST.get(
+            "is_active") == "on"  # ✅ Formadan checkbox keladi, "on" bo'lsa True, aks holda False
+        name = {code: request.POST.get(f'name[{code}]', "").strip() for code, _ in settings.LANGUAGES}
         description = {code: request.POST.get(f'description[{code}]', "").strip() for code, _ in settings.LANGUAGES}
 
         errors = []
-        if not title.get("uz"):
+        if not name.get("uz"):
             errors.append("📌 O'zbek tilida sarlavha kiritish majburiy.")
         if not description.get("uz"):
             errors.append("📌 O'zbek tilida tavsif kiritish majburiy.")
-        if not doctor_id and not image:
+        if not partner_id and not logo:
             errors.append("📌 Rasm yuklash majburiy.")
+
+        if website_url and not website_url.startswith(("http://", "https://")):
+            errors.append(
+                "📌 Veb-sayt manzili to‘g‘ri formatda bo‘lishi kerak (http:// yoki https:// bilan boshlanishi kerak).")
 
         if errors:
             return JsonResponse({"success": False, "error": "<br>".join(errors)}, status=400)
 
         # **Tahrirlash yoki yangi ma'lumot qo‘shish**
-        if doctor_id:  # **Tahrirlash**
-            doctor = get_object_or_404(DoctorAInfo, id=doctor_id)
-            doctor.title = title
-            doctor.description = description
-            if image:
-                doctor.image = image  # Yangi rasm yuklangan bo‘lsa, almashtirish
-            doctor.save()
+        if partner_id:  # **Tahrirlash**
+            partner = get_object_or_404(Partner, id=partner_id)
+            partner.name = name
+            partner.description = description
+            partner.website_url = website_url  # ✅ Website URL ni yangilash
+            partner.is_active = is_active  # ✅ `is_active` ni yangilash
+            if logo:
+                partner.logo = logo  # Yangi rasm yuklangan bo‘lsa, almashtirish
+            partner.save()
             return JsonResponse({"success": True, "message": "✅ Doctor A ma'lumotlari yangilandi!"})
 
         else:  # **Yangi qo‘shish**
-            doctor = DoctorAInfo.objects.create(title=title, description=description, image=image)
+            partner = Partner.objects.create(
+                name=name,
+                description=description,
+                logo=logo,
+                website_url=website_url,  # ✅ Yangi qo‘shishda website URL ni saqlash
+                is_active=is_active  # ✅ `is_active` ni yangi qo‘shishda saqlash
+            )
             return JsonResponse({"success": True, "message": "✅ Doctor A ma'lumotlari qo‘shildi!"})
+
+    def clean_website_url(url):
+        """ Website URL ni tozalash va kerakli formatda saqlash """
+        url = url.strip()
+        parsed_url = urlparse(url)
+
+        if parsed_url.netloc.startswith("www."):
+            return parsed_url.netloc[4:]  # `www.` ni olib tashlash
+        return url  # O'zgarishsiz saqlash
 
     def patch(self, request):
         """ Ma'lumotni tahrirlash (rasmni ham yangilash) """
         print("🟡 PATCH so‘rovi kelib tushdi.")
 
         try:
-            doctor_id = request.POST.get("doctor_id")
-            title = json.loads(request.POST.get("title", "{}"))
+            partner_id = request.POST.get("partner_id")
+            name = json.loads(request.POST.get("name", "{}"))
             description = json.loads(request.POST.get("description", "{}"))
-            image = request.FILES.get("image")  # 🔹 Rasmni olish
+            logo = request.FILES.get("logo")  # 🔹 Rasmni olish
+            website_url = request.POST.get("website_url", "").strip()  # ✅ Website URL ni olish
+            is_active = request.POST.get("is_active") == "on"  # ✅ is_active ni olish
 
-            print(f"📌 Olingan doctor_id: {doctor_id}")
-            print("📖 Title ma'lumotlari:", title)
+            print(f"📌 Olingan partner_id: {partner_id}")
+            print("📖 Name ma'lumotlari:", name)
             print("📖 Description ma'lumotlari:", description)
-            print("📷 Yuklangan rasm:", image)
+            print("📷 Yuklangan rasm:", logo)
+            print("🔗 Veb-sayt manzili:", website_url)
+            print("⚡ Holati (is_active):", is_active)
 
-            if not doctor_id:
-                print("🔴 Xatolik: doctor_id kiritilmagan!")
+            if not partner_id:
+                print("🔴 Xatolik: partner_id kiritilmagan!")
                 return JsonResponse({"success": False, "error": "❌ ID kiritilishi shart!"}, status=400)
 
-            doctor = get_object_or_404(DoctorAInfo, id=doctor_id)
-            print(f"🟢 Doctor ma'lumotlari topildi: {doctor}")
+            partner = get_object_or_404(Partner, id=partner_id)
+            print(f"🟢 Partner ma'lumotlari topildi: {partner}")
 
             # 🔹 Yangilash
-            doctor.title = title
-            doctor.description = description
-            if image:
-                doctor.image = image  # 🔹 Agar rasm yuklangan bo‘lsa, yangilash
+            partner.name = name
+            partner.description = description
+            partner.website_url = website_url  # ✅ Website URL ni yangilash
+            partner.is_active = is_active  # ✅ `is_active` ni yangilash
+
+            if logo:
+                partner.logo = logo  # 🔹 Agar rasm yuklangan bo‘lsa, yangilash
                 print("🖼️ Rasm yangilandi!")
 
-            doctor.save()
-            print("✅ Doctor A ma'lumotlari yangilandi!")
+            partner.save()
+            print("✅ Partner ma'lumotlari yangilandi!")
 
-            return JsonResponse({"success": True, "message": "✅ Doctor A ma'lumotlari yangilandi!"})
+            return JsonResponse({"success": True, "message": "✅ Partner ma'lumotlari yangilandi!"})
 
         except json.JSONDecodeError:
             print("🔴 Xatolik: JSON formati noto‘g‘ri!")
@@ -243,17 +277,17 @@ class DoctorAInfoView(TemplateView):
         """ Ma'lumotni o‘chirish """
         try:
             data = json.loads(request.body)
-            doctor_id = data.get("doctor_id")
+            partner_id = data.get("partner_id")
 
-            if not doctor_id:
+            if not partner_id:
                 print("🔴 Xatolik: ID kiritilmagan!")
                 return JsonResponse({"success": False, "error": "❌ ID kiritilishi shart!"}, status=400)
 
-            doctor = get_object_or_404(DoctorAInfo, id=doctor_id)
-            doctor.delete()
-            print(f"🟢 Doctor ID={doctor_id} muvaffaqiyatli o‘chirildi!")
+            partner = get_object_or_404(Partner, id=partner_id)
+            partner.delete()
+            print(f"🟢 Doctor ID={partner_id} muvaffaqiyatli o‘chirildi!")
 
-            return JsonResponse({"success": True, "message": "✅ Doctor A ma'lumotlari o‘chirildi!"})
+            return JsonResponse({"success": True, "message": "✅ Partner ma'lumotlari o‘chirildi!"})
 
         except json.JSONDecodeError:
             print("🔴 Xatolik: JSON formati noto‘g‘ri!")
@@ -262,26 +296,28 @@ class DoctorAInfoView(TemplateView):
 
 @login_required
 @csrf_exempt  # CSRF muammolarni oldini olish uchun
-def get_doctor_info(request):
-    """ AJAX orqali Doctor A ma'lumotlarini olish """
+def get_partner_info(request):
+    """ AJAX orqali partner ma'lumotlarini olish """
     if request.method != "GET":
         return JsonResponse({"error": "❌ Faqat GET so‘rovlarga ruxsat berilgan!"}, status=405)
 
-    doctor_id = request.GET.get("doctor_id")
-    if not doctor_id:
-        return JsonResponse({"error": "❌ Doctor ID ko‘rsatilishi shart!"}, status=400)
+    partner_id = request.GET.get("partner_id")
+    if not partner_id:
+        return JsonResponse({"error": "❌ Partner ID ko‘rsatilishi shart!"}, status=400)
 
-    # Doctor ma'lumotini olish yoki 404 qaytarish
-    doctor = get_object_or_404(DoctorAInfo, id=doctor_id)
+    # Partner ma'lumotini olish yoki 404 qaytarish
+    partner = get_object_or_404(Partner, id=partner_id)
 
     data = {
-        "id": doctor.id,
-        "image_url": doctor.image.url if doctor.image else "",
-        "title": doctor.title,  # JSON formatda
-        "description": doctor.description  # JSON formatda
+        "id": partner.id,
+        "logo_url": partner.logo.url if partner.logo else "",
+        "name": partner.name,  # JSON formatda
+        "description": partner.description,  # JSON formatda
+        "website_url": partner.website_url if partner.website_url else ""  # ✅ Website URL qo'shildi
     }
 
     return JsonResponse(data)  # 🔹 JSON formatda qaytarish
+
 
 
 @method_decorator(login_required, name='dispatch')
@@ -477,6 +513,12 @@ class AddUsersView(View):
         job_title = request.POST.get("job_title")
         is_active = request.POST.get("is_active") == "on"
 
+        # ✅ Yangi inputlarni qabul qilish
+        work_start_time = request.POST.get("work_start_time")  # Ish boshlanish vaqti
+        work_end_time = request.POST.get("work_end_time")  # Ish tugash vaqti
+        telegram_username = request.POST.get("telegram_username")  # Telegram foydalanuvchi nomi
+        instagram_username = request.POST.get("instagram_username")  # Instagram foydalanuvchi nomi
+
         profile_picture = request.FILES.get("profile_picture")  # Agar rasm yuklangan bo‘lsa
 
         # ✅ Majburiy maydonlarni tekshirish
@@ -508,7 +550,12 @@ class AddUsersView(View):
             date_of_birth=date_of_birth,
             job_title=job_title,
             is_active=is_active,
-            profile_picture=profile_picture
+            profile_picture=profile_picture,
+            # ✅ **Yangi maydonlarni saqlash**
+            work_start_time = work_start_time,  # Ish boshlanish vaqti
+            work_end_time = work_end_time,  # Ish tugash vaqti
+            telegram_username = telegram_username,  # Telegram foydalanuvchi nomi
+            instagram_username = instagram_username  # Instagram foydalanuvchi nomi
         )
 
         # ✅ Telegram kanaliga xabar yuborish
@@ -566,3 +613,49 @@ class LogsView(TemplateView):
         context = super().get_context_data(**kwargs)
 
         return context
+
+@method_decorator(login_required, name='dispatch')
+class AppointmentView(View):
+    template_name = 'havfsizlik/appointment.html'
+    paginate_by = 10  # Har bir sahifada 10 ta qabul chiqadi
+
+    def get(self, request):
+        """ Qabul ro‘yxatini chiqarish (qidirish + pagination) """
+        appointments = Appointment.objects.all()
+
+        # ✅ **Qidirish**
+        search_query = request.GET.get('q')
+        if search_query:
+            appointments = appointments.filter(
+                full_name__icontains=search_query
+            ) | appointments.filter(phone_number__icontains=search_query)
+
+        # ✅ **Pagination**
+        paginator = Paginator(appointments.order_by('-created_at'), self.paginate_by)
+        page_number = request.GET.get('page')
+        page_obj = paginator.get_page(page_number)
+
+        return render(request, self.template_name, {
+            "appointments": page_obj,
+            "search_query": search_query
+        })
+
+    def post(self, request):
+        """ Qabul holatini o‘zgartirish """
+        appointment_id = request.POST.get('appointment_id')
+        status = request.POST.get('status')
+
+        if appointment_id and status in ['pending', 'approved', 'canceled']:
+            appointment = get_object_or_404(Appointment, id=appointment_id)
+            appointment.status = status
+            appointment.save()
+            return JsonResponse({"success": True, "message": "✅ Qabul holati yangilandi!"})
+
+        return JsonResponse({"success": False, "message": "❌ Xato so‘rov!"}, status=400)
+
+    def delete(self, request):
+        """ Qabulni o‘chirish """
+        appointment_id = request.GET.get('appointment_id')
+        appointment = get_object_or_404(Appointment, id=appointment_id)
+        appointment.delete()
+        return JsonResponse({"success": True, "message": "✅ Qabul o‘chirildi!"})
