@@ -44,17 +44,27 @@ class MainView(TemplateView):
         if not site_settings:
             site_settings = SiteSettings()
 
+        # Ma'lumotlarni olish
         site_settings.site_name = request.POST.get('site_name', site_settings.site_name)
         site_settings.contact_email = request.POST.get('contact_email', site_settings.contact_email)
         site_settings.contact_phone = request.POST.get('contact_phone', site_settings.contact_phone)
         site_settings.address = request.POST.get('address', site_settings.address)
         site_settings.maintenance_mode = request.POST.get('maintenance_mode') == 'on'
 
+        # Yangi maydonlar (ish vaqti va ijtimoiy tarmoqlar)
+        site_settings.working_hours = request.POST.get('working_hours', site_settings.working_hours)
+        site_settings.facebook_url = request.POST.get('facebook_url', site_settings.facebook_url)
+        site_settings.telegram_url = request.POST.get('telegram_url', site_settings.telegram_url)
+        site_settings.instagram_url = request.POST.get('instagram_url', site_settings.instagram_url)
+        site_settings.youtube_url = request.POST.get('youtube_url', site_settings.youtube_url)
+
+        # Logotiplarni yangilash
         if 'logo_dark' in request.FILES:
             site_settings.logo_dark = self.resize_image(request.FILES['logo_dark'])
         if 'logo_light' in request.FILES:
             site_settings.logo_light = self.resize_image(request.FILES['logo_light'])
 
+        # Saqlash
         site_settings.save()
         messages.success(request, "Sayt sozlamalari muvaffaqiyatli saqlandi!")
         return redirect('admin-index')

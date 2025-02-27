@@ -32,11 +32,13 @@
                         </div>
                         <div class="mb-3">
                             <label for="logo_dark" class="form-label">Dark Logotip</label>
-                            <input type="file" class="form-control" id="logo_dark" name="logo_dark" onchange="previewImage(event, 'preview_dark')">
+                            <input type="file" class="form-control" id="logo_dark" name="logo_dark"
+                                   onchange="previewImage(event, 'preview_dark')">
                         </div>
                         <div class="mb-3">
                             <label for="logo_light" class="form-label">Light Logotip</label>
-                            <input type="file" class="form-control" id="logo_light" name="logo_light" onchange="previewImage(event, 'preview_light')">
+                            <input type="file" class="form-control" id="logo_light" name="logo_light"
+                                   onchange="previewImage(event, 'preview_light')">
                         </div>
                         <div class="mb-3">
                             <label for="contact_email" class="form-label">Aloqa Email</label>
@@ -53,6 +55,24 @@
                             <textarea class="form-control" id="address" name="address"
                                       required>{{ site_settings.address }}</textarea>
                         </div>
+                        <div class="mb-3">
+                            <label class="form-label">Ijtimoiy tarmoqlar</label>
+                            <div class="d-flex gap-2">
+                                <input type="url" class="form-control" name="facebook_url" placeholder="Facebook URL"
+                                       value="{{ site_settings.facebook_url }}">
+                                <input type="url" class="form-control" name="telegram_url" placeholder="Telegram URL"
+                                       value="{{ site_settings.telegram_url }}">
+                                <input type="url" class="form-control" name="instagram_url" placeholder="Instagram URL"
+                                       value="{{ site_settings.instagram_url }}">
+                                <input type="url" class="form-control" name="youtube_url" placeholder="YouTube URL"
+                                       value="{{ site_settings.youtube_url }}">
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="working_hours" class="form-label">Ish vaqti</label>
+                            <input type="text" class="form-control" id="working_hours" name="working_hours"
+                                   value="{{ site_settings.working_hours }}" placeholder="Dushanba - Juma 9:00 - 17:00">
+                        </div>
                         <div class="form-check mb-3">
                             <input class="form-check-input" type="checkbox" id="maintenance_mode"
                                    name="maintenance_mode" {% if site_settings.maintenance_mode %}checked{% endif %}>
@@ -68,11 +88,15 @@
                     <div class="row">
                         <div class="col-md-6">
                             <p>Dark Logotip</p>
-                            <img id="preview_dark" src="{% if site_settings.logo_dark %}{{ site_settings.logo_dark.url }}{% endif %}" class="img-fluid" style="max-height: 100px;">
+                            <img id="preview_dark"
+                                 src="{% if site_settings.logo_dark %}{{ site_settings.logo_dark.url }}{% endif %}"
+                                 class="img-fluid" style="max-height: 100px;">
                         </div>
                         <div class="col-md-6">
                             <p>Light Logotip</p>
-                            <img id="preview_light" src="{% if site_settings.logo_light %}{{ site_settings.logo_light.url }}{% endif %}" class="img-fluid" style="max-height: 100px;">
+                            <img id="preview_light"
+                                 src="{% if site_settings.logo_light %}{{ site_settings.logo_light.url }}{% endif %}"
+                                 class="img-fluid" style="max-height: 100px;">
                         </div>
                     </div>
                 </div>
@@ -82,14 +106,14 @@
 {% endblock content %}
 
 {% block vendor_js %}
-<script>
-    function previewImage(event, previewId) {
-        var reader = new FileReader();
-        reader.onload = function () {
-            var output = document.getElementById(previewId);
-            output.src = reader.result;
+    <script>
+        function previewImage(event, previewId) {
+            var reader = new FileReader();
+            reader.onload = function () {
+                var output = document.getElementById(previewId);
+                output.src = reader.result;
+            }
+            reader.readAsDataURL(event.target.files[0]);
         }
-        reader.readAsDataURL(event.target.files[0]);
-    }
-</script>
+    </script>
 {% endblock vendor_js %}
