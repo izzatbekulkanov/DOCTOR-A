@@ -11,7 +11,7 @@ from django.views.generic import TemplateView
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from PIL import Image
-from django.utils.translation import gettext_lazy as _
+from django.urls import reverse
 from io import BytesIO
 from django.core.files.uploadedfile import InMemoryUploadedFile
 import sys
@@ -21,7 +21,7 @@ from config import settings
 from config.settings import LANGUAGES
 from config.telegram_bot import send_message
 from members.models import CustomUser, Appointment
-from .models import SiteSettings, MainPageBanner, DoctorAInfo, ContactPhone, Partner
+from .models import SiteSettings, MainPageBanner, DoctorAInfo, ContactPhone, Partner, MedicalCheckupApplication
 
 
 class MainView(TemplateView):
@@ -155,7 +155,7 @@ def delete_banner(request, banner_id):
 
 @method_decorator(login_required, name='dispatch')
 class PartnerInfoView(TemplateView):
-    template_name = 'news/partner.html'
+    template_name = 'partners/partner.html'
 
     def get_context_data(self, **kwargs):
         """ Sahifa uchun kontekst ma'lumotlari """
@@ -164,11 +164,24 @@ class PartnerInfoView(TemplateView):
 
         if partner_id:
             context["partner_info"] = Partner.objects.filter(id=partner_id).first()
+            # Agar partner_id mavjud bo‘lsa, breadcrumbs shu partiyaga moslashtiriladi
+            partner = context["partner_info"]
+            breadcrumbs = [
+                {"title": "Bosh sahifa", "url": reverse('admin-index')},
+                {"title": "Hamkorlar", "url": reverse('get-partner-info')},
+                {"title": partner.name if partner else "Sherik", "url": "#", "active": True},
+            ]
         else:
             context["partner_list"] = Partner.objects.all()  # Barcha ma'lumotlarni olish
+            # Agar partner_id bo‘lmasa, umumiy sheriklar ro‘yxati uchun breadcrumbs
+            breadcrumbs = [
+                {"title": "Bosh sahifa", "url": reverse('admin-index')},
+                {"title": "Hamkorlar", "url": reverse('get-partner-info'), "active": True},
+            ]
 
         context["LANGUAGES"] = settings.LANGUAGES  # Tilni HTML-ga uzatish
         context["LANGUAGES_JSON"] = json.dumps([(code, str(name)) for code, name in settings.LANGUAGES])
+        context["breadcrumbs"] = breadcrumbs  # Breadcrumb qo‘shildi
 
         return context
 
@@ -319,7 +332,6 @@ def get_partner_info(request):
     return JsonResponse(data)  # 🔹 JSON formatda qaytarish
 
 
-
 @method_decorator(login_required, name='dispatch')
 class ContactPhoneView(TemplateView):
     template_name = 'views/contact-phone.html'
@@ -428,12 +440,34 @@ def get_contact_phone(request):
 
 
 @method_decorator(login_required, name='dispatch')
-class UsersView(TemplateView):
+class UsersView(View):
     template_name = 'havfsizlik/users.html'
 
+    def get(self, request, *args, **kwargs):
+        """ GET so‘rovlar uchun foydalanuvchilar ro‘yxatini ko‘rsatish """
+        context = self.get_context_data(**kwargs)
+        return render(request, self.template_name, context)
+
+    def post(self, request, *args, **kwargs):
+        """ POST so‘rovlar uchun foydalanuvchini o‘chirish """
+        user_id = request.POST.get('user_id')  # Modal yoki formadan keladigan ID
+        if user_id:
+            try:
+                user = CustomUser.objects.get(id=user_id)
+                user.delete()
+                messages.success(request, f"{user.full_name} muvaffaqiyatli o‘chirildi.")
+            except CustomUser.DoesNotExist:
+                messages.error(request, "Foydalanuvchi topilmadi.")
+            except Exception as e:
+                messages.error(request, f"Xatolik yuz berdi: {str(e)}")
+        else:
+            messages.error(request, "Foydalanuvchi ID topilmadi.")
+
+        # O‘chirishdan so‘ng foydalanuvchilar ro‘yxatiga qaytish
+        return redirect('users-view')
+
     def get_context_data(self, **kwargs):
-        """ Foydalanuvchilar uchun context yaratish """
-        context = super().get_context_data(**kwargs)
+        """ Foydalanuvchilar uchun kontekst yaratish """
         search_query = self.request.GET.get('search', '').strip()
         page = self.request.GET.get('page', 1)
 
@@ -450,13 +484,32 @@ class UsersView(TemplateView):
         paginator = Paginator(users, 10)  # Har bir sahifada 10 ta foydalanuvchi
         paginated_users = paginator.get_page(page)
 
-        context["users"] = paginated_users
-        context["search_query"] = search_query
-        context["LANGUAGES"] = settings.LANGUAGES
-        context["total_pages"] = paginator.num_pages
-        context["current_page"] = paginated_users.number
-        context["has_next"] = paginated_users.has_next()
-        context["has_previous"] = paginated_users.has_previous()
+        # Jins va faollik statistikasi
+        female_count = CustomUser.objects.filter(gender='female').count()
+        all_count = CustomUser.objects.all().count()
+        male_count = CustomUser.objects.filter(gender='male').count()
+        inactive_count = CustomUser.objects.filter(is_active=False).count()
+
+        # Breadcrumb uchun kontekst
+        breadcrumbs = [
+            {"title": "Bosh sahifa", "url": "{% url 'admin-index' %}"},
+            {"title": "Foydalanuvchilar", "url": "{% url 'users-view' %}", "active": True},
+        ]
+
+        context = {
+            "users": paginated_users,
+            "search_query": search_query,
+            "LANGUAGES": settings.LANGUAGES,
+            "total_pages": paginator.num_pages,
+            "current_page": paginated_users.number,
+            "has_next": paginated_users.has_next(),
+            "has_previous": paginated_users.has_previous(),
+            "breadcrumbs": breadcrumbs,
+            "female_count": female_count,  # Ayol foydalanuvchilar soni
+            "all_count": all_count,  # Barcha foydalanuvchilar soni
+            "male_count": male_count,  # Erkak foydalanuvchilar soni
+            "inactive_count": inactive_count,  # Faol bo‘lmagan foydalanuvchilar soni
+        }
         return context
 
 
@@ -465,32 +518,21 @@ class AddUsersView(View):
     template_name = 'havfsizlik/add-users.html'
 
     def get(self, request, *args, **kwargs):
-        """ GET so‘rovni qabul qiladi va sahifani qaytaradi """
-        print("\n📌 DEBUG: GET so‘rovi kelib tushdi!")
-        print(f"🌍 URL: {request.build_absolute_uri()}")
-        print(f"🔍 GET Parametrlari: {dict(request.GET)}")
-        return render(request, self.template_name)
+        """ GET so‘rovlar uchun forma ko‘rsatish """
+        context = self.get_context_data(**kwargs)
+        return render(request, self.template_name, context)
 
     def post(self, request, *args, **kwargs):
         """ POST so‘rov bilan foydalanuvchini yaratish """
-
-        # ✅ So‘rov turini aniqlab, debugging uchun chiqarish
-        print("\n📌 DEBUG: POST so‘rovi qabul qilindi!")
-        print(f"🌍 URL: {request.build_absolute_uri()}")
-        print(f"📨 So‘rov turi: {request.method}")
-
-        # ✅ Yuborilgan `POST` ma’lumotlarini chiqarish
-        print("📩 Yuborilgan POST ma’lumotlari:")
         for key, value in request.POST.items():
             print(f"  - {key}: {value}")
 
-        # ✅ Agar `FILES` mavjud bo‘lsa, chiqaramiz
+        # Agar `FILES` mavjud bo‘lsa, chiqaramiz
         if request.FILES:
-            print("🖼 Yuklangan fayllar:")
             for key, file in request.FILES.items():
                 print(f"  - {key}: {file.name} ({file.content_type})")
 
-        # ✅ Majburiy maydonlarni olish
+        # Majburiy maydonlarni olish
         full_name = request.POST.get("full_name")
         phone_number = request.POST.get("phone_number")
         gender = request.POST.get("gender")
@@ -512,85 +554,201 @@ class AddUsersView(View):
         department = request.POST.get("department")
         job_title = request.POST.get("job_title")
         is_active = request.POST.get("is_active") == "on"
+        work_start_time = request.POST.get("work_start_time")
+        work_end_time = request.POST.get("work_end_time")
+        telegram_username = request.POST.get("telegram_username")
+        instagram_username = request.POST.get("instagram_username")
+        profile_picture = request.FILES.get("profile_picture")
 
-        # ✅ Yangi inputlarni qabul qilish
-        work_start_time = request.POST.get("work_start_time")  # Ish boshlanish vaqti
-        work_end_time = request.POST.get("work_end_time")  # Ish tugash vaqti
-        telegram_username = request.POST.get("telegram_username")  # Telegram foydalanuvchi nomi
-        instagram_username = request.POST.get("instagram_username")  # Instagram foydalanuvchi nomi
-
-        profile_picture = request.FILES.get("profile_picture")  # Agar rasm yuklangan bo‘lsa
-
-        # ✅ Majburiy maydonlarni tekshirish
-        if not full_name:
+        # Majburiy maydonlarni tekshirish
+        if not full_name or not phone_number or not gender:
             print("❌ Xatolik: Majburiy maydonlar to‘ldirilmagan!")
-            return JsonResponse({"status": "error", "message": "Majburiy maydonlarni to‘ldiring!"}, status=400)
+            messages.error(request, "Majburiy maydonlarni to‘ldiring: F.I.O, Telefon raqami va Jins!")
+            return redirect('add-user')  # URL nomini 'add-users-view' dan 'add-user' ga o‘zgartirdim, moslashtiring
 
-        # ✅ Foydalanuvchi yaratish
+        # Foydalanuvchi yaratish
         print("🚀 Yangi foydalanuvchi yaratish jarayoni boshlandi...")
-        user = CustomUser(
-            full_name=full_name,
-            username=username,
-            address=address,
-            emergency_contact=emergency_contact,
-            insurance_number=insurance_number,
-            shift_schedule=shift_schedule,
-            employment_date=employment_date,
-            tax_identification_number=tax_identification_number,
-            medical_specialty=medical_specialty,
-            bank_account_number=bank_account_number,
-            contract_end_date=contract_end_date,
-            professional_license_number=professional_license_number,
-            department=department,
-            bio=bio,
-            nationality=nationality,
-            employee_id=employee_id,
-            phone_number=phone_number,
-            gender=gender,
-            date_of_birth=date_of_birth,
-            job_title=job_title,
-            is_active=is_active,
-            profile_picture=profile_picture,
-            # ✅ **Yangi maydonlarni saqlash**
-            work_start_time = work_start_time,  # Ish boshlanish vaqti
-            work_end_time = work_end_time,  # Ish tugash vaqti
-            telegram_username = telegram_username,  # Telegram foydalanuvchi nomi
-            instagram_username = instagram_username  # Instagram foydalanuvchi nomi
-        )
+        try:
+            user = CustomUser(
+                full_name=full_name,
+                username=username,
+                address=address,
+                emergency_contact=emergency_contact,
+                insurance_number=insurance_number,
+                shift_schedule=shift_schedule,
+                employment_date=employment_date,
+                tax_identification_number=tax_identification_number,
+                medical_specialty=medical_specialty,
+                bank_account_number=bank_account_number,
+                contract_end_date=contract_end_date,
+                professional_license_number=professional_license_number,
+                department=department,
+                bio=bio,
+                nationality=nationality,
+                employee_id=employee_id,
+                phone_number=phone_number,
+                gender=gender,
+                date_of_birth=date_of_birth,
+                job_title=job_title,
+                is_active=is_active,
+                profile_picture=profile_picture,
+                work_start_time=work_start_time,
+                work_end_time=work_end_time,
+                telegram_username=telegram_username,
+                instagram_username=instagram_username
+            )
 
-        # ✅ Telegram kanaliga xabar yuborish
-        message_text = (
-            f"👤 <b>Yangi foydalanuvchi qo‘shildi!</b>\n"
-            f"#_<b>ADD_USER</b>\n"
-            f"📌 Ismi: {full_name}\n"
-            f"📛 Foydalanuvchi nomi: {username}\n"
-            f"📞 Telefon: {phone_number}\n"
-            f"🏠 Manzil: {address}\n"
-            f"🎂 Tug‘ilgan sana: {date_of_birth}\n"
-            f"⚥ Jinsi: {'Erkak' if gender == 'male' else 'Ayol'}\n"
-            f"🌍 Millati: {nationality}\n"
-            f"🆔 Xodim ID: {employee_id}\n"
-            f"📝 Bio: {bio}\n"
-            f"🚑 Favqulodda aloqa: {emergency_contact}\n"
-            f"🏢 Bo‘lim: {department}\n"
-            f"💼 Lavozim: {job_title}\n"
-            f"📅 Ishga kirgan sana: {employment_date}\n"
-            f"📆 Shartnoma muddati: {contract_end_date}\n"
-            f"🔢 Professional litsenziya raqami: {professional_license_number}\n"
-            f"🩺 Tibbiy mutaxassisligi: {medical_specialty}\n"
-            f"⏰ Ish jadvali: {shift_schedule}\n"
-            f"🏦 Bank hisobi: {bank_account_number}\n"
-            f"🆔 Soliq identifikatsiya raqami: {tax_identification_number}\n"
-            f"🛡 Sug‘urta raqami: {insurance_number}\n"
-            f"🟢 Holati: {'Faol' if is_active == 'True' else 'Faol emas'}"
-        )
+            # Telegram kanaliga xabar yuborish
+            message_text = (
+                f"👤 <b>Yangi foydalanuvchi qo‘shildi!</b>\n"
+                f"#_<b>ADD_USER</b>\n"
+                f"📌 Ismi: {full_name}\n"
+                f"📛 Foydalanuvchi nomi: {username}\n"
+                f"📞 Telefon: {phone_number}\n"
+                f"🏠 Manzil: {address}\n"
+                f"🎂 Tug‘ilgan sana: {date_of_birth}\n"
+                f"⚥ Jinsi: {'Erkak' if gender == 'male' else 'Ayol'}\n"
+                f"🌍 Millati: {nationality}\n"
+                f"🆔 Xodim ID: {employee_id}\n"
+                f"📝 Bio: {bio}\n"
+                f"🚑 Favqulodda aloqa: {emergency_contact}\n"
+                f"🏢 Bo‘lim: {department}\n"
+                f"💼 Lavozim: {job_title}\n"
+                f"📅 Ishga kirgan sana: {employment_date}\n"
+                f"📆 Shartnoma muddati: {contract_end_date}\n"
+                f"🔢 Professional litsenziya raqami: {professional_license_number}\n"
+                f"🩺 Tibbiy mutaxassisligi: {medical_specialty}\n"
+                f"⏰ Ish jadvali: {shift_schedule}\n"
+                f"🏦 Bank hisobi: {bank_account_number}\n"
+                f"🆔 Soliq identifikatsiya raqami: {tax_identification_number}\n"
+                f"🛡 Sug‘urta raqami: {insurance_number}\n"
+                f"🟢 Holati: {'Faol' if is_active else 'Faol emas'}"
+            )
+            send_message(message_text)
 
-        send_message(message_text)
+            user.save()
+            print(f"✅ Foydalanuvchi qo‘shildi: {user.full_name} (ID: {user.id})")
+            messages.success(request, f"{user.full_name} muvaffaqiyatli qo‘shildi!")
+            return redirect('users-view')
 
-        user.save()
+        except Exception as e:
+            print(f"❌ Xatolik: {str(e)}")
+            messages.error(request, f"Hodim qo‘shishda xatolik yuz berdi: {str(e)}")
+            return redirect('add-users-view')  # Xatolik bo‘lsa qayta forma sahifasiga qaytadi
 
-        print(f"✅ Foydalanuvchi qo‘shildi: {user.full_name} (ID: {user.id})")
-        return JsonResponse({"status": "success", "message": "Foydalanuvchi muvaffaqiyatli qo‘shildi!"})
+    def get_context_data(self, **kwargs):
+        """ Kontekst yaratish, shu jumladan breadcrumb """
+        context = {}
+        breadcrumbs = [
+            {"title": "Bosh sahifa", "url": reverse('admin-index')},
+            {"title": "Foydalanuvchilar", "url": reverse('users-view')},
+            {"title": "Foydalanuvchi qo‘shish", "url": reverse('add-users-view'), "active": True},
+        ]
+        context["breadcrumbs"] = breadcrumbs
+        return context
+
+
+@method_decorator(login_required, name='dispatch')
+class EditUsersView(View):
+    template_name = 'havfsizlik/edit-users.html'
+
+    def get(self, request, user_id, *args, **kwargs):
+        """ GET so‘rovlar uchun forma ko‘rsatish """
+        user = get_object_or_404(CustomUser, id=user_id)
+        context = self.get_context_data(user=user, **kwargs)
+        context['user'] = user  # Foydalanuvchi ma’lumotlarini kontekstga qo‘shish
+        return render(request, self.template_name, context)
+
+    def post(self, request, user_id, *args, **kwargs):
+        """ POST so‘rov bilan foydalanuvchi ma’lumotlarini yangilash """
+        user = get_object_or_404(CustomUser, id=user_id)
+
+        # Forma ma’lumotlarini olish
+        full_name = request.POST.get("full_name")
+        phone_number = request.POST.get("phone_number")
+        gender = request.POST.get("gender")
+        username = request.POST.get("username")
+        address = request.POST.get("address")
+        emergency_contact = request.POST.get("emergency_contact")
+        employment_date = request.POST.get("employment_date")
+        employee_id = request.POST.get("employee_id")
+        bio = request.POST.get("bio")
+        nationality = request.POST.get("nationality")
+        professional_license_number = request.POST.get("professional_license_number")
+        bank_account_number = request.POST.get("bank_account_number")
+        tax_identification_number = request.POST.get("tax_identification_number")
+        insurance_number = request.POST.get("insurance_number")
+        shift_schedule = request.POST.get("shift_schedule")
+        medical_specialty = request.POST.get("medical_specialty")
+        date_of_birth = request.POST.get("date_of_birth")
+        contract_end_date = request.POST.get("contract_end_date")
+        department = request.POST.get("department")
+        job_title = request.POST.get("job_title")
+        is_active = request.POST.get("is_active") == "on"
+        work_start_time = request.POST.get("work_start_time")
+        work_end_time = request.POST.get("work_end_time")
+        telegram_username = request.POST.get("telegram_username")
+        instagram_username = request.POST.get("instagram_username")
+        profile_picture = request.FILES.get("profile_picture")
+
+        # Majburiy maydonlarni tekshirish
+        if not full_name or not phone_number or not gender:
+            messages.error(request, "Majburiy maydonlarni to‘ldiring: F.I.O, Telefon raqami va Jins!")
+            return redirect('edit-user', user_id=user_id)
+
+        # Foydalanuvchi ma’lumotlarini yangilash
+        try:
+            user.full_name = full_name
+            user.username = username
+            user.phone_number = phone_number
+            user.gender = gender
+            user.address = address
+            user.emergency_contact = emergency_contact
+            user.employment_date = employment_date
+            user.employee_id = employee_id
+            user.bio = bio
+            user.nationality = nationality
+            user.professional_license_number = professional_license_number
+            user.bank_account_number = bank_account_number
+            user.tax_identification_number = tax_identification_number
+            user.insurance_number = insurance_number
+            user.shift_schedule = shift_schedule
+            user.medical_specialty = medical_specialty
+            # Sana maydonini tekshirish va yangilash
+            if date_of_birth and date_of_birth.strip():  # Bo‘sh emasligini tekshirish
+                user.date_of_birth = date_of_birth
+            else:
+                user.date_of_birth = None  # Agar bo‘sh bo‘lsa, None qo‘yish
+            user.contract_end_date = contract_end_date
+            user.department = department
+            user.job_title = job_title
+            user.is_active = is_active
+            user.work_start_time = work_start_time
+            user.work_end_time = work_end_time
+            user.telegram_username = telegram_username
+            user.instagram_username = instagram_username
+            if profile_picture:  # Agar yangi rasm yuklansa
+                user.profile_picture = profile_picture
+
+            user.save()
+            messages.success(request, f"{user.full_name} muvaffaqiyatli tahrirlandi!")
+            return redirect('users-view')
+
+        except Exception as e:
+            messages.error(request, f"Tahrirlashda xatolik yuz berdi: {str(e)}")
+            return redirect('edit-user', user_id=user_id)
+
+    def get_context_data(self, **kwargs):
+        """ Kontekst yaratish, shu jumladan breadcrumb """
+        context = {}
+        user = kwargs.get('user')
+        breadcrumbs = [
+            {"title": "Bosh sahifa", "url": reverse('admin-index')},
+            {"title": "Foydalanuvchilar", "url": reverse('users-view')},
+            {"title": f"{user.full_name if user else 'Foydalanuvchi'} tahrirlash", "url": "", "active": True},
+        ]
+        context["breadcrumbs"] = breadcrumbs
+        return context
 
 
 @method_decorator(login_required, name='dispatch')
@@ -614,30 +772,32 @@ class LogsView(TemplateView):
 
         return context
 
+
 @method_decorator(login_required, name='dispatch')
 class AppointmentView(View):
-    template_name = 'havfsizlik/appointment.html'
+    template_name = 'views/appointment.html'
     paginate_by = 10  # Har bir sahifada 10 ta qabul chiqadi
 
     def get(self, request):
         """ Qabul ro‘yxatini chiqarish (qidirish + pagination) """
-        appointments = Appointment.objects.all()
+        appointments = Appointment.objects.all().order_by('-created_at')
 
-        # ✅ **Qidirish**
-        search_query = request.GET.get('q')
-        if search_query:
-            appointments = appointments.filter(
-                full_name__icontains=search_query
-            ) | appointments.filter(phone_number__icontains=search_query)
+
 
         # ✅ **Pagination**
         paginator = Paginator(appointments.order_by('-created_at'), self.paginate_by)
         page_number = request.GET.get('page')
         page_obj = paginator.get_page(page_number)
 
+        # Breadcrumb uchun kontekst
+        breadcrumbs = [
+            {"title": "Bosh sahifa", "url": reverse('admin-index')},
+            {"title": "Qabullar", "url": reverse('appointment-view'), "active": True},
+        ]
+
         return render(request, self.template_name, {
             "appointments": page_obj,
-            "search_query": search_query
+            "breadcrumbs": breadcrumbs,  # Breadcrumb qo‘shildi
         })
 
     def post(self, request):
@@ -659,3 +819,49 @@ class AppointmentView(View):
         appointment = get_object_or_404(Appointment, id=appointment_id)
         appointment.delete()
         return JsonResponse({"success": True, "message": "✅ Qabul o‘chirildi!"})
+
+@method_decorator(login_required, name='dispatch')
+class MedicalCheckupApplicationView(View):
+    template_name = 'views/medicalCheckup.html'
+    paginate_by = 10  # Har bir sahifada 10 ta ariza
+
+    def get(self, request):
+        """ Arizalarni ko‘rsatish (qidirish + pagination) """
+        applications = MedicalCheckupApplication.objects.all()
+
+        # ✅ Qidiruv
+        search_query = request.GET.get('q', '').strip()
+        if search_query:
+            applications = applications.filter(
+                full_name__icontains=search_query
+            ) | applications.filter(phone_number__icontains=search_query)
+
+        # ✅ Pagination
+        paginator = Paginator(applications.order_by('-created_at'), self.paginate_by)
+        page_number = request.GET.get('page')
+        page_obj = paginator.get_page(page_number)
+
+        # Breadcrumb uchun kontekst
+        breadcrumbs = [
+            {"title": "Bosh sahifa", "url": reverse('admin-index')},
+            {"title": "Tibbiy ko'rik arizalari", "url": reverse('medical-checkup-applications'), "active": True},
+        ]
+
+        context = {
+            "applications": page_obj,
+            "search_query": search_query,
+            "breadcrumbs": breadcrumbs,
+        }
+        return render(request, self.template_name, context)
+
+    def delete(self, request):
+        """ Ariza o‘chirish """
+        application_id = request.GET.get('application_id')
+        if application_id:
+            try:
+                application = get_object_or_404(MedicalCheckupApplication, id=application_id)
+                application.delete()
+                return JsonResponse({"status": "success", "message": "Ariza muvaffaqiyatli o‘chirildi!"})
+            except MedicalCheckupApplication.DoesNotExist:
+                return JsonResponse({"status": "error", "message": "Ariza topilmadi!"}, status=404)
+        return JsonResponse({"status": "error", "message": "Ariza ID kiritilmadi!"}, status=400)

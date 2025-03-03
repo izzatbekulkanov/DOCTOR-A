@@ -3,7 +3,6 @@ import json
 
 register = template.Library()
 
-
 @register.filter
 def get_language_text(data, lang_code):
     """
@@ -20,3 +19,12 @@ def get_language_text(data, lang_code):
         return data.get(lang_code, data.get('uz', 'Tavsif mavjud emas'))
 
     return data  # Agar JSON bo‘lmasa, o‘zini qaytaradi
+
+@register.filter
+def get_initials(value):
+    if not value:
+        return ""
+    parts = value.split()
+    if len(parts) >= 2:
+        return f"{parts[0][0]}{parts[-1][0]}".upper()
+    return value[:1].upper()

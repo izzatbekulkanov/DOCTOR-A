@@ -1,108 +1,328 @@
 {% extends 'administrator/main.html' %}
 {% load static %}
+{% load i18n %}
 
 {% block title %}
-    <title>Foydalanuvchilar</title>
+    Foydalanuvchilar
 {% endblock title %}
 
+{% block page_css %}
+
+    <link rel="stylesheet" href="{% static 'fonts/remix/remixicon.css' %}">
+    <link rel="stylesheet" href="{% static 'css/main.min.css' %}">
+
+    <!-- *************
+		************ Vendor Css Files *************
+	************ -->
+
+    <!-- Scrollbar CSS -->
+    <link rel="stylesheet" href="{% static 'vendor/overlay-scroll/OverlayScrollbars.min.css' %}">
+
+    <!-- Data Tables -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.bootstrap5.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css"> <!-- Remix Icons -->
+
+
+    <style>
+        .table th, .table td {
+            padding: 0.5rem;
+        }
+
+        .pagination .page-link {
+            padding: 0.25rem 0.5rem;
+        }
+    </style>
+
+
+{% endblock page_css %}
+
 {% block content %}
-    <div class="container">
-        <div class="row mt-4">
-            <div class="col-md-12">
-                <div class="card">
-                    <div class="card-header d-flex justify-content-between align-items-center">
-                        <h4 class="card-title">Foydalanuvchilar</h4>
-
-                        <!-- Yangi foydalanuvchi qo'shish tugmasi -->
-                        <button class="btn btn-success" onclick="window.location.href='{% url 'add-users-view' %}'">
-                            <i class="fas fa-user-plus"></i> Yangi foydalanuvchi qo‘shish
-                        </button>
-
-                    </div>
-
-                    <!-- Qidirish maydoni -->
-                    <div class="p-3">
-                        <input type="text" class="form-control w-100" id="searchUser"
-                               placeholder="🔍 Foydalanuvchini qidiring...">
-                    </div>
-
+    <div class="app-body">
+        <div class="row gx-3">
+            <div class="col-xl-3 col-sm-6 col-12">
+                <div class="card mb-3">
                     <div class="card-body">
-                        <table class="table table-hover table-responsive-sm">
-                            <thead>
+                        <div class="d-flex align-items-center">
+                            <div class="p-2 border border-success rounded-circle me-3">
+                                <div class="icon-box md bg-success-subtle rounded-5">
+                                    <i class="ri-group-line fs-4 text-success"></i> <!-- Barcha foydalanuvchilar -->
+                                </div>
+                            </div>
+                            <div class="d-flex flex-column">
+                                <h2 class="lh-1">{{ all_count }}</h2>
+                                <p class="m-0">{% trans "Barcha foydalanuvchilar" %}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-sm-6 col-12">
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center">
+                            <div class="p-2 border border-primary rounded-circle me-3">
+                                <div class="icon-box md bg-primary-subtle rounded-5">
+                                    <i class="ri-men-line fs-4 text-primary"></i> <!-- Erkaklar -->
+                                </div>
+                            </div>
+                            <div class="d-flex flex-column">
+                                <h2 class="lh-1">{{ male_count }}</h2>
+                                <p class="m-0">{% trans "Erkaklar" %}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-sm-6 col-12">
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center">
+                            <div class="p-2 border border-danger rounded-circle me-3">
+                                <div class="icon-box md bg-danger-subtle rounded-5">
+                                    <i class="ri-women-line fs-4 text-danger"></i> <!-- Ayollar -->
+                                </div>
+                            </div>
+                            <div class="d-flex flex-column">
+                                <h2 class="lh-1">{{ female_count }}</h2>
+                                <p class="m-0">{% trans "Ayollar" %}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-sm-6 col-12">
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center">
+                            <div class="p-2 border border-warning rounded-circle me-3">
+                                <div class="icon-box md bg-warning-subtle rounded-5">
+                                    <i class="ri-user-unfollow-fill fs-4 text-warning"></i>
+                                    <!-- Faol bo'lmagan foydalanuvchilar -->
+                                </div>
+                            </div>
+                            <div class="d-flex flex-column">
+                                <h2 class="lh-1">{{ inactive_count }}</h2>
+                                <p class="m-0">{% trans "Faol bo'lmagan foydalanuvchilar" %}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-3">
+
+            <h2 class="mb-3 fw-bold text-primary">{% trans "Barcha foydalanuvchilar" %}</h2>
+
+            <!-- Qidiruv formasi -->
+            <form method="GET" class="mb-3 row g-2 align-items-center">
+                <div class="col-md-6 col-sm-6">
+                    <input type="text" name="search" class="form-control form-control-sm"
+                           placeholder="🔍 Username, F.I.O, Telefon, Bo‘lim..."
+                           value="{{ search_query }}">
+                </div>
+                <div class="col-md-3 col-sm-3">
+                    <button type="submit" class="btn btn-primary btn-sm w-100">🔎 {% trans "Qidirish" %}</button>
+                </div>
+                <div class="col-md-3 col-sm-3">
+                    <a href="{% url 'add-users-view' %}" class="btn btn-primary btn-sm w-100">
+                        <i class="ri-user-add-line me-1"></i> {% trans "Qo‘shish" %}
+                    </a>
+                </div>
+            </form>
+
+            <!-- Jadval -->
+            <div class="card shadow-sm border-0">
+                <div class="card-body p-2">
+                    <div class="table-responsive">
+                        <table class="table table-hover table-sm align-middle m-0">
+                            <thead class="bg-light text-dark">
                             <tr>
                                 <th>#</th>
+                                <th>ID</th>
                                 <th>Rasm</th>
                                 <th>F.I.O</th>
-                                <th>Telefon</th>
-                                <th>Bo‘lim</th>
-                                <th>Lavozim</th>
-                                <th>Faol</th>
-                                <th>Amallar</th>
+                                <th>Tu'gilgan sana</th>
+                                <th class="text-center">Telefon</th>
+                                <th class="text-center">Bo‘lim</th>
+                                <th class="text-center">Lavozim</th>
+                                <th class="text-center">Faollik</th>
+                                <th class="text-center">Ish vaqti</th>
+                                <th class="text-center">Amallar</th>
                             </tr>
                             </thead>
                             <tbody>
                             {% for user in users %}
                                 <tr>
                                     <td>{{ forloop.counter }}</td>
+                                    <td class="text-center">{{ user.employee_id|default:'Mavjud emas' }}</td>
                                     <td>
                                         <img src="
-                                                {% if user.profile_picture %}{{ user.profile_picture.url }}{% else %}{% static 'images/profile/user-1.jpg' %}{% endif %}"
-                                             class="rounded-circle" width="40">
+
+
+
+
+
+
+                                                {% if user.profile_picture %}{{ user.profile_picture.url }}{% else %}{% static 'images/user.png' %}{% endif %}"
+                                             style="width: 30px; height: 30px; object-fit: cover; object-position: center;"
+                                             class="img-shadow rounded-5 me-1"
+                                             alt="{% trans 'Foydalanuvchi rasmi' %}">
                                     </td>
-                                    <td>{{ user.full_name }}</td>
-                                    <td>
-                                        {% if user.phone_number %}
-                                            {{ user.phone_number }}
-                                        {% else %}
-                                            <span class="badge bg-secondary">Ma'lumot mavjud emas</span>
-                                        {% endif %}
+                                    <td class="text-truncate"
+                                        style="max-width: 150px;">{{ user.full_name|default:user.username }}</td>
+                                    <td class="text-truncate">{{ user.date_of_birth|default:"Mavjud emas" }}</td>
+                                    <td class="text-center">{{ user.phone_number|default:'Mavjud emas' }}</td>
+                                    <td class="text-center">{{ user.department|default:'-' }}</td>
+                                    <td class="text-center">{{ user.job_title|default:'-' }}</td>
+                                    <td class="text-center">
+                                <span class="badge {% if user.is_active %}bg-success{% else %}bg-danger{% endif %} rounded-pill">
+                                    {{ user.is_active|yesno:"Faol,Nofaol" }}
+                                </span>
                                     </td>
-                                    <td>
-                                        {% if user.department %}
-                                            {{ user.department }}
-                                        {% else %}
-                                            <span class="badge bg-secondary">Ma'lumot mavjud emas</span>
-                                        {% endif %}
-                                    </td>
-                                    <td>
-                                        {% if user.job_title %}
-                                            {{ user.job_title }}
-                                        {% else %}
-                                            <span class="badge bg-secondary">Ma'lumot mavjud emas</span>
-                                        {% endif %}
-                                    </td>
-                                    <td>{% if user.is_active %}✅{% else %}❌{% endif %}</td>
-                                    <td>
-                                        <button class="btn btn-primary btn-sm" onclick="viewUser('{{ user.id }}')">
-                                            <i class="fas fa-eye"></i>
-                                        </button>
-                                        <button class="btn btn-danger btn-sm" onclick="deleteUser('{{ user.id }}')">
-                                            <i class="fas fa-trash-alt"></i>
-                                        </button>
+                                    <td class="text-center">{{ user.work_start_time|default:'-' }}
+                                        - {{ user.work_end_time|default:'-' }}</td>
+                                    <td class="text-center">
+                                        <div class="d-inline-flex gap-1">
+                                            <button class="btn btn-outline-danger btn-sm" data-bs-toggle="modal"
+                                                    data-bs-target="#delRow_{{ user.id }}">
+                                                <i class="ri-delete-bin-line"></i>
+                                            </button>
+                                            <a href="{% url 'edit-user' user.id %}"
+                                               class="btn btn-outline-success btn-sm"
+                                               data-bs-toggle="tooltip" data-bs-placement="top"
+                                               data-bs-title="{% trans 'Foydalanuvchini tahrirlash' %}">
+                                                <i class="ri-edit-box-line"></i>
+                                            </a>
+                                        </div>
                                     </td>
                                 </tr>
+                                <!-- O‘chirish modali -->
+                                <div class="modal fade" id="delRow_{{ user.id }}" tabindex="-1" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title">{% trans "Foydalanuvchini o‘chirish" %}</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                        aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                {% blocktrans with name=user.full_name %}
+                                                    {{ name }} foydalanuvchisini rostdan ham o‘chirishni xohlaysizmi?
+                                                {% endblocktrans %}
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary"
+                                                        data-bs-dismiss="modal">{% trans "Yo‘q" %}</button>
+                                                <form method="POST" action="{% url 'users-view' %}"
+                                                      style="display: inline;">
+                                                    {% csrf_token %}
+                                                    <input type="hidden" name="user_id" value="{{ user.id }}">
+                                                    <button type="submit"
+                                                            class="btn btn-danger">{% trans "Ha" %}</button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             {% empty %}
                                 <tr>
-                                    <td colspan="8" class="text-center">Foydalanuvchilar topilmadi.</td>
+                                    <td colspan="8" class="text-center text-muted py-3">
+                                        ⛔ {% trans "Foydalanuvchi topilmadi" %}</td>
                                 </tr>
                             {% endfor %}
                             </tbody>
                         </table>
-
-                    </div>
-                    <div class="card-footer text-center">
-                        {% if has_previous %}
-                            <a href="?page={{ users.previous_page_number }}&search={{ search_query }}"
-                               class="btn btn-primary">⬅ Oldingi</a>
-                        {% endif %}
-                        <span class="mx-3">Sahifa: {{ current_page }} / {{ total_pages }}</span>
-                        {% if has_next %}
-                            <a href="?page={{ users.next_page_number }}&search={{ search_query }}"
-                               class="btn btn-primary">Keyingi ➡</a>
-                        {% endif %}
                     </div>
                 </div>
             </div>
+
+            <!-- Sahifalash -->
+            {% if users.paginator.num_pages > 1 %}
+                <nav class="mt-3">
+                    <ul class="pagination justify-content-center mb-0">
+                        {% if users.has_previous %}
+                            <li class="page-item">
+                                <a class="page-link"
+                                   href="?page=1{% if search_query %}&search={{ search_query }}{% endif %}">⏮</a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="?page=
+
+
+
+
+
+
+                                        {{ users.previous_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}">⬅</a>
+                            </li>
+                        {% endif %}
+                        <li class="page-item active">
+                            <span class="page-link">{{ users.number }}</span>
+                        </li>
+                        {% if users.has_next %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page=
+
+
+
+
+
+
+                                        {{ users.next_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}">➡</a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="?page=
+
+
+
+
+
+
+                                        {{ users.paginator.num_pages }}{% if search_query %}&search={{ search_query }}{% endif %}">⏭</a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+            {% endif %}
+            <!-- Xabarlar -->
+            {% if messages %}
+                <div class="mt-3">
+                    {% for message in messages %}
+                        <div class="alert {% if message.tags == 'success' %}alert-success{% else %}alert-danger{% endif %} alert-dismissible fade show"
+                             role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
         </div>
     </div>
-{% endblock content %}
+{% endblock %}
+
+{% block vendor_js %}
+    <!-- Required jQuery first, then Bootstrap Bundle JS -->
+    <script src="{% static 'js/jquery.min.js' %}"></script>
+    <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'js/moment.min.js' %}"></script>
+
+    <!-- *************
+			************ Vendor Js Files *************
+		************* -->
+
+    <!-- Overlay Scroll JS -->
+    <script src="{% static 'vendor/overlay-scroll/jquery.overlayScrollbars.min.js' %}"></script>
+    <script src="{% static 'vendor/overlay-scroll/custom-scrollbar.js' %}"></script>
+
+    <!-- Data Tables -->
+    <script src="{% static 'vendor/datatables/dataTables.min.js' %}"></script>
+    <script src="{% static 'vendor/datatables/dataTables.bootstrap.min.js' %}"></script>
+    <script src="{% static 'vendor/datatables/custom/custom-datatables.js' %}"></script>
+
+
+
+{% endblock vendor_js %}
+
+

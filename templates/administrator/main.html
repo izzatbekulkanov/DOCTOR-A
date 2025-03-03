@@ -1,69 +1,78 @@
 <!DOCTYPE html>
+<html lang="uz">
 {% load static %}
-<html lang="uz" dir="ltr" data-bs-theme="light" data-color-theme="Blue_Theme"  data-layout="vertical">
-
+{% load i18n %}
+{% load custom_filters %} <!-- Custom filtrlar yuklanmoqda -->
 <head>
-    {% include 'administrator/components/head.html' %}
-    {% block title %}
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}{% endblock title %}</title>
 
-    {% endblock title %}
+    <!-- Meta ma'lumotlar -->
+    <meta name="description" content="{% trans 'Shifokorlar va klinikalar uchun boshqaruv tizimi' %}">
+    <meta name="author" content="Doctor-A Team">
+    <link rel="canonical" href="https://doctoramedical.uz/">
+    <meta property="og:url" content="https://doctoramedical.uz">
+    <meta property="og:title" content="{% trans 'Doctor-A | Shifokorlar uchun Admin Panel' %}">
+    <meta property="og:description" content="{% trans 'Klinikalar va shifokorlar uchun maxsus boshqaruv tizimi' %}">
+    <meta property="og:type" content="Website">
+    <meta property="og:site_name" content="Doctor-A">
+    <link rel="shortcut icon" href="{% static 'images/favicon.ico' %}">
 
+    <!-- Stil fayllarini ulash -->
+    {% include 'administrator/components/styles.html' %}
 
+    <!-- Qo‘shimcha CSS fayllar uchun blok -->
+    {% block vendor_css %}
+    {% endblock vendor_css %}
 </head>
+<body>
+<!-- Yuklanish animatsiyasi boshlanadi -->
+{% include 'administrator/components/loading.html' %}
+<!-- Yuklanish animatsiyasi tugaydi -->
 
-<body data-url="{{ request.path }}">
-<!-- Toast -->
-{% include 'administrator/components/toast.html' %}
-<!-- Preloader -->
-{% include 'administrator/components/preloader.html' %}
-<div id="main-wrapper">
-    <!-- Sidebar Start -->
-    {% include 'administrator/components/aside-vertical.html' %}
-    <!--  Sidebar End -->
-    <div class="page-wrapper">
-        <!--  Header Start -->
-        {% include 'administrator/components/header.html' %}
+<!-- Sahifa o‘rami boshlanadi -->
+<div class="page-wrapper">
+    <!-- Ilova sarlavhasi boshlanadi -->
+    {% include 'administrator/components/header.html' %}
+    <!-- Ilova sarlavhasi tugaydi -->
 
-        <!--  Header End -->
+    <!-- Asosiy konteyner boshlanadi -->
+    <div class="main-container">
+        <!-- Yon panel o‘rami boshlanadi -->
+        {% include 'administrator/components/sidebar.html' %}
+        <!-- Yon panel o‘rami tugaydi -->
+
+        <!-- Ilova konteyneri boshlanadi -->
+        <div class="app-container">
+            <!-- Ilova bosh sahifa sarlavhasi boshlanadi -->
+            {% include 'administrator/components/app-hero-header.html' %}
+            <!-- Ilova bosh sahifa sarlavhasi tugaydi -->
+
+            <!-- Asosiy kontent uchun blok -->
+            {% block content %}
+            {% endblock content %}
 
 
-
-        <div class="body-wrapper">
-            <div class="container-fluid">
-                {% block content %}
-                {% endblock content %}
-            </div>
         </div>
-
-
-        {% include 'administrator/components/offcanvas.html' %}
-
-
-        <script>
-            function handleColorTheme(e) {
-                document.documentElement.setAttribute("data-color-theme", e);
-            }
-        </script>
+    <!-- Ilova pastki qismi boshlanadi -->
+{#            {% include 'administrator/components/footer.html' %}#}
+            <!-- Ilova pastki qismi tugaydi -->
+        <!-- Ilova konteyneri tugaydi -->
     </div>
-
-        {% include 'administrator/components/search-modal.html' %}
-
-
+    <!-- Asosiy konteyner tugaydi -->
 </div>
-<div class="dark-transparent sidebartoggler"></div>
-<script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
-<!-- Import Js Files -->
-<script src="{% static 'libs/bootstrap/dist/js/bootstrap.bundle.min.js' %}"></script>
-<script src="{% static 'libs/simplebar/dist/simplebar.min.js' %}"></script>
-<script src="{% static 'js/theme/app.init.js' %}"></script>
-<script src="{% static 'js/theme/theme.js' %}"></script>
-<script src="{% static 'js/theme/app.min.js' %}"></script>
-<script src="{% static 'js/theme/sidebarmenu.js' %}"></script>
+<!-- Sahifa o‘rami tugaydi -->
 
-<!-- solar icons -->
-<script src="{% static 'libs/fullcalendar/index.global.min.js' %}"></script>
- {% block vendor_js %}
- {% endblock vendor_js %}
+<!-- *************
+  ************ JavaScript fayllari *************
+  ************* -->
+
+<!-- JavaScript fayllarini ulash -->
+{% include 'administrator/components/scripts.html' %}
+
+<!-- Qo‘shimcha JS fayllar uchun blok -->
+{% block vendor_js %}
+{% endblock vendor_js %}
 </body>
-
 </html>

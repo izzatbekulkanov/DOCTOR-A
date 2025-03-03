@@ -1,0 +1,31 @@
+{% load static %}
+
+<div class="app-hero-header d-flex align-items-center">
+    <!-- Breadcrumb starts -->
+    <ol class="breadcrumb">
+        {% if breadcrumbs %}
+            {% for item in breadcrumbs %}
+            <li class="breadcrumb-item {% if item.active %}text-primary{% endif %}" {% if item.active %}aria-current="page"{% endif %}>
+                {% if not item.active %}
+                    {% if forloop.first %}
+                        <i class="ri-home-8-line lh-1 pe-3 me-3 border-end"></i>
+                    {% endif %}
+                    <a href="{{ item.url }}">{{ item.title }}</a>
+                {% else %}
+                    {{ item.title }}
+                {% endif %}
+            </li>
+            {% endfor %}
+        {% else %}
+            <!-- Standart breadcrumb -->
+            <li class="breadcrumb-item">
+                <i class="ri-home-8-line lh-1 pe-3 me-3 border-end"></i>
+                <a href="{% url 'admin-index' %}">Home</a>
+            </li>
+            <li class="breadcrumb-item text-primary" aria-current="page">
+                Dashboard
+            </li>
+        {% endif %}
+    </ol>
+    <!-- Breadcrumb ends -->
+</div>

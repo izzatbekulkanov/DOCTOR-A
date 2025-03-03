@@ -56,6 +56,20 @@ class CustomUser(AbstractUser):
         return "Ish vaqti belgilanmagan"
 
 
+class TrainingHistory(models.Model):
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='training_history')
+    training_name = models.CharField(max_length=255, help_text="Malaka oshirish kursining nomi")
+    training_date = models.DateField(help_text="Malaka oshirish sanasi")
+    certificate_picture = models.ImageField(upload_to='training_certificates/', blank=True, null=True, help_text="Sertifikat rasmi")
+
+    def __str__(self):
+        return f"{self.user.full_name} - {self.training_name} ({self.training_date})"
+
+    class Meta:
+        verbose_name = "Malaka oshirish tarixi"
+        verbose_name_plural = "Malaka oshirish tarixlari"
+
+
 class Appointment(models.Model):
     """Hodim qabuliga yozilish modeli"""
     full_name = models.CharField(max_length=255, help_text="Foydalanuvchi ismi familiyasi")

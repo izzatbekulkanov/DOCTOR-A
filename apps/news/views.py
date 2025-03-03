@@ -4,6 +4,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404
 from django.core.paginator import Paginator
+from django.urls import reverse
 from django.utils.translation import get_language
 from django.conf import settings
 from django.views import View
@@ -31,23 +32,35 @@ class NewsView(View):
         if search_query:
             news_queryset = news_queryset.filter(title__icontains=search_query)
 
-        # 📄 Pagination (Har bir sahifada 5 ta yangilik)
-        paginator = Paginator(news_queryset, 5)
+        # 📄 Pagination (Har bir sahifada 6 ta yangilik)
+        paginator = Paginator(news_queryset, 6)
         page_number = request.GET.get("page")
         news_list = paginator.get_page(page_number)
 
         # 🌍 Cookie-dan yoki default tillardan til olish
         lang_code = request.COOKIES.get("selected_language", get_language())
 
+        # Breadcrumb uchun kontekst
+        breadcrumbs = [
+            {"title": "Bosh sahifa", "url": "{% url 'admin-index' %}"},
+            {"title": "Yangiliklar", "url": "{% url 'news-view' %}", "active": True},
+        ]
+
+        breadcrumbs = [
+            {"title": "Bosh sahifa", "url": reverse('admin-index')},
+            {"title": "Foydalanuvchilar", "url": reverse('news-view'), "active": True},
+        ]
+
         context = {
             "news_list": news_list,
             "search_query": search_query,
             "lang_code": lang_code,
             "LANGUAGES": settings.LANGUAGES,
+            "breadcrumbs": breadcrumbs,  # Breadcrumb qo‘shildi
         }
         return render(request, self.template_name, context)
 
-
+@method_decorator(login_required, name='dispatch')
 class AddNewsView(View):
     template_name = 'news/add_news_view.html'
 
@@ -56,10 +69,18 @@ class AddNewsView(View):
         lang_code = request.COOKIES.get("selected_language", get_language())
         authors = CustomUser.objects.all()  # Barcha mualliflarni olish
 
+        # Breadcrumb uchun kontekst
+        breadcrumbs = [
+            {"title": "Bosh sahifa", "url": reverse('admin-index')},
+            {"title": "Yangiliklar", "url": reverse('news-view')},
+            {"title": "Yangilik qo‘shish", "url": reverse('add-news-view'), "active": True},
+        ]
+
         context = {
             "lang_code": lang_code,
             "LANGUAGES": settings.LANGUAGES,
             "authors": authors,  # Mualliflar ro'yxati
+            "breadcrumbs": breadcrumbs,  # Breadcrumb qo‘shildi
         }
         return render(request, self.template_name, context)
 
@@ -119,9 +140,18 @@ class NewsDetailView(View):
 
         news = get_object_or_404(News, id=news_id)
 
+        # Breadcrumb uchun kontekst
+        breadcrumbs = [
+            {"title": "Bosh sahifa", "url": reverse('admin-index')},
+            {"title": "Yangiliklar", "url": reverse('news-view')},
+            {"title": "Yangilik tahrirlash", "url": reverse('news-detail'), "active": True},
+        ]
+
+
         context = {
             "news": news,
-            "LANGUAGES": self.LANGUAGES  # 🔹 Tillar ro‘yxati shablonga yuboriladi
+            "LANGUAGES": self.LANGUAGES,  # 🔹 Tillar ro‘yxati shablonga yuboriladi
+            "breadcrumbs": breadcrumbs,  # Breadcrumb qo‘shildi
         }
         return render(request, self.template_name, context)
 

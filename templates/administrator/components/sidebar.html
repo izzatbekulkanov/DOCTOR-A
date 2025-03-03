@@ -1,0 +1,102 @@
+{% load static %}
+
+<nav id="sidebar" class="sidebar-wrapper">
+    <!-- Sidebar profile starts -->
+    <div class="sidebar-profile">
+        <img src="
+                {% if request.user.profile_picture %}{{ request.user.profile_picture.url }}{% else %}{% static 'images/user.png' %}{% endif %}"
+             class="img-shadow img-3x me-3 rounded-5"
+             alt="Hospital Admin Templates">
+        <div class="m-0">
+            <h5 class="mb-1 profile-name text-nowrap text-truncate">{{ request.user.full_name }}</h5>
+            <p class="m-0 small profile-name text-nowrap text-truncate">
+                {{ request.user.is_superuser|yesno:"Admin,Hodim" }}
+            </p>
+        </div>
+    </div>
+    <!-- Sidebar profile ends -->
+    <div class="sidebarMenuScroll">
+        <ul class="sidebar-menu">
+            <li class="{% if request.resolver_match.url_name == 'users-view' %}active current-page{% endif %}">
+                <a href="{% url 'users-view' %}">
+                    <i class="ri-group-line"></i>
+                    <span class="menu-text">Foydalanuvchilar</span>
+                </a>
+            </li>
+            <li class="{% if request.resolver_match.url_name == 'news-view' %}active current-page{% endif %}">
+                <a href="{% url 'news-view' %}">
+                    <i class="ri-news-line"></i>
+                    <span class="menu-text">Yangiliklar</span>
+                </a>
+            </li>
+            <li class="{% if request.resolver_match.url_name == 'announcemen-view' %}active current-page{% endif %}">
+                <a href="{% url 'announcemen-view' %}">
+                    <i class="ri-megaphone-line"></i>
+                    <span class="menu-text">E'lonlar</span>
+                </a>
+            </li>
+            <li class="{% if request.resolver_match.url_name == 'partners-info' %}active current-page{% endif %}">
+                <a href="{% url 'partners-info' %}">
+                    <i class="ri-briefcase-3-line"></i>
+                    <span class="menu-text">Hamkorlar</span>
+                </a>
+            </li>
+            <li class="{% if request.resolver_match.url_name == '' %}active current-page{% endif %}">
+                <a href="">
+                    <i class="ri-folder-video-line"></i>
+                    <span class="menu-text">Videolar</span>
+                </a>
+            </li>
+            <li class="{% if request.resolver_match.url_name == '' %}active current-page{% endif %}">
+                <a href="">
+                    <i class="ri-device-line"></i>
+                    <span class="menu-text">Qurilmalar</span>
+                </a>
+            </li>
+            <li class="{% if request.resolver_match.url_name == 'appointment-view' %}active current-page{% endif %}">
+                <a href="{% url 'appointment-view' %}">
+                    <i class="ri-message-2-line"></i>
+                    <span class="menu-text">Qabullar</span>
+                </a>
+            </li>
+            <li class="{% if request.resolver_match.url_name == 'medical-checkup-applications' %}active current-page{% endif %}">
+                <a href="{% url 'medical-checkup-applications' %}">
+                    <i class="ri-message-3-line"></i>
+                    <span class="menu-text">Taklif va murojaatlar</span>
+                </a>
+            </li>
+            <li class="{% if request.resolver_match.url_name == '' %}active current-page{% endif %}">
+                <a href="">
+                    <i class="ri-building-line"></i>
+                    <span class="menu-text">Klinika ma'lumotlari</span>
+                </a>
+            </li>
+            <li class="{% if request.resolver_match.url_name == 'roles-view' %}active current-page{% endif %}">
+                <a href="{% url 'roles-view' %}">
+                    <i class="ri-git-repository-private-line"></i>
+                    <span class="menu-text">Rollar</span>
+                </a>
+            </li>
+            <li class="{% if request.resolver_match.url_name == 'logs-view' %}active current-page{% endif %}">
+                <a href="{% url 'logs-view' %}">
+                    <i class="ri-blogger-line"></i>
+                    <span class="menu-text">Loglar</span>
+                    <span class="badge border border-primary text-primary ms-auto">ASYN</span>
+                </a>
+            </li>
+            <li class="{% if request.resolver_match.url_name == '' %}active current-page{% endif %}">
+                <a href="" class="disabled">
+                    <i class="ri-admin-line"></i>
+                    <span class="menu-text">Superadmin</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+    <!-- Sidebar contact starts -->
+    <div class="sidebar-contact">
+        <p class="fw-light mb-1 text-nowrap text-truncate">Telefon raqam</p>
+        <h5 class="m-0 lh-1 text-nowrap text-truncate">{{ site_settings.contact_phone }}</h5>
+        <i class="ri-phone-line"></i>
+    </div>
+    <!-- Sidebar contact ends -->
+</nav>

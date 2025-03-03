@@ -2,78 +2,151 @@
 {% load i18n %}
 {% load custom_filters %}  {# get_language_text filtrini yuklash #}
 
+{% block title %}
+    {% trans "Yangiliklar" %}
+{% endblock title %}
+<!-- Qo‘shimcha CSS fayllar uchun blok -->
+{% block vendor_css %}
+
+    <style>
+        .hover-btn-primary:hover {
+            background-color: #0d6efd !important;
+            color: white !important;
+            transform: scale(1.05);
+            transition: all 0.3s ease;
+        }
+
+        .hover-btn-success:hover {
+            background-color: #198754 !important;
+            color: white !important;
+            transform: scale(1.05);
+            transition: all 0.3s ease;
+        }
+
+        .hover-btn-info:hover {
+            background-color: #0dcaf0 !important;
+            transform: scale(1.05);
+            transition: all 0.3s ease;
+        }
+
+        .hover-btn-danger:hover {
+            background-color: #dc3545 !important;
+            transform: scale(1.05);
+            transition: all 0.3s ease;
+        }
+
+        .hover-bg-light:hover {
+            background-color: #e9ecef !important;
+        }
+
+        .object-fit-cover {
+            object-fit: cover;
+        }
+    </style>
+{% endblock vendor_css %}
 {% block content %}
-    <div class="container mt-4">
-        <h2>{% trans "Yangiliklar" %}</h2>
+    {% load i18n static %}
+    <div class="app-body"
+         style="background: linear-gradient(135deg, #f8f9fa, #e9ecef); min-height: 100vh; padding: 1.5rem;">
 
         <!-- 🔍 Qidiruv formasi -->
         <form method="GET" action="{% url 'news-view' %}" class="mb-4">
-            <div class="input-group">
-                <input type="text" name="q" value="{{ search_query }}" class="form-control"
-                       placeholder="🔍 {% trans 'Qidirish...' %}">
-                <button type="submit" class="btn btn-primary">{% trans "Qidirish" %}</button>
-                <a href="{% url 'add-news-view' %}" class="btn btn-success">{% trans "Qo‘shish" %}</a>
+            <div class="d-flex align-items-center gap-2">
+                <div class="input-group flex-grow-1">
+                    <span class="input-group-text bg-white border rounded-start-3 shadow-sm px-3">🔍</span>
+                    <input type="text" name="q" value="{{ search_query }}"
+                           class="form-control border shadow-sm py-2 px-3"
+                           placeholder="{% trans 'Qidirish...' %}"
+                           aria-label="Search">
+                    <button type="submit"
+                            class="btn btn-primary fw-semibold px-4 py-2 rounded-end-3 hover-btn-primary">
+                        {% trans "Qidirish" %}
+                    </button>
+                </div>
+                <a href="{% url 'add-news-view' %}"
+                   class="btn btn-primary fw-semibold px-4 py-2 rounded-3 hover-btn-success">
+                    {% trans "Qo‘shish" %}
+                </a>
             </div>
         </form>
 
-        <!-- 📰 Yangiliklar ro‘yxati -->
+
+        <!-- Yangiliklar ro‘yxati -->
         <div id="news-list" class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
             {% for news in news_list %}
-                <div class="col" id="news-{{ news.id }}"> <!-- 🔹 Yangilikni ID bilan o'rash -->
-                    <div class="card h-100 shadow-sm">
-                        {% if news.image %}
-                            <img src="{{ news.image.url }}" class="card-img-top news-image"
-                                 alt="{% trans 'Yangilik rasmi' %}">
-                        {% endif %}
-                        <div class="card-body d-flex flex-column">
-                            <h5 class="card-title">{{ news.title|get_language_text:request.LANGUAGE_CODE }}</h5>
-                            <p class="card-text flex-grow-1">
+                <div class="col" id="news-{{ news.id }}">
+                    <div class="card h-100 shadow-sm border-0 rounded-3 overflow-hidden">
+                        <div class="card-img-top" style="height: 200px; overflow: hidden;">
+                            <img src="{{ news.image.url }}"
+                                 class="w-100 h-100 object-fit-cover rounded-top"
+                                 alt="{{ news.title|get_language_text:request.LANGUAGE_CODE }}">
+                        </div>
+                        <div class="card-body p-4">
+                            <h5 class="card-title fw-bold text-dark mb-2">
+                                {{ news.title|get_language_text:request.LANGUAGE_CODE }}
+                            </h5>
+                            <p class="small text-muted mb-2">
+                                {% trans "Chop etilgan" %} - {{ news.published_date|date:"Y-m-d" }}
+                            </p>
+                            <p class="text-muted mb-4">
                                 {{ news.content|get_language_text:request.LANGUAGE_CODE|truncatewords:20 }}
                             </p>
-                            <p class="text-muted small">{% trans "Chop etilgan" %}: {{ news.published_date }}</p>
-
-                            <div class="d-flex gap-2 mt-auto">
-                                <!-- 📌 Batafsil tugmasi -->
-                                <button class="btn btn-info" onclick="setSelectedNews({{ news.id }})">
-                                    {% trans "Batafsil" %}
-                                </button>
-
-                                <!-- ❌ O‘chirish tugmasi -->
-                                <button class="btn btn-danger" onclick="deleteNews({{ news.id }})">
-                                    {% trans "O‘chirish" %}
-                                </button>
+                            <!-- Blog footer -->
+                            <div class="d-flex justify-content-between align-items-center mt-4">
+                                <div class="d-flex gap-2">
+                                    <button onclick="setSelectedNews({{ news.id }})"
+                                            class="btn btn-info text-white fw-semibold px-3 py-1 rounded-3 hover-btn-info">
+                                        {% trans "Batafsil" %}
+                                    </button>
+                                    <button onclick="deleteNews({{ news.id }})"
+                                            class="btn btn-danger text-white fw-semibold px-3 py-1 rounded-3 hover-btn-danger">
+                                        {% trans "O‘chirish" %}
+                                    </button>
+                                </div>
+                                <div class="d-flex align-items-center gap-2">
+                                    <span class="badge bg-danger rounded-circle p-2">
+                                        <i class="ri-eye-line text-white"></i>
+                                    </span>
+                                    <span class="fw-bold text-muted">{{ news.views_count }}</span>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             {% empty %}
-                <p class="text-muted">{% trans "Hozircha yangiliklar mavjud emas." %}</p>
+                <p class="text-muted text-center col-12 py-4">
+                    {% trans "Hozircha yangiliklar mavjud emas." %}
+                </p>
             {% endfor %}
         </div>
 
         <!-- Pagination -->
-        <nav>
+        <nav class="mt-4">
             <ul class="pagination justify-content-center">
                 {% if news_list.has_previous %}
                     <li class="page-item">
-                        <a class="page-link" href="?q={{ search_query }}&page=1">{% trans "Birinchi" %}</a>
+                        <a class="page-link text-primary hover-bg-light rounded-3 px-3 py-2"
+                           href="?q={{ search_query }}&page=1">{% trans "Birinchi" %}</a>
                     </li>
                     <li class="page-item">
-                        <a class="page-link" href="?q={{ search_query }}&page={{ news_list.previous_page_number }}">&laquo;</a>
+                        <a class="page-link text-primary hover-bg-light rounded-3 px-3 py-2"
+                           href="?q={{ search_query }}&page={{ news_list.previous_page_number }}">«</a>
                     </li>
                 {% endif %}
 
                 <li class="page-item active">
-                    <span class="page-link">{{ news_list.number }} / {{ news_list.paginator.num_pages }}</span>
+                    <span class="page-link bg-primary text-white rounded-3 px-3 py-2">
+                        {{ news_list.number }} / {{ news_list.paginator.num_pages }}
+                    </span>
                 </li>
 
                 {% if news_list.has_next %}
                     <li class="page-item">
-                        <a class="page-link"
-                           href="?q={{ search_query }}&page={{ news_list.next_page_number }}">&raquo;</a>
+                        <a class="page-link text-primary hover-bg-light rounded-3 px-3 py-2"
+                           href="?q={{ search_query }}&page={{ news_list.next_page_number }}">»</a>
                     </li>
                     <li class="page-item">
-                        <a class="page-link"
+                        <a class="page-link text-primary hover-bg-light rounded-3 px-3 py-2"
                            href="?q={{ search_query }}&page={{ news_list.paginator.num_pages }}">{% trans "Oxirgi" %}</a>
                     </li>
                 {% endif %}

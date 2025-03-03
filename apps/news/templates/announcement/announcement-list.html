@@ -2,16 +2,21 @@
 {% load i18n static custom_filters %}
 
 {% block title %}
-    <title>{% trans "E'lonlar" %}</title>
+    {% trans "E'lonlar" %}
 {% endblock title %}
 
+{% block vendor_css %}
+
+    <style>
+
+    </style>
+{% endblock vendor_css %}
+
 {% block content %}
-    <div class="container mt-4">
+    <div class="app-body mt-4">
         <div class="d-flex justify-content-between align-items-center">
             <h2>{% trans "E'lonlar" %}</h2>
-            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addAnnouncementModal">
-                ➕ {% trans "E'lon qo'shish" %}
-            </button>
+            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addAnnouncementModal">{% trans "E'lon qo'shish" %}</button>
         </div>
 
 

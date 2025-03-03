@@ -2,64 +2,129 @@
 {% load i18n static custom_filters %}
 
 {% block title %}
-    <title>{% trans "Yangilik qo'shish" %}</title>
+    {% trans "Yangilik qo'shish" %}
 {% endblock title %}
 
+{% block vendor_css %}
+
+    <style>
+        .hover-btn-primary:hover {
+            background-color: #0d6efd;
+            color: white !important;
+            transform: scale(1.05);
+            transition: all 0.3s ease;
+        }
+
+        .nav-tabs .nav-link {
+            border: none;
+            border-bottom: 2px solid transparent;
+        }
+
+        .nav-tabs .nav-link.active {
+            border-bottom: 2px solid #0d6efd;
+            color: #0d6efd;
+            background-color: #f8f9fa;
+        }
+
+        .nav-tabs .nav-link:hover:not(.active) {
+            border-bottom: 2px solid #6c757d;
+            color: #6c757d;
+        }
+
+    </style>
+{% endblock vendor_css %}
+
+
 {% block content %}
-    <div class="container">
-        <h3 class="mb-4">{% trans "Yangilik qo'shish" %}</h3>
+    <div class="app-body mt-4"
+         style="background: linear-gradient(135deg, #f8f9fa, #e9ecef); min-height: 100vh; padding: 1.5rem;">
+            <div class="card shadow border-0 rounded-3">
+                <div class="card-header p-3 d-flex justify-content-between align-items-center rounded-top">
+                    <h3 class="mb-0 fw-bold">{% trans "Yangilik qo‘shish" %}</h3>
+                    <a href="{% url 'news-view' %}"
+                       class="btn btn-primary fw-semibold px-3 py-2 rounded-3 shadow-sm hover-btn-primary">
+                        {% trans "Ortga" %}
+                    </a>
+                </div>
 
-        <form method="POST" enctype="multipart/form-data">
-            {% csrf_token %}
+                <div class="card-body p-4">
+                    <form method="POST" enctype="multipart/form-data" id="addNewsForm">
+                        {% csrf_token %}
+                        <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
 
-            <!-- 🌍 Tillar uchun tab menyu -->
-            <ul class="nav nav-tabs" id="langTabs" role="tablist">
-                {% for code, name in LANGUAGES %}
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link {% if forloop.first %}active{% endif %}" id="{{ code }}-tab"
-                                data-bs-toggle="tab" data-bs-target="#{{ code }}" type="button" role="tab">
-                            <img src="{% static 'vendor/fonts/flags/1x1/' %}{{ code }}.svg" width="20" class="me-1">
-                            {{ name }}
+                        <!-- 🌍 Tillar uchun tab menyu -->
+                        <ul class="nav nav-tabs mb-4 border-bottom" id="langTabs" role="tablist">
+                            {% for code, name in LANGUAGES %}
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link {% if forloop.first %}active{% endif %}"
+                                            id="{{ code }}-tab"
+                                            data-bs-toggle="tab"
+                                            data-bs-target="#{{ code }}"
+                                            type="button"
+                                            role="tab"
+                                            aria-controls="{{ code }}"
+                                            aria-selected="{% if forloop.first %}true{% else %}false{% endif %}">
+                                        <img src="{% static 'fonts/flag-icon-css/flags/' %}{{ code }}.svg"
+                                             width="20" class="me-1 align-middle" alt="{{ name }}">
+                                        {{ name }}
+                                    </button>
+                                </li>
+                            {% endfor %}
+                        </ul>
+
+                        <!-- 📝 Tab mazmuni (sarlavha va mazmun) -->
+                        <div class="tab-content mt-3">
+                            {% for code, name in LANGUAGES %}
+                                <div class="tab-pane fade {% if forloop.first %}show active{% endif %}"
+                                     id="{{ code }}"
+                                     role="tabpanel"
+                                     aria-labelledby="{{ code }}-tab">
+                                    <div class="mb-3">
+                                        <label class="form-label fw-semibold text-muted">
+                                            {% trans "Sarlavha" %} ({{ name }})
+                                        </label>
+                                        <input type="text" name="title_{{ code }}"
+                                               class="form-control border rounded-3 shadow-sm py-2 px-3"
+                                               placeholder="{% trans 'Sarlavha kiriting...' %}">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label fw-semibold text-muted">
+                                            {% trans "Mazmun" %} ({{ name }})
+                                        </label>
+                                        <textarea name="content_{{ code }}"
+                                                  class="form-control border rounded-3 shadow-sm py-2 px-3"
+                                                  rows="5"
+                                                  placeholder="{% trans 'Mazmun kiriting...' %}"></textarea>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+
+                        <!-- 📷 Rasm yuklash -->
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold text-muted">{% trans "Yangilik rasmi" %}</label>
+                            <input type="file" name="newsImage"
+                                   class="form-control border rounded-3 shadow-sm py-2"
+                                   id="newsImage">
+                        </div>
+
+                        <!-- 📅 Chop etilgan holati -->
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" type="checkbox" name="is_published" id="is_published">
+                            <label class="form-check-label text-muted" for="is_published">
+                                {% trans "Chop etilgan" %}
+                            </label>
+                        </div>
+
+                        <!-- 🎯 Saqlash tugmasi -->
+                        <button type="button" id="saveNewsBtn"
+                                class="btn btn-primary fw-semibold px-4 py-2 rounded-3 shadow-sm hover-btn-primary">
+                            {% trans "Saqlash" %}
                         </button>
-                    </li>
-                {% endfor %}
-            </ul>
-
-            <!-- 📝 Tab mazmuni (sarlavha va mazmun) -->
-            <div class="tab-content mt-3">
-                {% for code, name in LANGUAGES %}
-                    <div class="tab-pane fade {% if forloop.first %}show active{% endif %}" id="{{ code }}"
-                         role="tabpanel">
-                        <div class="mb-3">
-                            <label class="form-label">{% trans "Sarlavha" %} ({{ name }})</label>
-                            <input type="text" name="title_{{ code }}" class="form-control">
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">{% trans "Mazmun" %} ({{ name }})</label>
-                            <textarea name="content_{{ code }}" class="form-control" rows="5"></textarea>
-                        </div>
-                    </div>
-                {% endfor %}
+                    </form>
+                </div>
             </div>
-
-            <!-- 📷 Rasm yuklash -->
-            <div class="mb-3">
-                <label class="form-label">{% trans "Yangilik rasmi" %}</label>
-                <input type="file" name="newsImage" class="form-control" id="newsImage">
-            </div>
-
-            <!-- 📅 Chop etilgan holati -->
-            <div class="form-check mb-3">
-                <input class="form-check-input" type="checkbox" name="is_published" id="is_published">
-                <label class="form-check-label" for="is_published">
-                    {% trans "Chop etilgan" %}
-                </label>
-            </div>
-
-            <!-- 🎯 Saqlash tugmasi -->
-            <button type="button" id="saveNewsBtn" class="btn btn-primary">{% trans "Saqlash" %}</button>
-        </form>
-    </div>
+        </div>
 {% endblock content %}
 
 {% block vendor_js %}
@@ -93,7 +158,6 @@
             if (imageInput.length > 0 && imageInput[0].files.length > 0) {
                 formData.append("image", imageInput[0].files[0]);
             }
-
 
 
             formData.append("is_published", $("#isPublished").is(":checked") ? "on" : "off");

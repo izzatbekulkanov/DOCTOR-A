@@ -1,0 +1,269 @@
+{% extends 'administrator/main.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}
+    Foydalanuvchi qo‘shish
+{% endblock title %}
+
+{% block content %}
+
+
+    <div class="app-body">
+    <!-- Xabarlar -->
+        {% if messages %}
+        <div class="mt-3">
+            {% for message in messages %}
+            <div class="alert {% if message.tags == 'success' %}alert-success{% else %}alert-danger{% endif %} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        <!-- Row starts -->
+
+        <div class="row gx-3">
+            <div class="col-sm-12">
+                <div class="app-body">
+                    <div class="card-body">
+                        <form method="POST" enctype="multipart/form-data" class="needs-validation" novalidate>
+                            {% csrf_token %}
+                            <div class="card shadow-sm border-0 p-3">
+                                <div class="bg-light rounded-2 px-3 py-2 mb-3">
+                                    <h6 class="m-0">{% trans "Hodim ma'lumotlarini tahrirlang" %}</h6>
+                                </div>
+                                <!-- Row starts -->
+                                <div class="row gx-3">
+                                    <div class="col-xxl-2 col-lg-4 col-sm-6">
+                                        <div class="mb-3">
+                                            <label class="form-label" for="full_name">{% trans "F.I.O" %} <span
+                                                    class="text-danger">*</span></label>
+                                            <input type="text" class="form-control" id="full_name" name="full_name"
+                                                   placeholder="{% trans 'Ism va familiya' %}" value="{{ user.full_name }}" required>
+                                            <div class="invalid-feedback">{% trans "Iltimos, F.I.O ni kiriting" %}</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-xxl-2 col-lg-4 col-sm-6">
+                                        <div class="mb-3">
+                                            <label class="form-label"
+                                                   for="username">{% trans "Foydalanuvchi nomi" %}</label>
+                                            <input type="text" class="form-control" id="username" name="username"
+                                                   placeholder="{% trans 'Foydalanuvchi nomi' %}" value="{{ user.username }}">
+                                        </div>
+                                    </div>
+                                    <div class="col-xxl-2 col-lg-4 col-sm-6">
+                                        <div class="mb-3">
+                                            <label class="form-label" for="phone_number">{% trans "Telefon raqami" %}
+                                                <span class="text-danger">*</span></label>
+                                            <input type="text" class="form-control" id="phone_number"
+                                                   name="phone_number" value="{{ user.phone_number }}"
+                                                   placeholder="{% trans 'Telefon raqamni kiriting' %}" required>
+                                            <div class="invalid-feedback">{% trans "Iltimos, telefon raqamni kiriting" %}</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-xxl-2 col-lg-4 col-sm-6">
+                                        <div class="mb-3">
+                                            <label class="form-label" for="employee_id">{% trans "Xodim ID" %}</label>
+                                            <input type="text" class="form-control" id="employee_id" name="employee_id" value="{{ user.employee_id }}"
+                                                   placeholder="{% trans 'Xodim ID kiriting' %}">
+                                        </div>
+                                    </div>
+                                    <div class="col-xxl-2 col-lg-4 col-sm-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">{% trans "Jins" %} <span class="text-danger">*</span></label>
+                                            <div class="m-0">
+                                                <div class="form-check form-check-inline">
+                                                    <input class="form-check-input" type="radio" name="gender" id="gender_male" value="male"
+                                                           {% if user.gender == 'male' %}checked{% endif %} required>
+                                                    <label class="form-check-label" for="gender_male">{% trans "Erkak" %}</label>
+                                                </div>
+                                                <div class="form-check form-check-inline">
+                                                    <input class="form-check-input" type="radio" name="gender" id="gender_female" value="female"
+                                                           {% if user.gender == 'female' %}checked{% endif %}>
+                                                    <label class="form-check-label" for="gender_female">{% trans "Ayol" %}</label>
+                                                </div>
+                                                <div class="invalid-feedback">{% trans "Iltimos, jinsni tanlang" %}</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-xxl-2 col-lg-4 col-sm-6">
+                                        <div class="mb-3">
+                                            <label class="form-label" for="date_of_birth">{% trans "Tug‘ilgan sana" %}</label>
+                                            <input type="date" class="form-control" id="date_of_birth" value="{{ user.date_of_birth|date:'Y-m-d' }}" name="date_of_birth">
+                                        </div>
+                                    </div>
+                                    <div class="col-xxl-2 col-lg-4 col-sm-6">
+                                        <div class="mb-3">
+                                            <label class="form-label" for="job_title">{% trans "Lavozim" %}</label>
+                                            <input type="text" class="form-control" id="job_title" name="job_title" value="{{ user.job_title }}"
+                                                   placeholder="{% trans 'Lavozimni kiriting' %}">
+                                        </div>
+                                    </div>
+                                    <div class="col-xxl-3 col-lg-4 col-sm-6">
+                                        <div class="mb-3">
+                                            <label class="form-label" for="department">{% trans "Bo‘lim" %}</label>
+                                            <input type="text" class="form-control" id="department" name="department" value="{{ user.department }}"
+                                                   placeholder="{% trans 'Bo‘limni kiriting' %}">
+                                        </div>
+                                    </div>
+                                    <!-- Millati -->
+                                    <div class="col-xxl-1 col-lg-4 col-sm-6">
+                                        <label class="form-label">{% trans "Millati" %}</label>
+                                        <input type="text" class="form-control" id="nationality" name="nationality" value="{{ user.nationality }}">
+                                    </div>
+
+                                    <!-- Favqulodda aloqa raqami -->
+                                    <div class="col-xxl-1 col-lg-4 col-sm-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">{% trans "FAV raqam" %}</label>
+                                            <input type="text" class="form-control" id="emergency_contact" value="{{ user.emergency_contact }}"
+                                                   name="emergency_contact"></div>
+                                    </div>
+                                    <div class="col-xxl-1 col-lg-4 col-sm-6">
+                                        <label class="form-label">{% trans "Boshlanishi" %}</label>
+                                        <input type="time" class="form-control" id="work_start_time" value="{{ user.work_start_time }}"
+                                               name="work_start_time">
+                                    </div>
+                                    <div class="col-xxl-1 col-lg-4 col-sm-6">
+                                        <label class="form-label">{% trans "Tugashi" %}</label>
+                                        <input type="time" class="form-control" id="work_end_time" name="work_end_time" value="{{ user.work_end_time }}">
+                                    </div>
+                                    <div class="col-xxl-1 col-lg-4 col-sm-6">
+                                        <label class="form-label">{% trans "Su'gurta" %}</label>
+                                        <input type="text" class="form-control" id="insurance_number" value="{{ user.insurance_number }}"
+                                               name="insurance_number">
+                                    </div>
+                                    <div class="col-xxl-1 col-lg-4 col-sm-6">
+                                    <label class="form-label">{% trans "Telegram" %}</label>
+                                    <input type="text" class="form-control" id="telegram_username" value="{{ user.telegram_username }}"
+                                           name="telegram_username"
+                                           placeholder="@username">
+                                </div>
+                                <div class="col-xxl-1 col-lg-4 col-sm-6">
+                                    <label class="form-label">{% trans "Instagram" %}</label>
+                                    <input type="text" class="form-control" id="instagram_username" value="{{ user.instagram_username }}"
+                                           name="instagram_username" placeholder="@username">
+                                </div>
+
+                                    <div class="col-xxl-2 col-lg-4 col-sm-6">
+                                        <div class="mb-3">
+                                            <label class="form-label"
+                                                   for="employment_date">{% trans "Ishga kirgan sana" %}</label>
+                                            <input type="date" class="form-control" id="employment_date" value="{{ user.employment_date|date:'Y-m-d' }}"
+                                                   name="employment_date">
+                                        </div>
+                                    </div>
+                                    <div class="col-xxl-2 col-lg-4 col-sm-6">
+                                        <div class="mb-3">
+                                            <label class="form-label"
+                                                   for="contract_end_date">{% trans "Shartnoma tugash sanasi" %}</label>
+                                            <input type="date" class="form-control" id="contract_end_date" value="{{ user.contract_end_date|date:'Y-m-d' }}"
+                                                   name="contract_end_date">
+                                        </div>
+                                    </div>
+                                    <div class="col-xxl-2 col-lg-4 col-sm-6">
+                                        <label class="form-label">{% trans "Litsenziya raqami" %}</label>
+                                        <input type="text" class="form-control" id="professional_license_number" value="{{ user.professional_license_number }}"
+                                               name="professional_license_number">
+                                    </div>
+                                    <!-- Tibbiyot mutaxassisligi -->
+                                    <div class="col-xxl-6 col-lg-4 col-sm-6">
+                                        <label class="form-label">{% trans "Tibbiyot mutaxassisligi" %}</label>
+                                        <input type="text" class="form-control" id="medical_specialty" value="{{ user.medical_specialty }}"
+                                               name="medical_specialty">
+                                    </div>
+                                    <!-- Ish jadvali -->
+                                    <div class="mb-3 col-3">
+                                        <label class="form-label">{% trans "Ish jadvali" %}</label>
+                                        <input type="text" class="form-control" id="shift_schedule" value="{{ user.shift_schedule }}"
+                                               name="shift_schedule">
+                                    </div>
+                                    <!-- Moliyaviy ma’lumotlar -->
+                                    <div class="mb-3 col-3">
+                                        <label class="form-label">{% trans "Bank hisob raqami" %}</label>
+                                        <input type="text" class="form-control" id="bank_account_number" value="{{ user.bank_account_number }}"
+                                               name="bank_account_number">
+                                    </div>
+                                    <div class="mb-3 col-3">
+                                        <label class="form-label">{% trans "STIR" %}</label>
+                                        <input type="text" class="form-control" id="tax_identification_number" value="{{ user.tax_identification_number }}"
+                                               name="tax_identification_number">
+                                    </div>
+                                    <div class="col-xxl-3 col-lg-4 col-sm-6">
+                                        <div class="mb-3">
+                                            <label class="form-label" for="profile_picture">{% trans "Profil rasmi" %}</label>
+                                            {% if user.profile_picture %}
+                                                <div class="mb-2">
+                                                    <img src="{{ user.profile_picture.url }}" alt="{% trans 'Joriy profil rasmi' %}" class="img-thumbnail" style="max-width: 100px; max-height: 100px; object-fit: cover;">
+                                                    <p class="small text-muted">{% trans "Joriy rasm" %}</p>
+                                                </div>
+                                            {% endif %}
+                                            <input type="file" class="form-control" id="profile_picture" name="profile_picture" accept="image/*">
+                                        </div>
+                                    </div>
+                                    <!-- Biografiya -->
+                                    <div class="col-xxl-6 col-lg-4 col-sm-6">
+                                        <label class="form-label">{% trans "Qo‘shimcha ma’lumot" %}</label>
+                                        <textarea class="form-control" id="bio" name="bio" placeholder="{% trans 'Qo‘shimcha ma’lumot' %}" rows="2">{{ user.bio }}</textarea>
+                                    </div>
+                                    <div class="col-xxl-6 col-lg-4 col-sm-6">
+                                        <div class="mb-3">
+                                            <label class="form-label" for="address">{% trans "Manzil" %}</label>
+                                            <textarea class="form-control" id="address" name="address" placeholder="{% trans 'Manzilni kiriting' %}" rows="2">{{ user.address }}</textarea>
+                                        </div>
+                                    </div>
+                                    <!-- Faollik statusi -->
+                                    <div class="mb-3 form-check">
+                                        <input class="form-check-input" type="checkbox" id="is_active" name="is_active"
+                                               {% if user.is_active %}checked{% endif %}>
+                                        <label class="form-check-label" for="is_active">{% trans "Foydalanuvchi faol" %}</label>
+                                    </div>
+                                    <div class="col-sm-12">
+                                        <div class="d-flex gap-2 justify-content-end">
+
+                                            <a href="{% url 'users-view' %}"
+                                               class="btn btn-outline-secondary">{% trans "Bekor qilish" %}</a>
+                                            <button type="submit"
+                                                    class="btn btn-primary">{% trans "Hodim saqlash" %}</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                        <!-- Row ends -->
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Row ends -->
+
+    </div>
+{% endblock content %}
+
+
+
+
+{% block vendor_js %}
+    <!-- jQuery kutubxonasini yuklash -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- Bootstrap validation uchun JavaScript -->
+<script>
+(function () {
+    'use strict';
+    var forms = document.querySelectorAll('.needs-validation');
+    Array.prototype.slice.call(forms).forEach(function (form) {
+        form.addEventListener('submit', function (event) {
+            if (!form.checkValidity()) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+            form.classList.add('was-validated');
+        }, false);
+    });
+})();
+</script>
+
+
+{% endblock vendor_js %}

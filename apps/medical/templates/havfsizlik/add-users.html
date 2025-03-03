@@ -3,216 +3,243 @@
 {% load i18n %}
 
 {% block title %}
-    <title>Foydalanuvchi qo‘shish</title>
+    Foydalanuvchi qo‘shish
 {% endblock title %}
 
 {% block content %}
-    <div class="">
+<!-- Xabarlar -->
+        {% if messages %}
+        <div class="mt-3">
+            {% for message in messages %}
+            <div class="alert {% if message.tags == 'success' %}alert-success{% else %}alert-danger{% endif %} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
 
-        <div class="row justify-content-center ">
-            <div class="col-md-10">
-                <div class="card shadow-sm">
-                    <div class="card-header d-flex justify-content-between align-items-center">
-                        <h4 class="card-title">{% trans "Yangi foydalanuvchi qo‘shish" %}</h4>
-                        <a href="{% url 'users-view' %}" class="btn btn-outline-primary">
-                            <i class="fas fa-arrow-left"></i> {% trans "Orqaga qaytish" %}
-                        </a>
-                    </div>
+    <div class="app-body">
+        <!-- Row starts -->
+        <div class="row gx-3">
+            <div class="col-sm-12">
+                <div class="app-body">
                     <div class="card-body">
-                        <form id="addUserForm" method="post" enctype="multipart/form-data">
+                        <form method="POST" enctype="multipart/form-data" class="needs-validation" novalidate>
                             {% csrf_token %}
-
-                            <div class="row">
-                                <!-- F.I.O -->
-                                <div class="mb-3 col-4">
-                                    <label class="form-label">{% trans "F.I.O" %}</label>
-                                    <input type="text" class="form-control" id="full_name" name="full_name" required>
+                            <div class="card shadow-sm border-0 p-3">
+                                <div class="bg-light rounded-2 px-3 py-2 mb-3">
+                                    <h6 class="m-0">{% trans "Hodim ma'lumotlarini kiriting" %}</h6>
                                 </div>
+                                <!-- Row starts -->
+                                <div class="row gx-3">
+                                    <div class="col-xxl-2 col-lg-4 col-sm-6">
+                                        <div class="mb-3">
+                                            <label class="form-label" for="full_name">{% trans "F.I.O" %} <span
+                                                    class="text-danger">*</span></label>
+                                            <input type="text" class="form-control" id="full_name" name="full_name"
+                                                   placeholder="{% trans 'Ism va familiya' %}" required>
+                                            <div class="invalid-feedback">{% trans "Iltimos, F.I.O ni kiriting" %}</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-xxl-2 col-lg-4 col-sm-6">
+                                        <div class="mb-3">
+                                            <label class="form-label"
+                                                   for="username">{% trans "Foydalanuvchi nomi" %}</label>
+                                            <input type="text" class="form-control" id="username" name="username"
+                                                   placeholder="{% trans 'Foydalanuvchi nomi' %}">
+                                        </div>
+                                    </div>
+                                    <div class="col-xxl-2 col-lg-4 col-sm-6">
+                                        <div class="mb-3">
+                                            <label class="form-label" for="phone_number">{% trans "Telefon raqami" %}
+                                                <span class="text-danger">*</span></label>
+                                            <input type="text" class="form-control" id="phone_number"
+                                                   name="phone_number"
+                                                   placeholder="{% trans 'Telefon raqamni kiriting' %}" required>
+                                            <div class="invalid-feedback">{% trans "Iltimos, telefon raqamni kiriting" %}</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-xxl-2 col-lg-4 col-sm-6">
+                                        <div class="mb-3">
+                                            <label class="form-label" for="employee_id">{% trans "Xodim ID" %}</label>
+                                            <input type="text" class="form-control" id="employee_id" name="employee_id"
+                                                   placeholder="{% trans 'Xodim ID kiriting' %}">
+                                        </div>
+                                    </div>
+                                    <div class="col-xxl-2 col-lg-4 col-sm-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">{% trans "Jins" %} <span
+                                                    class="text-danger">*</span></label>
+                                            <div class="m-0">
+                                                <div class="form-check form-check-inline">
+                                                    <input class="form-check-input" type="radio" name="gender"
+                                                           id="gender_male" value="male" required>
+                                                    <label class="form-check-label"
+                                                           for="gender_male">{% trans "Erkak" %}</label>
+                                                </div>
+                                                <div class="form-check form-check-inline">
+                                                    <input class="form-check-input" type="radio" name="gender"
+                                                           id="gender_female" value="female">
+                                                    <label class="form-check-label"
+                                                           for="gender_female">{% trans "Ayol" %}</label>
+                                                </div>
+                                                <div class="invalid-feedback">{% trans "Iltimos, jinsni tanlang" %}</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-xxl-2 col-lg-4 col-sm-6">
+                                        <div class="mb-3">
+                                            <label class="form-label"
+                                                   for="date_of_birth">{% trans "Tug‘ilgan sana" %}</label>
+                                            <input type="date" class="form-control" id="date_of_birth"
+                                                   name="date_of_birth">
+                                        </div>
+                                    </div>
+                                    <div class="col-xxl-2 col-lg-4 col-sm-6">
+                                        <div class="mb-3">
+                                            <label class="form-label" for="job_title">{% trans "Lavozim" %}</label>
+                                            <input type="text" class="form-control" id="job_title" name="job_title"
+                                                   placeholder="{% trans 'Lavozimni kiriting' %}">
+                                        </div>
+                                    </div>
+                                    <div class="col-xxl-3 col-lg-4 col-sm-6">
+                                        <div class="mb-3">
+                                            <label class="form-label" for="department">{% trans "Bo‘lim" %}</label>
+                                            <input type="text" class="form-control" id="department" name="department"
+                                                   placeholder="{% trans 'Bo‘limni kiriting' %}">
+                                        </div>
+                                    </div>
+                                    <!-- Millati -->
+                                    <div class="col-xxl-1 col-lg-4 col-sm-6">
+                                        <label class="form-label">{% trans "Millati" %}</label>
+                                        <input type="text" class="form-control" id="nationality" name="nationality">
+                                    </div>
 
-                                <!-- Username -->
-                                <div class="mb-3 col-4">
-                                    <label class="form-label">{% trans "Foydalanuvchi nomi (username)" %}</label>
-                                    <input type="text" class="form-control" id="username" name="username" required>
-                                </div>
-
-                                <!-- Telefon raqami -->
-                                <div class="mb-3 col-4">
-                                    <label class="form-label">{% trans "Telefon raqami" %}</label>
-                                    <input type="text" class="form-control" id="phone_number" name="phone_number"
-                                           placeholder="+998 90 123 45 67">
-                                </div>
-                            </div>
-
-                            <!-- Manzil -->
-                            <div class="mb-3">
-                                <label class="form-label">{% trans "Manzil" %}</label>
-                                <textarea class="form-control" id="address" name="address" rows="2"></textarea>
-                            </div>
-                            <!-- Ish vaqti -->
-                            <div class="row">
-                                <div class="mb-3 col-3">
-                                    <label class="form-label">{% trans "Ish boshlanish vaqti" %}</label>
-                                    <input type="time" class="form-control" id="work_start_time" name="work_start_time">
-                                </div>
-                                <div class="mb-3 col-3">
-                                    <label class="form-label">{% trans "Ish tugash vaqti" %}</label>
-                                    <input type="time" class="form-control" id="work_end_time" name="work_end_time">
-                                </div>
-                                <!-- Ijtimoiy tarmoqlar -->
-
-                                <div class="mb-3 col-3">
-                                    <label class="form-label">{% trans "Telegram foydalanuvchi nomi" %}</label>
+                                    <!-- Favqulodda aloqa raqami -->
+                                    <div class="col-xxl-1 col-lg-4 col-sm-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">{% trans "FAV raqam" %}</label>
+                                            <input type="text" class="form-control" id="emergency_contact"
+                                                   name="emergency_contact"></div>
+                                    </div>
+                                    <div class="col-xxl-1 col-lg-4 col-sm-6">
+                                        <label class="form-label">{% trans "Boshlanishi" %}</label>
+                                        <input type="time" class="form-control" id="work_start_time"
+                                               name="work_start_time">
+                                    </div>
+                                    <div class="col-xxl-1 col-lg-4 col-sm-6">
+                                        <label class="form-label">{% trans "Tugashi" %}</label>
+                                        <input type="time" class="form-control" id="work_end_time" name="work_end_time">
+                                    </div>
+                                    <div class="col-xxl-1 col-lg-4 col-sm-6">
+                                        <label class="form-label">{% trans "Su'gurta" %}</label>
+                                        <input type="text" class="form-control" id="insurance_number"
+                                               name="insurance_number">
+                                    </div>
+                                    <div class="col-xxl-1 col-lg-4 col-sm-6">
+                                    <label class="form-label">{% trans "Telegram" %}</label>
                                     <input type="text" class="form-control" id="telegram_username"
                                            name="telegram_username"
                                            placeholder="@username">
                                 </div>
-                                <div class="mb-3 col-3">
-                                    <label class="form-label">{% trans "Instagram nomi" %}</label>
+                                <div class="col-xxl-1 col-lg-4 col-sm-6">
+                                    <label class="form-label">{% trans "Instagram" %}</label>
                                     <input type="text" class="form-control" id="instagram_username"
                                            name="instagram_username" placeholder="@username">
                                 </div>
-                            </div>
-                            <div class="row">
-                                <!-- Tug‘ilgan sana -->
-                                <div class="mb-3 col-3">
-                                    <label class="form-label">{% trans "Tug‘ilgan sana" %}</label>
-                                    <input type="date" class="form-control" id="date_of_birth" name="date_of_birth">
+
+                                    <div class="col-xxl-2 col-lg-4 col-sm-6">
+                                        <div class="mb-3">
+                                            <label class="form-label"
+                                                   for="employment_date">{% trans "Ishga kirgan sana" %}</label>
+                                            <input type="date" class="form-control" id="employment_date"
+                                                   name="employment_date">
+                                        </div>
+                                    </div>
+                                    <div class="col-xxl-2 col-lg-4 col-sm-6">
+                                        <div class="mb-3">
+                                            <label class="form-label"
+                                                   for="contract_end_date">{% trans "Shartnoma tugash sanasi" %}</label>
+                                            <input type="date" class="form-control" id="contract_end_date"
+                                                   name="contract_end_date">
+                                        </div>
+                                    </div>
+                                    <div class="col-xxl-2 col-lg-4 col-sm-6">
+                                        <label class="form-label">{% trans "Litsenziya raqami" %}</label>
+                                        <input type="text" class="form-control" id="professional_license_number"
+                                               name="professional_license_number">
+                                    </div>
+                                    <!-- Tibbiyot mutaxassisligi -->
+                                    <div class="col-xxl-6 col-lg-4 col-sm-6">
+                                        <label class="form-label">{% trans "Tibbiyot mutaxassisligi" %}</label>
+                                        <input type="text" class="form-control" id="medical_specialty"
+                                               name="medical_specialty">
+                                    </div>
+                                    <!-- Ish jadvali -->
+                                    <div class="mb-3 col-3">
+                                        <label class="form-label">{% trans "Ish jadvali" %}</label>
+                                        <input type="text" class="form-control" id="shift_schedule"
+                                               name="shift_schedule">
+                                    </div>
+                                    <!-- Moliyaviy ma’lumotlar -->
+                                    <div class="mb-3 col-3">
+                                        <label class="form-label">{% trans "Bank hisob raqami" %}</label>
+                                        <input type="text" class="form-control" id="bank_account_number"
+                                               name="bank_account_number">
+                                    </div>
+                                    <div class="mb-3 col-3">
+                                        <label class="form-label">{% trans "STIR" %}</label>
+                                        <input type="text" class="form-control" id="tax_identification_number"
+                                               name="tax_identification_number">
+                                    </div>
+                                    <div class="col-xxl-3 col-lg-4 col-sm-6">
+                                        <div class="mb-3">
+                                            <label class="form-label"
+                                                   for="profile_picture">{% trans "Profil rasmi" %}</label>
+                                            <input type="file" class="form-control" id="profile_picture"
+                                                   name="profile_picture" accept="image/*">
+                                        </div>
+                                    </div>
+                                    <!-- Biografiya -->
+                                    <div class="col-xxl-6 col-lg-4 col-sm-6">
+                                        <label class="form-label">{% trans "Qo‘shimcha ma’lumot" %}</label>
+                                        <textarea class="form-control" id="bio" name="bio" placeholder="{% trans 'Qoshimcha malumot'  %}" rows="2"></textarea>
+                                    </div>
+                                    <div class="col-xxl-6 col-lg-4 col-sm-6">
+                                        <div class="mb-3">
+                                            <label class="form-label" for="address">{% trans "Manzil" %}</label>
+                                            <textarea class="form-control" id="address" name="address"
+                                                      placeholder="{% trans 'Manzilni kiriting' %}" rows="2"></textarea>
+                                        </div>
+                                    </div>
+                                    <!-- Faollik statusi -->
+                                    <div class="mb-3 form-check">
+                                        <input class="form-check-input" type="checkbox" id="is_active"
+                                               name="is_active" checked>
+                                        <label class="form-check-label"
+                                               for="is_active">{% trans "Foydalanuvchi faol" %}</label>
+                                    </div>
+                                    <div class="col-sm-12">
+                                        <div class="d-flex gap-2 justify-content-end">
+
+                                            <a href="{% url 'users-view' %}"
+                                               class="btn btn-outline-secondary">{% trans "Bekor qilish" %}</a>
+                                            <button type="submit"
+                                                    class="btn btn-primary">{% trans "Hodim qo‘shish" %}</button>
+                                        </div>
+                                    </div>
                                 </div>
-
-                                <!-- Jins -->
-                                <div class="mb-3 col-3">
-                                    <label class="form-label">{% trans "Jins" %}</label>
-                                    <select class="form-select" id="gender" name="gender">
-                                        <option value="male">{% trans "Erkak" %}</option>
-                                        <option value="female">{% trans "Ayol" %}</option>
-                                    </select>
-                                </div>
-
-                                <!-- Millati -->
-                                <div class="mb-3 col-3">
-                                    <label class="form-label">{% trans "Millati" %}</label>
-                                    <input type="text" class="form-control" id="nationality" name="nationality">
-                                </div>
-
-                                <!-- Xodim ID -->
-                                <div class="mb-3 col-3">
-                                    <label class="form-label">{% trans "Xodim ID" %}</label>
-                                    <input type="text" class="form-control" id="employee_id" name="employee_id">
-                                </div>
-                            </div>
-
-                            <!-- Profil rasmi -->
-                            <div class="mb-3">
-                                <label class="form-label">{% trans "Profil rasmi" %}</label>
-                                <input type="file" class="form-control" id="profile_picture" name="profile_picture"
-                                       accept="image/*">
-                            </div>
-
-
-                            <!-- Biografiya -->
-                            <div class="mb-3">
-                                <label class="form-label">{% trans "Qo‘shimcha ma’lumot" %}</label>
-                                <textarea class="form-control" id="bio" name="bio" rows="3"></textarea>
-                            </div>
-
-
-                            <div class="row">
-
-                                <!-- Favqulodda aloqa raqami -->
-                                <div class="mb-3 col-4">
-                                    <label class="form-label">{% trans "Favqulodda aloqa raqami" %}</label>
-                                    <input type="text" class="form-control" id="emergency_contact"
-                                           name="emergency_contact">
-                                </div>
-                                <!-- Ish joyi va lavozim -->
-                                <div class="mb-3 col-4">
-                                    <label class="form-label">{% trans "Bo‘lim" %}</label>
-                                    <input type="text" class="form-control" id="department" name="department">
-                                </div>
-
-                                <div class="mb-3 col-4">
-                                    <label class="form-label">{% trans "Lavozim" %}</label>
-                                    <input type="text" class="form-control" id="job_title" name="job_title">
-                                </div>
-                            </div>
-
-
-                            <div class="row">
-                                <!-- Ish boshlash va shartnoma tugash sanasi -->
-                                <div class="mb-3 col-4">
-                                    <label class="form-label">{% trans "Ish boshlash sanasi" %}</label>
-                                    <input type="date" class="form-control" id="employment_date" name="employment_date">
-                                </div>
-
-                                <div class="mb-3 col-4">
-                                    <label class="form-label">{% trans "Shartnoma tugash sanasi" %}</label>
-                                    <input type="date" class="form-control" id="contract_end_date"
-                                           name="contract_end_date">
-                                </div>
-
-                                <div class="mb-3 col-4">
-                                    <label class="form-label">{% trans "Litsenziya raqami" %}</label>
-                                    <input type="text" class="form-control" id="professional_license_number"
-                                           name="professional_license_number">
-                                </div>
-                            </div>
-
-                            <!-- Tibbiyot mutaxassisligi -->
-                            <div class="mb-3">
-                                <label class="form-label">{% trans "Tibbiyot mutaxassisligi" %}</label>
-                                <input type="text" class="form-control" id="medical_specialty" name="medical_specialty">
-                            </div>
-
-
-                            <div class="row">
-                                <!-- Ish jadvali -->
-                                <div class="mb-3 col-3">
-                                    <label class="form-label">{% trans "Ish jadvali" %}</label>
-                                    <input type="text" class="form-control" id="shift_schedule" name="shift_schedule">
-                                </div>
-
-                                <!-- Moliyaviy ma’lumotlar -->
-                                <div class="mb-3 col-3">
-                                    <label class="form-label">{% trans "Bank hisob raqami" %}</label>
-                                    <input type="text" class="form-control" id="bank_account_number"
-                                           name="bank_account_number">
-                                </div>
-
-                                <div class="mb-3 col-3">
-                                    <label class="form-label">{% trans "STIR" %}</label>
-                                    <input type="text" class="form-control" id="tax_identification_number"
-                                           name="tax_identification_number">
-                                </div>
-
-                                <div class="mb-3 col-3">
-                                    <label class="form-label">{% trans "Sug‘urta raqami" %}</label>
-                                    <input type="text" class="form-control" id="insurance_number"
-                                           name="insurance_number">
-                                </div>
-                            </div>
-
-                            <!-- Faollik statusi -->
-                            <div class="mb-3 form-check">
-                                <input class="form-check-input" type="checkbox" id="is_active" name="is_active" checked>
-                                <label class="form-check-label" for="is_active">{% trans "Foydalanuvchi faol" %}</label>
-                            </div>
-
-                            <!-- Tugmalar -->
-                            <div class="d-flex justify-content-between">
-                                <button type="button" class="btn btn-success">{% trans "Saqlash" %}</button>
-                                <button type="reset" class="btn btn-secondary">{% trans "Tozalash" %}</button>
                             </div>
                         </form>
+                        <!-- Row ends -->
                     </div>
                 </div>
             </div>
         </div>
-    </div>
+        <!-- Row ends -->
 
-    <div class="alert alert-info d-none" id="server_message">
-        <span></span>
     </div>
-
 {% endblock content %}
 
 
@@ -222,55 +249,22 @@
     <!-- jQuery kutubxonasini yuklash -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-    <script>
-        $(document).ready(function () {
-            $(".btn-success").click(function () {
-                submitUserForm();
-            });
-        });
-
-        function submitUserForm() {
-            let formData = new FormData(document.getElementById('addUserForm'));
-
-            $.ajax({
-                url: "{% url 'add-users-view' %}", // Django URL
-                type: "POST",
-                contentType: false,
-                processData: false,
-                data: formData,
-                headers: {"X-CSRFToken": getCSRFToken()}, // CSRF token qo‘shish
-                success: function (response) {
-                    if (response.status === "success") {
-                        showServerMessage(response.message, "success");
-
-                        // 2 soniyadan keyin sahifani yangilash yoki boshqa sahifaga o'tish
-                        setTimeout(() => {
-                            window.location.href = "{% url 'users-view' %}";
-                        }, 2000);
-                    } else {
-                        showServerMessage("⚠ " + response.message, "warning");
-                    }
-                },
-                error: function (xhr) {
-                    let errorMessage = xhr.responseJSON?.message || "Noma’lum xatolik";
-                    showServerMessage("❌ " + errorMessage, "danger");
-                }
-            });
-        }
-
-        function getCSRFToken() {
-            return document.querySelector("[name=csrfmiddlewaretoken]").value;
-        }
-
-        function showServerMessage(message, type) {
-            let alertBox = $("#server_message");
-            alertBox.removeClass("d-none alert-info alert-success alert-danger alert-warning")
-                .addClass("alert-" + type);
-            alertBox.find("span").text(message);
-        }
-    </script>
-
-
+    <!-- Bootstrap validation uchun JavaScript -->
+<script>
+(function () {
+    'use strict';
+    var forms = document.querySelectorAll('.needs-validation');
+    Array.prototype.slice.call(forms).forEach(function (form) {
+        form.addEventListener('submit', function (event) {
+            if (!form.checkValidity()) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+            form.classList.add('was-validated');
+        }, false);
+    });
+})();
+</script>
 
 
 {% endblock vendor_js %}

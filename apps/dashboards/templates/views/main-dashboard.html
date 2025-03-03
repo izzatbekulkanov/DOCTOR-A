@@ -37,6 +37,17 @@
             text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3); /* 🔹 Matnni yaxshiroq o‘qish */
         }
 
+        .title {
+    display: flex;
+    align-items: center; /* Matn va rasmni bir chiziqqa tushiradi */
+    flex-wrap: wrap; /* Kichik ekranda buzilmasin */
+    gap: 10px; /* Matn va rasm orasidagi masofa */
+}
+.title img {
+    max-width: 150px;
+    height: auto;
+}
+
     </style>
 
 
@@ -54,7 +65,7 @@
                         <div class="hero-content">
                             <h1 class="title wow fadeInUp" data-wow-delay="0.2s" data-wow-duration="0.8s">
                                 <span class="text-danger">{{ site_settings.site_name }}</span> KLINIKASI
-                                <img src="{% static 'dashboard/images/hero-banner/line.png' %}" alt="">
+                                <img src="{% static 'dashboard/images/hero-banner/line.png' %}" alt="" s>
                             </h1>
                             <p class="text wow fadeInUp" data-wow-delay="0.4s" data-wow-duration="0.8s">
                                 {{ banner.description|get_language_text:CURRENT_LANGUAGE }}!
@@ -66,7 +77,7 @@
                     <div class="col-lg-6 wow fadeInRight" data-wow-delay="0.8s" data-wow-duration="0.8s">
                         <div class="hero-thumbnail" data-bottom-top="transform: translateY(-50px)"
                              data-top-bottom="transform: translateY(50px)">
-                            <img class="thumbnail" src="{{ banner.image.url }}"
+                            <img class="thumbnail" style="width: 90%" src="{{ banner.image.url }}"
                                  alt="">
                             <div class="circle-wrapper">
                                 <span class="circle1"></span>
@@ -137,12 +148,11 @@
                 <div class="col-lg-6" data-bottom-top="transform: translateY(100px)"
                      data-top-bottom="transform: translateY(-10px)">
                     <div class="form-wrapper style-1 text-vr-wrapper">
-                        <div class="text-vertical bg-danger">Ariza topshiring</div>
+                        <div class="text-vertical bg-danger">Murojaatlar</div>
                         <div class="form-body bg-secondary background-blend-burn"
                              style="background-image: url({% static 'dashboard/images/background/bg2.png' %}); background-size: cover">
                             <div class="title-head">
-                                <h2 class="form-title m-b0">Tibbiy <span class="text-danger">Ko‘rik</span> <br> Uchun
-                                    Ariza Topshiring</h2>
+                                <h2 class="form-title m-b0">Taklif <span class="text-danger">va</span>  Murojaatlar<br></h2>
                             </div>
                             <form action="" method="POST" class="dzForm">
                                 {% csrf_token %}
@@ -177,7 +187,7 @@
                                     <div class="col-sm-12">
                                         <button type="submit" name="submit" value="submit"
                                                 class="btn btn-lg btn-icon btn-white hover-secondary btn-shadow">
-                                            Ariza Yuborish <span class="right-icon"><i
+                                            Yuborish <span class="right-icon"><i
                                                 class="feather icon-arrow-right"></i></span>
                                         </button>
                                     </div>
@@ -211,8 +221,8 @@
                     <div class="col-xl-3 col-sm-6 wow fadeInUp" data-wow-delay="0.2s" data-wow-duration="0.8s">
                         <div class="dz-team style-1 active box-hover">
                             <div class="dz-media">
-                                <img src="{{ employee.profile_picture.url }}" alt="{{ employee.full_name }}"
-                                     onerror="this.src='{% static 'dashboard/images/team/img1.webp' %}'">
+                                <img src="{% if employee.profile_picture %}{{ employee.profile_picture.url }}{% else %}{% static 'dashboard/images/team/img1.webp' %}{% endif %}"
+                             alt="{{ employee.full_name }}">
                                 <a href="" class="btn btn-primary">
                                     <i class="feather icon-calendar m-r5"></i>
                                     Qabuliga yozilish
@@ -255,14 +265,6 @@
                             Bizning ishonchli hamkorlarimiz bilan birgalikda yuqori sifatli xizmatlarni taqdim etamiz.
                         </p>
                     </div>
-                    {% for partner in active_partners %}
-                        <span class="btn btn-outline-secondary btn-rounded m-r5 m-b10 wow fadeInUp"
-                              data-wow-delay="0.{{ forloop.counter }}s" data-wow-duration="0.8s">
-                            {{ partner.name|get_language_text:CURRENT_LANGUAGE }}
-                        </span>
-                    {% endfor %}
-
-
                 </div>
                 <div class="col-xxl-9">
                     <div class="swiper awards-swiper wow fadeInUp" data-wow-delay="0.4s" data-wow-duration="0.8s">

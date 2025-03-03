@@ -181,8 +181,6 @@ class Comment(models.Model):
     def __str__(self):
         return f"{self.full_name} - {self.news.title.get('uz', 'Noma’lum yangilik')}"
 
-
-
 class Announcement(models.Model):
     # Ko'p tilli sarlavha
     title = models.JSONField(default=dict, help_text=_("Har xil tillarda e'lon sarlavhasi (JSON formatda)"))
@@ -227,7 +225,6 @@ class Announcement(models.Model):
         self.views_count += 1
         self.save(update_fields=['views_count'])
 
-
 class Partner(models.Model):
     # Ko'p tilli nom
     name = models.JSONField(default=dict, help_text=_("Har xil tillarda hamkor nomi (JSON formatda)"))
@@ -259,13 +256,12 @@ class Partner(models.Model):
         return self.description.get(lang_code, self.description.get('uz', _('Tavsif mavjud emas')))
 
 
-
-
 class MedicalCheckupApplication(models.Model):
     full_name = models.CharField(max_length=255, verbose_name="Ism va familiya")
     phone_number = models.CharField(max_length=15, verbose_name="Telefon raqami")
     message = models.TextField(verbose_name="Xabar", blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Yaratilgan vaqt")
+    is_seen = models.BooleanField(default=False, verbose_name="Ko‘rildi")  # Yangi maydon
 
     def __str__(self):
         return f"{self.full_name} - {self.phone_number}"
@@ -273,4 +269,5 @@ class MedicalCheckupApplication(models.Model):
     class Meta:
         verbose_name = "Tibbiy ko'rik arizasi"
         verbose_name_plural = "Tibbiy ko'rik arizalari"
+        ordering = ['-created_at']  # Yangidan eskisiga tartiblash
 

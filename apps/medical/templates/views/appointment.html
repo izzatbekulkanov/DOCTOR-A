@@ -1,0 +1,199 @@
+{% extends 'administrator/main.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}
+    {% trans "Qabullar" %}
+{% endblock title %}
+
+{% block page_css %}
+
+
+<style>
+        .hover-btn-primary:hover {
+            background-color: #0d6efd !important;
+            color: white !important;
+            transform: scale(1.05);
+            transition: all 0.3s ease;
+        }
+        .table-hover tbody tr:hover {
+            background-color: #f1f3f5;
+            transition: background-color 0.3s ease;
+        }
+        .pagination .page-link {
+            transition: all 0.3s ease;
+        }
+        .pagination .page-link:hover {
+            background-color: #e9ecef;
+        }
+        .table-dark th {
+            background-color: #343a40 !important;
+        }
+    </style>
+
+
+{% endblock page_css %}
+{% block content %}
+<div class="app-body" style="background: linear-gradient(135deg, #f8f9fa, #e9ecef); min-height: 100vh; padding: 1.5rem;">
+
+        <h2 class="mb-4 fw-bold text-dark">{% trans "Qabullar" %}</h2>
+
+        <!-- Qidiruv formasi -->
+        <form method="GET" action="{% url 'appointment-view' %}" class="mb-4">
+            <div class="input-group">
+                <input type="text" name="q" value="{{ search_query }}"
+                       class="form-control border rounded-3 shadow-sm py-2 px-3"
+                       placeholder="🔍 {% trans 'Qabul qidirish...' %}"
+                       aria-label="Search">
+                <button type="submit"
+                        class="btn btn-primary fw-semibold px-4 py-2 rounded-3 hover-btn-primary">
+                    {% trans "Qidirish" %}
+                </button>
+            </div>
+        </form>
+
+        <!-- Qabullar jadvali -->
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover rounded-3 overflow-hidden">
+                <thead class="table-dark">
+                    <tr>
+                        <th scope="col" class="py-3">#</th>
+                        <th scope="col" class="py-3">{% trans "Ism" %}</th>
+                        <th scope="col" class="py-3">{% trans "Telefon" %}</th>
+                        <th scope="col" class="py-3">{% trans "Habar" %}</th>
+                        <th scope="col" class="py-3">{% trans "Hodim" %}</th>
+                        <th scope="col" class="py-3">{% trans "Sana" %}</th>
+                        <th scope="col" class="py-3">{% trans "Holat" %}</th>
+                        <th scope="col" class="py-3">{% trans "Amallar" %}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for appointment in appointments %}
+                        <tr data-id="{{ appointment.id }}">
+                            <td class="py-3">{{ forloop.counter }}</td>
+                            <td class="py-3">{{ appointment.full_name }}</td>
+                            <td class="py-3">{{ appointment.phone_number }}</td>
+                            <td class="py-3">{{ appointment.message|truncatewords:20 }}</td>
+                            <td class="py-3">{{ appointment.employee.full_name }}</td>
+                            <td class="py-3">{{ appointment.created_at|date:"Y-m-d H:i" }}</td>
+                            <td class="py-3">
+                                <span class="badge
+                                    {% if appointment.status == 'pending' %}bg-warning{% endif %}
+                                    {% if appointment.status == 'approved' %}bg-success{% endif %}
+                                    {% if appointment.status == 'canceled' %}bg-danger{% endif %}">
+                                    {{ appointment.get_status_display }}
+                                </span>
+                            </td>
+                            <td class="py-3">
+                                <button class="btn btn-danger btn-sm hover-btn-danger"
+                                        onclick="deleteAppointment('{{ appointment.id }}')">
+                                    {% trans "O'chirish" %}
+                                </button>
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="8" class="text-center text-muted py-4">
+                                {% trans "Hozircha qabullar mavjud emas" %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination -->
+        {% if appointments.has_previous or appointments.has_next %}
+            <nav class="mt-4">
+                <ul class="pagination justify-content-center">
+                    {% if appointments.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link text-primary hover-bg-light rounded-3 px-3 py-2"
+                               href="?page=1&q={{ search_query }}">{% trans "Birinchi" %}</a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link text-primary hover-bg-light rounded-3 px-3 py-2"
+                               href="?page={{ appointments.previous_page_number }}&q={{ search_query }}">{% trans "Oldingi" %}</a>
+                        </li>
+                    {% endif %}
+                    <li class="page-item active">
+                        <span class="page-link bg-primary text-white rounded-3 px-3 py-2">
+                            {{ appointments.number }} / {{ appointments.paginator.num_pages }}
+                        </span>
+                    </li>
+                    {% if appointments.has_next %}
+                        <li class="page-item">
+                            <a class="page-link text-primary hover-bg-light rounded-3 px-3 py-2"
+                               href="?page={{ appointments.next_page_number }}&q={{ search_query }}">{% trans "Keyingi" %}</a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link text-primary hover-bg-light rounded-3 px-3 py-2"
+                               href="?page={{ appointments.paginator.num_pages }}&q={{ search_query }}">{% trans "Oxirgi" %}</a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        {% endif %}
+</div>
+{% endblock content %}
+
+{% block vendor_js %}
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            // ✅ Qidirish
+            $("#searchInput").on("keyup", function () {
+                var value = $(this).val().toLowerCase();
+                $("#messagesTable tr").filter(function () {
+                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                });
+            });
+
+            // ✅ Holatni o‘zgartirish
+            $(".status-select").on("change", function () {
+                var messageId = $(this).data("id");
+                var status = $(this).val();
+
+                $.ajax({
+                    url: "{% url 'appointment-view' %}",  // Django URL
+                    type: "POST",
+                    data: {
+                        "message_id": messageId,
+                        "status": status,
+                        "csrfmiddlewaretoken": "{{ csrf_token }}"
+                    },
+                    success: function (response) {
+                        alert(response.message);
+                    },
+                    error: function () {
+                        alert("{% trans 'Xatolik yuz berdi' %}");
+                    }
+                });
+            });
+
+            // ✅ Habarni o‘chirish
+            $(".delete-message").on("click", function () {
+                var messageId = $(this).data("id");
+                var row = $(this).closest("tr");
+
+                if (confirm("{% trans 'Haqiqatan ham o‘chirmoqchimisiz?' %}")) {
+                    $.ajax({
+                        url: "{% url 'appointment-view' %}",  // Django URL
+                        type: "POST",
+                        data: {
+                            "message_id": messageId,
+                            "csrfmiddlewaretoken": "{{ csrf_token }}"
+                        },
+                        success: function (response) {
+                            row.fadeOut();
+                        },
+                        error: function () {
+                            alert("{% trans 'Xatolik yuz berdi' %}");
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+{% endblock vendor_js %}
