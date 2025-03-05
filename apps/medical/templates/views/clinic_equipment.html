@@ -1,0 +1,305 @@
+{% extends 'administrator/main.html' %}
+{% load static i18n %}
+
+{% block title %}
+    {% trans "Klinika qurilmalari" %}
+{% endblock title %}
+
+{% block page_css %}
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<style>
+        body {
+            background: #f5f6fa;
+            font-family: 'Arial', sans-serif;
+        }
+        .app-body {
+            padding: 2rem 1rem;
+            min-height: 100vh;
+        }
+        .card {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+        .card-header {
+            background: linear-gradient(135deg, #343a40, #495057);
+            color: #fff;
+            border-radius: 12px 12px 0 0;
+            padding: 1.5rem;
+        }
+        .card-body {
+            padding: 2rem;
+            background: #fff;
+            border-radius: 0 0 12px 12px;
+        }
+        .btn-primary, .btn-danger {
+            border-radius: 8px;
+            padding: 0.5rem 1.5rem;
+            transition: all 0.3s ease;
+        }
+        .btn-primary:hover {
+            background-color: #0d6efd;
+            transform: scale(1.05);
+        }
+        .btn-danger:hover {
+            background-color: #dc3545;
+            transform: scale(1.05);
+        }
+        .form-label {
+            font-weight: 600;
+            color: #343a40;
+        }
+        .form-control, .form-check-input {
+            border-radius: 8px;
+            border: 1px solid #ced4da;
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+        .form-control:focus {
+            border-color: #0d6efd;
+            box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+        }
+        .nav-tabs .nav-link {
+            border-radius: 8px 8px 0 0;
+            color: #495057;
+            font-weight: 500;
+        }
+        .nav-tabs .nav-link.active {
+            background: #fff;
+            border-bottom: none;
+            color: #0d6efd;
+        }
+        .table {
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+        .table-dark {
+            background: #343a40;
+        }
+        .table-hover tbody tr:hover {
+            background: #f8f9fa;
+        }
+        .badge {
+            padding: 0.5em 0.75em;
+            font-size: 0.9em;
+        }
+        @media (max-width: 992px) {
+            .card {
+                margin-bottom: 1.5rem;
+            }
+        }
+    </style>
+{% endblock page_css %}
+
+{% block content %}
+<div class="app-body py-4">
+    <!-- Xabarlar ko‘rsatilishi -->
+    {% if messages %}
+        <div class="container mb-4">
+            {% for message in messages %}
+                <div class="alert {% if message.tags == 'success' %}alert-success{% elif message.tags == 'error' %}alert-danger{% else %}alert-info{% endif %} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <div class="container">
+        <div class="row g-4">
+            <!-- Yangi qurilma qo‘shish formasi -->
+            <div class="col-lg-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="mb-0 fw-bold">{% trans "Yangi qurilma qo‘shish / Tahrirlash" %}</h2>
+                    </div>
+                    <div class="card-body">
+                        <form method="POST" enctype="multipart/form-data" id="equipmentForm">
+                            {% csrf_token %}
+                            <input type="hidden" name="equipment_id" id="equipment_id">
+
+                            <!-- Qurilma nomi -->
+                            <ul class="nav nav-tabs mb-3" id="nameTabs" role="tablist">
+                                {% for lang_code, lang_name in LANGUAGES %}
+                                    <li class="nav-item" role="presentation">
+                                        <button class="nav-link {% if forloop.first %}active{% endif %}"
+                                                id="name-tab-{{ lang_code }}"
+                                                data-bs-toggle="tab"
+                                                data-bs-target="#name-content-{{ lang_code }}"
+                                                type="button"
+                                                role="tab"
+                                                aria-controls="name-content-{{ lang_code }}"
+                                                aria-selected="{% if forloop.first %}true{% else %}false{% endif %}">
+                                            {{ lang_name }}
+                                        </button>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                            <div class="tab-content mb-3" id="nameTabContent">
+                                {% for lang_code, lang_name in LANGUAGES %}
+                                    <div class="tab-pane fade {% if forloop.first %}show active{% endif %}"
+                                         id="name-content-{{ lang_code }}"
+                                         role="tabpanel"
+                                         aria-labelledby="name-tab-{{ lang_code }}">
+                                        <label for="name_{{ lang_code }}" class="form-label">
+                                            {% trans "Nomi" %} ({{ lang_name }}) {% if lang_code == 'uz' %}<span class="text-danger">*</span>{% endif %}
+                                        </label>
+                                        <input type="text" name="name_{{ lang_code }}" id="name_{{ lang_code }}"
+                                               class="form-control" {% if lang_code == 'uz' %}required{% endif %}>
+                                    </div>
+                                {% endfor %}
+                            </div>
+
+                            <!-- Qurilma tavsifi -->
+                            <ul class="nav nav-tabs mb-3" id="descTabs" role="tablist">
+                                {% for lang_code, lang_name in LANGUAGES %}
+                                    <li class="nav-item" role="presentation">
+                                        <button class="nav-link {% if forloop.first %}active{% endif %}"
+                                                id="desc-tab-{{ lang_code }}"
+                                                data-bs-toggle="tab"
+                                                data-bs-target="#desc-content-{{ lang_code }}"
+                                                type="button"
+                                                role="tab"
+                                                aria-controls="desc-content-{{ lang_code }}"
+                                                aria-selected="{% if forloop.first %}true{% else %}false{% endif %}">
+                                            {{ lang_name }}
+                                        </button>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                            <div class="tab-content mb-3" id="descTabContent">
+                                {% for lang_code, lang_name in LANGUAGES %}
+                                    <div class="tab-pane fade {% if forloop.first %}show active{% endif %}"
+                                         id="desc-content-{{ lang_code }}"
+                                         role="tabpanel"
+                                         aria-labelledby="desc-tab-{{ lang_code }}">
+                                        <label for="description_{{ lang_code }}" class="form-label">
+                                            {% trans "Tavsif" %} ({{ lang_name }})
+                                        </label>
+                                        <textarea name="description_{{ lang_code }}" id="description_{{ lang_code }}"
+                                                  class="form-control" rows="3"></textarea>
+                                    </div>
+                                {% endfor %}
+                            </div>
+
+                            <!-- Qurilma rasmi -->
+                            <div class="mb-3">
+                                <label for="image" class="form-label">{% trans "Rasm (800x600)" %}</label>
+                                <input type="file" name="image" id="image" class="form-control">
+                            </div>
+
+                            <!-- Faollik holati -->
+                            <div class="mb-4 form-check">
+                                <input type="checkbox" name="is_active" id="is_active" class="form-check-input" checked>
+                                <label for="is_active" class="form-check-label">{% trans "Faol" %}</label>
+                            </div>
+
+                            <!-- Saqlash tugmasi -->
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-primary">{% trans "Saqlash" %}</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Qurilmalar ro‘yxati -->
+            <div class="col-lg-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="mb-0 fw-bold">{% trans "Qurilmalar ro‘yxati" %}</h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th>{% trans "Nomi (O‘zbek)" %}</th>
+                                        <th>{% trans "Tavsif (O‘zbek)" %}</th>
+                                        <th>{% trans "Rasm" %}</th>
+                                        <th>{% trans "Faol" %}</th>
+                                        <th>{% trans "Amallar" %}</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for equipment in equipments %}
+                                        <tr>
+                                            <td>{{ equipment.get_name }}</td>
+                                            <td>{{ equipment.get_description|truncatewords:10 }}</td>
+                                            <td>
+                                                {% if equipment.image %}
+                                                    <img src="{{ equipment.image.url }}" style="max-height: 50px; border-radius: 4px;" alt="{{ equipment.get_name }}">
+                                                {% else %}
+                                                    <span class="text-muted">{% trans "Rasm yo‘q" %}</span>
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                {% if equipment.is_active %}
+                                                    <span class="badge bg-success">{% trans "Faol" %}</span>
+                                                {% else %}
+                                                    <span class="badge bg-danger">{% trans "Faol emas" %}</span>
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                <button class="btn btn-primary btn-sm edit-equipment"
+                                                        data-id="{{ equipment.id }}"
+                                                        data-name='{{ equipment.name|safe }}'
+                                                        data-desc='{{ equipment.description|safe }}'
+                                                        data-active="{{ equipment.is_active }}">{% trans "Tahrirlash" %}</button>
+                                                <button class="btn btn-danger btn-sm delete-equipment"
+                                                        data-id="{{ equipment.id }}">{% trans "O‘chirish" %}</button>
+                                            </td>
+                                        </tr>
+                                    {% empty %}
+                                        <tr>
+                                            <td colspan="5" class="text-center text-muted py-3">{% trans "Hozircha qurilmalar mavjud emas" %}</td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Qo‘shimcha JavaScript -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    document.querySelectorAll('.edit-equipment').forEach(button => {
+        button.addEventListener('click', function() {
+            const id = this.dataset.id;
+            const name = JSON.parse(this.dataset.name.replace(/&quot;/g, '"')); // HTML entities ni to‘g‘rilash
+            const desc = JSON.parse(this.dataset.desc.replace(/&quot;/g, '"')); // HTML entities ni to‘g‘rilash
+            const isActive = this.dataset.active === 'True';
+
+            document.getElementById('equipment_id').value = id;
+            {% for lang_code, lang_name in LANGUAGES %}
+                document.getElementById('name_{{ lang_code }}').value = name['{{ lang_code }}'] || '';
+                document.getElementById('description_{{ lang_code }}').value = desc['{{ lang_code }}'] || '';
+            {% endfor %}
+            document.getElementById('is_active').checked = isActive;
+            document.querySelector('.card-header h2').textContent = '{% trans "Qurilmani tahrirlash" %}';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+    });
+
+    document.querySelectorAll('.delete-equipment').forEach(button => {
+        button.addEventListener('click', function() {
+            if (confirm('{% trans "Qurilmani o‘chirishni tasdiqlaysizmi?" %}')) {
+                fetch(`?equipment_id=${this.dataset.id}`, {
+                    method: 'DELETE',
+                    headers: { 'X-CSRFToken': '{{ csrf_token }}' }
+                }).then(() => location.reload());
+            }
+        });
+    });
+</script>
+{% endblock content %}

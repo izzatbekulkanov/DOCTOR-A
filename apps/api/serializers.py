@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
-from apps.medical.models import News, MedicalCheckupApplication
+from apps.medical.models import MedicalCheckupApplication
+from apps.news.models import News
 
 
 class NewsSerializer(serializers.ModelSerializer):

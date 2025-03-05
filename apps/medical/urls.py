@@ -1,11 +1,12 @@
 from django.urls import path
 from .views import MainView, MainPageBannerView, get_banner, delete_banner, \
     ContactPhoneView, get_contact_phone, UsersView, RolesView, LogsView, AddUsersView, AppointmentView, EditUsersView, \
-    MedicalCheckupApplicationView
+    MedicalCheckupApplicationView, MainSettingsView, ClinicEquipmentView
 from django.contrib.auth.decorators import login_required
 
 viewspatterns = [
     path("", login_required(MainView.as_view()), name="admin-index", ),
+    path("settings", login_required(MainSettingsView.as_view()), name="admin-setting-index", ),
     path("page-banner", login_required(MainPageBannerView.as_view()), name="page-banner", ),
 
     path('get-banner/<int:banner_id>/', get_banner, name="get_banner"),
@@ -25,6 +26,7 @@ havsizlikpatterns = [
     path("appointmentView", login_required(AppointmentView.as_view()), name="appointment-view", ),
 
     path('checkup-applications', MedicalCheckupApplicationView.as_view(), name='medical-checkup-applications'),
+    path('clinic/equipment/', ClinicEquipmentView.as_view(), name='clinic-equipment'),
 
 ]
 

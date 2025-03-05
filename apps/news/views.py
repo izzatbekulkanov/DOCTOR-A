@@ -12,10 +12,11 @@ from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from .forms import NewsForm  # Django ModelForm
 
-from apps.medical.models import News, Announcement
 from members.models import CustomUser
 
 from django.utils.translation import gettext as _  # 🔹 `gettext` ni import qildik
+
+from .models import News, Announcement
 
 
 @method_decorator(login_required, name='dispatch')

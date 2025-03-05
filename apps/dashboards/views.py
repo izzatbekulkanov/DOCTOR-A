@@ -3,12 +3,11 @@ from django.db.models import Count
 from django.http import JsonResponse
 from django.views.generic import TemplateView, DetailView
 from django.utils.translation import gettext_lazy as _
-from apps.medical.models import News, Comment, Announcement
 from django.utils.translation import gettext as _
 from django.db.models import Q
 from django.db import models
 
-
+from apps.news.models import News, Comment, Announcement
 from members.models import CustomUser
 
 

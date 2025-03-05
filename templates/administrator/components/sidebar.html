@@ -47,8 +47,8 @@
                     <span class="menu-text">Videolar</span>
                 </a>
             </li>
-            <li class="{% if request.resolver_match.url_name == '' %}active current-page{% endif %}">
-                <a href="">
+            <li class="{% if request.resolver_match.url_name == 'clinic-equipment' %}active current-page{% endif %}">
+                <a href="{% url 'clinic-equipment' %}">
                     <i class="ri-device-line"></i>
                     <span class="menu-text">Qurilmalar</span>
                 </a>
@@ -65,8 +65,8 @@
                     <span class="menu-text">Taklif va murojaatlar</span>
                 </a>
             </li>
-            <li class="{% if request.resolver_match.url_name == '' %}active current-page{% endif %}">
-                <a href="">
+            <li class="{% if request.resolver_match.url_name == 'admin-setting-index' %}active current-page{% endif %}">
+                <a href="{% url 'admin-setting-index' %}">
                     <i class="ri-building-line"></i>
                     <span class="menu-text">Klinika ma'lumotlari</span>
                 </a>

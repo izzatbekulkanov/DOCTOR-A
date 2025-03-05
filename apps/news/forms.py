@@ -1,6 +1,7 @@
 from django import forms
-from apps.medical.models import News
 from django.utils.translation import gettext_lazy as _
+
+from apps.news.models import News
 
 LANGUAGES = [
     ("uz", _("O'zbek")),

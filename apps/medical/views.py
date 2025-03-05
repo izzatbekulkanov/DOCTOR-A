@@ -21,7 +21,8 @@ from config import settings
 from config.settings import LANGUAGES
 from config.telegram_bot import send_message
 from members.models import CustomUser, Appointment
-from .models import SiteSettings, MainPageBanner, DoctorAInfo, ContactPhone, Partner, MedicalCheckupApplication
+from .models import SiteSettings, MainPageBanner, DoctorAInfo, ContactPhone, Partner, MedicalCheckupApplication, \
+    ClinicEquipment
 
 
 class MainView(TemplateView):
@@ -32,6 +33,17 @@ class MainView(TemplateView):
         context['site_settings'] = SiteSettings.objects.first()
         return context
 
+@method_decorator(login_required, name='dispatch')
+class MainSettingsView(TemplateView):
+    template_name = 'views/main-settings.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['site_settings'] = SiteSettings.objects.first()
+        context['banner'] = MainPageBanner.objects.first()  # Faqat bitta banner
+        context['LANGUAGES'] = settings.LANGUAGES  # settings.LANGUAGES ishlatildi
+        return context
+
     def resize_image(self, image_file, width=136, height=40):
         image = Image.open(image_file)
         image = image.convert('RGBA')
@@ -40,36 +52,73 @@ class MainView(TemplateView):
         image.save(buffer, format='PNG')
         return InMemoryUploadedFile(buffer, 'ImageField', image_file.name, 'image/png', sys.getsizeof(buffer), None)
 
-    def post(self, request, *args, **kwargs):
-        site_settings = SiteSettings.objects.first()
-        if not site_settings:
-            site_settings = SiteSettings()
+    def resize_banner_image(self, image_file, width=1920, height=180):
+        image = Image.open(image_file)
+        image = image.convert('RGBA')
+        image = image.resize((width, height), Image.LANCZOS)
+        buffer = BytesIO()
+        image.save(buffer, format='PNG')
+        return InMemoryUploadedFile(buffer, 'ImageField', image_file.name, 'image/png', sys.getsizeof(buffer), None)
 
-        # Ma'lumotlarni olish
+    def post(self, request, *args, **kwargs):
+        # SiteSettings uchun
+        site_settings = SiteSettings.objects.first() or SiteSettings()
+
         site_settings.site_name = request.POST.get('site_name', site_settings.site_name)
         site_settings.contact_email = request.POST.get('contact_email', site_settings.contact_email)
         site_settings.contact_phone = request.POST.get('contact_phone', site_settings.contact_phone)
         site_settings.address = request.POST.get('address', site_settings.address)
         site_settings.maintenance_mode = request.POST.get('maintenance_mode') == 'on'
-
-        # Yangi maydonlar (ish vaqti va ijtimoiy tarmoqlar)
         site_settings.working_hours = request.POST.get('working_hours', site_settings.working_hours)
         site_settings.facebook_url = request.POST.get('facebook_url', site_settings.facebook_url)
         site_settings.telegram_url = request.POST.get('telegram_url', site_settings.telegram_url)
         site_settings.instagram_url = request.POST.get('instagram_url', site_settings.instagram_url)
         site_settings.youtube_url = request.POST.get('youtube_url', site_settings.youtube_url)
 
-        # Logotiplarni yangilash
         if 'logo_dark' in request.FILES:
             site_settings.logo_dark = self.resize_image(request.FILES['logo_dark'])
         if 'logo_light' in request.FILES:
             site_settings.logo_light = self.resize_image(request.FILES['logo_light'])
 
-        # Saqlash
         site_settings.save()
-        messages.success(request, "Sayt sozlamalari muvaffaqiyatli saqlandi!")
-        return redirect('admin-index')
 
+        # MainPageBanner uchun
+        image = request.FILES.get('banner_image')  # Yangi yuklangan rasm
+        description = {code: request.POST.get(f'description_{code}', "").strip() for code, name in settings.LANGUAGES}
+
+        print(f"🟢 So‘rov qabul qilindi! image={'bor' if image else 'yo‘q'}")
+
+        # Xatoliklarni tekshirish (faqat o‘zbek tili uchun majburiy)
+        missing_fields = []
+
+        if not description.get('uz'):
+            missing_fields.append("📌 O'zbek tili uchun tavsif majburiy.")
+
+        if missing_fields:
+            print("❌ Xatoliklar ro‘yxati:", missing_fields)
+            messages.error(request, " ".join(missing_fields))
+            # Xatolik bo‘lsa, sahifani qayta yuklash uchun GET kontekstini qaytarish
+            context = self.get_context_data()
+            return render(request, self.template_name, context)
+
+        # Bazada mavjud banner bor yoki yo‘qligini tekshiramiz
+        banner = MainPageBanner.objects.first()  # Faqat eng birinchi banner
+
+        if banner:  # Agar mavjud bo‘lsa, uni yangilaymiz
+            print(f"✏️ Mavjud banner yangilanmoqda... ID: {banner.id}")
+            banner.description = description
+            if image:  # Agar yangi rasm bo‘lsa, uni almashtiramiz
+                print("📸 Yangi rasm yuklandi, almashtirildi.")
+                banner.image = image
+            banner.save()
+            print("✅ Banner muvaffaqiyatli yangilandi!")
+        else:  # Agar banner mavjud bo‘lmasa, yangisini qo‘shamiz
+            print("🆕 Yangi banner qo‘shilmoqda...")
+            banner = MainPageBanner(image=image if image else None, description=description)
+            banner.save()
+
+        messages.success(request, "Sayt sozlamalari va banner muvaffaqiyatli saqlandi!")
+        return redirect('admin-setting-index')
 
 class MainPageBannerView(TemplateView):
     template_name = 'views/main-page-banner.html'
@@ -865,3 +914,75 @@ class MedicalCheckupApplicationView(View):
             except MedicalCheckupApplication.DoesNotExist:
                 return JsonResponse({"status": "error", "message": "Ariza topilmadi!"}, status=404)
         return JsonResponse({"status": "error", "message": "Ariza ID kiritilmadi!"}, status=400)
+
+@method_decorator(login_required, name='dispatch')
+class ClinicEquipmentView(View):
+    template_name = 'views/clinic_equipment.html'
+
+    def get(self, request):
+        """ Qurilmalar ro‘yxatini ko‘rsatish va yangi qurilma qo‘shish formasi """
+        equipments = ClinicEquipment.objects.all()
+        context = {
+            'equipments': equipments,
+            'LANGUAGES': settings.LANGUAGES,
+        }
+        return render(request, self.template_name, context)
+
+    def resize_image(self, image_file, width=800, height=600):
+        """ Rasmni o‘lchamini o‘zgartirish """
+        image = Image.open(image_file)
+        image = image.convert('RGBA')
+        image = image.resize((width, height), Image.LANCZOS)
+        buffer = BytesIO()
+        image.save(buffer, format='PNG')
+        return InMemoryUploadedFile(buffer, 'ImageField', image_file.name, 'image/png', sys.getsizeof(buffer), None)
+
+    def post(self, request):
+        """ Yangi qurilma qo‘shish yoki mavjud qurilmani yangilash """
+        equipment_id = request.POST.get('equipment_id', None)  # Agar ID bo‘lsa, yangilash uchun
+        name = {code: request.POST.get(f'name_{code}', "").strip() for code, name in settings.LANGUAGES}
+        description = {code: request.POST.get(f'description_{code}', "").strip() for code, name in settings.LANGUAGES}
+        image = request.FILES.get('image')
+        is_active = request.POST.get('is_active') == 'on'
+
+        # O‘zbek tili majburiy
+        if not name.get('uz'):
+            messages.error(request, "📌 O‘zbek tili uchun qurilma nomi majburiy.")
+            context = self.get_context_data()
+            context['equipments'] = ClinicEquipment.objects.all()
+            return render(request, self.template_name, context)
+
+        if equipment_id:  # Yangilash
+            try:
+                equipment = ClinicEquipment.objects.get(id=equipment_id)
+                equipment.name = name
+                equipment.description = description
+                if image:
+                    equipment.image = self.resize_image(image)
+                equipment.is_active = is_active
+                equipment.save()
+                messages.success(request, "✅ Qurilma muvaffaqiyatli yangilandi!")
+            except ClinicEquipment.DoesNotExist:
+                messages.error(request, "❌ Qurilma topilmadi!")
+        else:  # Yangi qurilma qo‘shish
+            equipment = ClinicEquipment(
+                name=name,
+                description=description,
+                image=self.resize_image(image) if image else None,
+                is_active=is_active
+            )
+            equipment.save()
+            messages.success(request, "✅ Yangi qurilma muvaffaqiyatli qo‘shildi!")
+
+        return redirect('clinic-equipment')
+
+    def delete(self, request):
+        """ Qurilmani o‘chirish """
+        equipment_id = request.GET.get('equipment_id')
+        try:
+            equipment = ClinicEquipment.objects.get(id=equipment_id)
+            equipment.delete()
+            messages.success(request, "✅ Qurilma muvaffaqiyatli o‘chirildi!")
+        except ClinicEquipment.DoesNotExist:
+            messages.error(request, "❌ Qurilma topilmadi!")
+        return redirect('clinic-equipment')

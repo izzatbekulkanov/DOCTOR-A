@@ -1,151 +1,117 @@
 <!DOCTYPE html>
-<html lang="en" dir="ltr" data-bs-theme="light" data-color-theme="Blue_Theme" data-layout="vertical">
-
+<html lang="en">
 {% load static %}
-
+{% load i18n %}
 <head>
-    <!-- Required meta tags -->
-    <meta charset="UTF-8"/>
-    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% translate 'DOCTOR - A | Kirish sahifasi' %}</title>
 
-    <!-- Favicon icon-->
-    <link rel="shortcut icon" type="image/png" href="{% static 'images/logos/favicon.png' %}"/>
+    <!-- Meta -->
+    <meta name="description" content="Marketplace for Bootstrap Admin Dashboards">
+    <meta name="author" content="Bootstrap Gallery">
+    <link rel="canonical" href="https://www.bootstrap.gallery/">
+    <meta property="og:url" content="https://www.bootstrap.gallery">
+    <meta property="og:title" content="Admin Templates - Dashboard Templates | Bootstrap Gallery">
+    <meta property="og:description" content="Marketplace for Bootstrap Admin Dashboards">
+    <meta property="og:type" content="Website">
+    <meta property="og:site_name" content="Bootstrap Gallery">
+    <link rel="shortcut icon" href="{% static 'images/favicon.svg' %}">
 
-    <!-- Core Css -->
-    <link rel="stylesheet" href="{% static 'css/styles.css' %}"/>
+    <!-- *************
+			************ CSS Files *************
+		************* -->
+    <link rel="stylesheet" href="{% static 'fonts/remix/remixicon.css' %}">
+    <link rel="stylesheet" href="{% static 'css/main.min.css' %}">
 
-    <title>DOCTOR A | KIRISH</title>
 </head>
 
-<body>
-<!-- Preloader -->
-<div class="preloader">
-    <img src="{% static 'images/logos/favicon.png' %}" alt="loader" class="lds-ripple img-fluid"/>
-</div>
-<div id="main-wrapper">
-    <div class="position-relative overflow-hidden auth-bg min-vh-100 w-100 d-flex align-items-center justify-content-center">
-        <div class="d-flex align-items-center justify-content-center w-100">
-            <div class="row justify-content-center w-100 my-5 my-xl-0">
-                <div class="col-md-9 d-flex flex-column justify-content-center">
-                    <div class="card mb-0 bg-body auth-login m-auto w-100">
-                        <div class="row gx-0">
-                            <!-- --------------------------------- -->
-                            <!-- Tizimga kirish bo‘limi -->
-                            <!-- --------------------------------- -->
-                            <div class="col-xl-6 border-end">
-                                <div class="row justify-content-center py-4">
-                                    <div class="col-lg-11">
-                                        <div class="card-body">
-                                            <a href="../main/index.html"
-                                               class="text-nowrap logo-img d-block mb-4 w-100">
-                                                <img src="{% static 'images/logos/logo-icon.svg' %}" class="dark-logo"
-                                                     alt="Doctor A Logo"/>
-                                            </a>
-                                            <h2 class="lh-base mb-4">Shifokorlar uchun tizimga kirish</h2>
-                                            <div class="position-relative text-center my-4">
-                                                <p class="mb-0 fs-12 px-3 d-inline-block bg-body z-index-5 position-relative">
-                                                    Foydalanuvchi nomi orqali tizimga kiring
-                                                </p>
-                                                <span class="border-top w-100 position-absolute top-50 start-50 translate-middle"></span>
-                                            </div>
-                                            <form method="post" action="{% url 'login' %}">
-                                                {% csrf_token %}  <!-- CSRF token -->
+<body class="login-bg">
 
-                                                <!-- `next` parametri -->
-                                                <input type="hidden" name="next" value="{{ request.GET.next }}">
+<!-- Container starts -->
+<div class="container">
 
-                                                <!-- Email yoki ID -->
-                                                <div class="mb-3">
-                                                    <label for="userEmail" class="form-label">Foydalanuvchi nomi</label>
-                                                    <input type="text" class="form-control" id="userEmail"
-                                                           name="email-username"
-                                                           placeholder="Email yoki shaxsiy ID kiriting" required>
-                                                </div>
+    <!-- Auth wrapper starts -->
+    <div class="auth-wrapper">
+        <!-- Form starts -->
+        <form method="POST" action="{% url 'login' %}">{% csrf_token %}
+            <div class="auth-box">
+                <a href="{% url 'admin-index' %}" class="auth-logo mb-4">
+                    <img src="{{ site_settings.logo_dark.url }}" alt="{{ site_settings.site_name }}">
+                </a>
 
-                                                <!-- Parol -->
-                                                <div class="mb-4">
-                                                    <div class="d-flex align-items-center justify-content-between">
-                                                        <label for="userPassword" class="form-label">Parol</label>
-                                                        <a class="text-primary link-dark fs-2" href="">Parolni
-                                                            unutdingizmi?</a>
-                                                    </div>
-                                                    <input type="password" class="form-control" id="userPassword"
-                                                           name="password" placeholder="Parolingizni kiriting" required>
-                                                </div>
+                <h4 class="mb-4">{% trans 'Kirish' %}</h4>
 
-                                                <!-- Tizimga kirish tugmasi -->
-                                                <button type="submit" class="btn btn-dark w-100 py-8 mb-4 rounded-1">
-                                                    Tizimga kirish
-                                                </button>
-
-                                                <!-- Ro'yxatdan o'tish havolasi -->
-
-                                            </form>
-                                        </div>
-                                    </div>
-                                </div>
+                <!-- Xabarlar ko‘rsatilishi -->
+                {% if messages %}
+                    <div class="mb-3">
+                        {% for message in messages %}
+                            <div class="alert {% if message.tags == 'error' %}alert-danger{% elif message.tags == 'success' %}alert-success{% else %}alert-info{% endif %} alert-dismissible fade show"
+                                 role="alert">
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                        aria-label="Close"></button>
                             </div>
-                            <!-- --------------------------------- -->
-                            <!-- Reklama bo‘limi -->
-                            <!-- --------------------------------- -->
-                            <div class="col-xl-6 d-none d-xl-block">
-                                <div class="row justify-content-center align-items-start h-100">
-                                    <div class="col-lg-9">
-                                        <div id="auth-login" class="carousel slide auth-carousel mt-5 pt-4"
-                                             data-bs-ride="carousel">
-                                            <div class="carousel-inner">
-                                                <div class="carousel-item active">
-                                                    <div class="d-flex align-items-center justify-content-center w-100 h-100 flex-column gap-9 text-center">
-                                                        <img src="{% static 'images/backgrounds/login-side.png' %}"
-                                                             alt="doctor-login" width="300" class="img-fluid"/>
-                                                        <h4 class="mb-0">DOCTOR_A Klinikasi - Eng yaxshi xizmatlar</h4>
-                                                        <p class="fs-12 mb-0">Tajribali shifokorlarimiz bilan sifatli
-                                                            xizmat oling!</p>
-                                                        <a href="../about.html" class="btn btn-primary rounded-1">Batafsil</a>
-                                                    </div>
-                                                </div>
-                                                <div class="carousel-item">
-                                                    <div class="d-flex align-items-center justify-content-center w-100 h-100 flex-column gap-9 text-center">
-                                                        <img src="{% static 'images/backgrounds/login-side.png' %}"
-                                                             alt="medical-team" width="300" class="img-fluid"/>
-                                                        <h4 class="mb-0">Tibbiy tekshiruvlar</h4>
-                                                        <p class="fs-12 mb-0">DOCTOR_A da zamonaviy diagnostika xizmati
-                                                            mavjud!</p>
-                                                        <a href="../services.html" class="btn btn-primary rounded-1">Ko‘proq
-                                                            bilish</a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="carousel-indicators">
-                                                <button type="button" data-bs-target="#auth-login" data-bs-slide-to="0"
-                                                        class="active" aria-current="true"
-                                                        aria-label="Slide 1"></button>
-                                                <button type="button" data-bs-target="#auth-login" data-bs-slide-to="1"
-                                                        aria-label="Slide 2"></button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                <!-- Next parametri uchun yashirin input -->
+                <input type="hidden" name="next" value="{{ next }}">
+
+                <div class="mb-3">
+                    <label class="form-label" for="email-username">{% trans 'E-mail yoki Username' %} <span
+                            class="text-danger">*</span></label>
+                    <input type="text" id="email-username" name="email-username" class="form-control"
+                           placeholder="{% trans 'email yoki username kiriting' %}"
+                           value="{{ request.POST.email_username|default:'' }}" required>
+                </div>
+
+                <div class="mb-2">
+                    <label class="form-label" for="pwd">{% trans 'Parol' %} <span class="text-danger">*</span></label>
+                    <div class="input-group">
+                        <input type="password" id="pwd" name="password" class="form-control"
+                               placeholder="{% trans 'Parolni kiriting' %}" required>
+                        <button class="btn btn-outline-secondary" type="button" onclick="togglePassword()">
+                            <i class="ri-eye-line text-primary" id="toggleIcon"></i>
+                        </button>
                     </div>
                 </div>
+
+                <div class="d-flex justify-content-end mb-3">
+                    <a href=""
+                       class="text-decoration-underline">{% trans 'Parolni unutdingizmi?' %}</a>
+                </div>
+
+                <div class="mb-3 d-grid gap-2">
+                    <button type="submit" class="btn btn-primary">{% trans 'Kirish' %}</button>
+                </div>
             </div>
-        </div>
+        </form>
+        <!-- Form ends -->
     </div>
+    <!-- Auth wrapper ends -->
+
 </div>
+<!-- Container ends -->
 
-<div class="dark-transparent sidebartoggler"></div>
-<!-- Import Js Files -->
-<script src="{% static 'libs/bootstrap/dist/js/bootstrap.bundle.min.js' %}"></script>
-<script src="{% static 'libs/simplebar/dist/simplebar.min.js' %}"></script>
-<script src="{% static 'js/theme/app.init.js' %}"></script>
-<script src="{% static 'js/theme/theme.js' %}"></script>
-<script src="{% static 'js/theme/app.min.js' %}"></script>
+<!-- Qo‘shimcha JavaScript -->
+<script>
+    function togglePassword() {
+        const pwd = document.getElementById('pwd');
+        const toggleIcon = document.getElementById('toggleIcon');
+        if (pwd.type === 'password') {
+            pwd.type = 'text';
+            toggleIcon.classList.remove('ri-eye-line');
+            toggleIcon.classList.add('ri-eye-off-line');
+        } else {
+            pwd.type = 'password';
+            toggleIcon.classList.remove('ri-eye-off-line');
+            toggleIcon.classList.add('ri-eye-line');
+        }
+    }
+</script>
 
-<!-- solar icons -->
-<script src="https://cdn.jsdelivr.net/npm/iconify-icon@1.0.8/dist/iconify-icon.min.js"></script>
 </body>
 
 </html>

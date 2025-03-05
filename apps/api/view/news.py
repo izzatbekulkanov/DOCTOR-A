@@ -5,7 +5,8 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework.filters import SearchFilter
 
 from apps.api.serializers import NewsSerializer
-from apps.medical.models import News
+from apps.news.models import News
+
 
 # 📌 Sahifalash (Pagination) - Har safar 6 ta yangilik chiqarish
 class NewsPagination(PageNumberPagination):

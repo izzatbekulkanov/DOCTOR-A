@@ -46,7 +46,7 @@
                                         <button class="nav-link {% if forloop.first %}active{% endif %}"
                                                 data-bs-toggle="tab"
                                                 data-bs-target="#{{ code }}">
-                                            <img src="{% static 'vendor/fonts/flags/1x1/' %}{{ code }}.svg" width="20"
+                                            <img src="{% static 'fonts/flag-icon-css/flags/' %}{{ code }}.svg" width="20"
                                                  class="me-1"> {{ name }}
                                         </button>
                                     </li>
@@ -58,14 +58,14 @@
                                     <div class="tab-pane fade {% if forloop.first %}show active{% endif %}"
                                          id="{{ code }}">
                                         <label class="form-label">
-                                            <img src="{% static 'vendor/fonts/flags/1x1/' %}{{ code }}.svg" width="20"
+                                            <img src="{% static 'fonts/flag-icon-css/flags/' %}{{ code }}.svg" width="20"
                                                  class="me-1">
                                             Nomi ({{ name }})
                                         </label>
                                         <input type="text" class="form-control" id="name_{{ code }}"
                                                name="name[{{ code }}]" required>
                                         <label class="form-label mt-2">
-                                            <img src="{% static 'vendor/fonts/flags/1x1/' %}{{ code }}.svg" width="20"
+                                            <img src="{% static 'fonts/flag-icon-css/flags/' %}{{ code }}.svg" width="20"
                                                  class="me-1">
                                             Tavsif ({{ name }})
                                         </label>

@@ -2,10 +2,11 @@ from django.contrib import admin
 from django.utils.html import format_html
 from django_json_widget.widgets import JSONEditorWidget
 from django.db import models
+from django.utils.translation import gettext_lazy as _
+
 
 from .models import (
-    SiteSettings, MainPageBanner, DoctorAInfo, ContactPhone,
-    News, Announcement, Partner, MedicalCheckupApplication, Comment
+    SiteSettings, MainPageBanner, DoctorAInfo, ContactPhone, Partner, MedicalCheckupApplication, ClinicEquipment
 )
 
 
@@ -78,44 +79,7 @@ class ContactPhoneAdmin(admin.ModelAdmin):
     }
 
 
-@admin.register(News)
-class NewsAdmin(admin.ModelAdmin):
-    """ Yangiliklarni boshqarish """
-    list_display = ('id', 'title_uz', 'published_date', 'author', 'views_count', 'is_published')
-    list_filter = ('is_published', 'published_date', 'author')
-    search_fields = ('title',)
-    date_hierarchy = 'published_date'
-    ordering = ['-published_date']
-    list_editable = ('is_published',)
-    formfield_overrides = {
-        models.JSONField: {'widget': JSONEditorWidget},
-    }
 
-    def title_uz(self, obj):
-        """ O‘zbek tilidagi sarlavhani chiqarish """
-        return obj.title.get('uz', 'Noma’lum')
-
-    title_uz.short_description = "Sarlavha (UZ)"
-
-
-@admin.register(Announcement)
-class AnnouncementAdmin(admin.ModelAdmin):
-    """ E’lonlarni boshqarish """
-    list_display = ('id', 'title_uz', 'published_date', 'author', 'views_count', 'is_published')
-    list_filter = ('is_published', 'published_date', 'author')
-    search_fields = ('title',)
-    date_hierarchy = 'published_date'
-    ordering = ['-published_date']
-    list_editable = ('is_published',)
-    formfield_overrides = {
-        models.JSONField: {'widget': JSONEditorWidget},
-    }
-
-    def title_uz(self, obj):
-        """ O‘zbek tilidagi sarlavhani chiqarish """
-        return obj.title.get('uz', 'Noma’lum')
-
-    title_uz.short_description = "Sarlavha (UZ)"
 
 
 @admin.register(Partner)
@@ -154,12 +118,30 @@ class MedicalCheckupApplicationAdmin(admin.ModelAdmin):
     list_filter = ("created_at",)
 
 
-@admin.register(Comment)
-class CommentAdmin(admin.ModelAdmin):
-    list_display = ('id', 'full_name', 'phone_number', 'news_title', 'created_at')
-    list_filter = ('created_at',)
-    search_fields = ('full_name', 'phone_number', 'text')
 
-    def news_title(self, obj):
-        return obj.news.title.get('uz', 'Noma’lum yangilik')
-    news_title.short_description = "Yangilik"
+# ClinicEquipment uchun admin
+@admin.register(ClinicEquipment)
+class ClinicEquipmentAdmin(admin.ModelAdmin):
+    list_display = ('get_name', 'get_description_preview', 'image', 'is_active', 'created_at', 'updated_at')
+    list_filter = ('is_active', 'created_at', 'updated_at')
+    search_fields = ('name__uz', 'description__uz')
+    list_editable = ('is_active',)  # Faollikni to‘g‘ridan-to‘g‘ri ro‘yxatda o‘zgartirish
+    fieldsets = (
+        (_("Qurilma ma'lumotlari"), {
+            'fields': ('name', 'description', 'image', 'is_active'),
+        }),
+        (_("Vaqt ma'lumotlari"), {
+            'fields': ('created_at', 'updated_at'),
+            'classes': ('collapse',),
+        }),
+    )
+    readonly_fields = ('created_at', 'updated_at')
+
+    def get_name(self, obj):
+        return obj.name.get('uz', 'Nomi mavjud emas')
+    get_name.short_description = _("Nomi (O‘zbek)")
+
+    def get_description_preview(self, obj):
+        return obj.description.get('uz', 'Tavsif yo‘q')[:30]
+    get_description_preview.short_description = _("Tavsif (O‘zbek)")
+

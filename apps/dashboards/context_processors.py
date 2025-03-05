@@ -4,7 +4,8 @@ import json
 from django.conf import settings
 from django.utils.translation import get_language
 
-from apps.medical.models import SiteSettings, MainPageBanner, DoctorAInfo, ContactPhone, News, Announcement, Partner
+from apps.medical.models import SiteSettings, MainPageBanner, DoctorAInfo, ContactPhone, Partner
+from apps.news.models import News, Announcement
 from members.models import CustomUser
 
 
