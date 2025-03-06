@@ -1,5 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from django.utils.translation import gettext_lazy as _
+from django.core.validators import MinValueValidator
 
 
 class CustomUser(AbstractUser):
@@ -56,18 +58,152 @@ class CustomUser(AbstractUser):
         return "Ish vaqti belgilanmagan"
 
 
-class TrainingHistory(models.Model):
-    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='training_history')
-    training_name = models.CharField(max_length=255, help_text="Malaka oshirish kursining nomi")
-    training_date = models.DateField(help_text="Malaka oshirish sanasi")
-    certificate_picture = models.ImageField(upload_to='training_certificates/', blank=True, null=True, help_text="Sertifikat rasmi")
+class EmployeeActivityHistory(models.Model):
+    # Foydalanuvchi bilan bog‘lash
+    user = models.ForeignKey(
+        CustomUser,
+        on_delete=models.CASCADE,
+        related_name='activity_history',
+        help_text=_("Faoliyat bilan bog‘liq xodim")
+    )
+
+    # Faoliyat umumiy ma'lumotlari
+    activity_name = models.CharField(
+        max_length=255,
+        help_text=_("Faoliyat nomi (masalan, 'Operatsiya', 'Malaka oshirish', 'Xizmat safari')")
+    )
+    activity_type = models.CharField(
+        max_length=50,
+        choices=[
+            ('training', 'Malaka oshirish'),
+            ('operation', 'Operatsiya'),
+            ('business_trip', 'Xizmat safari'),
+            ('certification', 'Sertifikat olish'),
+            ('conference', 'Konferensiya'),
+            ('workshop', 'Amaliy mashg‘ulot'),
+            ('other', 'Boshqa')
+        ],
+        default='training',
+        help_text=_("Faoliyat turi")
+    )
+    description = models.TextField(
+        blank=True,
+        help_text=_("Faoliyat haqida qisqacha tavsif (masalan, 'Appendektomiya operatsiyasi', 'Kardiologiya kursi')")
+    )
+
+    # Joylashuv ma'lumotlari
+    location_name = models.CharField(
+        max_length=255,
+        blank=True,
+        help_text=_("Faoliyat joyi (masalan, 'Toshkent Tibbiyot Akademiyasi', 'Parij klinikasi')")
+    )
+    city = models.CharField(
+        max_length=100,
+        blank=True,
+        help_text=_("Shahar (masalan, 'Toshkent', 'Parij')")
+    )
+    country = models.CharField(
+        max_length=100,
+        blank=True,
+        help_text=_("Davlat (masalan, 'O‘zbekiston', 'Fransiya')")
+    )
+
+    # Sana va muddat
+    start_date = models.DateField(
+        help_text=_("Faoliyat boshlanish sanasi")
+    )
+    end_date = models.DateField(
+        null=True,
+        blank=True,
+        help_text=_("Faoliyat tugash sanasi (agar davomiy bo‘lmasa)")
+    )
+
+    # Natija va hujjatlar
+    is_completed = models.BooleanField(
+        default=False,
+        help_text=_("Faoliyat muvaffaqiyatli yakunlanganmi?")
+    )
+    result_details = models.TextField(
+        blank=True,
+        help_text=_("Natija haqida qo‘shimcha ma'lumot (masalan, 'Sertifikat olindi', 'Operatsiya muvaffaqiyatli')")
+    )
+    certificate_file = models.FileField(
+        upload_to='activity_certificates/',
+        blank=True,
+        null=True,
+        help_text=_("Sertifikat yoki tasdiqlovchi hujjat (PDF, JPG va h.k.)")
+    )
+    additional_files = models.FileField(
+        upload_to='activity_documents/',
+        blank=True,
+        null=True,
+        help_text=_("Qo‘shimcha hujjatlar (masalan, hisobot, fotosurat)")
+    )
+
+    # Xarajat va moliyaviy ma'lumotlar
+    cost = models.DecimalField(
+        max_digits=15,
+        decimal_places=2,
+        null=True,
+        blank=True,
+        validators=[MinValueValidator(0)],
+        help_text=_("Faoliyat xarajati (so‘mda yoki boshqa valyutada)")
+    )
+    funded_by_clinic = models.BooleanField(
+        default=False,
+        help_text=_("Klinika tomonidan moliyalashtirilganmi?")
+    )
+    expense_report = models.FileField(
+        upload_to='expense_reports/',
+        blank=True,
+        null=True,
+        help_text=_("Xarajat hisoboti (agar mavjud bo‘lsa)")
+    )
+
+    # Qo‘shimcha ma'lumotlar
+    related_operation = models.CharField(
+        max_length=255,
+        blank=True,
+        help_text=_("Agar operatsiya bo‘lsa, uning turi (masalan, 'Appendektomiya')")
+    )
+    supervisor = models.CharField(
+        max_length=255,
+        blank=True,
+        help_text=_("Rahbar yoki trener ismi (masalan, 'Dr. Ahmadov')")
+    )
+    notes = models.TextField(
+        blank=True,
+        help_text=_("Qo‘shimcha eslatmalar yoki izohlar")
+    )
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+        help_text=_("Yozuv yaratilgan sana")
+    )
+    updated_at = models.DateTimeField(
+        auto_now=True,
+        help_text=_("Oxirgi yangilangan sana")
+    )
 
     def __str__(self):
-        return f"{self.user.full_name} - {self.training_name} ({self.training_date})"
+        return f"{self.user.full_name} - {self.activity_name} ({self.start_date})"
+
+    def get_duration(self):
+        """ Faoliyat muddatini hisoblash """
+        if self.start_date and self.end_date:
+            duration = (self.end_date - self.start_date).days
+            return f"{duration} kun"
+        return "Bir kunlik yoki davomiy"
+
+    def clean(self):
+        """ Validatsiya: tugash sanasi boshlanish sanasidan oldin bo‘lmasligi kerak """
+        from django.core.exceptions import ValidationError
+        if self.end_date and self.start_date and self.end_date < self.start_date:
+            raise ValidationError(_("Tugash sanasi boshlanish sanasidan oldin bo‘lishi mumkin emas."))
 
     class Meta:
-        verbose_name = "Malaka oshirish tarixi"
-        verbose_name_plural = "Malaka oshirish tarixlari"
+        verbose_name = _("Xodim faoliyat tarixi")
+        verbose_name_plural = _("Xodim faoliyat tarixlari")
+        ordering = ['-start_date']  # Eng yangi faoliyatlar yuqorida ko‘rinadi
 
 
 class Appointment(models.Model):

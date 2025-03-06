@@ -7,7 +7,7 @@ from django.http import JsonResponse
 from django.utils.decorators import method_decorator
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
-from django.views.generic import TemplateView
+from django.views.generic import TemplateView, DetailView
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from PIL import Image
@@ -16,13 +16,14 @@ from io import BytesIO
 from django.core.files.uploadedfile import InMemoryUploadedFile
 import sys
 from urllib.parse import urlparse
-
+from django.utils.translation import gettext_lazy as _
 from config import settings
 from config.settings import LANGUAGES
 from config.telegram_bot import send_message
 from members.models import CustomUser, Appointment
+from .forms import VideoForm
 from .models import SiteSettings, MainPageBanner, DoctorAInfo, ContactPhone, Partner, MedicalCheckupApplication, \
-    ClinicEquipment
+    ClinicEquipment, Video
 
 
 class MainView(TemplateView):
@@ -922,9 +923,17 @@ class ClinicEquipmentView(View):
     def get(self, request):
         """ Qurilmalar ro‘yxatini ko‘rsatish va yangi qurilma qo‘shish formasi """
         equipments = ClinicEquipment.objects.all()
+
+        # Breadcrumb uchun kontekst
+        breadcrumbs = [
+            {"title": _("Bosh sahifa"), "url": reverse('admin-index')},
+            {"title": _("Tibbiy jihozlar"), "url": reverse('clinic-equipment'), "active": True},
+        ]
+
         context = {
             'equipments': equipments,
             'LANGUAGES': settings.LANGUAGES,
+            'breadcrumbs': breadcrumbs,  # Breadcrumb'ni qo‘shdik
         }
         return render(request, self.template_name, context)
 
@@ -976,13 +985,153 @@ class ClinicEquipmentView(View):
 
         return redirect('clinic-equipment')
 
-    def delete(self, request):
+    def delete(self, request, *args, **kwargs):
         """ Qurilmani o‘chirish """
         equipment_id = request.GET.get('equipment_id')
         try:
             equipment = ClinicEquipment.objects.get(id=equipment_id)
             equipment.delete()
-            messages.success(request, "✅ Qurilma muvaffaqiyatli o‘chirildi!")
+            return JsonResponse({'success': True, 'message': 'Qurilma muvaffaqiyatli o‘chirildi!'})
         except ClinicEquipment.DoesNotExist:
-            messages.error(request, "❌ Qurilma topilmadi!")
-        return redirect('clinic-equipment')
+            return JsonResponse({'success': False, 'message': 'Qurilma topilmadi!'}, status=404)
+
+    def dispatch(self, request, *args, **kwargs):
+        if request.method == 'DELETE':
+            return self.delete(request, *args, **kwargs)
+        return super().dispatch(request, *args, **kwargs)
+
+class ClientEquipmentDetailView(DetailView):
+    model = ClinicEquipment
+    template_name = 'views/client_equipment_detail.html'
+    context_object_name = 'equipment'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['LANGUAGES'] = settings.LANGUAGES
+        return context
+
+    def post(self, request, *args, **kwargs):
+        equipment = self.get_object()
+        name = {code: request.POST.get(f'name_{code}', "").strip() for code, name in settings.LANGUAGES}
+        description = {code: request.POST.get(f'description_{code}', "").strip() for code, name in settings.LANGUAGES}
+        image = request.FILES.get('image')
+        is_active = request.POST.get('is_active') == 'on'
+
+        if not name.get('uz'):
+            messages.error(request, "📌 O‘zbek tili uchun qurilma nomi majburiy.")
+            return self.get(request, *args, **kwargs)
+
+        equipment.name = name
+        equipment.description = description
+        if image:
+            # Rasmni o‘lchamini o‘zgartirish
+            img = Image.open(image)
+            img = img.convert('RGBA')
+            img = img.resize((800, 600), Image.LANCZOS)
+            buffer = BytesIO()
+            img.save(buffer, format='PNG')
+            equipment.image = InMemoryUploadedFile(buffer, 'ImageField', image.name, 'image/png', sys.getsizeof(buffer), None)
+        equipment.is_active = is_active
+        equipment.save()
+
+        messages.success(request, "✅ Qurilma muvaffaqiyatli yangilandi!")
+        return redirect('client-equipment-detail', pk=equipment.pk)
+
+
+@method_decorator(login_required, name='dispatch')
+class VideoListView(View):
+    template_name = 'views/video_list.html'
+
+    def get(self, request):
+        search_query = request.GET.get('q', '').strip()
+        videos = Video.objects.all()
+
+        if search_query:
+            videos = videos.filter(
+                Q(title__uz__icontains=search_query) |
+                Q(embed_url__icontains=search_query)
+            )
+
+        paginator = Paginator(videos, 5)
+        page_number = request.GET.get('page')
+        videos_page = paginator.get_page(page_number)
+
+        # Breadcrumb uchun kontekst
+        breadcrumbs = [
+            {"title": _("Bosh sahifa"), "url": reverse('admin-index')},
+            {"title": _("Videolar ro‘yxati"), "url": reverse('video-list'), "active": True},
+        ]
+
+        context = {
+            'videos': videos_page,
+            'search_query': search_query,
+            'LANGUAGES': settings.LANGUAGES,
+            'breadcrumbs': breadcrumbs,  # Breadcrumb'ni context'ga qo‘shdik
+        }
+        return render(request, self.template_name, context)
+
+    def post(self, request):
+        video_id = request.POST.get('video_id', None)
+        title = {code: request.POST.get(f'title_{code}', "").strip() for code, name in settings.LANGUAGES}
+        embed_url = request.POST.get('embed_url', "").strip()
+        is_active = request.POST.get('is_active') == 'on'
+
+        if not title.get('uz'):
+            messages.error(request, "📌 O‘zbek tili uchun sarlavha majburiy.")
+            return self.get(request)
+        if not embed_url:
+            messages.error(request, "📌 YouTube URL yoki Video ID majburiy.")
+            return self.get(request)
+
+        if video_id:  # Tahrirlash
+            try:
+                video = Video.objects.get(id=video_id)
+                video.title = title
+                video.embed_url = embed_url
+                video.is_active = is_active
+                video.save()
+                messages.success(request, "✅ Video muvaffaqiyatli yangilandi!")
+            except Video.DoesNotExist:
+                messages.error(request, "❌ Video topilmadi!")
+        else:  # Yangi video qo‘shish
+            video = Video(
+                title=title,
+                embed_url=embed_url,
+                is_active=is_active
+            )
+            try:
+                video.full_clean()
+                video.save()
+                messages.success(request, "✅ Video muvaffaqiyatli qo‘shildi!")
+            except Exception as e:
+                messages.error(request, f"📌 Xatolik yuz berdi: {str(e)}")
+                return self.get(request)
+
+        return redirect('video-list')
+
+    def delete(self, request, *args, **kwargs):
+        video_id = request.GET.get('video_id')
+        try:
+            video = Video.objects.get(id=video_id)
+            video.delete()
+            return JsonResponse({'success': True, 'message': 'Video muvaffaqiyatli o‘chirildi!'})
+        except Video.DoesNotExist:
+            return JsonResponse({'success': False, 'message': 'Video topilmadi!'}, status=404)
+
+    def patch(self, request, *args, **kwargs):
+        video_id = request.GET.get('video_id')
+        is_active = request.GET.get('is_active') == 'true'
+        try:
+            video = Video.objects.get(id=video_id)
+            video.is_active = is_active
+            video.save()
+            return JsonResponse({'success': True, 'message': 'Holati muvaffaqiyatli yangilandi!'})
+        except Video.DoesNotExist:
+            return JsonResponse({'success': False, 'message': 'Video topilmadi!'}, status=404)
+
+    def dispatch(self, request, *args, **kwargs):
+        if request.method == 'DELETE':
+            return self.delete(request, *args, **kwargs)
+        elif request.method == 'PATCH':
+            return self.patch(request, *args, **kwargs)
+        return super().dispatch(request, *args, **kwargs)

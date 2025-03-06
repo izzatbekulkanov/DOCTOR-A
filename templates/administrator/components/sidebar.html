@@ -41,8 +41,8 @@
                     <span class="menu-text">Hamkorlar</span>
                 </a>
             </li>
-            <li class="{% if request.resolver_match.url_name == '' %}active current-page{% endif %}">
-                <a href="">
+            <li class="{% if request.resolver_match.url_name == 'video-list' %}active current-page{% endif %}">
+                <a href="{% url 'video-list' %}">
                     <i class="ri-folder-video-line"></i>
                     <span class="menu-text">Videolar</span>
                 </a>
@@ -57,6 +57,12 @@
                 <a href="{% url 'appointment-view' %}">
                     <i class="ri-message-2-line"></i>
                     <span class="menu-text">Qabullar</span>
+                </a>
+            </li>
+            <li class="{% if request.resolver_match.url_name == 'employee-list' %}active current-page{% endif %}">
+                <a href="{% url 'employee-list' %}">
+                    <i class="ri-message-2-line"></i>
+                    <span class="menu-text">Hodim faolligi</span>
                 </a>
             </li>
             <li class="{% if request.resolver_match.url_name == 'medical-checkup-applications' %}active current-page{% endif %}">

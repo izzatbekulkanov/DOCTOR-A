@@ -6,7 +6,7 @@ from django.utils.translation import gettext_lazy as _
 
 
 from .models import (
-    SiteSettings, MainPageBanner, DoctorAInfo, ContactPhone, Partner, MedicalCheckupApplication, ClinicEquipment
+    SiteSettings, MainPageBanner, DoctorAInfo, ContactPhone, Partner, MedicalCheckupApplication, ClinicEquipment, Video
 )
 
 
@@ -145,3 +145,18 @@ class ClinicEquipmentAdmin(admin.ModelAdmin):
         return obj.description.get('uz', 'Tavsif yo‘q')[:30]
     get_description_preview.short_description = _("Tavsif (O‘zbek)")
 
+
+@admin.register(Video)
+class VideoAdmin(admin.ModelAdmin):
+    list_display = ("get_title", "video_preview", "is_active", "created_at")
+    list_filter = ("is_active", "created_at", "updated_at")
+    search_fields = ("title__uz", "title__ru", "title__en")
+    readonly_fields = ("created_at", "updated_at", "video_preview")
+
+    def video_preview(self, obj):
+        """Admin panelida YouTube videosining oldindan ko‘rinishi."""
+        return format_html(
+            '<iframe width="200" height="113" src="{}" frameborder="0" allowfullscreen></iframe>',
+            obj.get_embed_url()
+        ) if obj.embed_url else "Video yo‘q"
+    video_preview.short_description = "Oldindan ko‘rish"

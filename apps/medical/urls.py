@@ -1,7 +1,7 @@
 from django.urls import path
 from .views import MainView, MainPageBannerView, get_banner, delete_banner, \
     ContactPhoneView, get_contact_phone, UsersView, RolesView, LogsView, AddUsersView, AppointmentView, EditUsersView, \
-    MedicalCheckupApplicationView, MainSettingsView, ClinicEquipmentView
+    MedicalCheckupApplicationView, MainSettingsView, ClinicEquipmentView, ClientEquipmentDetailView, VideoListView
 from django.contrib.auth.decorators import login_required
 
 viewspatterns = [
@@ -27,7 +27,9 @@ havsizlikpatterns = [
 
     path('checkup-applications', MedicalCheckupApplicationView.as_view(), name='medical-checkup-applications'),
     path('clinic/equipment/', ClinicEquipmentView.as_view(), name='clinic-equipment'),
+    path('equipment/<int:pk>/', ClientEquipmentDetailView.as_view(), name='client-equipment-detail'),
 
+    path('videos/', VideoListView.as_view(), name='video-list'),
 ]
 
 urlpatterns = viewspatterns + havsizlikpatterns

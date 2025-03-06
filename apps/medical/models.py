@@ -2,7 +2,7 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 # Create your models here.
 from django.contrib.auth.models import User
-
+from django.core.validators import RegexValidator
 from members.models import CustomUser
 
 
@@ -169,3 +169,47 @@ class ClinicEquipment(models.Model):
     def get_description(self, language_code='uz'):
         """ Til kodi asosida qurilma tavsifini olish """
         return self.description.get(language_code, self.description.get('uz', 'Tavsif yo‘q'))
+
+import re
+
+class Video(models.Model):
+    YOUTUBE_REGEX = r'(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:embed\/|watch\?v=)|youtu\.be\/)([A-Za-z0-9_-]+)'
+
+    youtube_embed_validator = RegexValidator(
+        regex=YOUTUBE_REGEX,
+        message=_("To‘g‘ri YouTube URL yoki Video ID kiriting (masalan, https://www.youtube.com/embed/07NL6SlDRUY yoki 07NL6SlDRUY).")
+    )
+
+    title = models.JSONField(default=dict, help_text=_("Har xil tillarda video sarlavhasi (JSON formatda)"))
+    embed_url = models.CharField(
+        max_length=50,
+        validators=[youtube_embed_validator],
+        help_text=_("YouTube video ID (masalan, 07NL6SlDRUY)")
+    )
+    is_active = models.BooleanField(default=True, help_text=_("Video faol yoki faol emasligini belgilaydi"))
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = _("Video")
+        verbose_name_plural = _("Videolar")
+
+    def __str__(self):
+        return self.title.get('uz', 'Sarlavha mavjud emas')
+
+    def get_title(self, language_code='uz'):
+        return self.title.get(language_code, self.title.get('uz', 'Sarlavha mavjud emas'))
+
+    def clean_embed_url(self):
+        """Video URL’dan faqat video ID’ni ajratib olish."""
+        match = re.search(self.YOUTUBE_REGEX, self.embed_url)
+        if match:
+            self.embed_url = match.group(1)
+
+    def save(self, *args, **kwargs):
+        self.clean_embed_url()
+        super().save(*args, **kwargs)
+
+    def get_embed_url(self):
+        """To‘liq iframe URL hosil qilish."""
+        return f"https://www.youtube.com/embed/{self.embed_url}"

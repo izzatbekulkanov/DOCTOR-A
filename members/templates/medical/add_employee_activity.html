@@ -1,0 +1,154 @@
+{% extends 'administrator/main.html' %}
+{% load static i18n %}
+
+{% block title %}
+    {% trans "Xodimga faoliyat qo‘shish" %}
+{% endblock title %}
+
+{% block page_css %}
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background: #f8f9fa; font-family: 'Arial', sans-serif; }
+        .app-body { padding: 2rem 1rem; }
+        .card { border: none; border-radius: 15px; box-shadow: 0 6px 25px rgba(0, 0, 0, 0.1); }
+        .card-header { background: linear-gradient(135deg, #007bff, #00c4cc); color: #fff; border-radius: 15px 15px 0 0; padding: 1.5rem; }
+        .card-body { padding: 2rem; }
+        .form-label { font-weight: 600; }
+        .form-control, .form-select { border-radius: 8px; }
+        .btn-primary, .btn-secondary { border-radius: 8px; transition: all 0.3s ease; }
+        .btn-primary:hover, .btn-secondary:hover { transform: scale(1.05); }
+    </style>
+{% endblock page_css %}
+
+{% block content %}
+<div class="app-body">
+    <div class="container">
+        <div class="card">
+            <div class="card-header">
+                <h1 class="mb-0 fw-bold">{% trans "Xodimga faoliyat qo‘shish" %} - {{ employee.full_name }}</h1>
+            </div>
+            <div class="card-body">
+                {% if messages %}
+                    <div class="mb-4">
+                        {% for message in messages %}
+                            <div class="alert {% if message.tags == 'success' %}alert-success{% elif message.tags == 'error' %}alert-danger{% else %}alert-info{% endif %} alert-dismissible fade show" role="alert">
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                <form method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="row g-3">
+                        <!-- Asosiy ma'lumotlar -->
+                        <div class="col-md-6">
+                            <label for="activity_name" class="form-label">{% trans "Faoliyat nomi" %} <span class="text-danger">*</span></label>
+                            <input type="text" name="activity_name" id="activity_name" class="form-control" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="activity_type" class="form-label">{% trans "Faoliyat turi" %}</label>
+                            <select name="activity_type" id="activity_type" class="form-select">
+                                <option value="training">{% trans "Malaka oshirish" %}</option>
+                                <option value="operation">{% trans "Operatsiya" %}</option>
+                                <option value="business_trip">{% trans "Xizmat safari" %}</option>
+                                <option value="certification">{% trans "Sertifikat olish" %}</option>
+                                <option value="conference">{% trans "Konferensiya" %}</option>
+                                <option value="workshop">{% trans "Amaliy mashg‘ulot" %}</option>
+                                <option value="other">{% trans "Boshqa" %}</option>
+                            </select>
+                        </div>
+                        <div class="col-12">
+                            <label for="description" class="form-label">{% trans "Tavsif" %}</label>
+                            <textarea name="description" id="description" class="form-control" rows="3"></textarea>
+                        </div>
+
+                        <!-- Joylashuv -->
+                        <div class="col-md-4">
+                            <label for="location_name" class="form-label">{% trans "Joy nomi" %}</label>
+                            <input type="text" name="location_name" id="location_name" class="form-control">
+                        </div>
+                        <div class="col-md-4">
+                            <label for="city" class="form-label">{% trans "Shahar" %}</label>
+                            <input type="text" name="city" id="city" class="form-control">
+                        </div>
+                        <div class="col-md-4">
+                            <label for="country" class="form-label">{% trans "Davlat" %}</label>
+                            <input type="text" name="country" id="country" class="form-control">
+                        </div>
+
+                        <!-- Sana -->
+                        <div class="col-md-6">
+                            <label for="start_date" class="form-label">{% trans "Boshlanish sanasi" %} <span class="text-danger">*</span></label>
+                            <input type="date" name="start_date" id="start_date" class="form-control" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="end_date" class="form-label">{% trans "Tugash sanasi" %}</label>
+                            <input type="date" name="end_date" id="end_date" class="form-control">
+                        </div>
+
+                        <!-- Natija -->
+                        <div class="col-md-4">
+                            <div class="form-check mt-4">
+                                <input class="form-check-input" type="checkbox" name="is_completed" id="is_completed">
+                                <label class="form-check-label" for="is_completed">{% trans "Yakunlangan" %}</label>
+                            </div>
+                        </div>
+                        <div class="col-md-8">
+                            <label for="result_details" class="form-label">{% trans "Natija tavsifi" %}</label>
+                            <input type="text" name="result_details" id="result_details" class="form-control">
+                        </div>
+
+                        <!-- Xarajatlar -->
+                        <div class="col-md-4">
+                            <label for="cost" class="form-label">{% trans "Xarajat (so‘m)" %}</label>
+                            <input type="number" name="cost" id="cost" class="form-control" step="0.01">
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-check mt-4">
+                                <input class="form-check-input" type="checkbox" name="funded_by_clinic" id="funded_by_clinic">
+                                <label class="form-check-label" for="funded_by_clinic">{% trans "Klinika tomonidan moliyalashtirilgan" %}</label>
+                            </div>
+                        </div>
+
+                        <!-- Qo‘shimcha -->
+                        <div class="col-md-6">
+                            <label for="related_operation" class="form-label">{% trans "Bog‘liq operatsiya" %}</label>
+                            <input type="text" name="related_operation" id="related_operation" class="form-control">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="supervisor" class="form-label">{% trans "Rahbar/Trener" %}</label>
+                            <input type="text" name="supervisor" id="supervisor" class="form-control">
+                        </div>
+                        <div class="col-12">
+                            <label for="notes" class="form-label">{% trans "Eslatmalar" %}</label>
+                            <textarea name="notes" id="notes" class="form-control" rows="3"></textarea>
+                        </div>
+
+                        <!-- Fayllar -->
+                        <div class="col-md-4">
+                            <label for="certificate_file" class="form-label">{% trans "Sertifikat fayli" %}</label>
+                            <input type="file" name="certificate_file" id="certificate_file" class="form-control">
+                        </div>
+                        <div class="col-md-4">
+                            <label for="additional_files" class="form-label">{% trans "Qo‘shimcha fayllar" %}</label>
+                            <input type="file" name="additional_files" id="additional_files" class="form-control">
+                        </div>
+                        <div class="col-md-4">
+                            <label for="expense_report" class="form-label">{% trans "Xarajat hisoboti" %}</label>
+                            <input type="file" name="expense_report" id="expense_report" class="form-control">
+                        </div>
+                    </div>
+
+                    <div class="mt-4 d-flex justify-content-end">
+                        <a href="{% url 'employee-list' %}" class="btn btn-secondary me-2">{% trans "Bekor qilish" %}</a>
+                        <button type="submit" class="btn btn-primary">{% trans "Saqlash" %}</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+{% endblock content %}

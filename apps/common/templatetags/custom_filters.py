@@ -28,3 +28,7 @@ def get_initials(value):
     if len(parts) >= 2:
         return f"{parts[0][0]}{parts[-1][0]}".upper()
     return value[:1].upper()
+
+@register.filter
+def lookup(value, key):
+    return value.get(key, '')

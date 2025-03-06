@@ -1,78 +1,73 @@
 {% extends 'dashboard.html' %}
-{% load static %}
+{% load static i18n %}
 {% load custom_filters %}
 
 {% block title %}
-    Videolar
+    {% trans "Videolar" %}
 {% endblock title %}
-{% block style %}
-{% endblock style %}
-
 
 {% block content %}
 <div class="container my-5">
-    <div class="section-head style-1 text-center m-b30">
-        <h2 class="title wow fadeInUp" data-wow-delay="0.2s" data-wow-duration="0.8s">
-            Bizning Video Lavhalar
-        </h2>
-        <p class="wow fadeInUp" data-wow-delay="0.4s" data-wow-duration="0.8s">
-            Klinikamiz faoliyati va xizmatlari bilan yaqindan tanishing.
-        </p>
+    <div class="text-center mb-4">
+        <h2 class="fw-bold">{% trans "Bizning Video Lavhalar" %}</h2>
+        <p class="text-muted">{% trans "Klinikamiz faoliyati va xizmatlari bilan yaqindan tanishing." %}</p>
     </div>
 
-<div class="row">
-    <!-- Video 1 -->
-    <div class="col-md-6 col-lg-4 mb-4 wow fadeInUp" data-wow-delay="0.2s">
-        <div class="video-box">
-            <iframe width="100%" height="250" src="https://www.youtube-nocookie.com/embed/PD-ucQ7EAl4?si=O6vOGdzqrrdu2jh9"
-                    frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen>
-            </iframe>
-        </div>
+    <!-- Qidiruv formasi -->
+    <div class="d-flex justify-content-center mb-4">
+        <form method="GET" class="input-group w-50">
+            <input type="text" name="q" class="form-control" value="{{ search_query }}" placeholder="{% trans 'Video qidiring...' %}">
+            <button type="submit" class="btn btn-primary">{% trans "Qidirish" %}</button>
+        </form>
     </div>
 
-    <!-- Video 2 -->
-    <div class="col-md-6 col-lg-4 mb-4 wow fadeInUp" data-wow-delay="0.4s">
-        <div class="video-box">
-            <iframe width="100%" height="250" src="https://www.youtube-nocookie.com/embed/HLkyw9fCGaI?si=o-2s7yY-U9jjsDJV"
-                    frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen>
-            </iframe>
-        </div>
+    <div class="row">
+        {% for video in videos %}
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="card shadow-sm border-0">
+                    <div class="ratio ratio-16x9">
+                        <iframe src="https://www.youtube.com/embed/{{ video.embed_url }}" title="{{ video.get_title }}"
+                                allowfullscreen class="rounded-top"></iframe>
+                    </div>
+                    <div class="card-body text-center">
+                        <h6 class="card-title">{{ video.get_title }}</h6>
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <div class="col-12 text-center text-muted py-3">
+                {% trans "Hozircha videolar mavjud emas" %}
+            </div>
+        {% endfor %}
     </div>
 
-    <!-- Video 3 -->
-    <div class="col-md-6 col-lg-4 mb-4 wow fadeInUp" data-wow-delay="0.6s">
-        <div class="video-box">
-            <iframe width="100%" height="250" src="https://www.youtube-nocookie.com/embed/0jPjArBeJOk?si=mGsWMjjYm3dwL-Rh"
-                    frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen>
-            </iframe>
-        </div>
-    </div>
+    <!-- Paginatsiya -->
+    {% if videos.has_other_pages %}
+        <nav class="mt-4">
+            <ul class="pagination justify-content-center">
+                {% if videos.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page=1{% if search_query %}&q={{ search_query }}{% endif %}">{% trans "Birinchi" %}</a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ videos.previous_page_number }}{% if search_query %}&q={{ search_query }}{% endif %}">{% trans "Oldingi" %}</a>
+                    </li>
+                {% endif %}
 
-    <!-- Yangi Video 1 -->
-    <div class="col-md-6 col-lg-4 mb-4 wow fadeInUp" data-wow-delay="0.8s">
-        <div class="video-box">
-            <iframe width="100%" height="250" src="https://www.youtube-nocookie.com/embed/Tv5eWRUar1A?si=A8I1M2V71h7bnHUI"
-                    frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen>
-            </iframe>
-        </div>
-    </div>
+                <li class="page-item disabled">
+                    <span class="page-link">{{ videos.number }} / {{ videos.paginator.num_pages }}</span>
+                </li>
 
-    <!-- Yangi Video 2 -->
-    <div class="col-md-6 col-lg-4 mb-4 wow fadeInUp" data-wow-delay="1.0s">
-        <div class="video-box">
-            <iframe width="100%" height="250" src="https://www.youtube-nocookie.com/embed/X2qrZntOEhk?si=ZR8NHvyYgEuzf1gD"
-                    frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen>
-            </iframe>
-        </div>
-    </div>
+                {% if videos.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ videos.next_page_number }}{% if search_query %}&q={{ search_query }}{% endif %}">{% trans "Keyingi" %}</a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ videos.paginator.num_pages }}{% if search_query %}&q={{ search_query }}{% endif %}">{% trans "Oxirgi" %}</a>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
+    {% endif %}
 </div>
-
-</div>
-{% endblock content %}
-
-{% block script %}
-<script>
-    // WOW.js animatsiyasini faollashtirish
-    new WOW().init();
-</script>
-{% endblock script %}
+{% endblock %}

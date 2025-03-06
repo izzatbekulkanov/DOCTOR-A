@@ -1,4 +1,5 @@
-from django.core.paginator import Paginator
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.db.models import Count
 from django.http import JsonResponse
 from django.views.generic import TemplateView, DetailView
@@ -7,6 +8,7 @@ from django.utils.translation import gettext as _
 from django.db.models import Q
 from django.db import models
 
+from apps.medical.models import Video
 from apps.news.models import News, Comment, Announcement
 from members.models import CustomUser
 
@@ -213,10 +215,39 @@ class EmployeeDetailView(DetailView):
 
 class VideosView(TemplateView):
     template_name = "views/videos-dashboard.html"
+    redirect_field_name = 'redirect_to'
 
     def get_context_data(self, **kwargs):
         """ Asosiy sahifa uchun barcha ma'lumotlarni olish """
         context = super().get_context_data(**kwargs)
 
+        # Qidiruv so‘rovi
+        search_query = self.request.GET.get('q', '').strip()
 
+        # Videolarni olish
+        videos = Video.objects.filter(is_active=True)
+
+        # Qidiruv filtri (sarlavha bo‘yicha)
+        if search_query:
+            videos = videos.filter(
+                Q(title__contains=search_query)  # JSONField'da qidiruv
+            )
+
+        # Tartiblash (eng yangi avval)
+        videos = videos.order_by('-created_at')
+
+        # Paginatsiya (har sahifada 6 ta video)
+        paginator = Paginator(videos, 6)
+        page_number = self.request.GET.get('page')
+        try:
+            videos_page = paginator.page(page_number)
+        except PageNotAnInteger:
+            videos_page = paginator.page(1)
+        except EmptyPage:
+            videos_page = paginator.page(paginator.num_pages)
+
+        context.update({
+            'videos': videos_page,
+            'search_query': search_query,
+        })
         return context
