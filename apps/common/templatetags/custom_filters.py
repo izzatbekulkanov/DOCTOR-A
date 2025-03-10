@@ -32,3 +32,12 @@ def get_initials(value):
 @register.filter
 def lookup(value, key):
     return value.get(key, '')
+
+
+@register.filter(name='multiply')
+def multiply(value, arg):
+    """Ikki qiymatni ko'paytiradi."""
+    try:
+        return float(value) * float(arg)
+    except (ValueError, TypeError):
+        return value  # Agar xatolik yuz bersa, asl qiymatni qaytaradi

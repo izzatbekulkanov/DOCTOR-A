@@ -27,7 +27,14 @@ urlpatterns = [
     path("logs/", include("apps.logs.urls")),
     # Til sozlamalari
     path("i18n/set_language/", set_language, name="set_language"),
+
 ]
+
+
+if 'rosetta' in settings.INSTALLED_APPS:
+    urlpatterns += [
+        re_path(r'^rosetta/', include('rosetta.urls'))
+    ]
 
 # 📌 Xatolik sahifalarini sozlash
 if settings.DEBUG:

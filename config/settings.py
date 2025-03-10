@@ -12,7 +12,6 @@ SECRET_KEY = os.environ.get("SECRET_KEY", default='')
 
 DEBUG = os.environ.get("DEBUG", 'True').lower() in ['true', 'yes', '1']
 
-
 ALLOWED_HOSTS = [
     "localhost",
     "0.0.0.0",
@@ -21,12 +20,11 @@ ALLOWED_HOSTS = [
     "webtest.namspi.uz"
 ]
 
-
 ENVIRONMENT = os.environ.get("DJANGO_ENVIRONMENT", default="local")
 
 LOCAL_APPS = [
     # 📌 **Loyiha ichidagi ilovalar**
-    "apps.dashboards",   # Dashboard ilovasi
+    "apps.dashboards",  # Dashboard ilovasi
     "apps.medical",  # ✅ Yangi `medical` ilovasini qo‘shdik
     "apps.auth",  # ✅ `apps.auth` ilovasi to‘g‘ri chaqirilgan
     "apps.logs",  # Loglar
@@ -35,6 +33,7 @@ LOCAL_APPS = [
     "apps.news",  # Yangiliklar uchun
     "apps.api",  # API uchun
     "members",  # Foydalanuvchilar
+
 ]
 
 WEB_APPS = [
@@ -47,13 +46,12 @@ DYNAMIC_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "rosetta",  # Tillarni boshqarish uchun
     'django_json_widget',
 ]
 
-
 # 📌 **Custom foydalanuvchi modeli (`AUTH_USER_MODEL`)**
 AUTH_USER_MODEL = "members.CustomUser"  # ✅ To‘g‘ri yozish
-
 
 INSTALLED_APPS = LOCAL_APPS + DYNAMIC_APPS + WEB_APPS
 
@@ -63,7 +61,7 @@ MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",  # 📌 Statik fayllarni tezroq xizmat ko'rsatish uchun
     "django.contrib.sessions.middleware.SessionMiddleware",
-    "django.middleware.locale.LocaleMiddleware", # 📌 Til o‘zgarishlari uchun middleware
+    "django.middleware.locale.LocaleMiddleware",  # 📌 Til o‘zgarishlari uchun middleware
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",  # 📌 CSRF himoyasi
     "django.contrib.auth.middleware.AuthenticationMiddleware",  # 📌 Auth middleware
@@ -73,11 +71,9 @@ MIDDLEWARE = [
 
 ]
 
-
 # 🔹 **URL sozlamalari (`ROOT_URLCONF`)**
 # 📌 Django loyihasi asosiy `urls.py` faylini ko'rsatadi
 ROOT_URLCONF = "config.urls"
-
 
 # 🔹 **Shablonlar (`TEMPLATES`)**
 # 📌 Django templatelari (HTML fayllari) sozlamalari
@@ -105,7 +101,6 @@ TEMPLATES = [
 # 📌 WSGI – Django server uchun asosiy interfeys
 WSGI_APPLICATION = "config.wsgi.application"
 
-
 # 🔹 **Ma’lumotlar bazasi (`DATABASES`)**
 # 📌 Django qaysi ma'lumotlar bazasidan foydalanishini ko'rsatadi
 DATABASES = {
@@ -115,7 +110,6 @@ DATABASES = {
     }
 }
 
-
 # 🔹 **Parolni tekshirish (`AUTH_PASSWORD_VALIDATORS`)**
 # 📌 Foydalanuvchi parolini tekshirish qoidalari
 AUTH_PASSWORD_VALIDATORS = [
@@ -124,7 +118,6 @@ AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator"},
     {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
 ]
-
 
 # 🔹 **Til sozlamalari (`LANGUAGES` va `LANGUAGE_CODE`)**
 LANGUAGES = [
@@ -141,10 +134,19 @@ LANGUAGE_CODE = "uz"  # 📌 Standart til - O'zbek tili
 TIME_ZONE = "Asia/Tashkent"  # 📌 Toshkent vaqti
 
 USE_I18N = True  # 📌 Tillarni qo‘llab-quvvatlash
+USE_L10N = True
 USE_TZ = True  # 📌 Django vaqtni `timezone-aware` qilish
 
 # 🔹 **Til fayllar joylashgan katalog (`LOCALE_PATHS`)**
-LOCALE_PATHS = [BASE_DIR / "locale"]
+LOCALE_PATHS = [
+    BASE_DIR / 'locale',
+]
+
+ROSETTA_SHOW_AT_ADMIN_PANEL = True  # Admin panelda Rosetta'ni ko'rsatish
+ROSETTA_MESSAGES_PER_PAGE = 50  # Tarjima xabarlari soni
+ROSETTA_STORAGE_CLASS = "rosetta.storage.CacheRosettaStorage"  # Tarjima xotirada saqlanadi
+ROSETTA_ACCESS_CONTROL_FUNCTION = None  # Maxsus huquqlarni o'chirish
+
 
 # 📌 Statik fayllar sozlamasi
 STATIC_URL = "/static/"
@@ -162,16 +164,12 @@ else:
 # 🔹 **Saytning asosiy URL manzili (`BASE_URL`)**
 BASE_URL = os.environ.get("BASE_URL", default="http://127.0.0.1:8000")
 
-
 # 🔹 **Model ID generatsiyasi (`DEFAULT_AUTO_FIELD`)**
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
-
-
 
 # 🔹 **Login va Logout sozlamalari**
 LOGIN_URL = "/login/"  # 📌 Agar foydalanuvchi login qilmagan bo‘lsa, shu sahifaga yo‘naltiriladi
 LOGOUT_REDIRECT_URL = "/"  # 📌 Logout bo‘lgandan keyin qayta yo‘naltiriladi
-
 
 # 🔹 **Session sozlamalari**
 SESSION_ENGINE = "django.contrib.sessions.backends.db"  # 📌 Sessionlar bazada saqlanadi

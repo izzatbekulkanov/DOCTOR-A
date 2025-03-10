@@ -4,7 +4,7 @@
 <header class="site-header header style-1">
     <div class="row">
         <div class="alert alert-warning text-center" role="alert">
-            Sayt test rejimida ishlamoqda 🚧
+            {% trans "Sayt test rejimida ishlamoqda 🚧" %}
         </div>
     </div>
     <div class="header-info-bar d-none d-xxl-block">
@@ -13,12 +13,12 @@
                 <div class="col">
                     <div class="icon-bx-wraper style-5">
                         <div class="icon-bx">
-                    <span class="icon-cell">
-                        <img src="{% static 'dashboard/images/svg/icon1.svg' %}" alt="">
-                    </span>
+                            <span class="icon-cell">
+                                <img src="{% static 'dashboard/images/svg/icon1.svg' %}" alt="">
+                            </span>
                         </div>
                         <div class="icon-content">
-                            <h2 class="dz-title text-secondary">Biz bilan bog‘laning</h2>
+                            <h2 class="dz-title text-secondary">{% trans "Biz bilan bog‘laning" %}</h2>
                             <p><a href="tel:+11234567890" class="text-danger">{{ site_settings.contact_phone }}</a></p>
                         </div>
                     </div>
@@ -26,27 +26,26 @@
                 <div class="col">
                     <div class="icon-bx-wraper style-5">
                         <div class="icon-bx">
-                    <span class="icon-cell">
-                        <img src="{% static 'dashboard/images/svg/icon2.svg' %}" alt="">
-                    </span>
+                            <span class="icon-cell">
+                                <img src="{% static 'dashboard/images/svg/icon2.svg' %}" alt="">
+                            </span>
                         </div>
                         <div class="icon-content">
-                            <h2 class="dz-title text-secondary">Email qo‘llab-quvvatlash</h2>
-                            <p><a href="mailto:doctoramedclinik2025@gmail.com"
-                                  class="text-danger"> {{ site_settings.contact_email }}</a></p>
+                            <h2 class="dz-title text-secondary">{% trans "Email qo‘llab-quvvatlash" %}</h2>
+                            <p><a href="mailto:doctoramedclinik2025@gmail.com" class="text-danger">{{ site_settings.contact_email }}</a></p>
                         </div>
                     </div>
                 </div>
                 <div class="col">
                     <div class="icon-bx-wraper style-5">
                         <div class="icon-bx">
-                    <span class="icon-cell">
-                        <img src="{% static 'dashboard/images/svg/icon4.svg' %}" alt="">
-                    </span>
+                            <span class="icon-cell">
+                                <img src="{% static 'dashboard/images/svg/icon4.svg' %}" alt="">
+                            </span>
                         </div>
                         <div class="icon-content">
-                            <h2 class="dz-title text-secondary">MRT MCKT Rengten</h2>
-                            <p class="text-danger">24/7 xizmat</p>
+                            <h2 class="dz-title text-secondary">{% trans "MRT MCKT Rengten" %}</h2>
+                            <p class="text-danger">{% trans "24/7 xizmat" %}</p>
                         </div>
                     </div>
                 </div>
@@ -65,12 +64,8 @@
                         <i class="fa-brands fa-youtube fs-1 text-danger"></i> <!-- Qizil YouTube -->
                     </a>
                 </div>
-
             </div>
-
         </div>
-
-
     </div>
 
     <!-- Main Header -->
@@ -96,23 +91,28 @@
                 <div class="menu-close fade-overlay"></div>
                 <div class="header-nav w3menu w3menu-end mo-left" id="W3Menu">
                     <div class="logo-header logo-dark">
-                        <a href="index.html"><img src="{% static 'dashboard/images/logo.svg' %}" alt=""></a>
+                        <a href="{% url 'main-dashboard' %}">
+                            <img src="{% static 'dashboard/images/logo.svg' %}" alt="">
+                        </a>
                     </div>
                     <ul class="nav navbar-nav">
                         <li class="{% if request.resolver_match.url_name == 'main-dashboard' %}active{% endif %}">
-                            <a href="{% url 'main-dashboard' %}"><span>Asosiy sahifa</span></a>
+                            <a href="{% url 'main-dashboard' %}"><span>{% trans "Asosiy sahifa" %}</span></a>
                         </li>
                         <li class="{% if request.resolver_match.url_name == 'news-dashboard' %}active{% endif %}">
-                            <a href="{% url 'news-dashboard' %}"><span>Yangiliklar</span></a>
+                            <a href="{% url 'news-dashboard' %}"><span>{% trans "Yangiliklar" %}</span></a>
                         </li>
                         <li class="{% if request.resolver_match.url_name == 'announcement-dashboard' %}active{% endif %}">
-                            <a href="{% url 'announcement-dashboard' %}"><span>E'lonlar</span></a>
+                            <a href="{% url 'announcement-dashboard' %}"><span>{% trans "E'lonlar" %}</span></a>
                         </li>
                         <li class="{% if request.resolver_match.url_name == 'employee-dashboard' %}active{% endif %}">
-                            <a href="{% url 'employee-dashboard' %}"><span>Hodimlar</span></a>
+                            <a href="{% url 'employee-dashboard' %}"><span>{% trans "Hodimlar" %}</span></a>
                         </li>
                         <li class="{% if request.resolver_match.url_name == 'videos-dashboard' %}active{% endif %}">
-                            <a href="{% url 'videos-dashboard' %}"><span>Videolar</span></a>
+                            <a href="{% url 'videos-dashboard' %}"><span>{% trans "Videolar" %}</span></a>
+                        </li>
+                        <li class="{% if request.resolver_match.url_name == 'equipment_list' %}active{% endif %}">
+                            <a href="{% url 'equipment_list' %}"><span>{% trans "Qurilmalar" %}</span></a>
                         </li>
                         <li class="sub-menu-down">
                             <a href="javascript:void(0);"
@@ -129,7 +129,6 @@
                                 </span>
                                 <i class="fas fa-chevron-down" style="margin-left: auto; color: #555;"></i>
                             </a>
-
                             <ul class="sub-menu">
                                 {% for code, name in LANGUAGES %}
                                     <li>
@@ -142,13 +141,8 @@
                                     </li>
                                 {% endfor %}
                             </ul>
-
                         </li>
-
-
                     </ul>
-
-
                 </div>
 
                 <!-- EXTRA NAV -->
@@ -158,11 +152,9 @@
                             <li class="nav-item">
                                 <a href="{% url 'admin-index' %}"
                                    class="btn btn-secondary btn-hover1 d-flex align-items-center">
-
                                     <i class="fas fa-chevron-right text-white fs-6"></i> <!-- Kichik ikon -->
                                 </a>
                             </li>
-
                         </ul>
                     </div>
                 </div>
@@ -172,6 +164,7 @@
     </div>
     <!-- Main Header End -->
 </header>
+
 <script>
     function changeLanguage(langCode) {
         fetch("{% url 'set_language' %}", {

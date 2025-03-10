@@ -7,8 +7,9 @@ from django.utils.translation import gettext_lazy as _
 from django.utils.translation import gettext as _
 from django.db.models import Q
 from django.db import models
-
-from apps.medical.models import Video
+from django.views.generic import ListView
+from django.utils.translation import get_language
+from apps.medical.models import Video, ClinicEquipment
 from apps.news.models import News, Comment, Announcement
 from members.models import CustomUser
 
@@ -212,6 +213,17 @@ class EmployeeDetailView(DetailView):
     template_name = "views/employee-detail-dashboard.html"
     context_object_name = "employee"
 
+    def get_queryset(self):
+        # Faqat faol xodimlarni ko'rsatish
+        return CustomUser.objects.filter(is_active_employee=True)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # Xodimning faoliyat tarixini qo'shish
+        context['activity_history'] = self.object.activity_history.all()
+        # Sayt sozlamalari (masalan, telefon raqami uchun)
+
+        return context
 
 class VideosView(TemplateView):
     template_name = "views/videos-dashboard.html"
@@ -250,4 +262,45 @@ class VideosView(TemplateView):
             'videos': videos_page,
             'search_query': search_query,
         })
+        return context
+
+
+class ClinicEquipmentListView(ListView):
+    model = ClinicEquipment
+    template_name = 'views/equipment_list.html'
+    context_object_name = 'equipments'
+    paginate_by = 6
+
+    def get_queryset(self):
+        queryset = ClinicEquipment.objects.filter(is_active=True).order_by('-created_at')
+        query = self.request.GET.get('q')
+        if query:
+            # JSONField ichidagi ma'lumotlarni qidirish uchun
+            queryset = queryset.filter(
+                Q(name__icontains=query) | Q(description__icontains=query)
+            )
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        language_code = get_language()
+        context['language_code'] = language_code
+
+        return context
+
+class EquipmentDetailView(DetailView):
+    model = ClinicEquipment
+    template_name = 'views/equipment_detail.html'
+    context_object_name = 'equipment'
+
+    def get_queryset(self):
+        # Faqat faol qurilmalarni ko'rsatish
+        return ClinicEquipment.objects.filter(is_active=True)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        language_code = get_language()
+        context['language_code'] = language_code
+
+
         return context

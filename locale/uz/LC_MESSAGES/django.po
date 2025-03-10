@@ -1,0 +1,3210 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-03-07 16:33+0500\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#: apps/dashboards/templates/components/footer.html:11
+#: apps/dashboards/templates/components/header.html:21
+#: apps/dashboards/templates/views/main-dashboard.html:354
+msgid "Biz bilan bog‘laning"
+msgstr ""
+
+#: apps/dashboards/templates/components/footer.html:12
+msgid ""
+"Sizning sog‘lig‘ingiz biz uchun muhim. Har qanday savollaringiz bo‘lsa, "
+"bizga murojaat qiling."
+msgstr ""
+
+#: apps/dashboards/templates/components/footer.html:22
+#: apps/dashboards/templates/views/employee-detail-dashboard.html:110
+#: apps/dashboards/templates/views/employee-detail-dashboard.html:163
+#: apps/medical/templates/views/appointment.html:62
+msgid "Telefon"
+msgstr ""
+
+#: apps/dashboards/templates/components/footer.html:36
+#: apps/dashboards/templates/views/employee-detail-dashboard.html:123
+msgid "Email"
+msgstr ""
+
+#: apps/dashboards/templates/components/footer.html:50
+#: apps/dashboards/templates/views/employee-detail-dashboard.html:81
+#: apps/dashboards/templates/views/main-dashboard.html:403
+#: apps/medical/templates/views/main-settings.html:97
+msgid "Ish vaqti"
+msgstr ""
+
+#: apps/dashboards/templates/components/footer.html:71
+msgid "Barcha huquqlar himoyalangan."
+msgstr ""
+
+#: apps/dashboards/templates/components/footer.html:94
+msgid "Dasturchi"
+msgstr ""
+
+#: apps/dashboards/templates/components/header.html:7
+msgid "Sayt test rejimida ishlamoqda 🚧"
+msgstr ""
+
+#: apps/dashboards/templates/components/header.html:34
+msgid "Email qo‘llab-quvvatlash"
+msgstr ""
+
+#: apps/dashboards/templates/components/header.html:47
+msgid "MRT MCKT Rengten"
+msgstr ""
+
+#: apps/dashboards/templates/components/header.html:48
+msgid "24/7 xizmat"
+msgstr ""
+
+#: apps/dashboards/templates/components/header.html:100
+#: apps/dashboards/templates/views/announcement-dashboard.html:21
+#: apps/dashboards/templates/views/employee-dashboard.html:21
+#: apps/dashboards/templates/views/equipment_detail.html:18
+#: apps/dashboards/templates/views/equipment_list.html:17
+#: apps/dashboards/templates/views/news-dashboard.html:27
+msgid "Asosiy sahifa"
+msgstr ""
+
+#: apps/dashboards/templates/components/header.html:103
+#: apps/dashboards/templates/views/news-dashboard.html:6
+#: apps/dashboards/templates/views/news-dashboard.html:23
+#: apps/dashboards/templates/views/news-dashboard.html:28
+#: apps/news/models.py:38 apps/news/templates/news/news_views.html:6
+msgid "Yangiliklar"
+msgstr ""
+
+#: apps/dashboards/templates/components/header.html:106 apps/news/models.py:113
+#: apps/news/templates/announcement/announcement-list.html:5
+#: apps/news/templates/announcement/announcement-list.html:18
+msgid "E'lonlar"
+msgstr ""
+
+#: apps/dashboards/templates/components/header.html:109
+#: apps/dashboards/templates/views/employee-dashboard.html:17
+#: apps/dashboards/templates/views/employee-dashboard.html:22
+#: apps/dashboards/templates/views/employee-dashboard.html:36
+#: apps/dashboards/templates/views/employee-detail-dashboard.html:41
+msgid "Hodimlar"
+msgstr ""
+
+#: apps/dashboards/templates/components/header.html:112
+#: apps/dashboards/templates/views/videos-dashboard.html:6
+#: apps/medical/models.py:195
+msgid "Videolar"
+msgstr ""
+
+#: apps/dashboards/templates/components/header.html:115
+#: apps/medical/templates/views/devices.html:6
+msgid "Qurilmalar"
+msgstr ""
+
+#: apps/dashboards/templates/views/announcement-dashboard.html:17
+#: apps/dashboards/templates/views/announcement-dashboard.html:22
+msgid "E‘lonlar"
+msgstr ""
+
+#: apps/dashboards/templates/views/announcement-dashboard.html:36
+#: apps/dashboards/templates/views/main-dashboard.html:65
+msgid "24/7 Shoshilinch Xizmat"
+msgstr ""
+
+#: apps/dashboards/templates/views/announcement-dashboard.html:45
+#: apps/news/templates/news/news_views.html:59
+msgid "Qidirish..."
+msgstr ""
+
+#: apps/dashboards/templates/views/announcement-dashboard.html:47
+msgid "Izlash"
+msgstr ""
+
+#: apps/dashboards/templates/views/announcement-dashboard.html:78
+msgid "E‘lonlar topilmadi"
+msgstr ""
+
+#: apps/dashboards/templates/views/announcement-dashboard.html:89
+#: apps/dashboards/templates/views/employee-dashboard.html:100
+#: apps/dashboards/templates/views/equipment_list.html:88
+#: apps/dashboards/templates/views/videos-dashboard.html:72
+#: apps/medical/templates/views/appointment.html:112
+#: apps/medical/templates/views/medicalCheckup.html:124
+#: apps/medical/templates/views/video_list.html:102
+#: apps/news/templates/news/news_views.html:129
+#: members/templates/medical/employee_list.html:98
+msgid "Birinchi"
+msgstr ""
+
+#: apps/dashboards/templates/views/announcement-dashboard.html:92
+#: apps/dashboards/templates/views/employee-dashboard.html:103
+#: apps/dashboards/templates/views/equipment_list.html:93
+#: apps/dashboards/templates/views/videos-dashboard.html:77
+#: apps/medical/templates/views/appointment.html:116
+#: apps/medical/templates/views/medicalCheckup.html:127
+#: apps/medical/templates/views/video_list.html:104
+#: members/templates/medical/employee_list.html:101
+msgid "Oldingi"
+msgstr ""
+
+#: apps/dashboards/templates/views/announcement-dashboard.html:97
+msgid "Sahifa"
+msgstr ""
+
+#: apps/dashboards/templates/views/announcement-dashboard.html:102
+#: apps/dashboards/templates/views/employee-dashboard.html:113
+#: apps/dashboards/templates/views/equipment_list.html:102
+#: apps/dashboards/templates/views/videos-dashboard.html:89
+#: apps/medical/templates/views/appointment.html:127
+#: apps/medical/templates/views/medicalCheckup.html:135
+#: apps/medical/templates/views/video_list.html:111
+#: members/templates/medical/employee_list.html:111
+msgid "Keyingi"
+msgstr ""
+
+#: apps/dashboards/templates/views/announcement-dashboard.html:105
+#: apps/dashboards/templates/views/employee-dashboard.html:116
+#: apps/dashboards/templates/views/equipment_list.html:107
+#: apps/dashboards/templates/views/main-dashboard.html:275
+#: apps/dashboards/templates/views/videos-dashboard.html:94
+#: apps/medical/templates/views/appointment.html:131
+#: apps/medical/templates/views/medicalCheckup.html:138
+#: apps/medical/templates/views/video_list.html:114
+#: apps/news/templates/news/news_views.html:150
+#: members/templates/medical/employee_list.html:114
+msgid "Oxirgi"
+msgstr ""
+
+#: apps/dashboards/templates/views/announcement-detail-dashboard.html:26
+#: apps/dashboards/templates/views/news-detail-dashboard.html:28
+msgid "By"
+msgstr ""
+
+#: apps/dashboards/templates/views/announcement-detail-dashboard.html:30
+msgid "ko‘rishlar"
+msgstr ""
+
+#: apps/dashboards/templates/views/announcement-detail-dashboard.html:37
+#: apps/dashboards/templates/views/news-detail-dashboard.html:39
+msgid "Ortga qaytish"
+msgstr ""
+
+#: apps/dashboards/templates/views/announcement-detail-dashboard.html:52
+msgid "marta ko‘rildi"
+msgstr ""
+
+#: apps/dashboards/templates/views/announcement-detail-dashboard.html:62
+msgid "O‘xshash e‘lonlar"
+msgstr ""
+
+#: apps/dashboards/templates/views/announcement-detail-dashboard.html:77
+msgid "O‘xshash e‘lonlar topilmadi."
+msgstr ""
+
+#: apps/dashboards/templates/views/employee-dashboard.html:48
+msgid "Xodim qidirish..."
+msgstr ""
+
+#: apps/dashboards/templates/views/employee-dashboard.html:50
+#: apps/dashboards/templates/views/news-dashboard.html:62
+#: apps/dashboards/templates/views/news-dashboard.html:67
+#: apps/dashboards/templates/views/videos-dashboard.html:33
+#: apps/medical/templates/havfsizlik/users.html:126
+#: apps/medical/templates/views/appointment.html:50
+#: apps/medical/templates/views/medicalCheckup.html:73
+#: apps/medical/templates/views/video_list.html:33
+#: apps/news/templates/news/news_views.html:63
+#: members/templates/medical/employee_list.html:51
+msgid "Qidirish"
+msgstr ""
+
+#: apps/dashboards/templates/views/employee-dashboard.html:64
+#: apps/medical/templates/views/client_equipment_detail.html:49
+#: apps/medical/templates/views/client_equipment_detail.html:165
+msgid "Rasm mavjud emas"
+msgstr ""
+
+#: apps/dashboards/templates/views/employee-dashboard.html:91
+msgid "Xodimlar topilmadi"
+msgstr ""
+
+#: apps/dashboards/templates/views/employee-detail-dashboard.html:6
+#: apps/dashboards/templates/views/employee-detail-dashboard.html:57
+#: apps/medical/templates/views/appointment.html:64 members/admin.py:107
+msgid "Hodim"
+msgstr ""
+
+#: apps/dashboards/templates/views/employee-detail-dashboard.html:43
+msgid "Hodim haqida ma'lumot"
+msgstr ""
+
+#: apps/dashboards/templates/views/employee-detail-dashboard.html:85
+msgid "Dushanba - Shanba"
+msgstr ""
+
+#: apps/dashboards/templates/views/employee-detail-dashboard.html:99
+#: apps/dashboards/templates/views/main-dashboard.html:365
+#: apps/medical/templates/havfsizlik/add-users.html:211
+#: apps/medical/templates/havfsizlik/edit-users.html:212
+#: apps/medical/templates/views/main-settings.html:91
+msgid "Manzil"
+msgstr ""
+
+#: apps/dashboards/templates/views/employee-detail-dashboard.html:136
+#: apps/medical/templates/havfsizlik/add-users.html:65
+#: apps/medical/templates/havfsizlik/edit-users.html:67
+msgid "Xodim ID"
+msgstr ""
+
+#: apps/dashboards/templates/views/employee-detail-dashboard.html:155
+#: apps/medical/templates/havfsizlik/add-users.html:101
+#: apps/medical/templates/havfsizlik/edit-users.html:98
+#: members/templates/medical/employee_list.html:60
+msgid "Lavozim"
+msgstr ""
+
+#: apps/dashboards/templates/views/employee-detail-dashboard.html:159
+msgid "Bo'lim"
+msgstr ""
+
+#: apps/dashboards/templates/views/employee-detail-dashboard.html:168
+msgid "Tug'ilgan sana"
+msgstr ""
+
+#: apps/dashboards/templates/views/employee-detail-dashboard.html:172
+msgid "Jinsi"
+msgstr ""
+
+#: apps/dashboards/templates/views/employee-detail-dashboard.html:176
+#: apps/medical/templates/havfsizlik/add-users.html:115
+#: apps/medical/templates/havfsizlik/edit-users.html:112
+msgid "Millati"
+msgstr ""
+
+#: apps/dashboards/templates/views/employee-detail-dashboard.html:180
+#: apps/medical/templates/havfsizlik/add-users.html:175
+#: apps/medical/templates/havfsizlik/edit-users.html:172
+msgid "Tibbiyot mutaxassisligi"
+msgstr ""
+
+#: apps/dashboards/templates/views/employee-detail-dashboard.html:184
+msgid "Diplom"
+msgstr ""
+
+#: apps/dashboards/templates/views/employee-detail-dashboard.html:188
+msgid "Ish boshlash sanasi"
+msgstr ""
+
+#: apps/dashboards/templates/views/employee-detail-dashboard.html:192
+#: apps/medical/templates/havfsizlik/add-users.html:163
+#: apps/medical/templates/havfsizlik/edit-users.html:160
+msgid "Shartnoma tugash sanasi"
+msgstr ""
+
+#: apps/dashboards/templates/views/employee-detail-dashboard.html:196
+#: apps/medical/templates/havfsizlik/add-users.html:181
+#: apps/medical/templates/havfsizlik/edit-users.html:178
+#: members/templates/medical/employee_list.html:62
+msgid "Ish jadvali"
+msgstr ""
+
+#: apps/dashboards/templates/views/employee-detail-dashboard.html:200
+#: apps/medical/templates/havfsizlik/add-users.html:187
+#: apps/medical/templates/havfsizlik/edit-users.html:184
+msgid "Bank hisob raqami"
+msgstr ""
+
+#: apps/dashboards/templates/views/employee-detail-dashboard.html:204
+#: apps/medical/templates/havfsizlik/add-users.html:192
+#: apps/medical/templates/havfsizlik/edit-users.html:189
+msgid "STIR"
+msgstr ""
+
+#: apps/dashboards/templates/views/employee-detail-dashboard.html:208
+msgid "Sug'urta raqami"
+msgstr ""
+
+#: apps/dashboards/templates/views/employee-detail-dashboard.html:212
+#: apps/medical/templates/havfsizlik/add-users.html:141
+#: apps/medical/templates/havfsizlik/edit-users.html:138
+msgid "Telegram"
+msgstr ""
+
+#: apps/dashboards/templates/views/employee-detail-dashboard.html:218
+#: apps/dashboards/templates/views/employee-detail-dashboard.html:229
+msgid "Mavjud emas"
+msgstr ""
+
+#: apps/dashboards/templates/views/employee-detail-dashboard.html:223
+#: apps/medical/templates/havfsizlik/add-users.html:147
+#: apps/medical/templates/havfsizlik/edit-users.html:144
+msgid "Instagram"
+msgstr ""
+
+#: apps/dashboards/templates/views/employee-detail-dashboard.html:234
+msgid "Favqulodda aloqa"
+msgstr ""
+
+#: apps/dashboards/templates/views/employee-detail-dashboard.html:243
+msgid "Faoliyat tarixi"
+msgstr ""
+
+#: apps/dashboards/templates/views/employee-detail-dashboard.html:259
+#: apps/dashboards/templates/views/employee-detail-dashboard.html:301
+#: members/templates/medical/add_employee_activity.html:95
+#: members/templates/medical/employee_list.html:173
+msgid "Yakunlangan"
+msgstr ""
+
+#: apps/dashboards/templates/views/employee-detail-dashboard.html:260
+#: apps/dashboards/templates/views/employee-detail-dashboard.html:302
+#: members/templates/medical/employee_list.html:175
+msgid "Yakunlanmagan"
+msgstr ""
+
+#: apps/dashboards/templates/views/employee-detail-dashboard.html:265
+msgid "Ko'rish"
+msgstr ""
+
+#: apps/dashboards/templates/views/employee-detail-dashboard.html:287
+#: members/templates/medical/employee_list.html:140
+msgid "Turi"
+msgstr ""
+
+#: apps/dashboards/templates/views/employee-detail-dashboard.html:290
+#: members/templates/medical/employee_list.html:142
+msgid "Boshlanish"
+msgstr ""
+
+#: apps/dashboards/templates/views/employee-detail-dashboard.html:293
+#: members/templates/medical/employee_list.html:143
+msgid "Tugash"
+msgstr ""
+
+#: apps/dashboards/templates/views/employee-detail-dashboard.html:296
+#: members/admin.py:197 members/admin.py:238
+#: members/templates/medical/employee_list.html:141
+msgid "Joylashuv"
+msgstr ""
+
+#: apps/dashboards/templates/views/employee-detail-dashboard.html:299
+#: members/templates/medical/employee_list.html:145
+msgid "Natija"
+msgstr ""
+
+#: apps/dashboards/templates/views/employee-detail-dashboard.html:321
+msgid "Faoliyat tarixi mavjud emas"
+msgstr ""
+
+#: apps/dashboards/templates/views/employee-detail-dashboard.html:329
+#: apps/dashboards/templates/views/equipment_detail.html:60
+msgid "Orqaga qaytish"
+msgstr ""
+
+#: apps/dashboards/templates/views/equipment_detail.html:6
+#: apps/dashboards/templates/views/equipment_detail.html:19
+#: apps/dashboards/templates/views/equipment_list.html:6
+#: apps/dashboards/templates/views/equipment_list.html:14
+#: apps/dashboards/templates/views/equipment_list.html:18
+msgid "Klinika Qurilmalari"
+msgstr ""
+
+#: apps/dashboards/templates/views/equipment_detail.html:52
+#: apps/medical/templates/views/medicalCheckup.html:86
+msgid "Yaratilgan vaqt"
+msgstr ""
+
+#: apps/dashboards/templates/views/equipment_detail.html:56
+msgid "Yangilangan vaqt"
+msgstr ""
+
+#: apps/dashboards/templates/views/equipment_list.html:42
+msgid "Qurilma qidiring..."
+msgstr ""
+
+#: apps/dashboards/templates/views/equipment_list.html:67
+msgid "Ko'proq"
+msgstr ""
+
+#: apps/dashboards/templates/views/equipment_list.html:76
+#: apps/medical/templates/views/clinic_equipment.html:281
+msgid "Hozircha qurilmalar mavjud emas"
+msgstr ""
+
+#: apps/dashboards/templates/views/main-dashboard.html:70
+msgid "KLINIKASI"
+msgstr ""
+
+#: apps/dashboards/templates/views/main-dashboard.html:100
+msgid "Savol va murojaatlar?"
+msgstr ""
+
+#: apps/dashboards/templates/views/main-dashboard.html:101
+#: apps/dashboards/templates/views/main-dashboard.html:163
+#: apps/dashboards/templates/views/news-detail-dashboard.html:115
+msgid "Yuborish"
+msgstr ""
+
+#: apps/dashboards/templates/views/main-dashboard.html:127
+#: apps/dashboards/templates/views/main-dashboard.html:131
+msgid "Murojaatlar"
+msgstr ""
+
+#: apps/dashboards/templates/views/main-dashboard.html:131
+msgid "Taklif"
+msgstr ""
+
+#: apps/dashboards/templates/views/main-dashboard.html:131
+msgid "va"
+msgstr ""
+
+#: apps/dashboards/templates/views/main-dashboard.html:142
+#: apps/dashboards/templates/views/main-dashboard.html:143
+msgid "To‘liq ismingiz"
+msgstr ""
+
+#: apps/dashboards/templates/views/main-dashboard.html:149
+#: apps/dashboards/templates/views/main-dashboard.html:150
+msgid "Telefon raqamingiz"
+msgstr ""
+
+#: apps/dashboards/templates/views/main-dashboard.html:156
+msgid "Xabar yozing"
+msgstr ""
+
+#: apps/dashboards/templates/views/main-dashboard.html:157
+#: apps/medical/templates/views/medicalCheckup.html:85
+msgid "Xabar"
+msgstr ""
+
+#: apps/dashboards/templates/views/main-dashboard.html:180
+msgid "Malakali hodimlar"
+msgstr ""
+
+#: apps/dashboards/templates/views/main-dashboard.html:185
+msgid "Barchasini Ko‘rish"
+msgstr ""
+
+#: apps/dashboards/templates/views/main-dashboard.html:199
+msgid "Qabuliga yozilish"
+msgstr ""
+
+#: apps/dashboards/templates/views/main-dashboard.html:221
+msgid "Hozircha hech qanday xodim mavjud emas."
+msgstr ""
+
+#: apps/dashboards/templates/views/main-dashboard.html:232
+msgid "Hamkorlarimiz"
+msgstr ""
+
+#: apps/dashboards/templates/views/main-dashboard.html:234
+msgid ""
+"Bizning ishonchli hamkorlarimiz bilan birgalikda yuqori sifatli xizmatlarni "
+"taqdim etamiz."
+msgstr ""
+
+#: apps/dashboards/templates/views/main-dashboard.html:249
+msgid "Hamkor logosi"
+msgstr ""
+
+#: apps/dashboards/templates/views/main-dashboard.html:275
+msgid "yangiliklar va e‘lonlar"
+msgstr ""
+
+#: apps/dashboards/templates/views/main-dashboard.html:280
+msgid "Barchasini ko‘rish"
+msgstr ""
+
+#: apps/dashboards/templates/views/main-dashboard.html:294
+#: apps/dashboards/templates/views/news-detail-dashboard.html:8
+#: apps/news/models.py:37
+msgid "Yangilik"
+msgstr ""
+
+#: apps/dashboards/templates/views/main-dashboard.html:305
+msgid "Ko‘proq"
+msgstr ""
+
+#: apps/dashboards/templates/views/main-dashboard.html:321
+msgid "E‘lon"
+msgstr ""
+
+#: apps/dashboards/templates/views/main-dashboard.html:355
+msgid "Savollaringiz bo‘lsa, biz bilan bog‘laning"
+msgstr ""
+
+#: apps/dashboards/templates/views/main-dashboard.html:377
+msgid "Bizga qo‘ng‘iroq qiling"
+msgstr ""
+
+#: apps/dashboards/templates/views/main-dashboard.html:390
+msgid "Bizga xat yuboring"
+msgstr ""
+
+#: apps/dashboards/templates/views/news-dashboard.html:53
+msgid "Ko‘proq yuklash"
+msgstr ""
+
+#: apps/dashboards/templates/views/news-dashboard.html:81
+msgid "Oy bo‘yicha qidirish"
+msgstr ""
+
+#: apps/dashboards/templates/views/news-dashboard.html:90
+msgid "Hozircha yangiliklar mavjud emas"
+msgstr ""
+
+#: apps/dashboards/templates/views/news-dashboard.html:97
+#: apps/dashboards/templates/views/news-detail-dashboard.html:130
+msgid "Oxirgi yangiliklar"
+msgstr ""
+
+#: apps/dashboards/templates/views/news-dashboard.html:124
+msgid "Oxirgi yangiliklar mavjud emas"
+msgstr ""
+
+#: apps/dashboards/templates/views/news-detail-dashboard.html:32
+msgid "izohlar"
+msgstr ""
+
+#: apps/dashboards/templates/views/news-detail-dashboard.html:69
+#: apps/news/models.py:82
+msgid "Izohlar"
+msgstr ""
+
+#: apps/dashboards/templates/views/news-detail-dashboard.html:72
+msgid "ta izoh"
+msgstr ""
+
+#: apps/dashboards/templates/views/news-detail-dashboard.html:87
+msgid "Hozircha izohlar yo‘q. Birinchi bo‘lib izoh qoldiring!"
+msgstr ""
+
+#: apps/dashboards/templates/views/news-detail-dashboard.html:93
+msgid "Izoh qoldirish"
+msgstr ""
+
+#: apps/dashboards/templates/views/news-detail-dashboard.html:98
+#: members/admin.py:84 members/templates/medical/employee_list.html:59
+msgid "To‘liq ism"
+msgstr ""
+
+#: apps/dashboards/templates/views/news-detail-dashboard.html:103
+msgid "Telefon raqam"
+msgstr ""
+
+#: apps/dashboards/templates/views/news-detail-dashboard.html:108
+msgid "Izohingizni shu yerga yozing"
+msgstr ""
+
+#: apps/dashboards/templates/views/news-detail-dashboard.html:155
+msgid "Hozircha o‘xshash yangiliklar yo‘q."
+msgstr ""
+
+#: apps/dashboards/templates/views/videos-dashboard.html:18
+msgid "Bizning Video Lavhalar"
+msgstr ""
+
+#: apps/dashboards/templates/views/videos-dashboard.html:19
+msgid "Klinikamiz faoliyati va xizmatlari bilan yaqindan tanishing."
+msgstr ""
+
+#: apps/dashboards/templates/views/videos-dashboard.html:30
+msgid "Video qidiring..."
+msgstr ""
+
+#: apps/dashboards/templates/views/videos-dashboard.html:60
+#: apps/medical/templates/views/video_list.html:92
+msgid "Hozircha videolar mavjud emas"
+msgstr ""
+
+#: apps/dashboards/views.py:46
+msgid "Yanvar"
+msgstr ""
+
+#: apps/dashboards/views.py:47
+msgid "Fevral"
+msgstr ""
+
+#: apps/dashboards/views.py:48
+msgid "Mart"
+msgstr ""
+
+#: apps/dashboards/views.py:49
+msgid "Aprel"
+msgstr ""
+
+#: apps/dashboards/views.py:50
+#: venv/lib/python3.12/site-packages/django/utils/dates.py:29
+msgid "May"
+msgstr ""
+
+#: apps/dashboards/views.py:51
+msgid "Iyun"
+msgstr ""
+
+#: apps/dashboards/views.py:52
+msgid "Iyul"
+msgstr ""
+
+#: apps/dashboards/views.py:53
+msgid "Avgust"
+msgstr ""
+
+#: apps/dashboards/views.py:54
+msgid "Sentabr"
+msgstr ""
+
+#: apps/dashboards/views.py:55
+msgid "Oktabr"
+msgstr ""
+
+#: apps/dashboards/views.py:56
+msgid "Noyabr"
+msgstr ""
+
+#: apps/dashboards/views.py:57
+msgid "Dekabr"
+msgstr ""
+
+#: apps/medical/admin.py:130
+msgid "Qurilma ma'lumotlari"
+msgstr ""
+
+#: apps/medical/admin.py:133
+msgid "Vaqt ma'lumotlari"
+msgstr ""
+
+#: apps/medical/admin.py:142
+#: apps/medical/templates/views/clinic_equipment.html:240
+msgid "Nomi (O‘zbek)"
+msgstr ""
+
+#: apps/medical/admin.py:146
+#: apps/medical/templates/views/clinic_equipment.html:241
+msgid "Tavsif (O‘zbek)"
+msgstr ""
+
+#: apps/medical/models.py:51
+msgid "1920x180 o'lchamdagi asosiy sahifa banner rasmi"
+msgstr ""
+
+#: apps/medical/models.py:52
+msgid "Har xil tillarda rasm tavsifi (JSON formatda)"
+msgstr ""
+
+#: apps/medical/models.py:58
+#: apps/medical/templates/views/main-settings.html:157
+msgid "Asosiy sahifa banneri"
+msgstr ""
+
+#: apps/medical/models.py:59
+msgid "Asosiy sahifa bannerlari"
+msgstr ""
+
+#: apps/medical/models.py:66
+msgid "Har xil tillarda sarlavha (JSON formatda)"
+msgstr ""
+
+#: apps/medical/models.py:67
+msgid "Har xil tillarda batafsil tavsif (JSON formatda)"
+msgstr ""
+
+#: apps/medical/models.py:68
+msgid "Doctor A haqida ma'lumot rasmi"
+msgstr ""
+
+#: apps/medical/models.py:74
+msgid "Doctor A haqida ma'lumot"
+msgstr ""
+
+#: apps/medical/models.py:75
+msgid "Doctor A haqida ma'lumotlar"
+msgstr ""
+
+#: apps/medical/models.py:82
+msgid "Telefon raqami (+998...) formatda kiriting"
+msgstr ""
+
+#: apps/medical/models.py:86
+msgid "Har xil tillarda telefon raqami haqida qisqacha tavsif (JSON formatda)"
+msgstr ""
+
+#: apps/medical/models.py:92
+msgid "Aloqa Telefoni"
+msgstr ""
+
+#: apps/medical/models.py:93
+msgid "Aloqa Telefonlari"
+msgstr ""
+
+#: apps/medical/models.py:105
+msgid "Har xil tillarda hamkor nomi (JSON formatda)"
+msgstr ""
+
+#: apps/medical/models.py:107
+msgid "Har xil tillarda hamkor tavsifi (JSON formatda)"
+msgstr ""
+
+#: apps/medical/models.py:109
+msgid "Hamkorning logotipi"
+msgstr ""
+
+#: apps/medical/models.py:111
+msgid "Hamkorning veb-sayti manzili"
+msgstr ""
+
+#: apps/medical/models.py:113 apps/news/models.py:18 apps/news/models.py:94
+msgid "Chop etilgan sana"
+msgstr ""
+
+#: apps/medical/models.py:115 apps/news/models.py:21 apps/news/models.py:96
+msgid "Oxirgi tahrir qilingan sana"
+msgstr ""
+
+#: apps/medical/models.py:117
+msgid "Hamkor faolmi?"
+msgstr ""
+
+#: apps/medical/models.py:120
+msgid "Hamkor"
+msgstr ""
+
+#: apps/medical/models.py:121
+msgid "Hamkorlar"
+msgstr ""
+
+#: apps/medical/models.py:125
+msgid "Nomi mavjud emas"
+msgstr ""
+
+#: apps/medical/models.py:131
+msgid "Tavsif mavjud emas"
+msgstr ""
+
+#: apps/medical/models.py:150
+msgid "Har xil tillarda qurilma nomi (JSON formatda)"
+msgstr ""
+
+#: apps/medical/models.py:151
+msgid "Har xil tillarda qurilma haqida batafsil ma'lumot (JSON formatda)"
+msgstr ""
+
+#: apps/medical/models.py:152
+msgid "Qurilma rasmi (masalan, 800x600 o'lchamda)"
+msgstr ""
+
+#: apps/medical/models.py:153
+msgid "Qurilma faol yoki faol emasligini belgilaydi"
+msgstr ""
+
+#: apps/medical/models.py:159
+msgid "Klinika qurilmasi"
+msgstr ""
+
+#: apps/medical/models.py:160
+#: apps/medical/templates/views/clinic_equipment.html:5
+msgid "Klinika qurilmalari"
+msgstr ""
+
+#: apps/medical/models.py:180
+msgid ""
+"To‘g‘ri YouTube URL yoki Video ID kiriting (masalan, https://www.youtube.com/"
+"embed/07NL6SlDRUY yoki 07NL6SlDRUY)."
+msgstr ""
+
+#: apps/medical/models.py:183
+msgid "Har xil tillarda video sarlavhasi (JSON formatda)"
+msgstr ""
+
+#: apps/medical/models.py:187
+msgid "YouTube video ID (masalan, 07NL6SlDRUY)"
+msgstr ""
+
+#: apps/medical/models.py:189
+msgid "Video faol yoki faol emasligini belgilaydi"
+msgstr ""
+
+#: apps/medical/models.py:194 apps/medical/templates/views/video_list.html:44
+msgid "Video"
+msgstr ""
+
+#: apps/medical/templates/havfsizlik/add-users.html:32
+msgid "Hodim ma'lumotlarini kiriting"
+msgstr ""
+
+#: apps/medical/templates/havfsizlik/add-users.html:38
+#: apps/medical/templates/havfsizlik/edit-users.html:40
+msgid "F.I.O"
+msgstr ""
+
+#: apps/medical/templates/havfsizlik/add-users.html:41
+#: apps/medical/templates/havfsizlik/edit-users.html:43
+#: apps/medical/templates/views/medicalCheckup.html:83
+msgid "Ism va familiya"
+msgstr ""
+
+#: apps/medical/templates/havfsizlik/add-users.html:42
+#: apps/medical/templates/havfsizlik/edit-users.html:44
+msgid "Iltimos, F.I.O ni kiriting"
+msgstr ""
+
+#: apps/medical/templates/havfsizlik/add-users.html:48
+#: apps/medical/templates/havfsizlik/add-users.html:50
+#: apps/medical/templates/havfsizlik/edit-users.html:50
+#: apps/medical/templates/havfsizlik/edit-users.html:52
+msgid "Foydalanuvchi nomi"
+msgstr ""
+
+#: apps/medical/templates/havfsizlik/add-users.html:55
+#: apps/medical/templates/havfsizlik/edit-users.html:57
+#: apps/medical/templates/views/medicalCheckup.html:84
+msgid "Telefon raqami"
+msgstr ""
+
+#: apps/medical/templates/havfsizlik/add-users.html:59
+#: apps/medical/templates/havfsizlik/edit-users.html:61
+msgid "Telefon raqamni kiriting"
+msgstr ""
+
+#: apps/medical/templates/havfsizlik/add-users.html:60
+#: apps/medical/templates/havfsizlik/edit-users.html:62
+msgid "Iltimos, telefon raqamni kiriting"
+msgstr ""
+
+#: apps/medical/templates/havfsizlik/add-users.html:67
+#: apps/medical/templates/havfsizlik/edit-users.html:69
+msgid "Xodim ID kiriting"
+msgstr ""
+
+#: apps/medical/templates/havfsizlik/add-users.html:72
+#: apps/medical/templates/havfsizlik/edit-users.html:74 members/admin.py:32
+msgid "Jins"
+msgstr ""
+
+#: apps/medical/templates/havfsizlik/add-users.html:79
+#: apps/medical/templates/havfsizlik/edit-users.html:79
+msgid "Erkak"
+msgstr ""
+
+#: apps/medical/templates/havfsizlik/add-users.html:85
+#: apps/medical/templates/havfsizlik/edit-users.html:84
+msgid "Ayol"
+msgstr ""
+
+#: apps/medical/templates/havfsizlik/add-users.html:87
+#: apps/medical/templates/havfsizlik/edit-users.html:86
+msgid "Iltimos, jinsni tanlang"
+msgstr ""
+
+#: apps/medical/templates/havfsizlik/add-users.html:94
+#: apps/medical/templates/havfsizlik/edit-users.html:92
+msgid "Tug‘ilgan sana"
+msgstr ""
+
+#: apps/medical/templates/havfsizlik/add-users.html:103
+#: apps/medical/templates/havfsizlik/edit-users.html:100
+msgid "Lavozimni kiriting"
+msgstr ""
+
+#: apps/medical/templates/havfsizlik/add-users.html:108
+#: apps/medical/templates/havfsizlik/edit-users.html:105
+#: members/templates/medical/employee_list.html:61
+msgid "Bo‘lim"
+msgstr ""
+
+#: apps/medical/templates/havfsizlik/add-users.html:110
+#: apps/medical/templates/havfsizlik/edit-users.html:107
+msgid "Bo‘limni kiriting"
+msgstr ""
+
+#: apps/medical/templates/havfsizlik/add-users.html:122
+#: apps/medical/templates/havfsizlik/edit-users.html:119
+msgid "FAV raqam"
+msgstr ""
+
+#: apps/medical/templates/havfsizlik/add-users.html:127
+#: apps/medical/templates/havfsizlik/edit-users.html:124
+msgid "Boshlanishi"
+msgstr ""
+
+#: apps/medical/templates/havfsizlik/add-users.html:132
+#: apps/medical/templates/havfsizlik/edit-users.html:129
+msgid "Tugashi"
+msgstr ""
+
+#: apps/medical/templates/havfsizlik/add-users.html:136
+#: apps/medical/templates/havfsizlik/edit-users.html:133
+msgid "Su'gurta"
+msgstr ""
+
+#: apps/medical/templates/havfsizlik/add-users.html:155
+#: apps/medical/templates/havfsizlik/edit-users.html:152
+msgid "Ishga kirgan sana"
+msgstr ""
+
+#: apps/medical/templates/havfsizlik/add-users.html:169
+#: apps/medical/templates/havfsizlik/edit-users.html:166
+msgid "Litsenziya raqami"
+msgstr ""
+
+#: apps/medical/templates/havfsizlik/add-users.html:199
+#: apps/medical/templates/havfsizlik/edit-users.html:195
+msgid "Profil rasmi"
+msgstr ""
+
+#: apps/medical/templates/havfsizlik/add-users.html:206
+#: apps/medical/templates/havfsizlik/edit-users.html:207
+#: apps/medical/templates/havfsizlik/edit-users.html:208
+msgid "Qo‘shimcha ma’lumot"
+msgstr ""
+
+#: apps/medical/templates/havfsizlik/add-users.html:207
+msgid "Qoshimcha malumot"
+msgstr ""
+
+#: apps/medical/templates/havfsizlik/add-users.html:213
+#: apps/medical/templates/havfsizlik/edit-users.html:213
+msgid "Manzilni kiriting"
+msgstr ""
+
+#: apps/medical/templates/havfsizlik/add-users.html:221
+#: apps/medical/templates/havfsizlik/edit-users.html:220
+msgid "Foydalanuvchi faol"
+msgstr ""
+
+#: apps/medical/templates/havfsizlik/add-users.html:227
+#: apps/medical/templates/havfsizlik/edit-users.html:226
+#: apps/medical/templates/views/video_list.html:186
+#: members/templates/medical/add_employee_activity.html:145
+msgid "Bekor qilish"
+msgstr ""
+
+#: apps/medical/templates/havfsizlik/add-users.html:229
+msgid "Hodim qo‘shish"
+msgstr ""
+
+#: apps/medical/templates/havfsizlik/edit-users.html:34
+msgid "Hodim ma'lumotlarini tahrirlang"
+msgstr ""
+
+#: apps/medical/templates/havfsizlik/edit-users.html:198
+msgid "Joriy profil rasmi"
+msgstr ""
+
+#: apps/medical/templates/havfsizlik/edit-users.html:199
+msgid "Joriy rasm"
+msgstr ""
+
+#: apps/medical/templates/havfsizlik/edit-users.html:228
+msgid "Hodim saqlash"
+msgstr ""
+
+#: apps/medical/templates/havfsizlik/users.html:54
+#: apps/medical/templates/havfsizlik/users.html:116
+msgid "Barcha foydalanuvchilar"
+msgstr ""
+
+#: apps/medical/templates/havfsizlik/users.html:71
+msgid "Erkaklar"
+msgstr ""
+
+#: apps/medical/templates/havfsizlik/users.html:88
+msgid "Ayollar"
+msgstr ""
+
+#: apps/medical/templates/havfsizlik/users.html:106
+msgid "Faol bo'lmagan foydalanuvchilar"
+msgstr ""
+
+#: apps/medical/templates/havfsizlik/users.html:130
+#: apps/news/templates/news/news_views.html:68
+msgid "Qo‘shish"
+msgstr ""
+
+#: apps/medical/templates/havfsizlik/users.html:171
+msgid "Foydalanuvchi rasmi"
+msgstr ""
+
+#: apps/medical/templates/havfsizlik/users.html:195
+msgid "Foydalanuvchini tahrirlash"
+msgstr ""
+
+#: apps/medical/templates/havfsizlik/users.html:206
+msgid "Foydalanuvchini o‘chirish"
+msgstr ""
+
+#: apps/medical/templates/havfsizlik/users.html:211
+#, python-format
+msgid ""
+"\n"
+"                                                    %(name)s "
+"foydalanuvchisini rostdan ham o‘chirishni xohlaysizmi?\n"
+"                                                "
+msgstr ""
+
+#: apps/medical/templates/havfsizlik/users.html:217
+#: apps/medical/templates/views/clinic_equipment.html:333
+#: apps/medical/templates/views/video_list.html:241
+#: apps/medical/templates/views/video_list.html:293 members/admin.py:244
+#: members/admin.py:253 members/templates/medical/employee_list.html:226
+msgid "Yo‘q"
+msgstr ""
+
+#: apps/medical/templates/havfsizlik/users.html:223
+#: apps/medical/templates/views/video_list.html:292 members/admin.py:244
+#: members/admin.py:253
+msgid "Ha"
+msgstr ""
+
+#: apps/medical/templates/havfsizlik/users.html:232
+msgid "Foydalanuvchi topilmadi"
+msgstr ""
+
+#: apps/medical/templates/views/appointment.html:6
+#: apps/medical/templates/views/appointment.html:39
+msgid "Qabullar"
+msgstr ""
+
+#: apps/medical/templates/views/appointment.html:46
+msgid "Qabul qidirish..."
+msgstr ""
+
+#: apps/medical/templates/views/appointment.html:61
+msgid "Ism"
+msgstr ""
+
+#: apps/medical/templates/views/appointment.html:63
+msgid "Habar"
+msgstr ""
+
+#: apps/medical/templates/views/appointment.html:65
+msgid "Sana"
+msgstr ""
+
+#: apps/medical/templates/views/appointment.html:66 members/admin.py:119
+msgid "Holat"
+msgstr ""
+
+#: apps/medical/templates/views/appointment.html:67
+#: apps/medical/templates/views/clinic_equipment.html:244
+#: apps/medical/templates/views/video_list.html:46 members/admin.py:137
+#: members/templates/medical/employee_list.html:63
+#: members/templates/medical/employee_list.html:147
+msgid "Amallar"
+msgstr ""
+
+#: apps/medical/templates/views/appointment.html:90
+msgid "O'chirish"
+msgstr ""
+
+#: apps/medical/templates/views/appointment.html:97
+msgid "Hozircha qabullar mavjud emas"
+msgstr ""
+
+#: apps/medical/templates/views/appointment.html:170
+#: apps/medical/templates/views/appointment.html:192
+msgid "Xatolik yuz berdi"
+msgstr ""
+
+#: apps/medical/templates/views/appointment.html:180
+msgid "Haqiqatan ham o‘chirmoqchimisiz?"
+msgstr ""
+
+#: apps/medical/templates/views/client_equipment_detail.html:5
+msgid "Qurilma detallari"
+msgstr ""
+
+#: apps/medical/templates/views/client_equipment_detail.html:31
+msgid "Qurilma"
+msgstr ""
+
+#: apps/medical/templates/views/client_equipment_detail.html:53
+msgid "Yangi rasm yuklash"
+msgstr ""
+
+#: apps/medical/templates/views/client_equipment_detail.html:59
+#: apps/medical/templates/views/clinic_equipment.html:167
+msgid "Nomi"
+msgstr ""
+
+#: apps/medical/templates/views/client_equipment_detail.html:94
+#: apps/medical/templates/views/clinic_equipment.html:200
+#: apps/medical/templates/views/main-settings.html:195
+#: members/templates/medical/add_employee_activity.html:63
+msgid "Tavsif"
+msgstr ""
+
+#: apps/medical/templates/views/client_equipment_detail.html:131
+#: apps/medical/templates/views/clinic_equipment.html:217
+#: apps/medical/templates/views/clinic_equipment.html:243
+#: apps/medical/templates/views/clinic_equipment.html:266
+#: apps/medical/templates/views/video_list.html:61
+#: apps/medical/templates/views/video_list.html:181
+#: apps/medical/templates/views/video_list.html:312
+msgid "Faol"
+msgstr ""
+
+#: apps/medical/templates/views/client_equipment_detail.html:136
+#: apps/medical/templates/views/clinic_equipment.html:222
+#: apps/medical/templates/views/main-settings.html:208
+#: apps/medical/templates/views/video_list.html:187
+#: apps/news/templates/announcement/announcement-modals.html:51
+#: apps/news/templates/news/add_news_view.html:122
+#: apps/news/templates/news/news_detail.html:118
+#: members/templates/medical/add_employee_activity.html:146
+msgid "Saqlash"
+msgstr ""
+
+#: apps/medical/templates/views/client_equipment_detail.html:138
+msgid "Ro‘yxatga qaytish"
+msgstr ""
+
+#: apps/medical/templates/views/client_equipment_detail.html:151
+#: apps/medical/templates/views/clinic_equipment.html:298
+msgid "Qurilma rasmi"
+msgstr ""
+
+#: apps/medical/templates/views/clinic_equipment.html:136
+msgid "Yangi qurilma qo‘shish / Tahrirlash"
+msgstr ""
+
+#: apps/medical/templates/views/clinic_equipment.html:210
+msgid "Rasm (800x600)"
+msgstr ""
+
+#: apps/medical/templates/views/clinic_equipment.html:233
+msgid "Qurilmalar ro‘yxati"
+msgstr ""
+
+#: apps/medical/templates/views/clinic_equipment.html:242
+#: apps/news/templates/news/news_detail.html:100
+msgid "Rasm"
+msgstr ""
+
+#: apps/medical/templates/views/clinic_equipment.html:261
+msgid "Rasm yo‘q"
+msgstr ""
+
+#: apps/medical/templates/views/clinic_equipment.html:268
+#: apps/medical/templates/views/video_list.html:63
+#: apps/medical/templates/views/video_list.html:312
+msgid "Faol emas"
+msgstr ""
+
+#: apps/medical/templates/views/clinic_equipment.html:273
+#: apps/news/templates/news/news_views.html:99
+msgid "Batafsil"
+msgstr ""
+
+#: apps/medical/templates/views/clinic_equipment.html:275
+#: apps/medical/templates/views/medicalCheckup.html:106
+#: apps/medical/templates/views/video_list.html:68
+#: apps/news/templates/news/news_views.html:103
+#: members/templates/medical/employee_list.html:191
+msgid "O‘chirish"
+msgstr ""
+
+#: apps/medical/templates/views/clinic_equipment.html:326
+#: apps/medical/templates/views/video_list.html:234
+#: members/templates/medical/employee_list.html:219
+msgid "O‘chirishni tasdiqlaysizmi?"
+msgstr ""
+
+#: apps/medical/templates/views/clinic_equipment.html:327
+#: apps/medical/templates/views/video_list.html:235
+#: members/templates/medical/employee_list.html:220
+msgid "Bu amalni qaytarib bo‘lmaydi!"
+msgstr ""
+
+#: apps/medical/templates/views/clinic_equipment.html:332
+#: apps/medical/templates/views/video_list.html:240
+#: members/templates/medical/employee_list.html:225
+msgid "Ha, o‘chirish!"
+msgstr ""
+
+#: apps/medical/templates/views/clinic_equipment.html:347
+#: apps/medical/templates/views/video_list.html:255
+#: members/templates/medical/employee_list.html:240
+msgid "O‘chirildi!"
+msgstr ""
+
+#: apps/medical/templates/views/clinic_equipment.html:353
+#: apps/medical/templates/views/clinic_equipment.html:361
+#: apps/medical/templates/views/video_list.html:261
+#: apps/medical/templates/views/video_list.html:269
+#: apps/medical/templates/views/video_list.html:316
+#: apps/medical/templates/views/video_list.html:325
+#: members/templates/medical/employee_list.html:246
+#: members/templates/medical/employee_list.html:254
+msgid "Xatolik!"
+msgstr ""
+
+#: apps/medical/templates/views/clinic_equipment.html:362
+#: apps/medical/templates/views/video_list.html:270
+#: apps/medical/templates/views/video_list.html:326
+#: members/templates/medical/employee_list.html:255
+msgid "Server bilan bog‘lanishda xatolik yuz berdi."
+msgstr ""
+
+#: apps/medical/templates/views/main-settings.html:6
+msgid "Sayt sozlamalari"
+msgstr ""
+
+#: apps/medical/templates/views/main-settings.html:62
+msgid "Sayt sozlamalarini tahrirlash"
+msgstr ""
+
+#: apps/medical/templates/views/main-settings.html:70
+msgid "Sayt nomi"
+msgstr ""
+
+#: apps/medical/templates/views/main-settings.html:78
+msgid "Aloqa email"
+msgstr ""
+
+#: apps/medical/templates/views/main-settings.html:83
+msgid "Aloqa telefon"
+msgstr ""
+
+#: apps/medical/templates/views/main-settings.html:100
+msgid "Masalan: Dushanba - Juma 9:00 - 17:00"
+msgstr ""
+
+#: apps/medical/templates/views/main-settings.html:106
+msgid "Facebook URL"
+msgstr ""
+
+#: apps/medical/templates/views/main-settings.html:111
+msgid "Telegram URL"
+msgstr ""
+
+#: apps/medical/templates/views/main-settings.html:118
+msgid "Instagram URL"
+msgstr ""
+
+#: apps/medical/templates/views/main-settings.html:123
+msgid "YouTube URL"
+msgstr ""
+
+#: apps/medical/templates/views/main-settings.html:132
+msgid "Dark rejim logotipi"
+msgstr ""
+
+#: apps/medical/templates/views/main-settings.html:139
+msgid "Light rejim logotipi"
+msgstr ""
+
+#: apps/medical/templates/views/main-settings.html:151
+msgid "Texnik xizmat rejimi"
+msgstr ""
+
+#: apps/medical/templates/views/main-settings.html:162
+msgid "Banner tasviri (1920x180)"
+msgstr ""
+
+#: apps/medical/templates/views/medicalCheckup.html:5
+msgid "Tibbiy ko‘rik arizalari"
+msgstr ""
+
+#: apps/medical/templates/views/medicalCheckup.html:71
+msgid "Ariza qidirish..."
+msgstr ""
+
+#: apps/medical/templates/views/medicalCheckup.html:87
+#: apps/medical/templates/views/video_list.html:45
+msgid "Holati"
+msgstr ""
+
+#: apps/medical/templates/views/medicalCheckup.html:88
+msgid "Amal"
+msgstr ""
+
+#: apps/medical/templates/views/medicalCheckup.html:101
+msgid "Ko‘rildi"
+msgstr ""
+
+#: apps/medical/templates/views/medicalCheckup.html:101
+msgid "Ko‘rilmadi"
+msgstr ""
+
+#: apps/medical/templates/views/medicalCheckup.html:111
+msgid "Hozircha arizalar mavjud emas"
+msgstr ""
+
+#: apps/medical/templates/views/medicalCheckup.html:161
+msgid "Arizani o‘chirishni tasdiqlaysizmi?"
+msgstr ""
+
+#: apps/medical/templates/views/medicalCheckup.html:173
+msgid "Xatolik yuz berdi!"
+msgstr ""
+
+#: apps/medical/templates/views/video_list.html:5 apps/medical/views.py:1062
+msgid "Videolar ro‘yxati"
+msgstr ""
+
+#: apps/medical/templates/views/video_list.html:32
+msgid "Videoni qidiring..."
+msgstr ""
+
+#: apps/medical/templates/views/video_list.html:36
+#: apps/medical/templates/views/video_list.html:126
+msgid "Yangi video qo‘shish"
+msgstr ""
+
+#: apps/medical/templates/views/video_list.html:43
+#: apps/medical/templates/views/video_list.html:134
+#: apps/medical/templates/views/video_list.html:159
+#: apps/news/templates/announcement/announcement-modals.html:32
+#: apps/news/templates/news/add_news_view.html:84
+#: apps/news/templates/news/news_detail.html:78
+msgid "Sarlavha"
+msgstr ""
+
+#: apps/medical/templates/views/video_list.html:56
+msgid "Ko‘rish"
+msgstr ""
+
+#: apps/medical/templates/views/video_list.html:166
+msgid "YouTube URL yoki Video ID"
+msgstr ""
+
+#: apps/medical/templates/views/video_list.html:172
+msgid "Formatlash"
+msgstr ""
+
+#: apps/medical/templates/views/video_list.html:210
+msgid "Iframe ichidan to‘g‘ri URL topilmadi!"
+msgstr ""
+
+#: apps/medical/templates/views/video_list.html:224
+msgid "To‘g‘ri YouTube URL yoki Video ID kiriting!"
+msgstr ""
+
+#: apps/medical/templates/views/video_list.html:286
+msgid "Holati o‘zgartirilsinmi?"
+msgstr ""
+
+#: apps/medical/templates/views/video_list.html:287
+msgid "Video faol qilinadi."
+msgstr ""
+
+#: apps/medical/templates/views/video_list.html:287
+msgid "Video faol emas qilinadi."
+msgstr ""
+
+#: apps/medical/templates/views/video_list.html:307
+msgid "Yangilandi!"
+msgstr ""
+
+#: apps/medical/views.py:929 apps/medical/views.py:1061
+msgid "Bosh sahifa"
+msgstr ""
+
+#: apps/medical/views.py:930
+msgid "Tibbiy jihozlar"
+msgstr ""
+
+#: apps/news/forms.py:7 apps/news/views.py:129 config/settings.py:124
+msgid "O'zbek"
+msgstr ""
+
+#: apps/news/forms.py:8 apps/news/views.py:130 config/settings.py:125
+msgid "Русский"
+msgstr ""
+
+#: apps/news/forms.py:9 apps/news/views.py:131 config/settings.py:126
+msgid "English"
+msgstr ""
+
+#: apps/news/forms.py:10 apps/news/views.py:132 config/settings.py:127
+msgid "Deutsch"
+msgstr ""
+
+#: apps/news/forms.py:11 apps/news/views.py:133 config/settings.py:128
+msgid "Türkçe"
+msgstr ""
+
+#: apps/news/models.py:12
+msgid "Har xil tillarda yangiliklar sarlavhasi (JSON formatda)"
+msgstr ""
+
+#: apps/news/models.py:14
+msgid "Har xil tillarda yangilik mazmuni (JSON formatda)"
+msgstr ""
+
+#: apps/news/models.py:16
+msgid "Yangiliklar rasmi"
+msgstr ""
+
+#: apps/news/models.py:19
+msgid "Yaratilgan sana"
+msgstr ""
+
+#: apps/news/models.py:23 apps/news/models.py:98
+msgid "Chop etilganmi?"
+msgstr ""
+
+#: apps/news/models.py:31
+msgid "Yangilik muallifi"
+msgstr ""
+
+#: apps/news/models.py:34
+msgid "Yangilik qancha marta ko'rilgan"
+msgstr ""
+
+#: apps/news/models.py:42 apps/news/models.py:117
+msgid "Sarlavha mavjud emas"
+msgstr ""
+
+#: apps/news/models.py:48 apps/news/models.py:123
+msgid "Mazmun mavjud emas"
+msgstr ""
+
+#: apps/news/models.py:62
+msgid "Izoh berilgan yangilik"
+msgstr ""
+
+#: apps/news/models.py:66
+msgid "Foydalanuvchining to'liq ismi"
+msgstr ""
+
+#: apps/news/models.py:70
+msgid "Foydalanuvchining telefon raqami"
+msgstr ""
+
+#: apps/news/models.py:73
+msgid "Izoh matni"
+msgstr ""
+
+#: apps/news/models.py:77
+msgid "Izoh qoldirilgan sana"
+msgstr ""
+
+#: apps/news/models.py:81
+msgid "Izoh"
+msgstr ""
+
+#: apps/news/models.py:90
+msgid "Har xil tillarda e'lon sarlavhasi (JSON formatda)"
+msgstr ""
+
+#: apps/news/models.py:92
+msgid "Har xil tillarda e'lon mazmuni (JSON formatda)"
+msgstr ""
+
+#: apps/news/models.py:106
+msgid "E'lon muallifi"
+msgstr ""
+
+#: apps/news/models.py:109
+msgid "E'lon qancha marta ko'rilgan"
+msgstr ""
+
+#: apps/news/models.py:112
+msgid "E'lon"
+msgstr ""
+
+#: apps/news/templates/announcement/announcement-list.html:19
+msgid "E'lon qo'shish"
+msgstr ""
+
+#: apps/news/templates/announcement/announcement-list.html:33
+#: apps/news/templates/news/add_news_view.html:115
+#: apps/news/templates/news/news_views.html:89
+msgid "Chop etilgan"
+msgstr ""
+
+#: apps/news/templates/announcement/announcement-list.html:34
+msgid "Ko'rishlar soni"
+msgstr ""
+
+#: apps/news/templates/announcement/announcement-list.html:39
+msgid "Hozircha e'lonlar mavjud emas."
+msgstr ""
+
+#: apps/news/templates/announcement/announcement-modals.html:9
+msgid "Yangi e'lon qo'shish"
+msgstr ""
+
+#: apps/news/templates/announcement/announcement-modals.html:37
+#: apps/news/templates/news/add_news_view.html:92
+msgid "Mazmun"
+msgstr ""
+
+#: apps/news/templates/announcement/announcement-modals.html:47
+msgid "Chop etish"
+msgstr ""
+
+#: apps/news/templates/news/add_news_view.html:5
+msgid "Yangilik qo'shish"
+msgstr ""
+
+#: apps/news/templates/news/add_news_view.html:43
+msgid "Yangilik qo‘shish"
+msgstr ""
+
+#: apps/news/templates/news/add_news_view.html:46
+#: apps/news/templates/news/news_detail.html:41
+msgid "Ortga"
+msgstr ""
+
+#: apps/news/templates/news/add_news_view.html:88
+#: apps/news/templates/news/news_detail.html:83
+msgid "Sarlavha kiriting..."
+msgstr ""
+
+#: apps/news/templates/news/add_news_view.html:97
+msgid "Mazmun kiriting..."
+msgstr ""
+
+#: apps/news/templates/news/add_news_view.html:105
+#: apps/news/templates/news/news_detail.html:109
+msgid "Yangilik rasmi"
+msgstr ""
+
+#: apps/news/templates/news/news_detail.html:38
+msgid "Yangilik tafsilotlari"
+msgstr ""
+
+#: apps/news/templates/news/news_detail.html:89
+msgid "Matn"
+msgstr ""
+
+#: apps/news/templates/news/news_detail.html:94
+msgid "Matn kiriting..."
+msgstr ""
+
+#: apps/news/templates/news/news_views.html:118
+msgid "Hozircha yangiliklar mavjud emas."
+msgstr ""
+
+#: apps/news/views.py:97
+msgid "O‘zbek tilida sarlavha kiritish majburiy!"
+msgstr ""
+
+#: apps/news/views.py:108
+msgid "Yangilik muvaffaqiyatli qo‘shildi!"
+msgstr ""
+
+#: apps/news/views.py:140
+msgid "Hech qanday yangilik tanlanmagan!"
+msgstr ""
+
+#: apps/news/views.py:241
+msgid "O‘zbek tilidagi sarlavha va mazmun talab qilinadi!"
+msgstr ""
+
+#: apps/news/views.py:252
+msgid "E'lon muvaffaqiyatli yaratildi!"
+msgstr ""
+
+#: members/admin.py:36 members/admin.py:194
+msgid "Asosiy ma'lumotlar"
+msgstr ""
+
+#: members/admin.py:37
+msgid "Shaxsiy ma'lumotlar"
+msgstr ""
+
+#: members/admin.py:40
+msgid "Qo'shimcha ma'lumotlar"
+msgstr ""
+
+#: members/admin.py:43
+msgid "Xavfsizlik"
+msgstr ""
+
+#: members/admin.py:46 members/admin.py:212
+msgid "Tizim ma'lumotlari"
+msgstr ""
+
+#: members/admin.py:65
+msgid "Tanlangan foydalanuvchilar faol qilindi."
+msgstr ""
+
+#: members/admin.py:67
+msgid "Foydalanuvchilarni faol qilish"
+msgstr ""
+
+#: members/admin.py:72
+msgid "Tanlangan foydalanuvchilar nofaol qilindi."
+msgstr ""
+
+#: members/admin.py:74
+msgid "Foydalanuvchilarni nofaol qilish"
+msgstr ""
+
+#: members/admin.py:131
+msgid "Kutilmoqda"
+msgstr ""
+
+#: members/admin.py:132
+msgid "Tasdiqlangan"
+msgstr ""
+
+#: members/admin.py:133
+msgid "Bekor qilingan"
+msgstr ""
+
+#: members/admin.py:144
+msgid "Tanlangan qabullar tasdiqlandi."
+msgstr ""
+
+#: members/admin.py:146
+msgid "Qabullarni tasdiqlash"
+msgstr ""
+
+#: members/admin.py:151
+msgid "Tanlangan qabullar bekor qilindi."
+msgstr ""
+
+#: members/admin.py:153
+msgid "Qabullarni bekor qilish"
+msgstr ""
+
+#: members/admin.py:200
+msgid "Sana va muddat"
+msgstr ""
+
+#: members/admin.py:203
+msgid "Natija va hujjatlar"
+msgstr ""
+
+#: members/admin.py:206
+msgid "Xarajatlar"
+msgstr ""
+
+#: members/admin.py:209
+msgid "Qo‘shimcha ma'lumotlar"
+msgstr ""
+
+#: members/admin.py:224
+msgid "Xodim nomi"
+msgstr ""
+
+#: members/admin.py:228 members/models.py:87
+#: members/templates/medical/add_employee_activity.html:51
+msgid "Faoliyat turi"
+msgstr ""
+
+#: members/admin.py:232 members/templates/medical/employee_list.html:144
+msgid "Muddat"
+msgstr ""
+
+#: members/admin.py:246
+msgid "Yakunlanganmi?"
+msgstr ""
+
+#: members/admin.py:255 members/models.py:154
+msgid "Klinika tomonidan moliyalashtirilganmi?"
+msgstr ""
+
+#: members/admin.py:263
+msgid "Sertifikatni ko‘rish"
+msgstr ""
+
+#: members/admin.py:266
+msgid "Sertifikat"
+msgstr ""
+
+#: members/models.py:67
+msgid "Faoliyat bilan bog‘liq xodim"
+msgstr ""
+
+#: members/models.py:73
+msgid ""
+"Faoliyat nomi (masalan, 'Operatsiya', 'Malaka oshirish', 'Xizmat safari')"
+msgstr ""
+
+#: members/models.py:91
+msgid ""
+"Faoliyat haqida qisqacha tavsif (masalan, 'Appendektomiya operatsiyasi', "
+"'Kardiologiya kursi')"
+msgstr ""
+
+#: members/models.py:98
+msgid ""
+"Faoliyat joyi (masalan, 'Toshkent Tibbiyot Akademiyasi', 'Parij klinikasi')"
+msgstr ""
+
+#: members/models.py:103
+msgid "Shahar (masalan, 'Toshkent', 'Parij')"
+msgstr ""
+
+#: members/models.py:108
+msgid "Davlat (masalan, 'O‘zbekiston', 'Fransiya')"
+msgstr ""
+
+#: members/models.py:113
+msgid "Faoliyat boshlanish sanasi"
+msgstr ""
+
+#: members/models.py:118
+msgid "Faoliyat tugash sanasi (agar davomiy bo‘lmasa)"
+msgstr ""
+
+#: members/models.py:124
+msgid "Faoliyat muvaffaqiyatli yakunlanganmi?"
+msgstr ""
+
+#: members/models.py:128
+msgid ""
+"Natija haqida qo‘shimcha ma'lumot (masalan, 'Sertifikat olindi', 'Operatsiya "
+"muvaffaqiyatli')"
+msgstr ""
+
+#: members/models.py:134
+msgid "Sertifikat yoki tasdiqlovchi hujjat (PDF, JPG va h.k.)"
+msgstr ""
+
+#: members/models.py:140
+msgid "Qo‘shimcha hujjatlar (masalan, hisobot, fotosurat)"
+msgstr ""
+
+#: members/models.py:150
+msgid "Faoliyat xarajati (so‘mda yoki boshqa valyutada)"
+msgstr ""
+
+#: members/models.py:160
+msgid "Xarajat hisoboti (agar mavjud bo‘lsa)"
+msgstr ""
+
+#: members/models.py:167
+msgid "Agar operatsiya bo‘lsa, uning turi (masalan, 'Appendektomiya')"
+msgstr ""
+
+#: members/models.py:172
+msgid "Rahbar yoki trener ismi (masalan, 'Dr. Ahmadov')"
+msgstr ""
+
+#: members/models.py:176
+msgid "Qo‘shimcha eslatmalar yoki izohlar"
+msgstr ""
+
+#: members/models.py:180
+msgid "Yozuv yaratilgan sana"
+msgstr ""
+
+#: members/models.py:184
+msgid "Oxirgi yangilangan sana"
+msgstr ""
+
+#: members/models.py:201
+msgid "Tugash sanasi boshlanish sanasidan oldin bo‘lishi mumkin emas."
+msgstr ""
+
+#: members/models.py:204
+msgid "Xodim faoliyat tarixi"
+msgstr ""
+
+#: members/models.py:205
+msgid "Xodim faoliyat tarixlari"
+msgstr ""
+
+#: members/templates/medical/add_employee_activity.html:5
+#: members/templates/medical/add_employee_activity.html:28
+msgid "Xodimga faoliyat qo‘shish"
+msgstr ""
+
+#: members/templates/medical/add_employee_activity.html:47
+#: members/templates/medical/employee_list.html:139
+msgid "Faoliyat nomi"
+msgstr ""
+
+#: members/templates/medical/add_employee_activity.html:53
+msgid "Malaka oshirish"
+msgstr ""
+
+#: members/templates/medical/add_employee_activity.html:54
+msgid "Operatsiya"
+msgstr ""
+
+#: members/templates/medical/add_employee_activity.html:55
+msgid "Xizmat safari"
+msgstr ""
+
+#: members/templates/medical/add_employee_activity.html:56
+msgid "Sertifikat olish"
+msgstr ""
+
+#: members/templates/medical/add_employee_activity.html:57
+msgid "Konferensiya"
+msgstr ""
+
+#: members/templates/medical/add_employee_activity.html:58
+msgid "Amaliy mashg‘ulot"
+msgstr ""
+
+#: members/templates/medical/add_employee_activity.html:59
+msgid "Boshqa"
+msgstr ""
+
+#: members/templates/medical/add_employee_activity.html:69
+msgid "Joy nomi"
+msgstr ""
+
+#: members/templates/medical/add_employee_activity.html:73
+msgid "Shahar"
+msgstr ""
+
+#: members/templates/medical/add_employee_activity.html:77
+msgid "Davlat"
+msgstr ""
+
+#: members/templates/medical/add_employee_activity.html:83
+msgid "Boshlanish sanasi"
+msgstr ""
+
+#: members/templates/medical/add_employee_activity.html:87
+msgid "Tugash sanasi"
+msgstr ""
+
+#: members/templates/medical/add_employee_activity.html:99
+msgid "Natija tavsifi"
+msgstr ""
+
+#: members/templates/medical/add_employee_activity.html:105
+msgid "Xarajat (so‘m)"
+msgstr ""
+
+#: members/templates/medical/add_employee_activity.html:111
+msgid "Klinika tomonidan moliyalashtirilgan"
+msgstr ""
+
+#: members/templates/medical/add_employee_activity.html:117
+msgid "Bog‘liq operatsiya"
+msgstr ""
+
+#: members/templates/medical/add_employee_activity.html:121
+msgid "Rahbar/Trener"
+msgstr ""
+
+#: members/templates/medical/add_employee_activity.html:125
+msgid "Eslatmalar"
+msgstr ""
+
+#: members/templates/medical/add_employee_activity.html:131
+msgid "Sertifikat fayli"
+msgstr ""
+
+#: members/templates/medical/add_employee_activity.html:135
+msgid "Qo‘shimcha fayllar"
+msgstr ""
+
+#: members/templates/medical/add_employee_activity.html:139
+msgid "Xarajat hisoboti"
+msgstr ""
+
+#: members/templates/medical/employee_list.html:5
+#: members/templates/medical/employee_list.html:32
+msgid "Xodimlar ro‘yxati"
+msgstr ""
+
+#: members/templates/medical/employee_list.html:50
+msgid "Xodimni qidiring..."
+msgstr ""
+
+#: members/templates/medical/employee_list.html:75
+msgid "Faoliyat qo‘shish"
+msgstr ""
+
+#: members/templates/medical/employee_list.html:79
+msgid "Faoliyatlarni ko‘rish"
+msgstr ""
+
+#: members/templates/medical/employee_list.html:85
+msgid "Hozircha faol xodimlar mavjud emas"
+msgstr ""
+
+#: members/templates/medical/employee_list.html:131
+msgid "Faoliyatlar"
+msgstr ""
+
+#: members/templates/medical/employee_list.html:146
+msgid "Xarajat"
+msgstr ""
+
+#: members/templates/medical/employee_list.html:180
+msgid "so‘m"
+msgstr ""
+
+#: members/templates/medical/employee_list.html:182
+msgid "Klinika tomonidan"
+msgstr ""
+
+#: members/templates/medical/employee_list.html:198
+msgid "Hozircha faoliyatlar mavjud emas"
+msgstr ""
+
+#: templates/administrator/components/header.html:21
+msgid "AdminLite Bootstrap Template"
+msgstr ""
+
+#: templates/administrator/components/header.html:71
+msgid "Chiqish"
+msgstr ""
+
+#: templates/administrator/main.html:12
+msgid "Shifokorlar va klinikalar uchun boshqaruv tizimi"
+msgstr ""
+
+#: templates/administrator/main.html:16
+msgid "Doctor-A | Shifokorlar uchun Admin Panel"
+msgstr ""
+
+#: templates/administrator/main.html:17
+msgid "Klinikalar va shifokorlar uchun maxsus boshqaruv tizimi"
+msgstr ""
+
+#: templates/auth/login.html:8
+msgid "DOCTOR - A | Kirish sahifasi"
+msgstr ""
+
+#: templates/auth/login.html:43 templates/auth/login.html:87
+msgid "Kirish"
+msgstr ""
+
+#: templates/auth/login.html:63
+msgid "E-mail yoki Username"
+msgstr ""
+
+#: templates/auth/login.html:66
+msgid "email yoki username kiriting"
+msgstr ""
+
+#: templates/auth/login.html:71
+msgid "Parol"
+msgstr ""
+
+#: templates/auth/login.html:74
+msgid "Parolni kiriting"
+msgstr ""
+
+#: templates/auth/login.html:83
+msgid "Parolni unutdingizmi?"
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/contrib/messages/apps.py:16
+msgid "Messages"
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/contrib/sitemaps/apps.py:8
+msgid "Site Maps"
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/contrib/staticfiles/apps.py:9
+msgid "Static Files"
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/contrib/syndication/apps.py:7
+msgid "Syndication"
+msgstr ""
+
+#. Translators: String used to replace omitted page numbers in elided page
+#. range generated by paginators, e.g. [1, 2, '…', 5, 6, 7, '…', 9, 10].
+#: venv/lib/python3.12/site-packages/django/core/paginator.py:30
+msgid "…"
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/core/paginator.py:32
+msgid "That page number is not an integer"
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/core/paginator.py:33
+msgid "That page number is less than 1"
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/core/paginator.py:34
+msgid "That page contains no results"
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/core/validators.py:22
+msgid "Enter a valid value."
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/core/validators.py:104
+#: venv/lib/python3.12/site-packages/django/forms/fields.py:760
+msgid "Enter a valid URL."
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/core/validators.py:165
+msgid "Enter a valid integer."
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/core/validators.py:176
+msgid "Enter a valid email address."
+msgstr ""
+
+#. Translators: "letters" means latin letters: a-z and A-Z.
+#: venv/lib/python3.12/site-packages/django/core/validators.py:259
+msgid ""
+"Enter a valid “slug” consisting of letters, numbers, underscores or hyphens."
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/core/validators.py:267
+msgid ""
+"Enter a valid “slug” consisting of Unicode letters, numbers, underscores, or "
+"hyphens."
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/core/validators.py:279
+#: venv/lib/python3.12/site-packages/django/core/validators.py:306
+msgid "Enter a valid IPv4 address."
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/core/validators.py:286
+#: venv/lib/python3.12/site-packages/django/core/validators.py:307
+msgid "Enter a valid IPv6 address."
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/core/validators.py:298
+#: venv/lib/python3.12/site-packages/django/core/validators.py:305
+msgid "Enter a valid IPv4 or IPv6 address."
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/core/validators.py:341
+msgid "Enter only digits separated by commas."
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/core/validators.py:347
+#, python-format
+msgid "Ensure this value is %(limit_value)s (it is %(show_value)s)."
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/core/validators.py:382
+#, python-format
+msgid "Ensure this value is less than or equal to %(limit_value)s."
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/core/validators.py:391
+#, python-format
+msgid "Ensure this value is greater than or equal to %(limit_value)s."
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/core/validators.py:400
+#, python-format
+msgid "Ensure this value is a multiple of step size %(limit_value)s."
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/core/validators.py:407
+#, python-format
+msgid ""
+"Ensure this value is a multiple of step size %(limit_value)s, starting from "
+"%(offset)s, e.g. %(offset)s, %(valid_value1)s, %(valid_value2)s, and so on."
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/core/validators.py:439
+#, python-format
+msgid ""
+"Ensure this value has at least %(limit_value)d character (it has "
+"%(show_value)d)."
+msgid_plural ""
+"Ensure this value has at least %(limit_value)d characters (it has "
+"%(show_value)d)."
+msgstr[0] ""
+msgstr[1] ""
+
+#: venv/lib/python3.12/site-packages/django/core/validators.py:457
+#, python-format
+msgid ""
+"Ensure this value has at most %(limit_value)d character (it has "
+"%(show_value)d)."
+msgid_plural ""
+"Ensure this value has at most %(limit_value)d characters (it has "
+"%(show_value)d)."
+msgstr[0] ""
+msgstr[1] ""
+
+#: venv/lib/python3.12/site-packages/django/core/validators.py:480
+#: venv/lib/python3.12/site-packages/django/forms/fields.py:355
+#: venv/lib/python3.12/site-packages/django/forms/fields.py:394
+msgid "Enter a number."
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/core/validators.py:482
+#, python-format
+msgid "Ensure that there are no more than %(max)s digit in total."
+msgid_plural "Ensure that there are no more than %(max)s digits in total."
+msgstr[0] ""
+msgstr[1] ""
+
+#: venv/lib/python3.12/site-packages/django/core/validators.py:487
+#, python-format
+msgid "Ensure that there are no more than %(max)s decimal place."
+msgid_plural "Ensure that there are no more than %(max)s decimal places."
+msgstr[0] ""
+msgstr[1] ""
+
+#: venv/lib/python3.12/site-packages/django/core/validators.py:492
+#, python-format
+msgid ""
+"Ensure that there are no more than %(max)s digit before the decimal point."
+msgid_plural ""
+"Ensure that there are no more than %(max)s digits before the decimal point."
+msgstr[0] ""
+msgstr[1] ""
+
+#: venv/lib/python3.12/site-packages/django/core/validators.py:563
+#, python-format
+msgid ""
+"File extension “%(extension)s” is not allowed. Allowed extensions are: "
+"%(allowed_extensions)s."
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/core/validators.py:624
+msgid "Null characters are not allowed."
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/db/models/base.py:1477
+#: venv/lib/python3.12/site-packages/django/forms/models.py:906
+msgid "and"
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/db/models/base.py:1479
+#, python-format
+msgid "%(model_name)s with this %(field_labels)s already exists."
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/db/models/constraints.py:20
+#, python-format
+msgid "Constraint “%(name)s” is violated."
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/db/models/fields/__init__.py:133
+#, python-format
+msgid "Value %(value)r is not a valid choice."
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/db/models/fields/__init__.py:134
+msgid "This field cannot be null."
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/db/models/fields/__init__.py:135
+msgid "This field cannot be blank."
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/db/models/fields/__init__.py:136
+#, python-format
+msgid "%(model_name)s with this %(field_label)s already exists."
+msgstr ""
+
+#. Translators: The 'lookup_type' is one of 'date', 'year' or
+#. 'month'. Eg: "Title must be unique for pub_date year"
+#: venv/lib/python3.12/site-packages/django/db/models/fields/__init__.py:140
+#, python-format
+msgid ""
+"%(field_label)s must be unique for %(date_field_label)s %(lookup_type)s."
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/db/models/fields/__init__.py:179
+#, python-format
+msgid "Field of type: %(field_type)s"
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/db/models/fields/__init__.py:1155
+#, python-format
+msgid "“%(value)s” value must be either True or False."
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/db/models/fields/__init__.py:1156
+#, python-format
+msgid "“%(value)s” value must be either True, False, or None."
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/db/models/fields/__init__.py:1158
+msgid "Boolean (Either True or False)"
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/db/models/fields/__init__.py:1208
+#, python-format
+msgid "String (up to %(max_length)s)"
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/db/models/fields/__init__.py:1210
+msgid "String (unlimited)"
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/db/models/fields/__init__.py:1314
+msgid "Comma-separated integers"
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/db/models/fields/__init__.py:1415
+#, python-format
+msgid ""
+"“%(value)s” value has an invalid date format. It must be in YYYY-MM-DD "
+"format."
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/db/models/fields/__init__.py:1419
+#: venv/lib/python3.12/site-packages/django/db/models/fields/__init__.py:1554
+#, python-format
+msgid ""
+"“%(value)s” value has the correct format (YYYY-MM-DD) but it is an invalid "
+"date."
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/db/models/fields/__init__.py:1423
+msgid "Date (without time)"
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/db/models/fields/__init__.py:1550
+#, python-format
+msgid ""
+"“%(value)s” value has an invalid format. It must be in YYYY-MM-DD "
+"HH:MM[:ss[.uuuuuu]][TZ] format."
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/db/models/fields/__init__.py:1558
+#, python-format
+msgid ""
+"“%(value)s” value has the correct format (YYYY-MM-DD HH:MM[:ss[.uuuuuu]]"
+"[TZ]) but it is an invalid date/time."
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/db/models/fields/__init__.py:1563
+msgid "Date (with time)"
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/db/models/fields/__init__.py:1690
+#, python-format
+msgid "“%(value)s” value must be a decimal number."
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/db/models/fields/__init__.py:1692
+msgid "Decimal number"
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/db/models/fields/__init__.py:1853
+#, python-format
+msgid ""
+"“%(value)s” value has an invalid format. It must be in [DD] "
+"[[HH:]MM:]ss[.uuuuuu] format."
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/db/models/fields/__init__.py:1857
+msgid "Duration"
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/db/models/fields/__init__.py:1909
+msgid "Email address"
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/db/models/fields/__init__.py:1934
+msgid "File path"
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/db/models/fields/__init__.py:2012
+#, python-format
+msgid "“%(value)s” value must be a float."
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/db/models/fields/__init__.py:2014
+msgid "Floating point number"
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/db/models/fields/__init__.py:2054
+#, python-format
+msgid "“%(value)s” value must be an integer."
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/db/models/fields/__init__.py:2056
+msgid "Integer"
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/db/models/fields/__init__.py:2152
+msgid "Big (8 byte) integer"
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/db/models/fields/__init__.py:2169
+msgid "Small integer"
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/db/models/fields/__init__.py:2177
+msgid "IPv4 address"
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/db/models/fields/__init__.py:2208
+msgid "IP address"
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/db/models/fields/__init__.py:2301
+#: venv/lib/python3.12/site-packages/django/db/models/fields/__init__.py:2302
+#, python-format
+msgid "“%(value)s” value must be either None, True or False."
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/db/models/fields/__init__.py:2304
+msgid "Boolean (Either True, False or None)"
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/db/models/fields/__init__.py:2355
+msgid "Positive big integer"
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/db/models/fields/__init__.py:2370
+msgid "Positive integer"
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/db/models/fields/__init__.py:2385
+msgid "Positive small integer"
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/db/models/fields/__init__.py:2401
+#, python-format
+msgid "Slug (up to %(max_length)s)"
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/db/models/fields/__init__.py:2437
+msgid "Text"
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/db/models/fields/__init__.py:2512
+#, python-format
+msgid ""
+"“%(value)s” value has an invalid format. It must be in HH:MM[:ss[.uuuuuu]] "
+"format."
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/db/models/fields/__init__.py:2516
+#, python-format
+msgid ""
+"“%(value)s” value has the correct format (HH:MM[:ss[.uuuuuu]]) but it is an "
+"invalid time."
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/db/models/fields/__init__.py:2520
+msgid "Time"
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/db/models/fields/__init__.py:2628
+msgid "URL"
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/db/models/fields/__init__.py:2652
+msgid "Raw binary data"
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/db/models/fields/__init__.py:2717
+#, python-format
+msgid "“%(value)s” is not a valid UUID."
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/db/models/fields/__init__.py:2719
+msgid "Universally unique identifier"
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/db/models/fields/files.py:232
+msgid "File"
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/db/models/fields/files.py:393
+msgid "Image"
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/db/models/fields/json.py:26
+msgid "A JSON object"
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/db/models/fields/json.py:28
+msgid "Value must be valid JSON."
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/db/models/fields/related.py:939
+#, python-format
+msgid "%(model)s instance with %(field)s %(value)r does not exist."
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/db/models/fields/related.py:941
+msgid "Foreign Key (type determined by related field)"
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/db/models/fields/related.py:1235
+msgid "One-to-one relationship"
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/db/models/fields/related.py:1292
+#, python-format
+msgid "%(from)s-%(to)s relationship"
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/db/models/fields/related.py:1294
+#, python-format
+msgid "%(from)s-%(to)s relationships"
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/db/models/fields/related.py:1342
+msgid "Many-to-many relationship"
+msgstr ""
+
+#. Translators: If found as last label character, these punctuation
+#. characters will prevent the default label_suffix to be appended to the label
+#: venv/lib/python3.12/site-packages/django/forms/boundfield.py:185
+msgid ":?.!"
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/forms/fields.py:95
+msgid "This field is required."
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/forms/fields.py:304
+msgid "Enter a whole number."
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/forms/fields.py:475
+#: venv/lib/python3.12/site-packages/django/forms/fields.py:1252
+msgid "Enter a valid date."
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/forms/fields.py:498
+#: venv/lib/python3.12/site-packages/django/forms/fields.py:1253
+msgid "Enter a valid time."
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/forms/fields.py:525
+msgid "Enter a valid date/time."
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/forms/fields.py:559
+msgid "Enter a valid duration."
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/forms/fields.py:560
+#, python-brace-format
+msgid "The number of days must be between {min_days} and {max_days}."
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/forms/fields.py:629
+msgid "No file was submitted. Check the encoding type on the form."
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/forms/fields.py:630
+msgid "No file was submitted."
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/forms/fields.py:631
+msgid "The submitted file is empty."
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/forms/fields.py:633
+#, python-format
+msgid "Ensure this filename has at most %(max)d character (it has %(length)d)."
+msgid_plural ""
+"Ensure this filename has at most %(max)d characters (it has %(length)d)."
+msgstr[0] ""
+msgstr[1] ""
+
+#: venv/lib/python3.12/site-packages/django/forms/fields.py:638
+msgid "Please either submit a file or check the clear checkbox, not both."
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/forms/fields.py:702
+msgid ""
+"Upload a valid image. The file you uploaded was either not an image or a "
+"corrupted image."
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/forms/fields.py:874
+#: venv/lib/python3.12/site-packages/django/forms/fields.py:960
+#: venv/lib/python3.12/site-packages/django/forms/models.py:1585
+#, python-format
+msgid "Select a valid choice. %(value)s is not one of the available choices."
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/forms/fields.py:962
+#: venv/lib/python3.12/site-packages/django/forms/fields.py:1081
+#: venv/lib/python3.12/site-packages/django/forms/models.py:1583
+msgid "Enter a list of values."
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/forms/fields.py:1082
+msgid "Enter a complete value."
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/forms/fields.py:1321
+msgid "Enter a valid UUID."
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/forms/fields.py:1351
+msgid "Enter a valid JSON."
+msgstr ""
+
+#. Translators: This is the default suffix added to form field labels
+#: venv/lib/python3.12/site-packages/django/forms/forms.py:94
+msgid ":"
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/forms/forms.py:231
+#, python-format
+msgid "(Hidden field %(name)s) %(error)s"
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/forms/formsets.py:61
+#, python-format
+msgid ""
+"ManagementForm data is missing or has been tampered with. Missing fields: "
+"%(field_names)s. You may need to file a bug report if the issue persists."
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/forms/formsets.py:65
+#, python-format
+msgid "Please submit at most %(num)d form."
+msgid_plural "Please submit at most %(num)d forms."
+msgstr[0] ""
+msgstr[1] ""
+
+#: venv/lib/python3.12/site-packages/django/forms/formsets.py:70
+#, python-format
+msgid "Please submit at least %(num)d form."
+msgid_plural "Please submit at least %(num)d forms."
+msgstr[0] ""
+msgstr[1] ""
+
+#: venv/lib/python3.12/site-packages/django/forms/formsets.py:484
+#: venv/lib/python3.12/site-packages/django/forms/formsets.py:491
+msgid "Order"
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/forms/formsets.py:499
+msgid "Delete"
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/forms/models.py:899
+#, python-format
+msgid "Please correct the duplicate data for %(field)s."
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/forms/models.py:904
+#, python-format
+msgid "Please correct the duplicate data for %(field)s, which must be unique."
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/forms/models.py:911
+#, python-format
+msgid ""
+"Please correct the duplicate data for %(field_name)s which must be unique "
+"for the %(lookup)s in %(date_field)s."
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/forms/models.py:920
+msgid "Please correct the duplicate values below."
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/forms/models.py:1357
+msgid "The inline value did not match the parent instance."
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/forms/models.py:1448
+msgid "Select a valid choice. That choice is not one of the available choices."
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/forms/models.py:1587
+#, python-format
+msgid "“%(pk)s” is not a valid value."
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/forms/utils.py:227
+#, python-format
+msgid ""
+"%(datetime)s couldn’t be interpreted in time zone %(current_timezone)s; it "
+"may be ambiguous or it may not exist."
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/forms/widgets.py:461
+msgid "Clear"
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/forms/widgets.py:462
+msgid "Currently"
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/forms/widgets.py:463
+msgid "Change"
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/forms/widgets.py:800
+msgid "Unknown"
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/forms/widgets.py:801
+msgid "Yes"
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/forms/widgets.py:802
+msgid "No"
+msgstr ""
+
+#. Translators: Please do not add spaces around commas.
+#: venv/lib/python3.12/site-packages/django/template/defaultfilters.py:876
+msgid "yes,no,maybe"
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/template/defaultfilters.py:906
+#: venv/lib/python3.12/site-packages/django/template/defaultfilters.py:923
+#, python-format
+msgid "%(size)d byte"
+msgid_plural "%(size)d bytes"
+msgstr[0] ""
+msgstr[1] ""
+
+#: venv/lib/python3.12/site-packages/django/template/defaultfilters.py:925
+#, python-format
+msgid "%s KB"
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/template/defaultfilters.py:927
+#, python-format
+msgid "%s MB"
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/template/defaultfilters.py:929
+#, python-format
+msgid "%s GB"
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/template/defaultfilters.py:931
+#, python-format
+msgid "%s TB"
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/template/defaultfilters.py:933
+#, python-format
+msgid "%s PB"
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/utils/dateformat.py:74
+msgid "p.m."
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/utils/dateformat.py:75
+msgid "a.m."
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/utils/dateformat.py:80
+msgid "PM"
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/utils/dateformat.py:81
+msgid "AM"
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/utils/dateformat.py:153
+msgid "midnight"
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/utils/dateformat.py:155
+msgid "noon"
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/utils/dates.py:7
+msgid "Monday"
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/utils/dates.py:8
+msgid "Tuesday"
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/utils/dates.py:9
+msgid "Wednesday"
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/utils/dates.py:10
+msgid "Thursday"
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/utils/dates.py:11
+msgid "Friday"
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/utils/dates.py:12
+msgid "Saturday"
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/utils/dates.py:13
+msgid "Sunday"
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/utils/dates.py:16
+msgid "Mon"
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/utils/dates.py:17
+msgid "Tue"
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/utils/dates.py:18
+msgid "Wed"
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/utils/dates.py:19
+msgid "Thu"
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/utils/dates.py:20
+msgid "Fri"
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/utils/dates.py:21
+msgid "Sat"
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/utils/dates.py:22
+msgid "Sun"
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/utils/dates.py:25
+msgid "January"
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/utils/dates.py:26
+msgid "February"
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/utils/dates.py:27
+msgid "March"
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/utils/dates.py:28
+msgid "April"
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/utils/dates.py:30
+msgid "June"
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/utils/dates.py:31
+msgid "July"
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/utils/dates.py:32
+msgid "August"
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/utils/dates.py:33
+msgid "September"
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/utils/dates.py:34
+msgid "October"
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/utils/dates.py:35
+msgid "November"
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/utils/dates.py:36
+msgid "December"
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/utils/dates.py:39
+msgid "jan"
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/utils/dates.py:40
+msgid "feb"
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/utils/dates.py:41
+msgid "mar"
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/utils/dates.py:42
+msgid "apr"
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/utils/dates.py:43
+msgid "may"
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/utils/dates.py:44
+msgid "jun"
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/utils/dates.py:45
+msgid "jul"
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/utils/dates.py:46
+msgid "aug"
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/utils/dates.py:47
+msgid "sep"
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/utils/dates.py:48
+msgid "oct"
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/utils/dates.py:49
+msgid "nov"
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/utils/dates.py:50
+msgid "dec"
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/utils/dates.py:53
+msgctxt "abbrev. month"
+msgid "Jan."
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/utils/dates.py:54
+msgctxt "abbrev. month"
+msgid "Feb."
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/utils/dates.py:55
+msgctxt "abbrev. month"
+msgid "March"
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/utils/dates.py:56
+msgctxt "abbrev. month"
+msgid "April"
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/utils/dates.py:57
+msgctxt "abbrev. month"
+msgid "May"
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/utils/dates.py:58
+msgctxt "abbrev. month"
+msgid "June"
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/utils/dates.py:59
+msgctxt "abbrev. month"
+msgid "July"
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/utils/dates.py:60
+msgctxt "abbrev. month"
+msgid "Aug."
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/utils/dates.py:61
+msgctxt "abbrev. month"
+msgid "Sept."
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/utils/dates.py:62
+msgctxt "abbrev. month"
+msgid "Oct."
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/utils/dates.py:63
+msgctxt "abbrev. month"
+msgid "Nov."
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/utils/dates.py:64
+msgctxt "abbrev. month"
+msgid "Dec."
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/utils/dates.py:67
+msgctxt "alt. month"
+msgid "January"
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/utils/dates.py:68
+msgctxt "alt. month"
+msgid "February"
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/utils/dates.py:69
+msgctxt "alt. month"
+msgid "March"
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/utils/dates.py:70
+msgctxt "alt. month"
+msgid "April"
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/utils/dates.py:71
+msgctxt "alt. month"
+msgid "May"
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/utils/dates.py:72
+msgctxt "alt. month"
+msgid "June"
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/utils/dates.py:73
+msgctxt "alt. month"
+msgid "July"
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/utils/dates.py:74
+msgctxt "alt. month"
+msgid "August"
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/utils/dates.py:75
+msgctxt "alt. month"
+msgid "September"
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/utils/dates.py:76
+msgctxt "alt. month"
+msgid "October"
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/utils/dates.py:77
+msgctxt "alt. month"
+msgid "November"
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/utils/dates.py:78
+msgctxt "alt. month"
+msgid "December"
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/utils/ipv6.py:8
+msgid "This is not a valid IPv6 address."
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/utils/text.py:123
+#, python-format
+msgctxt "String to return when truncating text"
+msgid "%(truncated_text)s…"
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/utils/text.py:323
+msgid "or"
+msgstr ""
+
+#. Translators: This string is used as a separator between list elements
+#: venv/lib/python3.12/site-packages/django/utils/text.py:342
+#: venv/lib/python3.12/site-packages/django/utils/timesince.py:135
+msgid ", "
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/utils/timesince.py:8
+#, python-format
+msgid "%(num)d year"
+msgid_plural "%(num)d years"
+msgstr[0] ""
+msgstr[1] ""
+
+#: venv/lib/python3.12/site-packages/django/utils/timesince.py:9
+#, python-format
+msgid "%(num)d month"
+msgid_plural "%(num)d months"
+msgstr[0] ""
+msgstr[1] ""
+
+#: venv/lib/python3.12/site-packages/django/utils/timesince.py:10
+#, python-format
+msgid "%(num)d week"
+msgid_plural "%(num)d weeks"
+msgstr[0] ""
+msgstr[1] ""
+
+#: venv/lib/python3.12/site-packages/django/utils/timesince.py:11
+#, python-format
+msgid "%(num)d day"
+msgid_plural "%(num)d days"
+msgstr[0] ""
+msgstr[1] ""
+
+#: venv/lib/python3.12/site-packages/django/utils/timesince.py:12
+#, python-format
+msgid "%(num)d hour"
+msgid_plural "%(num)d hours"
+msgstr[0] ""
+msgstr[1] ""
+
+#: venv/lib/python3.12/site-packages/django/utils/timesince.py:13
+#, python-format
+msgid "%(num)d minute"
+msgid_plural "%(num)d minutes"
+msgstr[0] ""
+msgstr[1] ""
+
+#: venv/lib/python3.12/site-packages/django/views/csrf.py:29
+msgid "Forbidden"
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/views/csrf.py:30
+msgid "CSRF verification failed. Request aborted."
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/views/csrf.py:34
+msgid ""
+"You are seeing this message because this HTTPS site requires a “Referer "
+"header” to be sent by your web browser, but none was sent. This header is "
+"required for security reasons, to ensure that your browser is not being "
+"hijacked by third parties."
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/views/csrf.py:40
+msgid ""
+"If you have configured your browser to disable “Referer” headers, please re-"
+"enable them, at least for this site, or for HTTPS connections, or for “same-"
+"origin” requests."
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/views/csrf.py:45
+msgid ""
+"If you are using the <meta name=\"referrer\" content=\"no-referrer\"> tag or "
+"including the “Referrer-Policy: no-referrer” header, please remove them. The "
+"CSRF protection requires the “Referer” header to do strict referer checking. "
+"If you’re concerned about privacy, use alternatives like <a "
+"rel=\"noreferrer\" …> for links to third-party sites."
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/views/csrf.py:54
+msgid ""
+"You are seeing this message because this site requires a CSRF cookie when "
+"submitting forms. This cookie is required for security reasons, to ensure "
+"that your browser is not being hijacked by third parties."
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/views/csrf.py:60
+msgid ""
+"If you have configured your browser to disable cookies, please re-enable "
+"them, at least for this site, or for “same-origin” requests."
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/views/csrf.py:66
+msgid "More information is available with DEBUG=True."
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/views/generic/dates.py:44
+msgid "No year specified"
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/views/generic/dates.py:64
+#: venv/lib/python3.12/site-packages/django/views/generic/dates.py:115
+#: venv/lib/python3.12/site-packages/django/views/generic/dates.py:214
+msgid "Date out of range"
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/views/generic/dates.py:94
+msgid "No month specified"
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/views/generic/dates.py:147
+msgid "No day specified"
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/views/generic/dates.py:194
+msgid "No week specified"
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/views/generic/dates.py:349
+#: venv/lib/python3.12/site-packages/django/views/generic/dates.py:380
+#, python-format
+msgid "No %(verbose_name_plural)s available"
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/views/generic/dates.py:652
+#, python-format
+msgid ""
+"Future %(verbose_name_plural)s not available because "
+"%(class_name)s.allow_future is False."
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/views/generic/dates.py:692
+#, python-format
+msgid "Invalid date string “%(datestr)s” given format “%(format)s”"
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/views/generic/detail.py:56
+#, python-format
+msgid "No %(verbose_name)s found matching the query"
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/views/generic/list.py:70
+msgid "Page is not “last”, nor can it be converted to an int."
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/views/generic/list.py:77
+#, python-format
+msgid "Invalid page (%(page_number)s): %(message)s"
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/views/generic/list.py:169
+#, python-format
+msgid "Empty list and “%(class_name)s.allow_empty” is False."
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/views/static.py:49
+msgid "Directory indexes are not allowed here."
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/views/static.py:51
+#, python-format
+msgid "“%(path)s” does not exist"
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/views/static.py:68
+#: venv/lib/python3.12/site-packages/django/views/templates/directory_index.html:8
+#: venv/lib/python3.12/site-packages/django/views/templates/directory_index.html:11
+#, python-format
+msgid "Index of %(directory)s"
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/views/templates/default_urlconf.html:7
+#: venv/lib/python3.12/site-packages/django/views/templates/default_urlconf.html:220
+msgid "The install worked successfully! Congratulations!"
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/views/templates/default_urlconf.html:206
+#, python-format
+msgid ""
+"View <a href=\"https://docs.djangoproject.com/en/%(version)s/releases/\" "
+"target=\"_blank\" rel=\"noopener\">release notes</a> for Django %(version)s"
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/views/templates/default_urlconf.html:221
+#, python-format
+msgid ""
+"You are seeing this page because <a href=\"https://docs.djangoproject.com/en/"
+"%(version)s/ref/settings/#debug\" target=\"_blank\" "
+"rel=\"noopener\">DEBUG=True</a> is in your settings file and you have not "
+"configured any URLs."
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/views/templates/default_urlconf.html:229
+msgid "Django Documentation"
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/views/templates/default_urlconf.html:230
+msgid "Topics, references, &amp; how-to’s"
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/views/templates/default_urlconf.html:238
+msgid "Tutorial: A Polling App"
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/views/templates/default_urlconf.html:239
+msgid "Get started with Django"
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/views/templates/default_urlconf.html:247
+msgid "Django Community"
+msgstr ""
+
+#: venv/lib/python3.12/site-packages/django/views/templates/default_urlconf.html:248
+msgid "Connect, get help, or contribute"
+msgstr ""

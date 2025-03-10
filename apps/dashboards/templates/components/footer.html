@@ -1,5 +1,5 @@
 {% load static %}
-
+{% load i18n %}
 
 <footer class="site-footer style-1 overlay-primary-dark"
         style="background-image: url({% static 'dashboard/images/background/bg4.webp' %})">
@@ -8,9 +8,8 @@
             <div class="fh-inner">
                 <div class="row g-3 align-items-center">
                     <div class="col-xl-3 col-md-12 col-sm-6">
-                        <h3 class="title">Biz bilan bog‘laning</h3>
-                        <p class="text">Sizning sog‘lig‘ingiz biz uchun muhim. Har qanday savollaringiz bo‘lsa, bizga
-                            murojaat qiling.</p>
+                        <h3 class="title">{% trans "Biz bilan bog‘laning" %}</h3>
+                        <p class="text">{% trans "Sizning sog‘lig‘ingiz biz uchun muhim. Har qanday savollaringiz bo‘lsa, bizga murojaat qiling." %}</p>
                     </div>
                     <div class="col-xl-3 col-md-4 col-sm-6">
                         <div class="icon-bx-wraper style-1">
@@ -20,7 +19,7 @@
                                 </span>
                             </div>
                             <div class="icon-content">
-                                <h5 class="dz-title">Telefon</h5>
+                                <h5 class="dz-title">{% trans "Telefon" %}</h5>
                                 <p><a href="tel:{{ site_settings.contact_phone }}"
                                       class="text-body">{{ site_settings.contact_phone }}</a></p>
                             </div>
@@ -34,7 +33,7 @@
                                 </span>
                             </div>
                             <div class="icon-content">
-                                <h5 class="dz-title">Email</h5>
+                                <h5 class="dz-title">{% trans "Email" %}</h5>
                                 <p><a href="mailto:{{ site_settings.contact_email }}"
                                       class="text-body">{{ site_settings.contact_email }}</a></p>
                             </div>
@@ -48,7 +47,7 @@
                                 </span>
                             </div>
                             <div class="icon-content">
-                                <h5 class="dz-title">Ish vaqti</h5>
+                                <h5 class="dz-title">{% trans "Ish vaqti" %}</h5>
                                 <p>{{ site_settings.working_hours }}</p>
                             </div>
                         </div>
@@ -69,7 +68,7 @@
                             <a href="https://doctoramedical.uz" target="_blank" class="text-danger">
                                 doctoramedical.uz
                             </a>
-                            Barcha huquqlar himoyalangan.
+                            {% trans "Barcha huquqlar himoyalangan." %}
                         </p>
                     </div>
                     <div class="col-lg-6 col-md-12 text-end">
@@ -92,12 +91,11 @@
                 <div class="row mt-2">
                     <div class="col-12 text-center">
                         <p class="text-muted">
-                            <small>Dasturchi: <strong>Izzatbek Ulkanov</strong></small>
+                            <small>{% trans "Dasturchi" %}: <strong>Izzatbek Ulkanov</strong></small>
                         </p>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-
 </footer>

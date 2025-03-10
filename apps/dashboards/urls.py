@@ -1,6 +1,6 @@
 from django.urls import path
 from .views import DashboardsView, NewsView, AnnouncementView, EmployeeView, VideosView, NewsDetailDashboard, \
-    AnnouncementDetailView, EmployeeDetailView
+    AnnouncementDetailView, EmployeeDetailView, ClinicEquipmentListView, EquipmentDetailView
 from django.contrib.auth.decorators import login_required
 
 urlpatterns = [
@@ -16,4 +16,6 @@ urlpatterns = [
     path("employee/", EmployeeView.as_view(template_name="views/employee-dashboard.html"), name="employee-dashboard", ),
     path("employees/<int:pk>/", EmployeeDetailView.as_view(), name="employee_detail"),
     path("videos/", VideosView.as_view(template_name="views/videos-dashboard.html"), name="videos-dashboard", ),
+    path('equipments/', ClinicEquipmentListView.as_view(), name='equipment_list'),
+    path('equipments/<int:pk>/', EquipmentDetailView.as_view(), name='equipment_detail'),
 ]

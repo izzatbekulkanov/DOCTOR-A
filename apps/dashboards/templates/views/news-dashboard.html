@@ -1,10 +1,11 @@
 {% extends 'dashboard.html' %}
-{% load static %}
+{% load static i18n %}
 {% load custom_filters %}
 
 {% block title %}
-    Yangiliklar
+    {% trans "Yangiliklar" %}
 {% endblock title %}
+
 {% block style %}
 {% endblock style %}
 
@@ -13,27 +14,26 @@
         display: none; /* 🔥 Boshlang‘ichda ikonani yashiramiz */
     }
 </style>
+
 {% block content %}
-
-
     <div class="dz-bnr-inr dz-banner-dark overlay-secondary-middle dz-bnr-inr-md"
          style="background-image:url({% static 'dashboard/images/banner/bnr2.webp' %});">
         <div class="container">
             <div class="dz-bnr-inr-entry d-table-cell">
-                <h1 class="wow fadeInUp" data-wow-delay="0.2s" data-wow-duration="0.8s">Yangiliklar</h1>
+                <h1 class="wow fadeInUp" data-wow-delay="0.2s" data-wow-duration="0.8s">{% trans "Yangiliklar" %}</h1>
                 <nav aria-label="breadcrumb" class="breadcrumb-row wow fadeInUp" data-wow-delay="0.4s"
                      data-wow-duration="0.8s">
                     <ul class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="{% url 'main-dashboard' %}">Asosiy sahifa</a></li>
-                        <li class="breadcrumb-item">Yangiliklar</li>
+                        <li class="breadcrumb-item"><a href="{% url 'main-dashboard' %}">{% trans "Asosiy sahifa" %}</a></li>
+                        <li class="breadcrumb-item">{% trans "Yangiliklar" %}</li>
                     </ul>
                 </nav>
                 <div class="dz-btn">
-                    <a href="tel: {{ site_settings.contact_phone }}"
+                    <a href="tel:{{ site_settings.contact_phone }}"
                        class="btn btn-lg btn-icon btn-primary radius-xl btn-shadow mb-3 mb-sm-0">
-						<span class="left-icon">
-							<i class="feather icon-phone-call"></i>
-						</span>
+                        <span class="left-icon">
+                            <i class="feather icon-phone-call"></i>
+                        </span>
                         {{ site_settings.contact_phone }}
                     </a>
                 </div>
@@ -50,7 +50,7 @@
                     </div>
                     <div class="text-center m-t30 m-lg-t0 wow fadeInUp" data-wow-delay="0.7s" data-wow-duration="0.5s">
                         <button id="load-more-btn" class="btn btn-lg btn-icon btn-primary dz-load-more">
-                            Ko'proq yuklash
+                            {% trans "Ko‘proq yuklash" %}
                             <span class="right-icon"><i class="feather icon-refresh-ccw"></i></span>
                         </button>
                     </div>
@@ -59,12 +59,12 @@
                     <aside class="side-bar sticky-top right m-b30 p-0">
                         <div class="widget wow fadeInUp" data-wow-delay="0.1s" data-wow-duration="0.5s">
                             <div class="widget-title">
-                                <h4 class="title">Qidirish</h4>
+                                <h4 class="title">{% trans "Qidirish" %}</h4>
                             </div>
                             <div class="search-bx">
-                                <form role="search" > {% csrf_token %}
+                                <form role="search">{% csrf_token %}
                                     <div class="input-group">
-                                        <input name="search_text" class="form-control" placeholder="Qidirish"
+                                        <input name="search_text" class="form-control" placeholder="{% trans 'Qidirish' %}"
                                                type="text">
                                         <div class="input-group-btn">
                                             <button type="submit" id="search-btn">
@@ -78,7 +78,7 @@
                         <div class="widget widget_categories style-1 wow fadeInUp" data-wow-delay="0.2s"
                              data-wow-duration="0.5s">
                             <div class="widget-title">
-                                <h4 class="title">Oy boyicha qidirish</h4>
+                                <h4 class="title">{% trans "Oy bo‘yicha qidirish" %}</h4>
                             </div>
                             <ul>
                                 {% for entry in monthly_news_data %}
@@ -87,15 +87,14 @@
                                         ({{ entry.count }})
                                     </li>
                                 {% empty %}
-                                    <li class="cat-item">Hozircha yangiliklar mavjud emas</li>
+                                    <li class="cat-item">{% trans "Hozircha yangiliklar mavjud emas" %}</li>
                                 {% endfor %}
                             </ul>
-
                         </div>
                         <div class="widget recent-posts-entry wow fadeInUp" data-wow-delay="0.3s"
                              data-wow-duration="0.5s">
                             <div class="widget-title">
-                                <h4 class="title">Oxirgi yangiliklar</h4>
+                                <h4 class="title">{% trans "Oxirgi yangiliklar" %}</h4>
                             </div>
                             <div class="widget-post-bx">
                                 {% for news in latest_news %}
@@ -122,12 +121,10 @@
                                         </div>
                                     </div>
                                 {% empty %}
-                                    <p>Oxirgi yangiliklar mavjud emas</p>
+                                    <p>{% trans "Oxirgi yangiliklar mavjud emas" %}</p>
                                 {% endfor %}
-
                             </div>
                         </div>
-
                     </aside>
                 </div>
             </div>
@@ -136,7 +133,6 @@
 
     <input type="hidden" name="csrfmiddlewaretoken" value="{% csrf_token %}">
 {% endblock content %}
-
 
 
 {% block script %}

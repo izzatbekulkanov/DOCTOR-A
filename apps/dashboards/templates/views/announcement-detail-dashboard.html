@@ -14,7 +14,7 @@
         <div class="dz-card text-center">
             <div class="dz-media overlay-secondary-light">
                 <img src="{% static 'dashboard/images/announcement-background-design_23-2151163117.avif' %}"
-                     alt="{{ news.title|get_language_text:CURRENT_LANGUAGE }}">
+                     alt="{{ announcement.title|get_language_text:CURRENT_LANGUAGE }}">
             </div>
             <div class="dz-info">
                 <h1 class="dz-title text-white mx-auto">{{ announcement.title|get_language_text:CURRENT_LANGUAGE }}</h1>
@@ -23,24 +23,23 @@
                         <li class="post-date">{{ announcement.published_date|date:"d-m-Y" }}</li>
                         <li class="dz-user">
                             <i class="fa-solid fa-user"></i>
-                            By <a href="">{{ announcement.author.full_name|default:"Doctor-A" }}</a>
+                            {% trans "By" %} <a href="">{{ announcement.author.full_name|default:"Doctor-A" }}</a>
                         </li>
                         <li class="dz-comment">
                             <i class="fa-solid fa-message"></i>
-                            <a href="javascript:void(0);">{{ view_count }} ko'rishlar</a>
+                            <a href="javascript:void(0);">{{ view_count }} {% trans "ko‘rishlar" %}</a>
                         </li>
                     </ul>
                 </div>
                 <!-- Ortga qaytish tugmachasi -->
                 <div class="mt-3">
                     <button class="btn btn-primary" onclick="history.back()">
-                        <i class="fa-solid fa-arrow-left"></i> Ortga qaytish
+                        <i class="fa-solid fa-arrow-left"></i> {% trans "Ortga qaytish" %}
                     </button>
                 </div>
             </div>
         </div>
     </div>
-
 
     <section class="content-inner-3">
         <div class="container">
@@ -50,7 +49,7 @@
                         <div class="card-body">
                             <h2 class="card-title">{{ announcement.title|get_language_text:CURRENT_LANGUAGE }}</h2>
                             <p class="text-muted">{{ announcement.published_date|date:"d-m-Y" }} |
-                                👀 {{ announcement.views_count }} marta ko'rildi</p>
+                                👀 {{ announcement.views_count }} {% trans "marta ko‘rildi" %}</p>
                             <hr>
                             <p>{{ announcement.content|get_language_text:CURRENT_LANGUAGE }}</p>
                         </div>
@@ -60,7 +59,7 @@
 
             <!-- O'xshash e'lonlar -->
             <div class="row mt-5">
-                <h4 class="text-center mb-4">O'xshash e'lonlar</h4>
+                <h4 class="text-center mb-4">{% trans "O‘xshash e‘lonlar" %}</h4>
                 {% for related in related_announcements %}
                     <div class="col-md-3">
                         <div class="card shadow-sm border-0">
@@ -75,14 +74,12 @@
                         </div>
                     </div>
                 {% empty %}
-                    <p class="text-center">O'xshash e'lonlar topilmadi.</p>
+                    <p class="text-center">{% trans "O‘xshash e‘lonlar topilmadi." %}</p>
                 {% endfor %}
             </div>
         </div>
     </section>
-
-
-{% endblock %}
+{% endblock content %}
 
 
 {% block script %}
