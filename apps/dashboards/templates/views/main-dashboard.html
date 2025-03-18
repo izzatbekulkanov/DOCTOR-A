@@ -94,11 +94,11 @@
                      data-top-bottom="transform: translateY(30px)">
                     <div class="info-widget style-4 move-4">
                         <div class="widget-media">
-                            <img src="{% static 'dashboard/images/avatar/small/avatar6.webp' %}" alt="">
+                            <img src="{% static 'dashboard/images/bot.png' %}" alt="">
                         </div>
                         <div class="widget-content">
-                            <h6 class="title">{% trans "Savol va murojaatlar?" %}</h6>
-                            <a href="#ariza_section">{% trans "Yuborish" %}</a>
+                            <h6 class="title">{% trans "Telegram bot?" %}</h6>
+                            <a href="https://t.me/doctoramedclinicbot" target="_blank" title="Telegram bot orqali hulosalar olish.">{% trans "Botga kirish" %}</a>
                         </div>
                     </div>
                 </div>
@@ -107,12 +107,30 @@
     </div>
 
     <section class="content-inner-3 bg-secondary background-blend-multiply bg-img-fix"
-             style="background-image: url({% static 'dashboard/images/background/bg2.webp' %}); background-repeat: no-repeat; background-position: right center; background-size: cover;">
-        <div class="container">
-            <div class="row align-items-sm-center">
+         style="background-image: url({% static 'dashboard/images/background/bg2.webp' %}); background-repeat: no-repeat; background-position: right center; background-size: cover;">
+    <div class="container">
+        <div class="row align-items-sm-center">
+            <div class="col-md-4">
+                <div class="card text-center p-3">
+                    <h3>Shifokorlar</h3>
+                    <p id="doctor-count">Yuklanmoqda...</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card text-center p-3">
+                    <h3>Jarrohlar</h3>
+                    <p id="surgeon-count">Yuklanmoqda...</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card text-center p-3">
+                    <h3>Tashrifchilar</h3>
+                    <p id="visitor-count">Yuklanmoqda...</p>
+                </div>
             </div>
         </div>
-    </section>
+    </div>
+</section>
 
     <section class="content-inner-2 bg-light z-2" id="ariza_section"
              style="background-image: url({% static 'dashboard/images/background/bg5.png' %});">

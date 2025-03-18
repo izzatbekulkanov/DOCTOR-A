@@ -10,6 +10,8 @@ from django.conf import settings
 from django.views import View
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.csrf import csrf_exempt
+
 from .forms import NewsForm  # Django ModelForm
 
 from members.models import CustomUser
@@ -92,6 +94,7 @@ class AddNewsView(View):
         content = json.loads(data.get('content', '{}'))
         image = request.FILES.get('image')
         is_published = data.get('is_published') == 'on'
+        print(data.get('is_published'))
 
         if not title.get('uz'):
             return JsonResponse({"status": "error", "message": _("O‘zbek tilida sarlavha kiritish majburiy!")},
@@ -102,11 +105,20 @@ class AddNewsView(View):
             content=content,
             image=image,
             author=request.user,
-            is_published=is_published
+            is_published=True
         )
 
         return JsonResponse({"status": "success", "message": _("Yangilik muvaffaqiyatli qo‘shildi!")})
 
+@csrf_exempt
+def toggle_news_status(request, news_id):
+    """ Yangilikning is_published statusini o'zgartirish """
+    if request.method == "POST":
+        news = get_object_or_404(News, id=news_id)
+        news.is_published = not news.is_published  # Holatni teskarisiga o'zgartirish
+        news.save()
+        return JsonResponse({"is_published": news.is_published})
+    return JsonResponse({"error": "Noto‘g‘ri so‘rov"}, status=400)
 
 
 class SetSelectedNewsView(View):

@@ -1,6 +1,6 @@
 from django.urls import path
 from .views import NewsView, AddNewsView, NewsDetailView, SetSelectedNewsView, NewsDeleteView, AnnouncementView, \
-    AnnouncementCreateView
+    AnnouncementCreateView, toggle_news_status
 from django.contrib.auth.decorators import login_required
 
 from ..medical.views import PartnerInfoView, get_partner_info
@@ -18,6 +18,7 @@ viewspatterns = [
 
     path("partners", login_required(PartnerInfoView.as_view()), name="partners-info", ),
     path("get-partner-info", get_partner_info, name="get-partner-info"),
+    path("toggle-status/<int:news_id>/", toggle_news_status, name="toggle_news_status"),
 ]
 
 urlpatterns = viewspatterns

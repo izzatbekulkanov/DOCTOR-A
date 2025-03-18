@@ -11,10 +11,13 @@
          style="background-image:url({% static 'dashboard/images/banner/bnr2.webp' %}); min-height: 320px; background-size: cover;">
         <div class="container">
             <div class="dz-bnr-inr-entry d-table-cell">
-                <h1 class="wow fadeInUp" data-wow-delay="0.2s" data-wow-duration="0.8s">{% trans "Klinika Qurilmalari" %}</h1>
-                <nav aria-label="breadcrumb" class="breadcrumb-row wow fadeInUp" data-wow-delay="0.4s" data-wow-duration="0.8s">
+                <h1 class="wow fadeInUp" data-wow-delay="0.2s"
+                    data-wow-duration="0.8s">{% trans "Klinika Qurilmalari" %}</h1>
+                <nav aria-label="breadcrumb" class="breadcrumb-row wow fadeInUp" data-wow-delay="0.4s"
+                     data-wow-duration="0.8s">
                     <ul class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="{% url 'main-dashboard' %}">{% trans "Asosiy sahifa" %}</a></li>
+                        <li class="breadcrumb-item"><a href="{% url 'main-dashboard' %}">{% trans "Asosiy sahifa" %}</a>
+                        </li>
                         <li class="breadcrumb-item active" aria-current="page">{% trans "Klinika Qurilmalari" %}</li>
                     </ul>
                 </nav>
@@ -56,14 +59,18 @@
                              style="animation-delay: {{ forloop.counter|multiply:0.1 }}s;">
                             <div class="row g-0 align-items-center">
                                 <div class="col-md-4">
-                                    <img src="{{ equipment.image.url }}" class="img-fluid rounded-start"
-                                         alt="{{ equipment.name|get_language_text:CURRENT_LANGUAGE }}" style="height: 200px; object-fit: cover;">
+                                    <div class="ratio ratio-4x3 rounded overflow-hidden shadow-sm">
+                                        <img src="{{ equipment.image.url }}" class="img-fluid"
+                                             alt="{{ equipment.name|get_language_text:CURRENT_LANGUAGE }}"
+                                             style="object-fit: cover; width: 100%; height: 100%;">
+                                    </div>
                                 </div>
                                 <div class="col-md-8">
                                     <div class="card-body text-center">
                                         <h5 class="card-title fw-bold text-primary mb-3">{{ equipment.name|get_language_text:CURRENT_LANGUAGE }}</h5>
                                         <p class="card-text text-muted">{{ equipment.description|get_language_text:CURRENT_LANGUAGE|truncatechars:250 }}</p>
-                                        <a href="{% url 'equipment_detail' equipment.id %}" class="btn btn-sm btn-outline-primary rounded-pill mt-2">
+                                        <a href="{% url 'equipment_detail' equipment.id %}"
+                                           class="btn btn-sm btn-outline-primary rounded-pill mt-2">
                                             {% trans "Ko'proq" %}
                                         </a>
                                     </div>
@@ -84,12 +91,15 @@
                     <ul class="pagination justify-content-center gap-2">
                         {% if page_obj.has_previous %}
                             <li class="page-item">
-                                <a class="page-link rounded-pill px-3 py-2" href="?page=1{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">
+                                <a class="page-link rounded-pill px-3 py-2"
+                                   href="?page=1{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">
                                     <i class="feather icon-chevrons-left"></i> {% trans "Birinchi" %}
                                 </a>
                             </li>
                             <li class="page-item">
-                                <a class="page-link rounded-pill px-3 py-2" href="?page={{ page_obj.previous_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">
+                                <a class="page-link rounded-pill px-3 py-2" href="?page=
+
+                                        {{ page_obj.previous_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">
                                     <i class="feather icon-chevron-left"></i> {% trans "Oldingi" %}
                                 </a>
                             </li>
@@ -98,12 +108,16 @@
                             <span class="page-link rounded-pill px-3 py-2">{{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span>
                         </li>
                         <li class="page-item">
-                            <a class="page-link rounded-pill px-3 py-2" href="?page={{ page_obj.next_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">
+                            <a class="page-link rounded-pill px-3 py-2" href="?page=
+
+                                    {{ page_obj.next_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">
                                 {% trans "Keyingi" %} <i class="feather icon-chevron-right"></i>
                             </a>
                         </li>
                         <li class="page-item">
-                            <a class="page-link rounded-pill px-3 py-2" href="?page={{ page_obj.paginator.num_pages }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">
+                            <a class="page-link rounded-pill px-3 py-2" href="?page=
+
+                                    {{ page_obj.paginator.num_pages }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">
                                 {% trans "Oxirgi" %} <i class="feather icon-chevrons-right"></i>
                             </a>
                         </li>

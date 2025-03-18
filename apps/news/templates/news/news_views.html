@@ -91,25 +91,32 @@
                             <p class="text-muted mb-4">
                                 {{ news.content|get_language_text:request.LANGUAGE_CODE|truncatewords:20 }}
                             </p>
-                            <!-- Blog footer -->
-                            <div class="d-flex justify-content-between align-items-center mt-4">
-                                <div class="d-flex gap-2">
-                                    <button onclick="setSelectedNews({{ news.id }})"
-                                            class="btn btn-info text-white fw-semibold px-3 py-1 rounded-3 hover-btn-info">
-                                        {% trans "Batafsil" %}
-                                    </button>
-                                    <button onclick="deleteNews({{ news.id }})"
-                                            class="btn btn-danger text-white fw-semibold px-3 py-1 rounded-3 hover-btn-danger">
-                                        {% trans "O‘chirish" %}
-                                    </button>
-                                </div>
-                                <div class="d-flex align-items-center gap-2">
-                                    <span class="badge bg-danger rounded-circle p-2">
-                                        <i class="ri-eye-line text-white"></i>
-                                    </span>
-                                    <span class="fw-bold text-muted">{{ news.views_count }}</span>
-                                </div>
+                            <div class="d-flex gap-2">
+                                <!-- Batafsil tugmasi -->
+                                <button onclick="setSelectedNews({{ news.id }})"
+                                        class="btn btn-info text-white fw-semibold px-3 py-1 rounded-3 hover-btn-info">
+                                    {% trans "Batafsil" %}
+                                </button>
+
+                                <!-- Switch tugmasi (Chiroq) -->
+                                <button onclick="togglePublishStatus({{ news.id }})"
+                                        class="btn text-white fw-semibold px-3 py-1 rounded-3"
+                                        id="publish-btn-{{ news.id }}"
+                                        style="background-color: {% if news.is_published %}green{% else %}gray{% endif %};">
+                                    {% if news.is_published %}
+                                        {% trans "Faol" %}
+                                    {% else %}
+                                        {% trans "Nofaol" %}
+                                    {% endif %}
+                                </button>
+
+                                <!-- O'chirish tugmasi -->
+                                <button onclick="deleteNews({{ news.id }})"
+                                        class="btn btn-danger text-white fw-semibold px-3 py-1 rounded-3 hover-btn-danger">
+                                    {% trans "O‘chirish" %}
+                                </button>
                             </div>
+
                         </div>
                     </div>
                 </div>
@@ -260,6 +267,44 @@
             });
         }
     </script>
+    <script>
+        function togglePublishStatus(newsId) {
+            fetch(`/toggle-status/${newsId}/`, {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": getCookie("csrftoken"),
+                    "Content-Type": "application/json",
+                },
+            })
+                .then(response => response.json())
+                .then(data => {
+                    let btn = document.getElementById(`publish-btn-${newsId}`);
+                    if (data.is_published) {
+                        btn.style.backgroundColor = "green";
+                        btn.innerHTML = "🔆 Faol";
+                    } else {
+                        btn.style.backgroundColor = "gray";
+                        btn.innerHTML = "🌑 Nofaol";
+                    }
+                })
+                .catch(error => console.error("Xatolik:", error));
+        }
 
+        // CSRF token olish funksiyasi
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.startsWith(name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+    </script>
 
 {% endblock vendor_js %}
