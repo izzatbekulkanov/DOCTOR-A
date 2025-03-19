@@ -6,6 +6,26 @@
     Hodimlar
 {% endblock title %}
 {% block style %}
+    <style>
+    .pagination .page-link {
+    font-weight: bold;
+    border-radius: 30px;
+    padding: 10px 20px;
+    transition: all 0.3s ease-in-out;
+}
+
+.pagination .page-link:hover {
+    background-color: #007bff;
+    color: white;
+    box-shadow: 0px 4px 10px rgba(0, 123, 255, 0.3);
+}
+
+.pagination .active .page-link {
+    background-color: #007bff !important;
+    color: white !important;
+    border: none;
+}
+    </style>
 {% endblock style %}
 
 
@@ -55,7 +75,7 @@
                     {% for employee in employees %}
                         <div class="col-xl-3 col-sm-6 wow fadeInUp" data-wow-delay="0.{{ forloop.counter }}s"
                              data-wow-duration="0.8s">
-                            <div class="dz-team style-1 active box-hover">
+                            <div class="dz-team style-1 box-hover">
                                 <div class="dz-media">
                                     {% if employee.profile_picture %}
                                         <img src="{{ employee.profile_picture.url }}" alt="{{ employee.full_name }}">
@@ -94,26 +114,36 @@
 
                 <!-- 📌 Pagination -->
                 <nav>
-                    <ul class="pagination justify-content-center">
+                    <ul class="pagination pagination-lg justify-content-center">
                         {% if employees.has_previous %}
                             <li class="page-item">
-                                <a class="page-link" href="?page=1">{% trans "Birinchi" %}</a>
+                                <a class="page-link rounded-pill shadow-sm" href="?page=1">
+                                    ⏮ {% trans "Birinchi" %}
+                                </a>
                             </li>
                             <li class="page-item">
-                                <a class="page-link" href="?page={{ employees.previous_page_number }}">⬅ {% trans "Oldingi" %}</a>
+                                <a class="page-link rounded-pill shadow-sm" href="?page={{ employees.previous_page_number }}">
+                                    ⬅ {% trans "Oldingi" %}
+                                </a>
                             </li>
                         {% endif %}
 
                         <li class="page-item active">
-                            <span class="page-link">{{ employees.number }} / {{ employees.paginator.num_pages }}</span>
+                            <span class="page-link rounded-pill bg-primary text-white shadow-sm border-0">
+                                {{ employees.number }} / {{ employees.paginator.num_pages }}
+                            </span>
                         </li>
 
                         {% if employees.has_next %}
                             <li class="page-item">
-                                <a class="page-link" href="?page={{ employees.next_page_number }}">{% trans "Keyingi" %} ➡</a>
+                                <a class="page-link rounded-pill shadow-sm" href="?page={{ employees.next_page_number }}">
+                                    {% trans "Keyingi" %} ➡
+                                </a>
                             </li>
                             <li class="page-item">
-                                <a class="page-link" href="?page={{ employees.paginator.num_pages }}">{% trans "Oxirgi" %}</a>
+                                <a class="page-link rounded-pill shadow-sm" href="?page={{ employees.paginator.num_pages }}">
+                                    {% trans "Oxirgi" %} ⏭
+                                </a>
                             </li>
                         {% endif %}
                     </ul>

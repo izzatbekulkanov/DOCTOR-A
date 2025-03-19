@@ -1,4 +1,5 @@
 import json
+from datetime import datetime
 
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
@@ -577,7 +578,6 @@ class AddUsersView(View):
         for key, value in request.POST.items():
             print(f"  - {key}: {value}")
 
-        # Agar `FILES` mavjud bo‘lsa, chiqaramiz
         if request.FILES:
             for key, file in request.FILES.items():
                 print(f"  - {key}: {file.name} ({file.content_type})")
@@ -614,7 +614,31 @@ class AddUsersView(View):
         if not full_name or not phone_number or not gender:
             print("❌ Xatolik: Majburiy maydonlar to‘ldirilmagan!")
             messages.error(request, "Majburiy maydonlarni to‘ldiring: F.I.O, Telefon raqami va Jins!")
-            return redirect('add-user')  # URL nomini 'add-users-view' dan 'add-user' ga o‘zgartirdim, moslashtiring
+            return redirect('add-user')
+
+        # Sana va vaqt maydonlarini tekshirish uchun funksiyalar
+        def parse_date(date_str):
+            if not date_str:
+                return None
+            try:
+                return datetime.strptime(date_str, '%Y-%m-%d').date()
+            except ValueError:
+                return None
+
+        def parse_time(time_str):
+            if not time_str:
+                return None
+            try:
+                return datetime.strptime(time_str, '%H:%M').time()
+            except ValueError:
+                return None
+
+        # Sana va vaqt maydonlarini to'g'rilash
+        date_of_birth = parse_date(date_of_birth)
+        employment_date = parse_date(employment_date)
+        contract_end_date = parse_date(contract_end_date)
+        work_start_time = parse_time(work_start_time)
+        work_end_time = parse_time(work_end_time)
 
         # Foydalanuvchi yaratish
         print("🚀 Yangi foydalanuvchi yaratish jarayoni boshlandi...")
@@ -653,25 +677,25 @@ class AddUsersView(View):
                 f"👤 <b>Yangi foydalanuvchi qo‘shildi!</b>\n"
                 f"#_<b>ADD_USER</b>\n"
                 f"📌 Ismi: {full_name}\n"
-                f"📛 Foydalanuvchi nomi: {username}\n"
+                f"📛 Foydalanuvchi nomi: {username or 'Belgilanmagan'}\n"
                 f"📞 Telefon: {phone_number}\n"
-                f"🏠 Manzil: {address}\n"
-                f"🎂 Tug‘ilgan sana: {date_of_birth}\n"
+                f"🏠 Manzil: {address or 'Belgilanmagan'}\n"
+                f"🎂 Tug‘ilgan sana: {date_of_birth or 'Belgilanmagan'}\n"
                 f"⚥ Jinsi: {'Erkak' if gender == 'male' else 'Ayol'}\n"
-                f"🌍 Millati: {nationality}\n"
-                f"🆔 Xodim ID: {employee_id}\n"
-                f"📝 Bio: {bio}\n"
-                f"🚑 Favqulodda aloqa: {emergency_contact}\n"
-                f"🏢 Bo‘lim: {department}\n"
-                f"💼 Lavozim: {job_title}\n"
-                f"📅 Ishga kirgan sana: {employment_date}\n"
-                f"📆 Shartnoma muddati: {contract_end_date}\n"
-                f"🔢 Professional litsenziya raqami: {professional_license_number}\n"
-                f"🩺 Tibbiy mutaxassisligi: {medical_specialty}\n"
-                f"⏰ Ish jadvali: {shift_schedule}\n"
-                f"🏦 Bank hisobi: {bank_account_number}\n"
-                f"🆔 Soliq identifikatsiya raqami: {tax_identification_number}\n"
-                f"🛡 Sug‘urta raqami: {insurance_number}\n"
+                f"🌍 Millati: {nationality or 'Belgilanmagan'}\n"
+                f"🆔 Xodim ID: {employee_id or 'Belgilanmagan'}\n"
+                f"📝 Bio: {bio or 'Belgilanmagan'}\n"
+                f"🚑 Favqulodda aloqa: {emergency_contact or 'Belgilanmagan'}\n"
+                f"🏢 Bo‘lim: {department or 'Belgilanmagan'}\n"
+                f"💼 Lavozim: {job_title or 'Belgilanmagan'}\n"
+                f"📅 Ishga kirgan sana: {employment_date or 'Belgilanmagan'}\n"
+                f"📆 Shartnoma muddati: {contract_end_date or 'Belgilanmagan'}\n"
+                f"🔢 Professional litsenziya raqami: {professional_license_number or 'Belgilanmagan'}\n"
+                f"🩺 Tibbiy mutaxassisligi: {medical_specialty or 'Belgilanmagan'}\n"
+                f"⏰ Ish jadvali: {shift_schedule or 'Belgilanmagan'}\n"
+                f"🏦 Bank hisobi: {bank_account_number or 'Belgilanmagan'}\n"
+                f"🆔 Soliq identifikatsiya raqami: {tax_identification_number or 'Belgilanmagan'}\n"
+                f"🛡 Sug‘urta raqami: {insurance_number or 'Belgilanmagan'}\n"
                 f"🟢 Holati: {'Faol' if is_active else 'Faol emas'}"
             )
             send_message(message_text)
@@ -684,7 +708,7 @@ class AddUsersView(View):
         except Exception as e:
             print(f"❌ Xatolik: {str(e)}")
             messages.error(request, f"Hodim qo‘shishda xatolik yuz berdi: {str(e)}")
-            return redirect('add-users-view')  # Xatolik bo‘lsa qayta forma sahifasiga qaytadi
+            return redirect('add-users-view')
 
     def get_context_data(self, **kwargs):
         """ Kontekst yaratish, shu jumladan breadcrumb """

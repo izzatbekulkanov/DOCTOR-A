@@ -207,22 +207,22 @@
             </div>
             <div class="row">
                 {% for employee in employees %}
-                    <div class="col-xl-3 col-sm-6 wow fadeInUp" data-wow-delay="0.2s" data-wow-duration="0.8s">
-                        <div class="dz-team style-1 active box-hover">
+                    <div class="col-xl-3 col-sm-6 " data-wow-delay="0.2s" data-wow-duration="0.8s">
+                        <div class="dz-team style-1 ">
                             <div class="dz-media">
                                 <img src="{% if employee.profile_picture %}{{ employee.profile_picture.url }}{% else %}{% static 'dashboard/images/team/img1.webp' %}{% endif %}"
                                      alt="{{ employee.full_name }}">
-                                <a href="" class="btn btn-primary">
-                                    <i class="feather icon-calendar m-r5"></i>
-                                    {% trans "Qabuliga yozilish" %}
-                                </a>
+{#                                <a href="" class="btn btn-primary">#}
+{#                                    <i class="feather icon-calendar m-r5"></i>#}
+{#                                    {% trans "Qabuliga yozilish" %}#}
+{#                                </a>#}
                             </div>
                             <div class="dz-content">
                                 <div class="clearfix">
                                     <h3 class="dz-name"><a href="">{{ employee.full_name }}</a></h3>
                                     <span class="dz-position">{{ employee.job_title }}</span>
                                 </div>
-                                <a href="" class="btn btn-square btn-secondary">
+                                <a href="{% url 'employee_detail' employee.id %}" class="btn btn-square btn-secondary">
                                     <i class="feather icon-arrow-right"></i>
                                 </a>
                             </div>
@@ -311,10 +311,8 @@
                                     <div class="post-date">
                                         {{ news.published_date|date:"d M Y" }} | {% trans "Yangilik" %}
                                     </div>
-                                    <h3 class="dz-title">
-                                        <a href="">
-                                            {{ news.title|get_language_text:CURRENT_LANGUAGE }}
-                                        </a>
+                                    <h3 class="" style="color: whitesmoke">
+                                            {{ news.title|get_language_text:CURRENT_LANGUAGE | truncatechars:50 }}
                                     </h3>
                                 </div>
                                 <div class="bottom-info">
@@ -340,11 +338,11 @@
                                         </div>
                                         <h3 class="dz-title">
                                             <a href="#">
-                                                {{ announcement.title|get_language_text:CURRENT_LANGUAGE }}
+                                                {{ announcement.title|get_language_text:CURRENT_LANGUAGE | truncatewords:10 }}
                                             </a>
                                         </h3>
                                         <div class="bottom-info ms-auto">
-                                            <a href="#" class="btn btn-square btn-white rounded-circle">
+                                            <a href="{% url 'announcement_detail' announcement.id %}" class="btn btn-square btn-white rounded-circle">
                                                 <i class="feather icon-arrow-up-right"></i>
                                             </a>
                                         </div>

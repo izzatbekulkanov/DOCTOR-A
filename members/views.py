@@ -8,7 +8,7 @@ from django.http import Http404, JsonResponse
 from .models import CustomUser, EmployeeActivityHistory
 from django.db.models import Q
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-
+from datetime import datetime  # Sana tekshiruvi uchun
 
 @method_decorator(login_required, name='dispatch')
 class EmployeeListView(View):
@@ -89,9 +89,21 @@ class AddEmployeeActivityView(View):
         if not activity_name:
             messages.error(request, "📌 Faoliyat nomi majburiy.")
             return self.get(request, employee_id)
+
+        # Sana maydonlarini tekshirish va to'g'rilash
+        def parse_date(date_str):
+            if not date_str:
+                return None
+            try:
+                return datetime.strptime(date_str, '%Y-%m-%d').date()
+            except ValueError:
+                return None
+
+        start_date = parse_date(start_date)
+        end_date = parse_date(end_date)
+
         if not start_date:
-            messages.error(request, "📌 Boshlanish sanasi majburiy.")
-            return self.get(request, employee_id)
+            messages.warning(request, "📌 Boshlanish sanasi noto'g'ri yoki kiritilmagan, None sifatida saqlanadi.")
 
         activity = EmployeeActivityHistory(
             user=employee,
@@ -123,7 +135,6 @@ class AddEmployeeActivityView(View):
         except Exception as e:
             messages.error(request, f"📌 Xatolik yuz berdi: {str(e)}")
             return self.get(request, employee_id)
-
 @method_decorator(login_required, name='dispatch')
 class DeleteEmployeeActivityView(View):
     def delete(self, request, *args, **kwargs):

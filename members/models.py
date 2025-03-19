@@ -18,7 +18,7 @@ class CustomUser(AbstractUser):
     # ✅ Klinikaga tegishli maydonlar
     job_title = models.CharField(max_length=100, blank=True, help_text="Lavozim")
     department = models.CharField(max_length=100, blank=True, help_text="Bo'lim")
-    employee_id = models.CharField(max_length=50, unique=True, blank=True, null=True, help_text="Xodim ID")
+    employee_id = models.CharField(max_length=50, blank=True, null=True, help_text="Xodim ID")
     employment_date = models.DateField(null=True, blank=True, help_text="Ish boshlash sanasi")
     contract_end_date = models.DateField(null=True, blank=True, help_text="Shartnoma tugash sanasi")
     is_active_employee = models.BooleanField(default=True, help_text="Faol xodimmi?")
@@ -109,7 +109,8 @@ class EmployeeActivityHistory(models.Model):
     )
 
     # Sana va muddat
-    start_date = models.DateField(
+    start_date = models.DateField(null=True,
+        blank=True,
         help_text=_("Faoliyat boshlanish sanasi")
     )
     end_date = models.DateField(
