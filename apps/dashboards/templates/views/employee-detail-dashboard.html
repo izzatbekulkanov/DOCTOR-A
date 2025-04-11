@@ -142,12 +142,32 @@
                 </div>
                 <div class="col-lg-8 ps-xl-5 m-b30">
                     <div class="section-head style-1 mb-30">
-                        <h2 class="title fw-semibold m-b0 wow fadeInUp" data-wow-delay="0.1s"
-                            data-wow-duration="0.7s">{{ employee.full_name }}</h2>
-                        <p class="text-primary m-b20 fw-normal font-16 wow fadeInUp" data-wow-delay="0.2s"
-                           data-wow-duration="0.7s">{{ employee.job_title|default:"Lavozim belgilanmagan" }}</p>
-                        <p class="fw-normal m-b0 wow fadeInUp" data-wow-delay="0.3s"
-                           data-wow-duration="0.7s">{{ employee.bio|default:"Bio mavjud emas" }}</p>
+                        <h2 class="title fw-semibold m-b0 wow fadeInUp" data-wow-delay="0.1s" data-wow-duration="0.7s">
+                            {{ employee.full_name }}
+                        </h2>
+                        <div class="fw-normal m-b0 wow fadeInUp" data-wow-delay="0.3s" data-wow-duration="0.7s">
+                            {% with bio_data=employee.get_bio %}
+                                {% if bio_data.experience %}
+                                    <strong>ISH TAJRIBASI:</strong>
+                                    <ul>
+                                        {% for exp in bio_data.experience %}
+                                            <li>{{ exp }}</li>
+                                        {% endfor %}
+                                    </ul>
+                                {% endif %}
+
+                                {% if bio_data.education %}
+                                    <strong>TA’LIM:</strong>
+                                    <ul>
+                                        {% for edu in bio_data.education %}
+                                            <li>{{ edu }}</li>
+                                        {% endfor %}
+                                    </ul>
+
+                                {% endif %}
+                                <p>Bio mavjud emas</p>
+                            {% endwith %}
+                        </div>
                     </div>
                     <table class="table table-striped table-striped-rounded m-b40 wow fadeInUp" data-wow-delay="0.4s"
                            data-wow-duration="0.7s">
@@ -155,10 +175,7 @@
                             <th>{% trans "Lavozim" %}</th>
                             <td>{{ employee.job_title|default:"Belgilanmagan" }}</td>
                         </tr>
-                        <tr>
-                            <th>{% trans "Bo'lim" %}</th>
-                            <td>{{ employee.department|default:"Belgilanmagan" }}</td>
-                        </tr>
+
                         <tr>
                             <th>{% trans "Telefon" %}</th>
                             <td><a href="tel:{{ employee.phone_number }}">{{ employee.phone_number|default:"Yo'q" }}</a>
@@ -169,14 +186,6 @@
                             <td>{{ employee.date_of_birth|date:"d F Y"|default:"Belgilanmagan" }}</td>
                         </tr>
                         <tr>
-                            <th>{% trans "Jinsi" %}</th>
-                            <td>{{ employee.get_gender_display|default:"Belgilanmagan" }}</td>
-                        </tr>
-                        <tr>
-                            <th>{% trans "Millati" %}</th>
-                            <td>{{ employee.nationality|default:"Belgilanmagan" }}</td>
-                        </tr>
-                        <tr>
                             <th>{% trans "Tibbiyot mutaxassisligi" %}</th>
                             <td>{{ employee.medical_specialty|default:"Yo'q" }}</td>
                         </tr>
@@ -185,28 +194,8 @@
                             <td>{{ employee.professional_license_number|default:"Yo'q" }}</td>
                         </tr>
                         <tr>
-                            <th>{% trans "Ish boshlash sanasi" %}</th>
-                            <td>{{ employee.employment_date|date:"d F Y"|default:"Belgilanmagan" }}</td>
-                        </tr>
-                        <tr>
-                            <th>{% trans "Shartnoma tugash sanasi" %}</th>
-                            <td>{{ employee.contract_end_date|date:"d F Y"|default:"Mavjud emas" }}</td>
-                        </tr>
-                        <tr>
                             <th>{% trans "Ish jadvali" %}</th>
                             <td>{{ employee.shift_schedule|default:"Belgilanmagan" }}</td>
-                        </tr>
-                        <tr>
-                            <th>{% trans "Bank hisob raqami" %}</th>
-                            <td>{{ employee.bank_account_number|default:"Yo'q" }}</td>
-                        </tr>
-                        <tr>
-                            <th>{% trans "STIR" %}</th>
-                            <td>{{ employee.tax_identification_number|default:"Yo'q" }}</td>
-                        </tr>
-                        <tr>
-                            <th>{% trans "Sug'urta raqami" %}</th>
-                            <td>{{ employee.insurance_number|default:"Yo'q" }}</td>
                         </tr>
                         <tr>
                             <th>{% trans "Telegram" %}</th>
@@ -230,10 +219,7 @@
                                 {% endif %}
                             </td>
                         </tr>
-                        <tr>
-                            <th>{% trans "Favqulodda aloqa" %}</th>
-                            <td>{{ employee.emergency_contact|default:"Yo'q" }}</td>
-                        </tr>
+
                     </table>
 
                     <!-- Faoliyat tarixi -->
@@ -247,6 +233,9 @@
                                         <div class="col-md-4">
                                             <div class="card h-100 border-0 shadow-sm position-relative overflow-hidden gallery-item">
                                                 <img src="
+
+
+
 
                                                         {% if activity.additional_files %}{{ activity.additional_files.url }}{% else %}{% static 'dashboard/images/quotation.svg' %}{% endif %}"
                                                      alt="{{ activity.activity_name }}"
@@ -276,6 +265,9 @@
                                                     <div class="modal-content">
                                                         <div class="modal-body p-0 position-relative">
                                                             <img src="
+
+
+
 
                                                                     {% if activity.additional_files %}{{ activity.additional_files.url }}{% else %}{% static 'dashboard/images/quotation.svg' %}{% endif %}"
                                                                  alt="{{ activity.activity_name }}"

@@ -47,6 +47,7 @@ class CustomUser(AbstractUser):
         return self.username
 
     def save(self, *args, **kwargs):
+        # Agar full_name bo'sh bo'lsa, first_name va last_name ni qo'llash
         if not self.full_name and self.first_name and self.last_name:
             self.full_name = f"{self.first_name} {self.last_name}"
         super().save(*args, **kwargs)
@@ -56,6 +57,38 @@ class CustomUser(AbstractUser):
         if self.work_start_time and self.work_end_time:
             return f"{self.work_start_time.strftime('%H:%M')} - {self.work_end_time.strftime('%H:%M')}"
         return "Ish vaqti belgilanmagan"
+
+    def get_bio(self):
+        """ Bio ma'lumotlarini tartibga solish """
+        if self.bio:
+            # "TAJRIBASI:" va "TA’LIM:" bo'yicha bo'lish
+            bio = self.bio.strip()
+            experience_list = []
+            education_list = []
+
+            if "TAJRIBASI:" in bio and "TA’LIM:" in bio:
+                exp_start = bio.find("TAJRIBASI:") + len("TAJRIBASI:")
+                edu_start = bio.find("TA’LIM:")
+                experience_raw = bio[exp_start:edu_start].strip()
+                education_raw = bio[edu_start + len("TA’LIM:"):].strip()
+
+                experience_list = experience_raw.splitlines()
+                education_list = education_raw.splitlines()
+
+            elif "TAJRIBASI:" in bio:
+                experience_raw = bio.split("TAJRIBASI:")[1].strip()
+                experience_list = experience_raw.splitlines()
+
+            elif "TA’LIM:" in bio:
+                education_raw = bio.split("TA’LIM:")[1].strip()
+                education_list = education_raw.splitlines()
+
+            return {
+                'experience': [line.strip() for line in experience_list if line.strip()],
+                'education': [line.strip() for line in education_list if line.strip()]
+            }
+
+        return {'experience': [], 'education': []}
 
 
 class EmployeeActivityHistory(models.Model):
