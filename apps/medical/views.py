@@ -1,6 +1,6 @@
 import json
 from datetime import datetime
-
+import traceback
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.db.models import Q
@@ -722,108 +722,108 @@ class AddUsersView(View):
         return context
 
 
+# ✅ Sana formatini xavfsiz tarzda o‘zgartiruvchi funksiya
+def parse_date_safe(date_str):
+    if date_str and date_str.strip():
+        try:
+            return datetime.strptime(date_str.strip(), "%Y-%m-%d").date()
+        except ValueError:
+            print(f"[WARN] ❗ Yaroqsiz sana: '{date_str}'")
+            return None
+    return None
+
+# ✅ Vaqt formatini xavfsiz tarzda o‘zgartiruvchi funksiya
+def parse_time_safe(time_str):
+    if time_str and time_str.strip():
+        try:
+            return datetime.strptime(time_str.strip(), "%H:%M").time()
+        except ValueError:
+            print(f"[WARN] ❗ Yaroqsiz vaqt: '{time_str}'")
+            return None
+    return None
+
+
 @method_decorator(login_required, name='dispatch')
 class EditUsersView(View):
     template_name = 'havfsizlik/edit-users.html'
 
     def get(self, request, user_id, *args, **kwargs):
-        """ GET so‘rovlar uchun forma ko‘rsatish """
+        print(f"\n[GET] 🔍 Tahrirlash sahifasi ochildi | user_id = {user_id}")
         user = get_object_or_404(CustomUser, id=user_id)
         context = self.get_context_data(user=user, **kwargs)
-        context['user'] = user  # Foydalanuvchi ma’lumotlarini kontekstga qo‘shish
+        context['user'] = user
+        print(f"[GET] 📎 User: {user.full_name}, Username: {user.username}")
+        print(f"[GET] 🧭 Breadcrumbs: {context['breadcrumbs']}")
         return render(request, self.template_name, context)
 
     def post(self, request, user_id, *args, **kwargs):
-        """ POST so‘rov bilan foydalanuvchi ma’lumotlarini yangilash """
+        print(f"\n[POST] 📝 Tahrirlash so‘rovi kelib tushdi | user_id = {user_id}")
         user = get_object_or_404(CustomUser, id=user_id)
-
-        # Forma ma’lumotlarini olish
-        full_name = request.POST.get("full_name")
-        phone_number = request.POST.get("phone_number")
-        gender = request.POST.get("gender")
-        username = request.POST.get("username")
-        address = request.POST.get("address")
-        emergency_contact = request.POST.get("emergency_contact")
-        employment_date = request.POST.get("employment_date")
-        employee_id = request.POST.get("employee_id")
-        bio = request.POST.get("bio")
-        nationality = request.POST.get("nationality")
-        professional_license_number = request.POST.get("professional_license_number")
-        bank_account_number = request.POST.get("bank_account_number")
-        tax_identification_number = request.POST.get("tax_identification_number")
-        insurance_number = request.POST.get("insurance_number")
-        shift_schedule = request.POST.get("shift_schedule")
-        medical_specialty = request.POST.get("medical_specialty")
-        date_of_birth = request.POST.get("date_of_birth")
-        contract_end_date = request.POST.get("contract_end_date")
-        department = request.POST.get("department")
-        job_title = request.POST.get("job_title")
-        is_active = request.POST.get("is_active") == "on"
-        work_start_time = request.POST.get("work_start_time")
-        work_end_time = request.POST.get("work_end_time")
-        telegram_username = request.POST.get("telegram_username")
-        instagram_username = request.POST.get("instagram_username")
+        data = request.POST
         profile_picture = request.FILES.get("profile_picture")
 
-        # Majburiy maydonlarni tekshirish
+        # Majburiy maydonlar
+        full_name = data.get("full_name")
+        phone_number = data.get("phone_number")
+        gender = data.get("gender")
+
+        print(f"[POST] 🧾 Olingan ma’lumotlar: FIO = {full_name}, Tel = {phone_number}, Jins = {gender}")
+
         if not full_name or not phone_number or not gender:
+            print("[POST] ❌ Majburiy maydonlar to‘ldirilmagan!")
             messages.error(request, "Majburiy maydonlarni to‘ldiring: F.I.O, Telefon raqami va Jins!")
             return redirect('edit-user', user_id=user_id)
 
-        # Foydalanuvchi ma’lumotlarini yangilash
         try:
             user.full_name = full_name
-            user.username = username
+            user.username = data.get("username")
             user.phone_number = phone_number
             user.gender = gender
-            user.address = address
-            user.emergency_contact = emergency_contact
-            user.employment_date = employment_date
-            user.employee_id = employee_id
-            user.bio = bio
-            user.nationality = nationality
-            user.professional_license_number = professional_license_number
-            user.bank_account_number = bank_account_number
-            user.tax_identification_number = tax_identification_number
-            user.insurance_number = insurance_number
-            user.shift_schedule = shift_schedule
-            user.medical_specialty = medical_specialty
-            # Sana maydonini tekshirish va yangilash
-            if date_of_birth and date_of_birth.strip():  # Bo‘sh emasligini tekshirish
-                user.date_of_birth = date_of_birth
-            else:
-                user.date_of_birth = None  # Agar bo‘sh bo‘lsa, None qo‘yish
-            user.contract_end_date = contract_end_date
-            user.department = department
-            user.job_title = job_title
-            user.is_active = is_active
-            user.work_start_time = work_start_time
-            user.work_end_time = work_end_time
-            user.telegram_username = telegram_username
-            user.instagram_username = instagram_username
-            if profile_picture:  # Agar yangi rasm yuklansa
+            user.address = data.get("address")
+            user.emergency_contact = data.get("emergency_contact")
+            user.employment_date = parse_date_safe(data.get("employment_date"))
+            user.employee_id = data.get("employee_id")
+            user.bio = data.get("bio")
+            user.nationality = data.get("nationality")
+            user.professional_license_number = data.get("professional_license_number")
+            user.bank_account_number = data.get("bank_account_number")
+            user.tax_identification_number = data.get("tax_identification_number")
+            user.insurance_number = data.get("insurance_number")
+            user.shift_schedule = data.get("shift_schedule")
+            user.medical_specialty = data.get("medical_specialty")
+            user.date_of_birth = parse_date_safe(data.get("date_of_birth"))
+            user.contract_end_date = parse_date_safe(data.get("contract_end_date"))
+            user.department = data.get("department")
+            user.job_title = data.get("job_title")
+            user.is_active = data.get("is_active") == "on"
+            user.work_start_time = parse_time_safe(data.get("work_start_time"))
+            user.work_end_time = parse_time_safe(data.get("work_end_time"))
+            user.telegram_username = data.get("telegram_username")
+            user.instagram_username = data.get("instagram_username")
+
+            if profile_picture:
+                print("[POST] 📷 Yangi profil rasmi yuklandi")
                 user.profile_picture = profile_picture
 
             user.save()
+            print(f"[POST] ✅ Saqlash muvaffaqiyatli: {user.full_name} | ID: {user.id}")
             messages.success(request, f"{user.full_name} muvaffaqiyatli tahrirlandi!")
             return redirect('users-view')
 
         except Exception as e:
+            print(f"[ERROR] ❌ Tahrirlashda xatolik yuz berdi: {str(e)}")
+            traceback.print_exc()
             messages.error(request, f"Tahrirlashda xatolik yuz berdi: {str(e)}")
             return redirect('edit-user', user_id=user_id)
 
     def get_context_data(self, **kwargs):
-        """ Kontekst yaratish, shu jumladan breadcrumb """
-        context = {}
         user = kwargs.get('user')
         breadcrumbs = [
             {"title": "Bosh sahifa", "url": reverse('admin-index')},
             {"title": "Foydalanuvchilar", "url": reverse('users-view')},
             {"title": f"{user.full_name if user else 'Foydalanuvchi'} tahrirlash", "url": "", "active": True},
         ]
-        context["breadcrumbs"] = breadcrumbs
-        return context
-
+        return {"breadcrumbs": breadcrumbs}
 
 @method_decorator(login_required, name='dispatch')
 class RolesView(TemplateView):
