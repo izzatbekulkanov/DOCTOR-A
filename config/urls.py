@@ -7,6 +7,7 @@ from django.views.defaults import page_not_found, permission_denied, bad_request
 from django.urls import re_path
 from django.views.static import serve
 from pathlib import Path
+from django.views.generic import TemplateView
 import os
 
 
@@ -31,14 +32,14 @@ urlpatterns = [
     path("i18n/set_language/", set_language, name="set_language"),
 
     # serve sitemap.xml va robots.txt
-    re_path(r'^sitemap\.xml$', serve, {
-        'path': 'sitemap.xml',
-        'document_root': os.path.join(settings.BASE_DIR, 'config/static')
-    }),
-    re_path(r'^robots\.txt$', serve, {
-        'path': 'robots.txt',
-        'document_root': os.path.join(settings.BASE_DIR, 'config/static')
-    }),
+    path("sitemap.xml", TemplateView.as_view(
+        template_name="sitemap.xml",
+        content_type="application/xml"
+    )),
+    path("robots.txt", TemplateView.as_view(
+        template_name="robots.txt",
+        content_type="text/plain"
+    )),
 
 ]
 
