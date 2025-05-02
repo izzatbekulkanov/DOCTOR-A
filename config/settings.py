@@ -18,8 +18,6 @@ ALLOWED_HOSTS = [
     "127.0.0.1",
     "updatehub.namspi.uz",
     "webtest.namspi.uz",
-    "arm.namspi.uz"
-    "arm.namspi.uz",
     "doctoramedical.uz"
 ]
 
