@@ -173,17 +173,14 @@ LOGIN_URL = "/login/"  # 📌 Agar foydalanuvchi login qilmagan bo‘lsa, shu sa
 LOGOUT_REDIRECT_URL = "/"  # 📌 Logout bo‘lgandan keyin qayta yo‘naltiriladi
 
 # 🔹 **Session sozlamalari**
-SESSION_ENGINE = "django.contrib.sessions.backends.db"  # 📌 Sessionlar bazada saqlanadi
-SESSION_COOKIE_SECURE = True  # 📌 HTTPS orqali cookie'lar yuboriladi
-SESSION_COOKIE_HTTPONLY = True  # 📌 JavaScript session cookie'ni ko‘ra olmaydi
-SESSION_COOKIE_SAMESITE = "Lax"  # 📌 Xavfsizlik sozlamasi
-
-SESSION_COOKIE_AGE = 3600  # 📌 Sessiyaning amal qilish vaqti (1 soat)
+SESSION_ENGINE = "django.contrib.sessions.backends.db"
+SESSION_COOKIE_SECURE = True
+SESSION_COOKIE_HTTPONLY = True
+SESSION_COOKIE_SAMESITE = "Lax"
+SESSION_COOKIE_AGE = 3600
 
 # 🔹 **CSRF Trusted Origins**
 CSRF_TRUSTED_ORIGINS = [
-    "https://webtest.namspi.uz",
-    "https://updatehub.namspi.uz",
-    "https://arm.namspi.uz",
+    "https://*.namspi.uz",
     "https://doctoramedical.uz",
 ]
