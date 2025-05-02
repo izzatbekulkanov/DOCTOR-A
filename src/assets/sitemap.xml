@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+
    <url>
       <loc>https://doctoramedical.uz/</loc>
       <priority>1.0</priority>
    </url>
+
+   <!-- Asosiy sahifalar -->
    <url>
       <loc>https://doctoramedical.uz/yangiliklar</loc>
       <priority>0.8</priority>
@@ -13,6 +16,12 @@
       <priority>0.8</priority>
    </url>
    <url>
+      <loc>https://doctoramedical.uz/jamoa</loc>
+      <priority>0.7</priority>
+   </url>
+
+   <!-- Xizmatlar -->
+   <url>
       <loc>https://doctoramedical.uz/mrt</loc>
       <priority>0.7</priority>
    </url>
@@ -20,4 +29,39 @@
       <loc>https://doctoramedical.uz/fizioterapiya</loc>
       <priority>0.7</priority>
    </url>
+   <url>
+      <loc>https://doctoramedical.uz/labaratoriya</loc>
+      <priority>0.7</priority>
+   </url>
+   <url>
+      <loc>https://doctoramedical.uz/kardiologiya</loc>
+      <priority>0.7</priority>
+   </url>
+   <url>
+      <loc>https://doctoramedical.uz/uzi</loc>
+      <priority>0.7</priority>
+   </url>
+   <url>
+      <loc>https://doctoramedical.uz/ginekologiya</loc>
+      <priority>0.7</priority>
+   </url>
+   <url>
+      <loc>https://doctoramedical.uz/lor</loc>
+      <priority>0.7</priority>
+   </url>
+
+   <!-- Qo‘shimcha -->
+   <url>
+      <loc>https://doctoramedical.uz/online-qabul</loc>
+      <priority>0.9</priority>
+   </url>
+   <url>
+      <loc>https://doctoramedical.uz/kontakt</loc>
+      <priority>0.6</priority>
+   </url>
+   <url>
+      <loc>https://doctoramedical.uz/biz-haqimizda</loc>
+      <priority>0.6</priority>
+   </url>
+
 </urlset>

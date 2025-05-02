@@ -19,6 +19,8 @@ ALLOWED_HOSTS = [
     "updatehub.namspi.uz",
     "webtest.namspi.uz",
     "arm.namspi.uz"
+    "arm.namspi.uz",
+    "doctoramedical.uz"
 ]
 
 ENVIRONMENT = os.environ.get("DJANGO_ENVIRONMENT", default="local")
@@ -185,5 +187,5 @@ CSRF_TRUSTED_ORIGINS = [
     "https://webtest.namspi.uz",
     "https://updatehub.namspi.uz",
     "https://arm.namspi.uz",
-
+    "https://doctoramedical.uz",
 ]
