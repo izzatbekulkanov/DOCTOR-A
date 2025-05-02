@@ -18,6 +18,7 @@ ALLOWED_HOSTS = [
     "127.0.0.1",
     "updatehub.namspi.uz",
     "webtest.namspi.uz",
+    "arm.namspi.uz"
 ]
 
 ENVIRONMENT = os.environ.get("DJANGO_ENVIRONMENT", default="local")
@@ -183,5 +184,6 @@ SESSION_COOKIE_AGE = 3600  # 📌 Sessiyaning amal qilish vaqti (1 soat)
 CSRF_TRUSTED_ORIGINS = [
     "https://webtest.namspi.uz",
     "https://updatehub.namspi.uz",
+    "https://arm.namspi.uz",
 
 ]
