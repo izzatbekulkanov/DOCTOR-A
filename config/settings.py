@@ -11,6 +11,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ.get("SECRET_KEY", default='')
 
 DEBUG = os.environ.get("DEBUG", 'True').lower() in ['true', 'yes', '1']
+ENVIRONMENT = 'local'
+BASE_URL = os.environ.get("BASE_URL", default='https://webtest.namspi.uz/')
 
 ALLOWED_HOSTS = [
     "localhost",
@@ -21,7 +23,6 @@ ALLOWED_HOSTS = [
     "doctoramedical.uz"
 ]
 
-ENVIRONMENT = os.environ.get("DJANGO_ENVIRONMENT")
 
 LOCAL_APPS = [
     # 📌 **Loyiha ichidagi ilovalar**
@@ -105,6 +106,8 @@ WSGI_APPLICATION = "config.wsgi.application"
 # 🔹 **Ma’lumotlar bazasi (`DATABASES`)**
 # 📌 Django qaysi ma'lumotlar bazasidan foydalanishini ko'rsatadi
 # Database configuration
+# Ma'lumotlar bazasi sozlamalari
+print(f"Current environment: {ENVIRONMENT}")  # Muhitni konsolga chiqarish
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -127,7 +130,7 @@ AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator"},
     {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
 ]
-
+LANGUAGE_CODE = "uz"  # 📌 Standart til - O'zbek tili
 # 🔹 **Til sozlamalari (`LANGUAGES` va `LANGUAGE_CODE`)**
 LANGUAGES = [
     ("uz", _("O'zbek")),
@@ -137,7 +140,7 @@ LANGUAGES = [
     ("tr", _("Türkçe")),
 ]
 
-LANGUAGE_CODE = "uz"  # 📌 Standart til - O'zbek tili
+
 
 # 🔹 **Vaqt zonasi (`TIME_ZONE`)**
 TIME_ZONE = "Asia/Tashkent"  # 📌 Toshkent vaqti
