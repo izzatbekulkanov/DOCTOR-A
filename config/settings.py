@@ -21,7 +21,7 @@ ALLOWED_HOSTS = [
     "doctoramedical.uz"
 ]
 
-ENVIRONMENT = os.environ.get("DJANGO_ENVIRONMENT", default="local")
+ENVIRONMENT = os.environ.get("DJANGO_ENVIRONMENT")
 
 LOCAL_APPS = [
     # 📌 **Loyiha ichidagi ilovalar**
@@ -104,10 +104,18 @@ WSGI_APPLICATION = "config.wsgi.application"
 
 # 🔹 **Ma’lumotlar bazasi (`DATABASES`)**
 # 📌 Django qaysi ma'lumotlar bazasidan foydalanishini ko'rsatadi
+# Database configuration
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",  # 📌 SQLite bazasi (default)
-        "NAME": BASE_DIR / "db.sqlite3",  # 📌 Baza nomi (lokal)
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    } if ENVIRONMENT == 'local' else {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.environ.get('POSTGRES_DB', 'doctor_a_db'),
+        'USER': os.environ.get('POSTGRES_USER', 'doctor_a_user'),
+        'PASSWORD': os.environ.get('POSTGRES_PASSWORD', 'admin1231'),
+        'HOST': os.environ.get('POSTGRES_HOST', 'localhost'),
+        'PORT': os.environ.get('POSTGRES_PORT', '5432'),
     }
 }
 
