@@ -4,20 +4,51 @@
 {% load i18n %}
 {% load custom_filters %} <!-- Custom filtrlar yuklanmoqda -->
 <head>
+    <!-- Kodlash va viewport -->
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{% block title %}{% endblock title %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <!-- Meta ma'lumotlar -->
-    <meta name="description" content="{% trans 'Shifokorlar va klinikalar uchun boshqaruv tizimi' %}">
+    <!-- Sahifa sarlavhasi -->
+    <title>{% block title %}{% trans 'Doctor-A | Shifokorlar uchun Admin Panel' %}{% endblock title %}</title>
+
+    <!-- Asosiy meta teglar (SEO uchun) -->
+    <meta name="description" content="{% trans 'Shifokorlar va klinikalar uchun maxsus boshqaruv tizimi. Klinika jihozlari, xizmatlar va shifokorlar maʼlumotlarini boshqaring.' %}">
+    <meta name="keywords" content="{% trans 'shifokorlar, klinikalar, boshqaruv tizimi, Doctor-A, tibbiy jihozlar, salomatlik, Oʻzbekiston' %}">
     <meta name="author" content="Doctor-A Team">
-    <link rel="canonical" href="https://doctoramedical.uz/">
-    <meta property="og:url" content="https://doctoramedical.uz">
-    <meta property="og:title" content="{% trans 'Doctor-A | Shifokorlar uchun Admin Panel' %}">
-    <meta property="og:description" content="{% trans 'Klinikalar va shifokorlar uchun maxsus boshqaruv tizimi' %}">
-    <meta property="og:type" content="Website">
+    <meta name="robots" content="index, follow">
+
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://doctoramedical.uz{% block canonical_url %}{% endblock canonical_url %}">
+
+    <!-- Open Graph (OG) teglari (Facebook, LinkedIn va boshqa ijtimoiy tarmoqlar uchun) -->
+    <meta property="og:url" content="https://doctoramedical.uz{% block og_url %}{% endblock og_url %}">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="{% block og_title %}{% trans 'Doctor-A | Shifokorlar uchun Admin Panel' %}{% endblock og_title %}">
+    <meta property="og:description" content="{% block og_description %}{% trans 'Klinikalar va shifokorlar uchun maxsus boshqaruv tizimi. Tibbiy jihozlar va xizmatlarni samarali boshqaring.' %}{% endblock og_description %}">
+    <meta property="og:image" content="{% static 'images/og-image.jpg' %}">
+    <meta property="og:image:alt" content="{% trans 'Doctor-A boshqaruv tizimi logotipi' %}">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
     <meta property="og:site_name" content="Doctor-A">
-    <link rel="shortcut icon" href="{% static 'images/favicon.ico' %}">
+    <meta property="og:locale" content="uz_UZ">
+    <meta property="og:locale:alternate" content="en_US">
+    <meta property="og:locale:alternate" content="ru_RU">
+
+    <!-- Twitter Card teglari -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{% block twitter_title %}{% trans 'Doctor-A | Shifokorlar uchun Admin Panel' %}{% endblock twitter_title %}">
+    <meta name="twitter:description" content="{% block twitter_description %}{% trans 'Klinikalar va shifokorlar uchun maxsus boshqaruv tizimi.' %}{% endblock twitter_description %}">
+    <meta name="twitter:image" content="{% static 'images/twitter-image.jpg' %}">
+    <meta name="twitter:image:alt" content="{% trans 'Doctor-A boshqaruv tizimi logotipi' %}">
+    <meta name="twitter:site" content="@DoctorAUzbekistan">
+
+    <!-- Favicon va boshqa ikonalar -->
+    <link rel="shortcut icon" href="{% static 'images/favicon.ico' %}" type="image/x-icon">
+    <link rel="icon" href="{% static 'images/favicon.ico' %}" type="image/x-icon">
+    <link rel="apple-touch-icon" sizes="180x180" href="{% static 'images/apple-touch-icon.png' %}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'images/favicon-32x32.png' %}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{% static 'images/favicon-16x16.png' %}">
+    <link rel="manifest" href="{% static 'site.webmanifest' %}">
 
     <!-- Stil fayllarini ulash -->
     {% include 'administrator/components/styles.html' %}
@@ -25,6 +56,23 @@
     <!-- Qo‘shimcha CSS fayllar uchun blok -->
     {% block vendor_css %}
     {% endblock vendor_css %}
+
+    <!-- Strukturaviy ma'lumotlar (JSON-LD) -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "Doctor-A",
+        "url": "https://doctoramedical.uz",
+        "description": "{% trans 'Shifokorlar va klinikalar uchun maxsus boshqaruv tizimi.' %}",
+        "inLanguage": "uz",
+        "potentialAction": {
+            "@type": "SearchAction",
+            "target": "https://doctoramedical.uz/?q={search_term_string}",
+            "query-input": "required name=search_term_string"
+        }
+    }
+    </script>
 </head>
 <body>
 <!-- Yuklanish animatsiyasi boshlanadi -->

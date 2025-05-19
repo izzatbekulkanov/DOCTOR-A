@@ -1,4 +1,16 @@
 User-agent: *
-Disallow:
+Disallow: /admin/  # Admin panelini qidiruv tizimlaridan yashirish
+Disallow: /login/  # Kirish sahifasini indekslamaslik
+Disallow: /logout/  # Chiqish sahifasini indekslamaslik
+Disallow: /api/  # API endpointlarini indekslamaslik
+Disallow: /*?*  # Dinamik URL'larni (masalan, qidiruv parametrlari) indekslamaslik
 
+# Statik fayllarga ruxsat
+Allow: /static/
+Allow: /media/
+
+# Sitemap
 Sitemap: https://doctoramedical.uz/sitemap.xml
+
+# Crawl kechikishini belgilash (server yukini kamaytirish uchun)
+Crawl-delay: 10
