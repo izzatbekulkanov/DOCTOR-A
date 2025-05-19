@@ -275,7 +275,6 @@ class ClinicEquipmentListView(ListView):
         queryset = ClinicEquipment.objects.filter(is_active=True).order_by('-created_at')
         query = self.request.GET.get('q')
         if query:
-            # JSONField ichidagi ma'lumotlarni qidirish uchun
             queryset = queryset.filter(
                 Q(name__icontains=query) | Q(description__icontains=query)
             )
@@ -283,11 +282,25 @@ class ClinicEquipmentListView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        language_code = get_language()
-        context['language_code'] = language_code
-
+        context['language_code'] = get_language()
         return context
 
+    def get(self, request, *args, **kwargs):
+        self.object_list = self.get_queryset()
+        paginator = Paginator(self.object_list, self.paginate_by)
+        page = request.GET.get('page', 1)
+
+        try:
+            page_obj = paginator.page(page)
+        except PageNotAnInteger:
+            # If page is not an integer, deliver first page
+            page_obj = paginator.page(1)
+        except EmptyPage:
+            # If page is out of range, deliver last page of results
+            page_obj = paginator.page(paginator.num_pages)
+
+        context = self.get_context_data(page_obj=page_obj)
+        return self.render_to_response(context)
 class EquipmentDetailView(DetailView):
     model = ClinicEquipment
     template_name = 'views/equipment_detail.html'

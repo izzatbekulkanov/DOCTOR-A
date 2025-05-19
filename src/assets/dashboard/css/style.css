@@ -78,10 +78,10 @@
 
 html[data-theme-color="skin-1"] {
   --bs-body-color:              #566593;
-  --bs-heading-color:           #031B4E;
+  --bs-heading-color: rgba(50, 88, 168, 0.6);
   --bs-heading-color-rgb:       3, 27, 78;
-  --bs-primary: rgba(3, 27, 78, 0.85);
-  --bs-secondary:               #031B4E;
+  --bs-primary: rgba(27, 70, 159, 0.45);
+  --bs-secondary: rgba(29, 63, 131, 0.54);
   --bs-light:                   #ECF5FB;
   --bs-primary-rgb:             0, 189, 224;
   --bs-secondary-rgb:           3, 27, 78;
@@ -97,8 +97,8 @@ html[data-theme-color="skin-1"] {
   --bs-light-border-subtle:     #fbfdfe;
   --bs-primary-btn-hover-bg: #153c65;
   --bs-primary-btn-hover-border-color: #09223c;
-  --bs-secondary-btn-hover-bg: #031742;
-  --bs-secondary-btn-hover-border-color: #031742;
+  --bs-secondary-btn-hover-bg: rgba(19, 43, 90, 0.58);
+  --bs-secondary-btn-hover-border-color: rgba(22, 62, 147, 0.56);
   --bs-light-btn-hover-bg: #c9d0d5;
   --bs-light-btn-hover-border-color: #c9d0d5; }
   html[data-theme-color="skin-1"] .site-header.style-2 .nav > li.menu-item-has-children.active > a:after, html[data-theme-color="skin-1"] .site-header.style-2 .nav > li.menu-item-has-children:hover > a:after,
@@ -237,7 +237,7 @@ html[data-theme-color="skin-6"] {
   --bs-primary-rgb:             60, 72, 211;
   --bs-secondary-rgb:           10, 27, 78;
   --bs-light-rgb:               244, 245, 255;
-  --bs-primary-text-emphasis:   #181d54;
+  --bs-primary-text-emphasis: rgba(25, 52, 158, 0.69);
   --bs-secondary-text-emphasis: #040b1f;
   --bs-light-text-emphasis:     #626266;
   --bs-primary-bg-subtle:       #d8daf6;

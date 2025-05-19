@@ -60,9 +60,16 @@
                             <div class="row g-0 align-items-center">
                                 <div class="col-md-4">
                                     <div class="ratio ratio-4x3 rounded overflow-hidden shadow-sm">
-                                        <img src="{{ equipment.image.url }}" class="img-fluid"
-                                             alt="{{ equipment.name|get_language_text:CURRENT_LANGUAGE }}"
-                                             style="object-fit: cover; width: 100%; height: 100%;">
+                                        {% if equipment.image %}
+                                            <img src="{{ equipment.image.url }}" class="img-fluid"
+                                                 alt="{{ equipment.name|get_language_text:CURRENT_LANGUAGE }}"
+                                                 style="object-fit: cover; width: 100%; height: 100%;">
+                                        {% else %}
+                                            <img src="{% static 'images/device.webp' %}"
+                                                 class="img-fluid"
+                                                 alt="{% trans 'No image available' %}"
+                                                 style="object-fit: cover; width: 100%; height: 100%;">
+                                        {% endif %}
                                     </div>
                                 </div>
                                 <div class="col-md-8">
@@ -92,14 +99,15 @@
                         {% if page_obj.has_previous %}
                             <li class="page-item">
                                 <a class="page-link rounded-pill px-3 py-2"
-                                   href="?page=1{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">
+                                   href="?page=1{% if request.GET.q %}&q={{ request.GET.q|urlencode }}{% endif %}">
                                     <i class="feather icon-chevrons-left"></i> {% trans "Birinchi" %}
                                 </a>
                             </li>
                             <li class="page-item">
-                                <a class="page-link rounded-pill px-3 py-2" href="?page=
+                                <a class="page-link rounded-pill px-3 py-2"
+                                   href="?page=
 
-                                        {{ page_obj.previous_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">
+                                           {{ page_obj.previous_page_number }}{% if request.GET.q %}&q={{ request.GET.q|urlencode }}{% endif %}">
                                     <i class="feather icon-chevron-left"></i> {% trans "Oldingi" %}
                                 </a>
                             </li>
@@ -107,20 +115,24 @@
                         <li class="page-item disabled">
                             <span class="page-link rounded-pill px-3 py-2">{{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span>
                         </li>
-                        <li class="page-item">
-                            <a class="page-link rounded-pill px-3 py-2" href="?page=
+                        {% if page_obj.has_next %}
+                            <li class="page-item">
+                                <a class="page-link rounded-pill px-3 py-2"
+                                   href="?page=
 
-                                    {{ page_obj.next_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">
-                                {% trans "Keyingi" %} <i class="feather icon-chevron-right"></i>
-                            </a>
-                        </li>
-                        <li class="page-item">
-                            <a class="page-link rounded-pill px-3 py-2" href="?page=
+                                           {{ page_obj.next_page_number }}{% if request.GET.q %}&q={{ request.GET.q|urlencode }}{% endif %}">
+                                    {% trans "Keyingi" %} <i class="feather icon-chevron-right"></i>
+                                </a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link rounded-pill px-3 py-2"
+                                   href="?page=
 
-                                    {{ page_obj.paginator.num_pages }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">
-                                {% trans "Oxirgi" %} <i class="feather icon-chevrons-right"></i>
-                            </a>
-                        </li>
+                                           {{ page_obj.paginator.num_pages }}{% if request.GET.q %}&q={{ request.GET.q|urlencode }}{% endif %}">
+                                    {% trans "Oxirgi" %} <i class="feather icon-chevrons-right"></i>
+                                </a>
+                            </li>
+                        {% endif %}
                     </ul>
                 </nav>
             {% endif %}

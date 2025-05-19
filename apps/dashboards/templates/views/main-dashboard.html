@@ -185,19 +185,19 @@
                 <div class="col-md-4">
                     <div class="card text-center p-3">
                         <h3>Shifokorlar</h3>
-                        <p id="doctor-count">Yuklanmoqda...</p>
+                        <p id="doctor-count">58+</p>
                     </div>
                 </div>
                 <div class="col-md-4">
                     <div class="card text-center p-3">
-                        <h3>Jarrohlar</h3>
-                        <p id="surgeon-count">Yuklanmoqda...</p>
+                        <h3>Bosh Shifokorlar</h3>
+                        <p id="surgeon-count">24+</p>
                     </div>
                 </div>
                 <div class="col-md-4">
                     <div class="card text-center p-3">
-                        <h3>Tashrifchilar</h3>
-                        <p id="visitor-count">Yuklanmoqda...</p>
+                        <h3>Jarroh Shifokorlar</h3>
+                        <p id="visitor-count"></p>
                     </div>
                 </div>
             </div>
@@ -284,19 +284,7 @@
                     <div class="col-xl-3 col-sm-6 " data-wow-delay="0.2s" data-wow-duration="0.8s">
                         <div class="dz-team style-1 ">
                             <div class="dz-media">
-                                <img src="
-
-
-
-
-
-
-
-
-
-
-                                        {% if employee.profile_picture %}{{ employee.profile_picture.url }}{% else %}{% static 'dashboard/images/team/img1.webp' %}{% endif %}"
-                                     alt="{{ employee.full_name }}">
+                                <img src="{% if employee.profile_picture %}{{ employee.profile_picture.url }}{% else %}{% static 'dashboard/images/team/img1.webp' %}{% endif %}" alt="{{ employee.full_name }}">
                                 {#                                <a href="" class="btn btn-primary">#}
                                 {#                                    <i class="feather icon-calendar m-r5"></i>#}
                                 {#                                    {% trans "Qabuliga yozilish" %}#}
