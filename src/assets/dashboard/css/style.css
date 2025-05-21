@@ -80,8 +80,8 @@ html[data-theme-color="skin-1"] {
   --bs-body-color:              #566593;
   --bs-heading-color: rgba(50, 88, 168, 0.6);
   --bs-heading-color-rgb:       3, 27, 78;
-  --bs-primary: rgba(27, 70, 159, 0.45);
-  --bs-secondary: rgba(29, 63, 131, 0.54);
+  --bs-primary: rgb(8, 36, 114);
+  --bs-secondary: rgb(8, 36, 114);
   --bs-light:                   #ECF5FB;
   --bs-primary-rgb:             0, 189, 224;
   --bs-secondary-rgb:           3, 27, 78;
