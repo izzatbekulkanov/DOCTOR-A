@@ -137,8 +137,10 @@ STATIC_URL = "/static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'  # WhiteNoise uchun
 
-# DEBUG=True bo'lsa, qo'shimcha static fayllar katalogi
-STATICFILES_DIRS = [BASE_DIR / "src" / "assets"] if DEBUG else []
+# Statik fayllar manba papkasi (lokal va productionda ishlatiladi)
+STATICFILES_DIRS = [
+    BASE_DIR / "static",
+]
 
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
