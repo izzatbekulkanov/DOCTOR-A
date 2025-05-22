@@ -11,7 +11,11 @@ SECRET_KEY = os.environ.get("SECRET_KEY", default='unsafe-secret-key')
 
 DEBUG = os.environ.get("DEBUG", 'True').lower() in ['true', 'yes', '1']
 
-ENVIRONMENT = 'local'
+
+DJANGO_ENVIRONMENT = os.environ.get("DJANGO_ENVIRONMENT")
+
+print("bu environment",DJANGO_ENVIRONMENT)
+
 
 
 BASE_URL = os.environ.get("BASE_URL", default='https://webtest.namspi.uz/')
@@ -87,12 +91,11 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "config.wsgi.application"
 
-print(f"Current environment: {ENVIRONMENT}")
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
-    } if ENVIRONMENT == 'local' else {
+    } if DJANGO_ENVIRONMENT == 'local' else {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': os.environ.get('POSTGRES_DB', 'doctor_a_db'),
         'USER': os.environ.get('POSTGRES_USER', 'doctor_a_user'),
