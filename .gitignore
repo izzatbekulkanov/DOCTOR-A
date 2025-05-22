@@ -5,7 +5,6 @@ __pycache__/
 *.so
 
 # Virtual muhit
-.venv/
 venv/
 env/
 ENV/
@@ -13,12 +12,19 @@ env.bak/
 venv.bak/
 
 # Ma'lumotlar bazasi
+# Agar faqat PostgreSQL ishlatayotgan bo'lsangiz, SQLite fayllarini o'chirib tashlash mumkin
 db.sqlite3
 db.sqlite3-journal
 
-# Statik va media fayllar (WhiteNoise va media)
+# Statik va media fayllar
 staticfiles/
 media/
+
+# .env fayllari (sezgir ma'lumotlarni saqlash uchun)
+.env
+.env.*
+*.env
+
 
 # Loglar va kesh
 *.log
@@ -35,10 +41,8 @@ coverage.xml
 htmlcov/
 
 # Django maxsus fayllar
-local_settings.py
-*.env
-.env
-.env.*
+migrations/*  # Agar migratsiya fayllarini versiya nazoratiga qo'shmoqchi bo'lmasangiz
+!migrations/__init__.py  # __init__.py ni saqlash uchun
 
 # IDE va muharrirlar
 .idea/
@@ -62,3 +66,9 @@ __pypackages__/
 celerybeat-schedule
 celerybeat.pid
 .ipynb_checkpoints/
+
+# Loyihangizga xos fayllar/papkalar
+# Agar maxsus fayllar yoki papkalar bo'lsa, ularni qo'shishingiz mumkin
+# Masalan:
+# requirements.txt.bak
+# *.backup

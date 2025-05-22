@@ -3,7 +3,7 @@
 {% load custom_filters %}
 
 {% block title %}
-    {% trans "Doctor A | Klinika Qurilmalari" %}
+    {% trans "Doctor A | Klinika Xizmatlar" %}
 {% endblock title %}
 
 {% block content %}
@@ -42,7 +42,7 @@
                         {% csrf_token %}
                         <div class="input-group shadow-sm">
                             <input name="q" class="form-control rounded-start-pill border-0"
-                                   placeholder="{% trans 'Qurilma qidiring...' %}"
+                                   placeholder="{% trans 'Bizning xizmatlarni qidiring...' %}"
                                    type="text" value="{{ request.GET.q }}">
                             <button type="submit" class="btn btn-primary rounded-end-pill">
                                 <i class="feather icon-search"></i>
@@ -87,7 +87,7 @@
                     {% empty %}
                         <div class="text-center py-5 animate__animated animate__fadeIn">
                             <i class="bi bi-tools display-4 text-muted mb-3 d-block"></i>
-                            <p class="fs-5 text-muted">{% trans "Hozircha qurilmalar mavjud emas" %}</p>
+                            <p class="fs-5 text-muted">{% trans "Hozircha xizmatlar mavjud emas" %}</p>
                         </div>
                     {% endfor %}
                 </div>
