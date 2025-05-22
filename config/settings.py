@@ -1,26 +1,24 @@
 import os
 from pathlib import Path
-from django.utils.translation import gettext_lazy as _
 from dotenv import load_dotenv
-
-load_dotenv()
+from django.utils.translation import gettext_lazy as _
 
 BASE_DIR = Path(__file__).resolve().parent.parent
+# ✅ Load .env from BASE_DIR
+load_dotenv(dotenv_path=os.path.join(BASE_DIR, '.env'))
 
-SECRET_KEY = os.environ.get("SECRET_KEY", default='')
+SECRET_KEY = os.environ.get("SECRET_KEY", default='unsafe-secret-key')
 
 DEBUG = os.environ.get("DEBUG", 'True').lower() in ['true', 'yes', '1']
-ENVIRONMENT = 'production'
+
+ENVIRONMENT = 'local'
+
+
 BASE_URL = os.environ.get("BASE_URL", default='https://webtest.namspi.uz/')
 
-ALLOWED_HOSTS = [
-    "localhost",
-    "0.0.0.0",
-    "127.0.0.1",
-    "updatehub.namspi.uz",
-    "webtest.namspi.uz",
-    "doctoramedical.uz"
-]
+ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "")
+if isinstance(ALLOWED_HOSTS, str):
+    ALLOWED_HOSTS = [host.strip() for host in ALLOWED_HOSTS.split(",") if host.strip()]
 
 LOCAL_APPS = [
     "apps.dashboards",
