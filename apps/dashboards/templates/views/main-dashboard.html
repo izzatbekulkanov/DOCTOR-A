@@ -379,7 +379,7 @@
                     <div class="col-lg-4 wow fadeInUp" data-wow-delay="0.{{ forloop.counter }}s"
                          data-wow-duration="0.8s">
                         <div class="dz-card style-2 dz-card-overlay overlay-none news-card"
-                             style="background-image: url({{ news.image.url }});">
+                             style="background-image: url('{% if news.image %}{{ news.image.url }}{% else %}/static/img/default.jpg{% endif %}');">
                             <div class="dz-info">
                                 <div class="content-half">
                                     <div class="post-date">
