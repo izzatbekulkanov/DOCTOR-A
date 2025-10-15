@@ -100,8 +100,13 @@
                                 {% for news in latest_news %}
                                     <div class="widget-post clearfix">
                                         <div class="dz-media">
-                                            <img src="{{ news.image.url }}"
-                                                 alt="{{ news.title|get_language_text:CURRENT_LANGUAGE }}">
+                                            {% if news.image %}
+                                                <img src="{{ news.image.url }}"
+                                                     alt="{{ news.title|get_language_text:CURRENT_LANGUAGE }}">
+                                            {% else %}
+                                                <img src=""
+                                                     alt="{% trans 'Rasm mavjud emas' %}">
+                                            {% endif %}
                                         </div>
                                         <div class="dz-info">
                                             <div class="dz-meta">

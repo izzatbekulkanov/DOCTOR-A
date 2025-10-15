@@ -42,8 +42,8 @@ class MainSettingsView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['site_settings'] = SiteSettings.objects.first()
-        context['banner'] = MainPageBanner.objects.first()  # Faqat bitta banner
-        context['LANGUAGES'] = settings.LANGUAGES  # settings.LANGUAGES ishlatildi
+        context['banner'] = MainPageBanner.objects.first()
+        context['LANGUAGES'] = settings.LANGUAGES
         return context
 
     def resize_image(self, image_file, width=136, height=40):
@@ -77,50 +77,56 @@ class MainSettingsView(TemplateView):
         site_settings.instagram_url = request.POST.get('instagram_url', site_settings.instagram_url)
         site_settings.youtube_url = request.POST.get('youtube_url', site_settings.youtube_url)
 
+        # Logotiplar
         if 'logo_dark' in request.FILES:
             site_settings.logo_dark = self.resize_image(request.FILES['logo_dark'])
         if 'logo_light' in request.FILES:
             site_settings.logo_light = self.resize_image(request.FILES['logo_light'])
 
+        # 🔹 Video fayllarni saqlash
+        if 'video1' in request.FILES:
+            site_settings.video1 = request.FILES['video1']
+            print("🎥 Video 1 yuklandi.")
+        if 'video2' in request.FILES:
+            site_settings.video2 = request.FILES['video2']
+            print("🎥 Video 2 yuklandi.")
+
         site_settings.save()
 
-        # MainPageBanner uchun
-        image = request.FILES.get('banner_image')  # Yangi yuklangan rasm
+        # Banner uchun
+        image = request.FILES.get('banner_image')
         description = {code: request.POST.get(f'description_{code}', "").strip() for code, name in settings.LANGUAGES}
 
         print(f"🟢 So‘rov qabul qilindi! image={'bor' if image else 'yo‘q'}")
 
-        # Xatoliklarni tekshirish (faqat o‘zbek tili uchun majburiy)
         missing_fields = []
-
         if not description.get('uz'):
             missing_fields.append("📌 O'zbek tili uchun tavsif majburiy.")
 
         if missing_fields:
-            print("❌ Xatoliklar ro‘yxati:", missing_fields)
+            print("❌ Xatoliklar:", missing_fields)
             messages.error(request, " ".join(missing_fields))
-            # Xatolik bo‘lsa, sahifani qayta yuklash uchun GET kontekstini qaytarish
             context = self.get_context_data()
             return render(request, self.template_name, context)
 
-        # Bazada mavjud banner bor yoki yo‘qligini tekshiramiz
-        banner = MainPageBanner.objects.first()  # Faqat eng birinchi banner
+        banner = MainPageBanner.objects.first()
 
-        if banner:  # Agar mavjud bo‘lsa, uni yangilaymiz
-            print(f"✏️ Mavjud banner yangilanmoqda... ID: {banner.id}")
+        if banner:
+            print(f"✏️ Banner yangilanmoqda... ID: {banner.id}")
             banner.description = description
-            if image:  # Agar yangi rasm bo‘lsa, uni almashtiramiz
-                print("📸 Yangi rasm yuklandi, almashtirildi.")
+            if image:
                 banner.image = image
+                print("📸 Yangi rasm yuklandi.")
             banner.save()
-            print("✅ Banner muvaffaqiyatli yangilandi!")
-        else:  # Agar banner mavjud bo‘lmasa, yangisini qo‘shamiz
+            print("✅ Banner yangilandi!")
+        else:
             print("🆕 Yangi banner qo‘shilmoqda...")
             banner = MainPageBanner(image=image if image else None, description=description)
             banner.save()
 
-        messages.success(request, "Sayt sozlamalari va banner muvaffaqiyatli saqlandi!")
+        messages.success(request, "Sayt sozlamalari, videolar va banner muvaffaqiyatli saqlandi!")
         return redirect('admin-setting-index')
+
 
 class MainPageBannerView(TemplateView):
     template_name = 'views/main-page-banner.html'

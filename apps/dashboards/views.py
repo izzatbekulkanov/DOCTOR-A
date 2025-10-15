@@ -9,7 +9,7 @@ from django.db.models import Q
 from django.db import models
 from django.views.generic import ListView
 from django.utils.translation import get_language
-from apps.medical.models import Video, ClinicEquipment
+from apps.medical.models import Video, ClinicEquipment, SiteSettings
 from apps.news.models import News, Comment, Announcement
 from members.models import CustomUser
 
@@ -20,6 +20,8 @@ class DashboardsView(TemplateView):
     def get_context_data(self, **kwargs):
         """ Asosiy sahifa uchun barcha ma'lumotlarni olish """
         context = super().get_context_data(**kwargs)
+        site_settings = SiteSettings.objects.first()  # Faqat birinchi sozlama
+        context['site_settings'] = site_settings
         return context
 
 

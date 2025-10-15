@@ -128,35 +128,39 @@
                         <div class="hero-thumbnail d-flex flex-wrap justify-content-center gap-4 position-relative mb-5"
                              style="width: 100%; max-width: 700px;">
 
-                            <!-- 1-video -->
-                            <div class="video-wrapper position-relative video-hover"
-                                 style="width: 48%; aspect-ratio: 9/16; margin-top: 60px;">
-                                <video class="video-el w-100 h-100 rounded object-fit-cover red-shadow" autoplay muted
-                                       loop playsinline
-                                       style="background: #000;">
-                                    <source src="{% static 'dashboard/videos/videoplayback.MOV' %}" type="video/mp4">
-                                    {% trans "Brauzeringiz videoni qo‘llab-quvvatlamaydi." %}
-                                </video>
-                                <!-- Mute/unmute tugma -->
-                                <button class="mute-btn" onclick="toggleMute(this)">
-                                    <span class="mute-icon">🔇</span>
-                                </button>
-                            </div>
+                        <!-- 1-video -->
+                        <div class="video-wrapper position-relative video-hover"
+                             style="width: 48%; aspect-ratio: 9/16; margin-top: 60px;">
+                            <video class="video-el w-100 h-100 rounded object-fit-cover red-shadow" autoplay muted
+                                   loop playsinline style="background: #000;">
+                                {% if site_settings.video1 %}
+                                    <source src="{{ site_settings.video1.url }}" type="video/mp4">
+                                {% else %}
+                                    <source src="{% static 'dashboard/videos/default1.mp4' %}" type="video/mp4">
+                                {% endif %}
+                                {% trans "Brauzeringiz videoni qo‘llab-quvvatlamaydi." %}
+                            </video>
+                            <button class="mute-btn" onclick="toggleMute(this)">
+                                <span class="mute-icon">🔇</span>
+                            </button>
+                        </div>
 
-                            <!-- 2-video -->
-                            <div class="video-wrapper position-relative video-hover"
-                                 style="width: 48%; aspect-ratio: 9/16; margin-top: 0;">
-                                <video class="video-el w-100 h-100 rounded object-fit-cover red-shadow" autoplay muted
-                                       loop playsinline
-                                       style="background: #000;">
-                                    <source src="{% static 'dashboard/videos/videoplayback1.mp4' %}" type="video/mp4">
-                                    {% trans "Brauzeringiz videoni qo‘llab-quvvatlamaydi." %}
-                                </video>
-                                <!-- Mute/unmute tugma -->
-                                <button class="mute-btn" onclick="toggleMute(this)">
-                                    <span class="mute-icon">🔇</span>
-                                </button>
-                            </div>
+                        <!-- 2-video -->
+                        <div class="video-wrapper position-relative video-hover"
+                             style="width: 48%; aspect-ratio: 9/16; margin-top: 0;">
+                            <video class="video-el w-100 h-100 rounded object-fit-cover red-shadow" autoplay muted
+                                   loop playsinline style="background: #000;">
+                                {% if site_settings.video2 %}
+                                    <source src="{{ site_settings.video2.url }}" type="video/mp4">
+                                {% else %}
+                                    <source src="{% static 'dashboard/videos/default2.mp4' %}" type="video/mp4">
+                                {% endif %}
+                                {% trans "Brauzeringiz videoni qo‘llab-quvvatlamaydi." %}
+                            </video>
+                            <button class="mute-btn" onclick="toggleMute(this)">
+                                <span class="mute-icon">🔇</span>
+                            </button>
+                        </div>
 
                         </div>
                     </div>

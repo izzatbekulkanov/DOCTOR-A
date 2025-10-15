@@ -14,12 +14,18 @@ class SiteSettings(models.Model):
     logo_dark = models.ImageField(upload_to='logos/', null=True, blank=True, help_text="Dark rejim uchun logotip")
     logo_light = models.ImageField(upload_to='logos/', null=True, blank=True, help_text="Light rejim uchun logotip")
 
+    # Videolar
+    video1 = models.FileField(upload_to='videos/', null=True, blank=True, help_text="1-video faylni yuklang")
+    video2 = models.FileField(upload_to='videos/', null=True, blank=True, help_text="2-video faylni yuklang")
+
     # Qo'shimcha sozlamalar
     contact_email = models.EmailField(null=True, blank=True, help_text="Aloqa uchun email manzil")
     contact_phone = models.CharField(max_length=20, null=True, blank=True, help_text="Aloqa uchun telefon raqami")
     address = models.TextField(null=True, blank=True, help_text="Kompaniya manzili")
-    maintenance_mode = models.BooleanField(default=False,
-                                           help_text="Saytni texnik xizmat ko'rsatish rejimiga o'tkazish")
+    maintenance_mode = models.BooleanField(
+        default=False,
+        help_text="Saytni texnik xizmat ko'rsatish rejimiga o'tkazish"
+    )
 
     # Ish vaqti
     working_hours = models.CharField(
@@ -45,6 +51,7 @@ class SiteSettings(models.Model):
 
     def __str__(self):
         return self.site_name
+
 
 # Sayt Asosiy Rasmlari
 class MainPageBanner(models.Model):
