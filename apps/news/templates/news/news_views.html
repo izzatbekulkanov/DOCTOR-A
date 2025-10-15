@@ -77,9 +77,15 @@
                 <div class="col" id="news-{{ news.id }}">
                     <div class="card h-100 shadow-sm border-0 rounded-3 overflow-hidden">
                         <div class="card-img-top" style="height: 200px; overflow: hidden;">
-                            <img src="{{ news.image.url }}"
-                                 class="w-100 h-100 object-fit-cover rounded-top"
-                                 alt="{{ news.title|get_language_text:request.LANGUAGE_CODE }}">
+                            {% if news.image %}
+                                <img src="{{ news.image.url }}"
+                                     class="w-100 h-100 object-fit-cover rounded-top"
+                                     alt="{{ news.title|get_language_text:request.LANGUAGE_CODE }}">
+                            {% else %}
+                                <img src="{% static 'dashboard/images/blog/grid/default-image.webp' %}"
+                                     class="w-100 h-100 object-fit-cover rounded-top"
+                                     alt="Default image">
+                            {% endif %}
                         </div>
                         <div class="card-body p-4">
                             <h5 class="card-title fw-bold text-dark mb-2">

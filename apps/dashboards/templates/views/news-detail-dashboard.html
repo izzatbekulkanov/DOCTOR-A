@@ -132,10 +132,13 @@
                             <div class="widget-post-bx">
                                 {% for news in related_news %}
                                     <div class="widget-post clearfix">
-                                        <div class="dz-media">
-                                            <img src="{{ news.image.url|default:'/static/dashboard/images/blog/grid/default-image.webp' }}"
+                                        {% if news.image %}
+                                            <img src="{{ news.image.url }}"
                                                  alt="{{ news.title|get_language_text:CURRENT_LANGUAGE }}">
-                                        </div>
+                                        {% else %}
+                                            <img src=""
+                                                 alt="{% trans 'Rasm mavjud emas' %}">
+                                        {% endif %}
                                         <div class="dz-info">
                                             <div class="dz-meta">
                                                 <ul>
