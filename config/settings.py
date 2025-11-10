@@ -163,4 +163,5 @@ SESSION_COOKIE_AGE = 3600
 CSRF_TRUSTED_ORIGINS = [
     "https://*.namspi.uz",
     "https://doctoramedical.uz",
+    "https://doctoramedclinic.uz",
 ]
