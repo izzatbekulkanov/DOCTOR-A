@@ -13,7 +13,6 @@
 
 {% block content %}
 <div class="container my-5">
-    <!-- Sarlavha -->
     <div class="text-center mb-5 animate__animated animate__fadeIn">
         <h1 class="display-5 fw-bold">{% trans "Bizning Video Lavhalar" %}</h1>
         <p class="lead text-muted">{% trans "Klinikamiz faoliyati va xizmatlari bilan yaqindan tanishing." %}</p>
@@ -42,15 +41,27 @@
             <div class="col animate__animated animate__fadeInUp" style="animation-delay: {{ forloop.counter|multiply:0.1 }}s;">
                 <div class="card h-100 border-0 shadow-sm w-100">
                     <div class="ratio ratio-16x9">
-                        <iframe src="{{ video.get_embed_url }}?rel=0& modestbranding=1&controls=1&showinfo=0&autoplay=0"
-                                title="{{ video.get_title }}"
-                                allowfullscreen
-                                class="rounded-top w-100 h-100"
-                                frameborder="0"
-                                loading="lazy"></iframe>
+                        <iframe
+                            src="{{ video.get_embed_url }}"
+                            title="{{ video.get_title }}"
+                            class="rounded-top w-100 h-100 video-iframe"
+                            frameborder="0"
+                            allowfullscreen
+                            loading="lazy"
+                            referrerpolicy="strict-origin-when-cross-origin">
+                        </iframe>
                     </div>
                     <div class="card-body text-center">
-                        <h6 class="card-title mb-0 text-truncate">{{ video.get_title|truncatechars:50 }}</h6>
+                        <h6 class="card-title mb-2 text-truncate">
+                            {{ video.get_title|truncatechars:50 }}
+                        </h6>
+                        <!-- Fallback link: agar iframe ishlamasa ham foydalanuvchi YouTube'ga o'ta olsin -->
+                        <a href="https://www.youtube.com/watch?v={{ video.embed_url }}"
+                           target="_blank"
+                           rel="noopener noreferrer"
+                           class="btn btn-outline-primary btn-sm">
+                            {% trans "YouTube’da ko‘rish" %}
+                        </a>
                     </div>
                 </div>
             </div>
@@ -62,7 +73,7 @@
         {% endfor %}
     </div>
 
-    <!-- Paginatsiya -->
+    <!-- Paginatsiya (o'zgartirmadik) -->
     {% if videos.has_other_pages %}
         <nav class="mt-5 animate__animated animate__fadeIn" style="animation-delay: 0.5s;">
             <ul class="pagination justify-content-center gap-2">
@@ -103,20 +114,34 @@
 
 {% block script %}
     <script>
-        // Qidiruv formasiga enter tugmasi bilan submit qilish
-        document.querySelector('input[name="q"]').addEventListener('keypress', function (e) {
-            if (e.key === 'Enter') {
-                e.preventDefault();
-                this.form.submit();
-            }
-        });
-
-        // Videolarni sahifa yuklanganda animatsiya bilan ko'rsatish
         document.addEventListener('DOMContentLoaded', function () {
+            // Qidiruv formasiga enter tugmasi bilan submit qilish
+            const searchInput = document.querySelector('input[name="q"]');
+            if (searchInput) {
+                searchInput.addEventListener('keypress', function (e) {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        this.form.submit();
+                    }
+                });
+            }
+
+            // Kartalarga animatsiya
             const cards = document.querySelectorAll('.card');
             cards.forEach((card, index) => {
                 card.classList.add('animate__animated', 'animate__fadeInUp');
                 card.style.animationDelay = `${index * 0.1}s`;
+            });
+
+            // Konsol uchun minimal debug (xato bo'lsa ko'rish uchun)
+            const iframes = document.querySelectorAll('.video-iframe');
+            console.log('Video iframelar soni:', iframes.length);
+            iframes.forEach((iframe, index) => {
+                console.log(`[VIDEO #${index + 1}] src =`, iframe.src);
+            });
+
+            window.addEventListener('error', function (event) {
+                console.error('[GLOBAL ERROR]', event.message);
             });
         });
     </script>

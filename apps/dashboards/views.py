@@ -232,25 +232,19 @@ class VideosView(TemplateView):
     redirect_field_name = 'redirect_to'
 
     def get_context_data(self, **kwargs):
-        """ Asosiy sahifa uchun barcha ma'lumotlarni olish """
         context = super().get_context_data(**kwargs)
 
-        # Qidiruv so‘rovi
         search_query = self.request.GET.get('q', '').strip()
 
-        # Videolarni olish
         videos = Video.objects.filter(is_active=True)
 
-        # Qidiruv filtri (sarlavha bo‘yicha)
         if search_query:
             videos = videos.filter(
-                Q(title__contains=search_query)  # JSONField'da qidiruv
+                Q(title__contains=search_query)
             )
 
-        # Tartiblash (eng yangi avval)
         videos = videos.order_by('-created_at')
 
-        # Paginatsiya (har sahifada 6 ta video)
         paginator = Paginator(videos, 6)
         page_number = self.request.GET.get('page')
         try:

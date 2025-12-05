@@ -1,6 +1,6 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
-# Create your models here.
+from django.core.exceptions import ValidationError
 from django.contrib.auth.models import User
 from django.core.validators import RegexValidator
 from members.models import CustomUser
@@ -180,19 +180,23 @@ class ClinicEquipment(models.Model):
 import re
 
 class Video(models.Model):
-    YOUTUBE_REGEX = r'(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:embed\/|watch\?v=)|youtu\.be\/)([A-Za-z0-9_-]+)'
+    # Faqat 11 ta belgidan iborat YouTube video ID
+    YOUTUBE_ID_REGEX = r'^[A-Za-z0-9_-]{11}$'
 
-    youtube_embed_validator = RegexValidator(
-        regex=YOUTUBE_REGEX,
-        message=_("To‘g‘ri YouTube URL yoki Video ID kiriting (masalan, https://www.youtube.com/embed/07NL6SlDRUY yoki 07NL6SlDRUY).")
+    title = models.JSONField(
+        default=dict,
+        help_text=_("Har xil tillarda video sarlavhasi (JSON formatda)")
     )
 
-    title = models.JSONField(default=dict, help_text=_("Har xil tillarda video sarlavhasi (JSON formatda)"))
-    embed_url = models.CharField(
+    embed_url = models.CharField(   # nomini o'zgartirmayapmiz, lekin ichida ID saqlaymiz
         max_length=50,
-        validators=[youtube_embed_validator],
-        help_text=_("YouTube video ID (masalan, 07NL6SlDRUY)")
+        validators=[RegexValidator(
+            regex=r'.+',
+            message=_("To‘g‘ri YouTube URL yoki Video ID kiriting.")
+        )],
+        help_text=_("YouTube video ID yoki URL (masalan, 3V0SztVfsMo yoki https://youtu.be/3V0SztVfsMo)")
     )
+
     is_active = models.BooleanField(default=True, help_text=_("Video faol yoki faol emasligini belgilaydi"))
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -207,16 +211,40 @@ class Video(models.Model):
     def get_title(self, language_code='uz'):
         return self.title.get(language_code, self.title.get('uz', 'Sarlavha mavjud emas'))
 
-    def clean_embed_url(self):
-        """Video URL’dan faqat video ID’ni ajratib olish."""
-        match = re.search(self.YOUTUBE_REGEX, self.embed_url)
+    @staticmethod
+    def extract_video_id(value: str) -> str:
+        """
+        Kiritilgan qiymatdan YouTube video ID ni ajratib oladi.
+        ID, watch URL, share URL, embed URL hammasini qo'llab-quvvatlaydi.
+        """
+        value = (value or "").strip()
+
+        # Agar to'g'ridan-to'g'ri 11 belgili ID bo'lsa
+        if re.match(r'^[A-Za-z0-9_-]{11}$', value):
+            return value
+
+        # URL ichidan ID ni ajratamiz
+        pattern = r'(?:v=|be/|embed/|shorts/)([A-Za-z0-9_-]{11})'
+        match = re.search(pattern, value)
         if match:
-            self.embed_url = match.group(1)
+            return match.group(1)
+
+        raise ValidationError(_("To‘g‘ri YouTube URL yoki Video ID kiriting."))
+
+    def clean(self):
+        # embed_url ichidan faqat video ID ni saqlaymiz
+        try:
+            self.embed_url = self.extract_video_id(self.embed_url)
+        except ValidationError as e:
+            raise ValidationError({'embed_url': e})
 
     def save(self, *args, **kwargs):
-        self.clean_embed_url()
+        self.full_clean()
         super().save(*args, **kwargs)
 
     def get_embed_url(self):
-        """To‘liq iframe URL hosil qilish."""
-        return f"https://www.youtube.com/embed/{self.embed_url}"
+        """
+        To‘liq iframe URL hosil qilish.
+        youtube-nocookie domenidan foydalanamiz (maxfiylik va extensionlar kamroq aralashishi uchun).
+        """
+        return f"https://www.youtube-nocookie.com/embed/{self.embed_url}"
