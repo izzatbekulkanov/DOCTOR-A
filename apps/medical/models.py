@@ -28,8 +28,7 @@ class SiteSettings(models.Model):
     )
 
     # Ish vaqti
-    working_hours = models.CharField(
-        max_length=255,
+    working_hours = models.TextField(
         null=True,
         blank=True,
         help_text="Ish vaqti (masalan: Dushanba - Juma 9:00 - 17:00)"
@@ -139,7 +138,7 @@ class Partner(models.Model):
 
 class MedicalCheckupApplication(models.Model):
     full_name = models.CharField(max_length=255, verbose_name="Ism va familiya")
-    phone_number = models.CharField(max_length=15, verbose_name="Telefon raqami")
+    phone_number = models.CharField(max_length=25, verbose_name="Telefon raqami")
     message = models.TextField(verbose_name="Xabar", blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Yaratilgan vaqt")
     is_seen = models.BooleanField(default=False, verbose_name="Ko‘rildi")  # Yangi maydon

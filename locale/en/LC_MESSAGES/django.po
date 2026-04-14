@@ -3208,3 +3208,24 @@ msgstr ""
 #: venv/lib/python3.12/site-packages/django/views/templates/default_urlconf.html:248
 msgid "Connect, get help, or contribute"
 msgstr ""
+
+msgid "Uskunalar ro'yxati"
+msgstr "Equipment List"
+
+msgid "Bosh sahifa"
+msgstr "Home"
+
+msgid "Uskunalar"
+msgstr "Equipment"
+
+msgid "Texnologiyalar"
+msgstr "Technologies"
+
+msgid "Bizning tibbiy uskunalarimiz"
+msgstr "Our Medical Equipment"
+
+msgid "Bizning klinikamiz eng zamonaviy va yuqori aniqlikdagi tibbiy uskunalar bilan jihozlangan."
+msgstr "Our clinic is equipped with the latest and highest precision medical equipment."
+
+msgid "View Equipment"
+msgstr "View Equipment"

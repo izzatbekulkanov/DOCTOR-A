@@ -1,5 +1,6 @@
 {% load static %}
 {% load i18n %}
+{% load custom_filters %}
 
 <footer class="site-footer style-1 overlay-primary-dark"
         style="background-image: url({% static 'dashboard/images/background/bg4.webp' %})">
@@ -48,7 +49,7 @@
                             </div>
                             <div class="icon-content">
                                 <h5 class="dz-title">{% trans "Ish vaqti" %}</h5>
-                                <p>{{ site_settings.working_hours }}</p>
+                                <div>{{ site_settings.working_hours|render_rich_text }}</div>
                             </div>
                         </div>
                     </div>

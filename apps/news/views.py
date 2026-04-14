@@ -184,13 +184,14 @@ class NewsDetailView(View):
 
         # ✅ **Ko‘p tilli yangilash**
         for lang_code, _ in self.LANGUAGES:
-            title_value = request.POST.get(f"title_{lang_code}", "").strip()
-            content_value = request.POST.get(f"content_{lang_code}", "").strip()
+            title_key = f"title_{lang_code}"
+            content_key = f"content_{lang_code}"
 
-            if title_value:
-                news.title[lang_code] = title_value  # JSONField uchun
-            if content_value:
-                news.content[lang_code] = content_value  # JSONField uchun
+            if title_key in request.POST:
+                news.title[lang_code] = request.POST.get(title_key, "").strip()
+
+            if content_key in request.POST:
+                news.content[lang_code] = request.POST.get(content_key, "").strip()
 
         # ✅ **Rasmni yangilash**
         if "image" in request.FILES:

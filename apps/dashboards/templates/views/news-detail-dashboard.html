@@ -60,7 +60,9 @@
                                     </figure>
                                     <i class="flaticon-right-quote"></i>
                                 </blockquote>
-                                <p>{{ news.content|get_language_text:CURRENT_LANGUAGE }}</p>
+                                <div class="news-rich-text">
+                                    {{ news.content|get_language_text:CURRENT_LANGUAGE|render_rich_text }}
+                                </div>
                             </div>
                         </div>
                     </div>

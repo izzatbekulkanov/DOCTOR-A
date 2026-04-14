@@ -95,7 +95,7 @@
                                 {% trans "Chop etilgan" %} - {{ news.published_date|date:"Y-m-d" }}
                             </p>
                             <p class="text-muted mb-4">
-                                {{ news.content|get_language_text:request.LANGUAGE_CODE|truncatewords:20 }}
+                                {{ news.content|get_language_text:request.LANGUAGE_CODE|striptags|truncatewords:20 }}
                             </p>
                             <div class="d-flex gap-2">
                                 <!-- Batafsil tugmasi -->

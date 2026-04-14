@@ -1,0 +1,379 @@
+{% extends "v1/base.html" %}
+{% load static custom_filters %}
+
+{% block title %}{{ videos_page.page_title }}{% endblock %}
+
+{% block extra_head %}
+    <style>
+        .video-library-card {
+            margin-bottom: 30px;
+            overflow: hidden;
+            border-radius: 6px;
+            background-color: #ffffff;
+            border: 1px solid rgba(226, 232, 240, 0.95);
+            box-shadow: 0 0 20px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        .video-library-card .blog-content {
+            box-shadow: none;
+            padding: 24px;
+        }
+
+        .video-library-media {
+            position: relative;
+            display: block;
+            overflow: hidden;
+            background: #122738;
+        }
+
+        .video-library-media img {
+            display: block;
+            width: 100%;
+            aspect-ratio: 16 / 10;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .video-library-media::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, rgba(18, 39, 56, 0.05) 0%, rgba(18, 39, 56, 0.72) 100%);
+        }
+
+        .video-library-card:hover .video-library-media img {
+            transform: scale(1.05);
+        }
+
+        .video-library-media-top {
+            position: absolute;
+            top: 18px;
+            left: 18px;
+            right: 18px;
+            z-index: 2;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .video-library-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 12px;
+            border-radius: 4px;
+            background: rgba(255, 255, 255, 0.92);
+            color: #15233c;
+            font-size: 12px;
+            font-weight: 700;
+            line-height: 1;
+            text-transform: uppercase;
+        }
+
+        .video-library-play {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            z-index: 2;
+            transform: translate(-50%, -50%);
+        }
+
+        .video-library-play.video-btn {
+            width: 72px;
+            height: 72px;
+            line-height: 72px;
+            background-color: rgba(255, 0, 0, 0.68);
+        }
+
+        .video-library-play.video-btn i {
+            left: 2px;
+            font-size: 42px;
+        }
+
+        .video-library-media-bottom {
+            position: absolute;
+            left: 18px;
+            right: 18px;
+            bottom: 18px;
+            z-index: 2;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            color: #ffffff;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .video-library-media-bottom span {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .video-library-card .blog-content ul {
+            margin-bottom: 14px;
+        }
+
+        .video-library-card .blog-content h3 {
+            min-height: 64px;
+            margin-bottom: 14px;
+        }
+
+        .video-library-card .blog-content p {
+            margin-top: 0;
+            margin-bottom: 20px;
+            color: #66788f;
+        }
+
+        .video-library-actions {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: auto;
+            padding-top: 18px;
+            border-top: 1px solid #edf1f6;
+        }
+
+        .video-library-actions .read-more {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 0;
+        }
+
+        .video-library-modal .modal-content {
+            border: none;
+            border-radius: 6px;
+            overflow: hidden;
+            background: #0f1722;
+        }
+
+        .video-library-modal .modal-header {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 16px 20px;
+            background: rgba(0, 0, 0, 0.18);
+        }
+
+        .video-library-modal .modal-title {
+            color: #ffffff;
+            font-size: 20px;
+            line-height: 1.4;
+        }
+
+        .video-library-modal .btn-close {
+            filter: invert(1);
+            opacity: 0.85;
+        }
+
+        .video-library-modal .modal-body {
+            padding: 0;
+            background: #0f1722;
+        }
+
+        .video-library-modal iframe {
+            display: block;
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            border: 0;
+            background: #000000;
+        }
+
+        @media only screen and (max-width: 767px) {
+            .video-library-card .blog-content {
+                padding: 20px;
+            }
+
+            .video-library-card .blog-content h3 {
+                min-height: auto;
+            }
+
+            .video-library-play.video-btn {
+                width: 64px;
+                height: 64px;
+                line-height: 64px;
+            }
+
+            .video-library-play.video-btn i {
+                font-size: 38px;
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    <div class="page-title-area bg-5">
+        <div class="container">
+            <div class="page-title-content">
+                <h2>{{ videos_page.page_title }}</h2>
+                <ul>
+                    <li>
+                        <a href="{% url 'landing-v1' %}">
+                            {{ videos_page.home_label }}
+                        </a>
+                    </li>
+
+                    <li class="active">{{ videos_page.page_title }}</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <section class="blog-area bg-color ptb-100">
+        <div class="container">
+            <div data-aos="fade-up" data-aos-duration="1200" class="section-title">
+                <span class="top-title">{{ videos_page.section_top_title }}</span>
+                <h2>{{ videos_page.section_heading }}</h2>
+                <p>{{ videos_page.section_description }}</p>
+            </div>
+
+            <div class="row justify-content-center">
+                <div class="col-lg-6 col-md-8">
+                    <div class="blog-details-right-area">
+                        <div data-aos="fade-up" data-aos-duration="1000" class="blog-widget search-widget">
+                            <form class="search-form" method="get">
+                                <input type="search" class="form-control" name="q" value="{{ search_query }}" placeholder="{{ videos_page.search_placeholder }}">
+                                <button type="submit">
+                                    <i class="bx bx-search"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                {% for video in videos %}
+                    <div data-aos="fade-up" data-aos-duration="{% cycle '1200' '1400' '1600' '1800' '2000' '2200' %}" class="col-xl-4 col-lg-6 col-md-6 d-flex">
+                        <article class="single-blog news-grid-card video-library-card h-100 d-flex flex-column w-100">
+                            <div class="video-library-media">
+                                <img src="https://i.ytimg.com/vi/{{ video.embed_url }}/hqdefault.jpg" alt="{{ video.title|get_language_text:CURRENT_LANGUAGE }}">
+
+                                <div class="video-library-media-top">
+                                    <span class="video-library-badge">
+                                        <i class="bx bx-video"></i>{{ videos_page.video_label }}
+                                    </span>
+                                    <span class="video-library-badge">
+                                        <i class="bx bx-calendar"></i>{{ video.created_at|date:"d / m / Y" }}
+                                    </span>
+                                </div>
+
+                                <a
+                                    href="#"
+                                    class="video-btn video-library-play js-video-modal-trigger"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#videoPreviewModal"
+                                    data-video-url="{{ video.get_embed_url }}"
+                                    data-video-title="{{ video.title|get_language_text:CURRENT_LANGUAGE }}"
+                                    aria-label="{{ videos_page.play_now }}">
+                                    <i class="bx bx-play"></i>
+                                </a>
+
+                                <div class="video-library-media-bottom">
+                                    <span><i class="bx bx-play-circle"></i>{{ videos_page.play_now }}</span>
+                                    <span><i class="bx bx-time-five"></i>{{ video.created_at|date:"d F Y" }}</span>
+                                </div>
+                            </div>
+
+                            <div class="blog-content d-flex flex-column flex-grow-1">
+                                <ul>
+                                    <li>{{ videos_page.video_label }}</li>
+                                    <li>{{ video.created_at|date:"d / m / Y" }}</li>
+                                </ul>
+
+                                <h3>{{ video.title|get_language_text:CURRENT_LANGUAGE }}</h3>
+                                <p>{{ videos_page.section_description|truncatechars:110 }}</p>
+
+                                <div class="video-library-actions">
+                                    <a
+                                        href="#"
+                                        class="read-more js-video-modal-trigger"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#videoPreviewModal"
+                                        data-video-url="{{ video.get_embed_url }}"
+                                        data-video-title="{{ video.title|get_language_text:CURRENT_LANGUAGE }}">
+                                        {{ videos_page.play_now }} <i class="bx bx-right-arrow-alt"></i>
+                                    </a>
+
+                                    <a href="https://www.youtube.com/watch?v={{ video.embed_url }}" target="_blank" rel="noopener noreferrer" class="read-more">
+                                        {{ videos_page.watch_youtube }} <i class="bx bx-link-external"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </article>
+                    </div>
+                {% empty %}
+                    <div class="col-lg-12 col-md-12">
+                        <div class="single-blog">
+                            <div class="blog-content">
+                                <h3>{{ videos_page.empty_title }}</h3>
+                                <p>{{ videos_page.empty_description }}</p>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+
+                {% if page_obj.paginator.num_pages > 1 %}
+                    <div data-aos="fade-up" data-aos-duration="1200" class="col-lg-12 col-md-12">
+                        <div class="pagination-area text-center">
+                            {% if page_obj.has_previous %}
+                                <a href="?page={{ page_obj.previous_page_number }}{% if search_query %}&q={{ search_query|urlencode }}{% endif %}" class="prev page-numbers">
+                                    <i class="bx bx-chevrons-left"></i>
+                                </a>
+                            {% endif %}
+
+                            {% for page_number in page_obj.paginator.page_range %}
+                                <a href="?page={{ page_number }}{% if search_query %}&q={{ search_query|urlencode }}{% endif %}" class="page-numbers{% if page_number == page_obj.number %} active{% endif %}">{{ page_number }}</a>
+                            {% endfor %}
+
+                            {% if page_obj.has_next %}
+                                <a href="?page={{ page_obj.next_page_number }}{% if search_query %}&q={{ search_query|urlencode }}{% endif %}" class="next page-numbers">
+                                    <i class="bx bx-chevrons-right"></i>
+                                </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </section>
+
+    <div class="modal fade video-library-modal" id="videoPreviewModal" tabindex="-1" aria-labelledby="videoPreviewModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="videoPreviewModalLabel">{{ videos_page.page_title }}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ videos_page.modal_close }}"></button>
+                </div>
+                <div class="modal-body">
+                    <iframe id="videoPreviewFrame" src="" title="{{ videos_page.page_title }}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block extra_scripts %}
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const modal = document.getElementById("videoPreviewModal");
+            const modalTitle = document.getElementById("videoPreviewModalLabel");
+            const modalFrame = document.getElementById("videoPreviewFrame");
+
+            document.querySelectorAll(".js-video-modal-trigger").forEach(function (trigger) {
+                trigger.addEventListener("click", function (event) {
+                    event.preventDefault();
+                    modalTitle.textContent = trigger.dataset.videoTitle || "{{ videos_page.page_title }}";
+                    modalFrame.src = trigger.dataset.videoUrl ? trigger.dataset.videoUrl + "?autoplay=1" : "";
+                });
+            });
+
+            modal.addEventListener("hidden.bs.modal", function () {
+                modalFrame.src = "";
+            });
+        });
+    </script>
+{% endblock %}

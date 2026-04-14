@@ -1,5 +1,5 @@
 {% extends 'administrator/main.html' %}
-{% load i18n %}
+{% load i18n static %}
 {% load custom_filters %}  {# get_language_text filtrini yuklash #}
 
 {% block vendor_css %}
@@ -26,6 +26,25 @@
         .nav-tabs .nav-link:hover:not(.active) {
             border-bottom: 2px solid #6c757d;
             color: #6c757d;
+        }
+
+        .news-editor-wrapper .ql-toolbar.ql-snow,
+        .news-editor-wrapper .ql-container.ql-snow {
+            border-color: #dee2e6;
+        }
+
+        .news-editor-wrapper .ql-toolbar.ql-snow {
+            border-radius: 0.75rem 0.75rem 0 0;
+        }
+
+        .news-editor-wrapper .ql-container.ql-snow {
+            border-radius: 0 0 0.75rem 0.75rem;
+            min-height: 240px;
+        }
+
+        .news-editor-wrapper .ql-editor {
+            min-height: 240px;
+            font-size: 1rem;
         }
     </style>
 {% endblock vendor_css %}
@@ -79,7 +98,7 @@
                                         </label>
                                         <input type="text" name="title_{{ lang_code }}"
                                                class="form-control border rounded-3 shadow-sm py-2 px-3"
-                                               value="{{ news.title|get_language_text:lang_code }}"
+                                               value="{{ news.title|lookup:lang_code }}"
                                                placeholder="{% trans 'Sarlavha kiriting...' %}">
                                     </div>
 
@@ -88,10 +107,13 @@
                                         <label class="form-label fw-semibold text-muted">
                                             {% trans "Matn" %} ({{ lang_name }})
                                         </label>
+                                        <div class="news-editor-wrapper shadow-sm rounded-3">
+                                            <div class="news-editor" id="editor-{{ lang_code }}"></div>
+                                        </div>
                                         <textarea name="content_{{ lang_code }}"
-                                                  class="form-control border rounded-3 shadow-sm py-2 px-3"
-                                                  rows="6"
-                                                  placeholder="{% trans 'Matn kiriting...' %}">{{ news.content|get_language_text:lang_code }}</textarea>
+                                                  class="news-editor-input d-none"
+                                                  data-lang="{{ lang_code }}"
+                                                  placeholder="{% trans 'Matn kiriting...' %}">{{ news.content|lookup:lang_code }}</textarea>
                                     </div>
 
                                     <!-- 📷 Rasm -->
@@ -127,11 +149,56 @@
 {% endblock content %}
 
 {% block vendor_js %}
+    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> <!-- ✅ SweetAlert kutubxonasi -->
 
     <script>
         $(document).ready(function () {
+            const editorToolbar = [
+                ['bold', 'italic', 'underline', 'strike'],
+                ['blockquote', 'code-block'],
+                [{header: 1}, {header: 2}],
+                [{list: 'ordered'}, {list: 'bullet'}],
+                [{script: 'sub'}, {script: 'super'}],
+                [{indent: '-1'}, {indent: '+1'}],
+                [{direction: 'rtl'}],
+                [{size: ['small', false, 'large', 'huge']}],
+                [{header: [1, 2, 3, 4, 5, 6, false]}],
+                [{color: []}, {background: []}],
+                [{align: []}],
+                ['clean']
+            ];
+
+            function normalizeEditorHtml(html) {
+                return html === '<p><br></p>' ? '' : html.trim();
+            }
+
+            function syncEditor($textarea, quill) {
+                $textarea.val(normalizeEditorHtml(quill.root.innerHTML));
+            }
+
+            $('.news-editor-input').each(function () {
+                const $textarea = $(this);
+                const lang = $textarea.data('lang');
+                const quill = new Quill(`#editor-${lang}`, {
+                    theme: 'snow',
+                    modules: {
+                        toolbar: editorToolbar
+                    }
+                });
+
+                if ($textarea.val().trim()) {
+                    quill.root.innerHTML = $textarea.val();
+                }
+
+                syncEditor($textarea, quill);
+                quill.on('text-change', function () {
+                    syncEditor($textarea, quill);
+                });
+            });
+
             $(".save-news").click(function () {
                 var news_id = "{{ news.id }}"; // 🔹 Yangilik ID'ni olish
                 var formData = new FormData(); // 🔹 FormData obyektini yaratish

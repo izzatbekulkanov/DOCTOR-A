@@ -1,0 +1,205 @@
+{% load static i18n %}
+<!doctype html>
+<html lang="zxx">
+    <head>
+		<!-- REQUIRED META TAGS -->
+		<meta charset="utf-8">
+			<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+			<!-- FAVICON -->
+			<link rel="icon" type="image/x-icon" href="{% static 'medic/favicon/favicon.ico' %}">
+			<link rel="icon" type="image/png" sizes="32x32" href="{% static 'medic/favicon/favicon-32x32.png' %}">
+			<link rel="icon" type="image/png" sizes="16x16" href="{% static 'medic/favicon/favicon-16x16.png' %}">
+			<link rel="apple-touch-icon" href="{% static 'medic/favicon/apple-touch-icon.png' %}">
+			<link rel="manifest" href="{% static 'medic/favicon/site.webmanifest' %}">
+			<!-- TITLE -->
+		<title>{% block title %}Medic - Hospital, Diagnostic, Clinic, Health and Medical Lab HTML Website Template{% endblock %}</title>
+
+		<!-- BOOTSTRAP MIN CSS --> 
+		<link rel="stylesheet" href="{% static 'medic/css/bootstrap.min.css' %}">
+		<!-- OWL THEME DEFAULT MIN CSS --> 
+		<link rel="stylesheet" href="{% static 'medic/css/owl.theme.default.min.css' %}">
+		<!-- OWL CAROUSEL MIN CSS --> 
+		<link rel="stylesheet" href="{% static 'medic/css/owl.carousel.min.css' %}">
+		<!-- MAGNIFIC POPUP MIN CSS --> 
+		<link rel="stylesheet" href="{% static 'medic/css/magnific-popup.min.css' %}">
+		<!-- ANIMATE MIN CSS --> 
+		<link rel="stylesheet" href="{% static 'medic/css/animate.min.css' %}">
+		<!-- BOXICONS CSS --> 
+		<link rel="stylesheet" href="{% static 'medic/css/boxicons.min.css' %}"> 
+		<!-- FLATICON CSS --> 
+		<link rel="stylesheet" href="{% static 'medic/css/flaticon.css' %}">
+		<!-- MEANMENU MIN CSS -->
+		<link rel="stylesheet" href="{% static 'medic/css/meanmenu.min.css' %}">
+		<!-- NICE SELECT MIN CSS -->
+		<link rel="stylesheet" href="{% static 'medic/css/nice-select.min.css' %}">
+		<!-- ODOMETER MIN CSS-->
+		<link rel="stylesheet" href="{% static 'medic/css/odometer.min.css' %}">
+		<!-- AOS CSS -->
+		<link rel="stylesheet" href="{% static 'medic/css/aos.css' %}">
+			<!-- STYLE CSS -->
+			<link rel="stylesheet" href="{% static 'medic/css/style.css' %}">
+			<!-- RESPONSIVE CSS -->
+			<link rel="stylesheet" href="{% static 'medic/css/responsive.css' %}">
+			{% block extra_head %}{% endblock %}
+
+	    </head>
+
+    <body>
+    	
+		<!-- START PRELOADER AREA -->
+		<div class="preloader">
+			<div class="lds-ripple">
+				<div></div>
+				<div></div>
+			</div>
+		</div>
+		<!-- END PRELOADER AREA -->
+
+		{% include "v1/partials/_header.html" %}
+
+		{% block content %}{% endblock %}
+
+		{% include "v1/partials/_footer.html" %}
+
+		<!-- START GO TOP AREA -->
+		<div class="go-top">
+			<i class='bx bx-chevrons-up'></i>
+		</div>
+		<!-- END GO TOP AREA -->
+
+		<!-- Start LTR & RTL Button -->
+		<div class="ltr-rtl-button">
+			<a class="default-btn active ltr">
+			    LTR
+			</a>
+			<a class="default-btn rtl">
+			    RTL
+			</a>
+		</div>
+		<!-- End LTR & RTL Button -->
+
+        <!-- JQUERY MIN JS -->
+        <script src="{% static 'medic/js/jquery.min.js' %}"></script>
+        <!-- BOOTSTRAP MIN JS -->
+        <script src="{% static 'medic/js/bootstrap.bundle.min.js' %}"></script>
+        <!-- MEANMENU MIN JS -->
+		<script src="{% static 'medic/js/meanmenu.min.js' %}"></script>
+        <!-- WOW MIN JS -->
+        <script src="{% static 'medic/js/wow.min.js' %}"></script>
+        <!-- OWL CAROUSEL MIN JS -->
+		<script src="{% static 'medic/js/owl.carousel.min.js' %}"></script>
+        <!-- OWL MAGNIFIC POPUP MIN JS -->
+		<script src="{% static 'medic/js/magnific-popup.min.js' %}"></script>
+        <!-- NICE SELECT MIN JS -->
+		<script src="{% static 'medic/js/nice-select.min.js' %}"></script>
+		<!-- APPEAR MIN JS --> 
+        <script src="{% static 'medic/js/appear.min.js' %}"></script>
+		<!-- ODOMETER MIN JS --> 
+		<script src="{% static 'medic/js/odometer.min.js' %}"></script>
+		<!-- DATEPICKER MIN JS --> 
+		<script src="{% static 'medic/js/bootstrap-datepicker.min.js' %}"></script>
+		<!-- FORM VALIDATOR MIN JS -->
+		<script src="{% static 'medic/js/form-validator.min.js' %}"></script>
+		<!-- CONTACT JS -->
+		<script src="{% static 'medic/js/contact-form-script.js' %}"></script>
+		<!-- AJAXCHIMP MIN JS -->
+		<script src="{% static 'medic/js/ajaxchimp.min.js' %}"></script>
+		<!-- AOS JS -->
+		<script src="{% static 'medic/js/aos.js' %}"></script>
+	        <!-- CUSTOM JS -->
+			<script src="{% static 'medic/js/custom.js' %}"></script>
+			<script>
+			document.addEventListener("DOMContentLoaded", function () {
+				const landingPath = "{% url 'landing-v1' %}";
+				const aboutPath = "{% url 'landing-v1-about' %}";
+				const servicesPath = "{% url 'landing-v1-services' %}";
+				const videosPath = "{% url 'landing-v1-videos' %}";
+				const doctorsPath = "{% url 'landing-v1-doctors' %}";
+				const blogPath = "{% url 'landing-v1-blog' %}";
+				const announcementsPath = "{% url 'landing-v1-announcements' %}";
+				const equipmentPath = "{% url 'landing-v1-equipment' %}";
+				const contactPath = "{% url 'landing-v1-contact' %}";
+				const navSelector = "[data-nav-key]";
+
+				const normalizePath = function (path) {
+					if (!path) {
+						return "/";
+					}
+
+					return path.length > 1 ? path.replace(/\/+$/, "") : path;
+				};
+
+				const currentPath = normalizePath(window.location.pathname);
+
+				const getNavLinks = function () {
+					return Array.from(document.querySelectorAll(navSelector));
+				};
+
+				const setActiveLink = function (key) {
+					getNavLinks().forEach(function (link) {
+						link.classList.toggle("active", link.dataset.navKey === key);
+					});
+				};
+
+				const getActiveKey = function () {
+					if (currentPath === normalizePath(aboutPath)) {
+						return "about";
+					}
+
+					if (currentPath === normalizePath(servicesPath)) {
+						return "services";
+					}
+
+					if (currentPath === normalizePath(videosPath)) {
+						return "videos";
+					}
+
+					if (currentPath === normalizePath(doctorsPath)) {
+						return "doctors";
+					}
+
+					if (currentPath === normalizePath(blogPath) || currentPath.indexOf(normalizePath(blogPath) + "/") === 0) {
+						return "blog";
+					}
+
+					if (currentPath === normalizePath(announcementsPath)) {
+						return "announcements";
+					}
+
+					if (currentPath === normalizePath(equipmentPath)) {
+						return "equipment";
+					}
+
+					if (currentPath === normalizePath(contactPath)) {
+						return "contact";
+					}
+
+					if (currentPath === normalizePath(landingPath)) {
+						return window.location.hash.replace("#", "") || "home";
+					}
+
+					return null;
+				};
+
+				const syncActiveLink = function () {
+					const activeKey = getActiveKey();
+					if (activeKey) {
+						setActiveLink(activeKey);
+					}
+				};
+
+				document.addEventListener("click", function (event) {
+					const link = event.target.closest(navSelector);
+					if (link && link.dataset.navKey) {
+						setActiveLink(link.dataset.navKey);
+					}
+				});
+
+				window.addEventListener("hashchange", syncActiveLink);
+				syncActiveLink();
+			});
+		</script>
+		{% block extra_scripts %}{% endblock %}
+    </body>
+</html>

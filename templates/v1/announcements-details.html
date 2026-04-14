@@ -1,0 +1,124 @@
+{% extends "v1/base.html" %}
+{% load static custom_filters %}
+
+{% block title %}{{ serialized_announcement.title }}{% endblock %}
+
+{% block content %}
+		<div class="page-title-area bg-10">
+			<div class="container">
+				<div class="page-title-content">
+					<h2>{{ news_page.page_title }}</h2>
+					<ul>
+						<li>
+							<a href="{% url 'landing-v1' %}">
+								{{ news_page.home_label }}
+							</a>
+						</li>
+						<li>
+							<a href="{% url 'landing-v1-announcements' %}">
+								{{ news_page.page_title }}
+							</a>
+						</li>
+
+						<li class="active">{{ serialized_announcement.title|truncatechars:45 }}</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+
+		<section class="blog-area bg-color ptb-100">
+			<div class="container">
+				<div class="row">
+					<div class="col-lg-8 col-md-12">
+						<div class="blog-details-left-area blog-right-sidebar">
+							<div class="blog-details-single-post">
+								<div class="blog-details-img">
+									<img src="{{ serialized_announcement.image_url }}" alt="{{ serialized_announcement.title }}">
+								</div>
+
+								<ul>
+									<li>
+										<i class='bx bx-user'></i>
+										{{ serialized_announcement.author_name }}
+									</li>
+									<li>
+										<i class='bx bx-calendar'></i>
+										{{ news_page.published_label|default:"Published" }}: {{ serialized_announcement.published_date|date:"d / m / Y" }}
+									</li>
+									<li>
+										<i class='bx bx-show'></i>
+										{{ news_page.views_label|default:"Views" }}: {{ announcement.views_count }}
+									</li>
+								</ul>
+
+								<h3>{{ serialized_announcement.title }}</h3>
+								<div class="blog-details-copy">
+									{{ announcement_content|linebreaks }}
+								</div>
+
+								<a href="{% url 'landing-v1-announcements' %}" class="default-btn">{{ news_page.back_to_news }}</a>
+							</div>
+						</div>
+					</div>
+
+					<div class="col-lg-4 col-md-12">
+						<div class="blog-details-right-area blog-right-sidebar">
+							<div data-aos="fade-up" data-aos-duration="800" class="blog-widget search-widget">
+								<form class="search-form" method="get" action="{% url 'landing-v1-announcements' %}">
+									<input type="search" name="q" class="form-control" placeholder="{{ news_page.search_placeholder }}">
+									<button type="submit">
+										<i class="bx bx-search"></i>
+									</button>
+								</form>
+							</div>
+
+							<div data-aos="fade-up" data-aos-duration="1000" class="blog-widget resent-post-widget news-summary-widget">
+								<h3 class="title">{{ news_page.recent_posts_title }}</h3>
+
+								<ul>
+									{% for related_item in latest_announcements %}
+										<li>
+											{% if related_item.id %}
+												<a href="{% url 'landing-v1-announcement-detail' related_item.id %}">
+											{% else %}
+												<a href="javascript:void(0);">
+											{% endif %}
+												<span>{{ related_item.published_date|date:"d F Y" }}</span>
+												<h3>{{ related_item.title }}</h3>
+												<p>{{ related_item.summary|striptags|truncatechars:90 }}</p>
+											</a>
+										</li>
+									{% empty %}
+										<li>
+											<a href="javascript:void(0);">
+												<h3>{{ news_page.empty_title }}</h3>
+											</a>
+										</li>
+									{% endfor %}
+								</ul>
+							</div>
+
+							<div data-aos="fade-up" data-aos-duration="1200" class="blog-widget archives-widget">
+								<h3 class="title">{{ news_page.archives_title }}</h3>
+								<ul>
+									{% for archive in announcement_archives %}
+										<li>
+											<a href="{% url 'landing-v1-announcements' %}?month={{ archive.value }}">
+												{{ archive.label }}
+												<span>{{ archive.count }}</span>
+											</a>
+										</li>
+									{% empty %}
+										<li>
+											<a href="javascript:void(0);">{{ news_page.empty_title }}</a>
+										</li>
+									{% endfor %}
+								</ul>
+							</div>
+
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+{% endblock %}

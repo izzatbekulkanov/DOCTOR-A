@@ -1,0 +1,436 @@
+{% extends "v1/base.html" %}
+{% load static i18n custom_filters %}
+
+{% block title %}{{ t.page_title }} - Medic{% endblock %}
+
+{% block extra_head %}
+<style>
+    .contact-style-two-page {
+        --contact-radius: 6px;
+    }
+
+    .contact-info-shell,
+    .contact-hub-card,
+    .contact-map-shell {
+        border-radius: var(--contact-radius);
+        background: #ffffff;
+        border: 1px solid rgba(223, 231, 240, 0.92);
+        box-shadow: 0 0 20px 3px rgba(0, 0, 0, 0.05);
+    }
+
+    .contact-info-shell {
+        padding: 30px;
+        height: 100%;
+    }
+
+    .contact-info-list {
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+        margin-top: 28px;
+    }
+
+    .contact-info-item {
+        display: grid;
+        grid-template-columns: 52px minmax(0, 1fr);
+        gap: 14px;
+        align-items: start;
+    }
+
+    .contact-info-item .icon {
+        width: 52px;
+        height: 52px;
+        border-radius: 4px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: #def5ee;
+        color: #e21919;
+        font-size: 22px;
+    }
+
+    .contact-info-item span {
+        display: block;
+        margin-bottom: 6px;
+        color: #5d6d85;
+        font-size: 13px;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+    }
+
+    .contact-info-item a,
+    .contact-info-item .copy {
+        color: #15233c;
+        font-size: 15px;
+        line-height: 1.7;
+        overflow-wrap: anywhere;
+    }
+
+    .contact-map-shell {
+        overflow: hidden;
+        min-height: 100%;
+    }
+
+    .contact-map-shell iframe {
+        display: block;
+        width: 100%;
+        min-height: 460px;
+        border: 0;
+    }
+
+    .contact-hub-section {
+        padding-top: 0;
+    }
+
+    .contact-hub-card {
+        overflow: hidden;
+    }
+
+    .contact-hub-pane {
+        padding: 34px;
+        height: 100%;
+    }
+
+    .contact-hub-pane.is-muted {
+        background: linear-gradient(180deg, #f8fbff 0%, #f3f7fc 100%);
+    }
+
+    .contact-hub-pane + .contact-hub-pane {
+        border-left: 1px solid rgba(223, 231, 240, 0.92);
+    }
+
+    .contact-hub-pane .top-title {
+        margin-bottom: 10px;
+    }
+
+    .contact-hub-pane h3 {
+        margin-bottom: 10px;
+    }
+
+    .contact-hub-pane .intro {
+        margin-bottom: 24px;
+        color: #67778f;
+        line-height: 1.8;
+    }
+
+    .form-status {
+        margin-bottom: 22px;
+        padding: 14px 18px;
+        border-radius: 4px;
+        font-size: 15px;
+        font-weight: 500;
+        display: none;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .form-status.msg-success {
+        display: flex;
+        background-color: #e8f5e9;
+        color: #2e7d32;
+        border: 1px solid #c8e6c9;
+    }
+
+    .form-status.msg-error {
+        display: flex;
+        background-color: #ffebee;
+        color: #c62828;
+        border: 1px solid #ffcdd2;
+    }
+
+    .form-status i {
+        font-size: 20px;
+    }
+
+    .contact-hub-pane .form-group {
+        margin-bottom: 18px;
+    }
+
+    .contact-hub-pane .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        color: #15233c;
+        font-size: 14px;
+        font-weight: 600;
+    }
+
+    .contact-hub-pane .form-control {
+        min-height: 52px;
+        border-radius: 4px;
+        border: 1px solid #dde5ee;
+        box-shadow: none;
+    }
+
+    .contact-hub-pane textarea.form-control {
+        min-height: 146px;
+        resize: vertical;
+    }
+
+    .contact-hub-pane .form-control:focus {
+        border-color: #ff0000;
+    }
+
+    .contact-hub-pane select.form-control {
+        appearance: auto;
+    }
+
+    @media only screen and (max-width: 991px) {
+        .contact-hub-pane + .contact-hub-pane {
+            border-left: none;
+            border-top: 1px solid rgba(223, 231, 240, 0.92);
+        }
+    }
+
+    @media only screen and (max-width: 767px) {
+        .contact-info-shell,
+        .contact-hub-pane {
+            padding: 24px;
+        }
+
+        .contact-map-shell iframe {
+            min-height: 320px;
+        }
+    }
+</style>
+<script src="https://unpkg.com/imask"></script>
+{% endblock %}
+
+{% block content %}
+    <div class="page-title-area bg-6">
+        <div class="container">
+            <div class="page-title-content">
+                <h2>{{ t.page_title }}</h2>
+                <ul>
+                    <li>
+                        <a href="{% url 'landing-v1' %}">
+                            {{ t.home }}
+                        </a>
+                    </li>
+
+                    <li class="active">{{ t.page_title }}</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <section class="contact-form-area ptb-100 contact-style-two-page">
+        <div class="container">
+            <div data-aos="fade-up" data-aos-duration="1200" class="section-title">
+                <h2>{{ t.get_in_touch }}</h2>
+                <p>{{ t.contact_desc }}</p>
+            </div>
+
+            <div class="row g-4 align-items-stretch">
+                <div data-aos="fade-up" data-aos-duration="1200" class="col-lg-4">
+                    <div class="contact-info-shell">
+                        <span class="top-title">{{ t.contact_us }}</span>
+                        <h3>{{ t.page_title }}</h3>
+                        <p class="intro">{{ t.contact_desc }}</p>
+
+                        <div class="contact-info-list">
+                            <div class="contact-info-item">
+                                <div class="icon">
+                                    <i class="bx bx-location-plus"></i>
+                                </div>
+                                <div>
+                                    <span>{{ t.address }}</span>
+                                    <a href="https://maps.app.goo.gl/xEtPruqrfG9f6q3H7" target="_blank" rel="noopener noreferrer">
+                                        {{ site_settings.address|default:"Doctor-A Med Clinic, Namangan, Uzbekistan"|striptags }}
+                                    </a>
+                                </div>
+                            </div>
+
+                            <div class="contact-info-item">
+                                <div class="icon">
+                                    <i class="bx bx-envelope"></i>
+                                </div>
+                                <div>
+                                    <span>{{ t.email }}</span>
+                                    <div class="copy">{{ site_settings.contact_email|default:"hello@example.com" }}</div>
+                                </div>
+                            </div>
+
+                            <div class="contact-info-item">
+                                <div class="icon">
+                                    <i class="bx bx-phone-call"></i>
+                                </div>
+                                <div>
+                                    <span>{{ t.phone }}</span>
+                                    <div class="copy">{{ site_settings.contact_phone|default:"+998 (--) --- -- --" }}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div data-aos="fade-up" data-aos-duration="1600" class="col-lg-8">
+                    <div class="contact-map-shell">
+                        <iframe src="https://maps.google.com/maps?q=Doctor-A%20Med%20Clinic,%20Namangan&t=&z=15&ie=UTF8&iwloc=&output=embed" allowfullscreen loading="lazy"></iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="contact-form-area contact-hub-section pb-100 contact-style-two-page">
+        <div class="container">
+            <div data-aos="fade-up" data-aos-duration="1200" class="section-title">
+                <span class="top-title">{{ t.forms_heading }}</span>
+                <h2>{{ t.forms_heading }}</h2>
+                <p>{{ t.forms_desc }}</p>
+            </div>
+
+            <div data-aos="fade-up" data-aos-duration="1400" class="contact-hub-card">
+                <div class="row g-0">
+                    <div class="col-lg-6">
+                        <div class="contact-hub-pane is-muted">
+                            <span class="top-title">{{ t.contact_form_title }}</span>
+                            <h3>{{ t.drop_message }}</h3>
+                            <p class="intro">{{ t.message_desc }}</p>
+
+                            <form id="contactForm" method="post">
+                                {% csrf_token %}
+                                <input type="hidden" name="form_type" value="contact">
+                                <div id="contactMsgSubmit" class="form-status"></div>
+
+                                <div class="form-group">
+                                    <label for="name">{{ t.name_label }}</label>
+                                    <input type="text" name="name" id="name" class="form-control" placeholder="{{ t.name_label }}" required>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="phone">{{ t.phone_label }}</label>
+                                    <input type="tel" name="phone" id="phone" class="form-control" placeholder="+998 90 123 45 67" required>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="message">{{ t.message_label }}</label>
+                                    <textarea name="message" id="message" class="form-control" rows="6" placeholder="{{ t.message_label }}" required></textarea>
+                                </div>
+
+                                <button type="submit" class="default-btn">
+                                    {{ t.send_btn }}
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-6">
+                        <div class="contact-hub-pane">
+                            <span class="top-title">{{ t.appointment_title }}</span>
+                            <h3>{{ t.appointment_title }}</h3>
+                            <p class="intro">{{ t.appointment_desc }}</p>
+
+                            <form id="appointmentForm" method="post">
+                                {% csrf_token %}
+                                <input type="hidden" name="form_type" value="appointment">
+                                <div id="appointmentMsgSubmit" class="form-status"></div>
+
+                                <div class="form-group">
+                                    <label for="appointment_name">{{ t.name_label }}</label>
+                                    <input type="text" name="appointment_name" id="appointment_name" class="form-control" placeholder="{{ t.name_label }}" required>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="appointment_phone">{{ t.phone_label }}</label>
+                                    <input type="tel" name="appointment_phone" id="appointment_phone" class="form-control" placeholder="+998 90 123 45 67" required>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="employee_id">{{ t.employee_label }}</label>
+                                    <select name="employee_id" id="employee_id" class="form-control" {% if not employees %}disabled{% endif %} required>
+                                        <option value="">{{ t.employee_placeholder }}</option>
+                                        {% for employee in employees %}
+                                            <option value="{{ employee.id }}">
+                                                {{ employee.full_name|default:employee.username }}{% if employee.job_title %} - {{ employee.job_title }}{% endif %}
+                                            </option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="appointment_message">{{ t.message_label }}</label>
+                                    <textarea name="appointment_message" id="appointment_message" class="form-control" rows="6" placeholder="{{ t.message_label }}" required></textarea>
+                                </div>
+
+                                <button type="submit" class="default-btn">
+                                    {{ t.appointment_button }}
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const masks = [];
+        const phoneInputs = ["phone", "appointment_phone"];
+
+        phoneInputs.forEach(function (inputId) {
+            const input = document.getElementById(inputId);
+            if (!input) {
+                return;
+            }
+            masks.push(IMask(input, {
+                mask: "+ {998} 00 000 00 00"
+            }));
+        });
+
+        function renderStatus(element, type, text) {
+            element.className = "form-status " + type;
+            element.innerHTML = '<i class="bx ' + (type === "msg-success" ? 'bx-check-circle' : 'bx-error-circle') + '"></i><span>' + text + '</span>';
+        }
+
+        function bindAjaxForm(formId, statusId, successMessage, errorMessage) {
+            const form = document.getElementById(formId);
+            const statusBox = document.getElementById(statusId);
+
+            if (!form || !statusBox) {
+                return;
+            }
+
+            form.addEventListener("submit", function (event) {
+                event.preventDefault();
+                const formData = new FormData(form);
+
+                statusBox.className = "form-status";
+                statusBox.innerHTML = "";
+
+                fetch(window.location.href, {
+                    method: "POST",
+                    body: formData,
+                    headers: {
+                        "X-CSRFToken": formData.get("csrfmiddlewaretoken")
+                    }
+                })
+                .then(function (response) {
+                    if (!response.ok) {
+                        throw new Error("request_failed");
+                    }
+                    return response.json();
+                })
+                .then(function (data) {
+                    if (data.status === "success") {
+                        renderStatus(statusBox, "msg-success", successMessage);
+                        form.reset();
+                    } else {
+                        renderStatus(statusBox, "msg-error", errorMessage);
+                    }
+                })
+                .catch(function () {
+                    renderStatus(statusBox, "msg-error", errorMessage);
+                });
+            });
+        }
+
+        bindAjaxForm("contactForm", "contactMsgSubmit", "{{ t.success_msg|escapejs }}", "{{ t.error_msg|escapejs }}");
+        bindAjaxForm("appointmentForm", "appointmentMsgSubmit", "{{ t.appointment_success_msg|escapejs }}", "{{ t.appointment_error_msg|escapejs }}");
+    });
+</script>
+{% endblock %}

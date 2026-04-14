@@ -1,117 +1,122 @@
-<!DOCTYPE html>
-<html lang="en">
-{% load static %}
+{% extends "v1/base.html" %}
 {% load i18n %}
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{% translate 'DOCTOR - A | Kirish sahifasi' %}</title>
 
-    <!-- Meta -->
-    <meta name="description" content="Marketplace for Bootstrap Admin Dashboards">
-    <meta name="author" content="Bootstrap Gallery">
-    <link rel="canonical" href="https://www.bootstrap.gallery/">
-    <meta property="og:url" content="https://www.bootstrap.gallery">
-    <meta property="og:title" content="Admin Templates - Dashboard Templates | Bootstrap Gallery">
-    <meta property="og:description" content="Marketplace for Bootstrap Admin Dashboards">
-    <meta property="og:type" content="Website">
-    <meta property="og:site_name" content="Bootstrap Gallery">
-    <link rel="shortcut icon" href="{% static 'images/favicon.svg' %}">
+{% block title %}{% trans "DOCTOR - A | Kirish" %}{% endblock %}
 
-    <!-- *************
-			************ CSS Files *************
-		************* -->
-    <link rel="stylesheet" href="{% static 'fonts/remix/remixicon.css' %}">
-    <link rel="stylesheet" href="{% static 'css/main.min.css' %}">
+{% block content %}
+		<!-- START PAGE TITLE AREA -->
+		<div class="page-title-area bg-8">
+			<div class="container">
+				<div class="page-title-content">
+					<h2>{% trans "Kirish" %}</h2>
+					<ul>
+						<li>
+							<a href="{% url 'landing-v1' %}">
+								{% trans "Home" %}
+							</a>
+						</li>
 
-</head>
+						<li class="active">{% trans "Kirish" %}</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+		<!-- END PAGE TITLE AREA -->
 
-<body class="login-bg">
+		<!-- START LOG IN AREA -->
+		<section data-aos="fade-up" data-aos-duration="1200" class="user-area-style log-in-area ptb-100">
+			<div class="container">
+				<div class="contact-form-action">
+					<div class="section-title">
+						<h2>{% trans "Tizimga kiring" %}</h2>
+						<p>{% trans "Admin panel va ichki sahifalarga kirish uchun login va parolingizni kiriting." %}</p>
+					</div>
 
-<!-- Container starts -->
-<div class="container">
+					{% if messages %}
+						<div class="mb-4">
+							{% for message in messages %}
+								<div class="alert {% if message.tags == 'error' %}alert-danger{% elif message.tags == 'success' %}alert-success{% else %}alert-info{% endif %}" role="alert">
+									{{ message }}
+								</div>
+							{% endfor %}
+						</div>
+					{% endif %}
 
-    <!-- Auth wrapper starts -->
-    <div class="auth-wrapper">
-        <!-- Form starts -->
-        <form method="POST" action="{% url 'login' %}">{% csrf_token %}
-            <div class="auth-box">
-                <a href="{% url 'admin-index' %}" class="auth-logo mb-4">
-                    <img src="{{ site_settings.logo_dark.url }}" alt="{{ site_settings.site_name }}">
-                </a>
+					<form method="post" action="{% url 'login' %}">
+						{% csrf_token %}
+						<input type="hidden" name="next" value="{{ next }}">
 
-                <h4 class="mb-4">{% trans 'Kirish' %}</h4>
+						<div class="row">
+							<div class="col-12">
+								<div class="form-group">
+									<input class="form-control" type="text" id="email-username" name="email-username" placeholder="{% trans 'Username yoki Email' %}" required>
+								</div>
+							</div>
 
-                <!-- Xabarlar ko‘rsatilishi -->
-                {% if messages %}
-                    <div class="mb-3">
-                        {% for message in messages %}
-                            <div class="alert {% if message.tags == 'error' %}alert-danger{% elif message.tags == 'success' %}alert-success{% else %}alert-info{% endif %} alert-dismissible fade show"
-                                 role="alert">
-                                {{ message }}
-                                <button type="button" class="btn-close" data-bs-dismiss="alert"
-                                        aria-label="Close"></button>
-                            </div>
-                        {% endfor %}
-                    </div>
-                {% endif %}
+							<div class="col-12">
+								<div class="form-group position-relative">
+									<input class="form-control" type="password" id="password" name="password" placeholder="{% trans 'Parol' %}" required>
+									<button type="button" id="togglePassword" aria-label="{% trans 'Parolni ko‘rsatish' %}" style="position:absolute; right:18px; top:50%; transform:translateY(-50%); background:none; border:none; color:#7a7a7a; font-size:22px;">
+										<i class="bx bx-show"></i>
+									</button>
+								</div>
+							</div>
 
-                <!-- Next parametri uchun yashirin input -->
-                <input type="hidden" name="next" value="{{ next }}">
+							<div class="col-12 d-flex justify-content-end mb-3">
+								<a href="#" style="color:#666;">{% trans "Parolni unutdingizmi?" %}</a>
+							</div>
 
-                <div class="mb-3">
-                    <label class="form-label" for="email-username">{% trans 'E-mail yoki Username' %} <span
-                            class="text-danger">*</span></label>
-                    <input type="text" id="email-username" name="email-username" class="form-control"
-                           placeholder="{% trans 'email yoki username kiriting' %}"
-                           value="{{ request.POST.email_username|default:'' }}" required>
-                </div>
+							<div class="col-12">
+								<button class="default-btn btn-two" type="submit">
+									{% trans "Kirish" %}
+								</button>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+		</section>
+		<!-- END LOG IN AREA -->
 
-                <div class="mb-2">
-                    <label class="form-label" for="pwd">{% trans 'Parol' %} <span class="text-danger">*</span></label>
-                    <div class="input-group">
-                        <input type="password" id="pwd" name="password" class="form-control"
-                               placeholder="{% trans 'Parolni kiriting' %}" required>
-                        <button class="btn btn-outline-secondary" type="button" onclick="togglePassword()">
-                            <i class="ri-eye-line text-primary" id="toggleIcon"></i>
-                        </button>
-                    </div>
-                </div>
+		<!-- START SUBSCRIBE AREA -->
+		<section class="subscribe-area">
+			<div class="container">
+				<div class="row align-items-center">
+					<div class="col-lg-6">
+						<h2>{% trans "Yangiliklardan xabardor bo‘ling" %}</h2>
+						<p>{% trans "So‘nggi yangilik va e’lonlarni muntazam oling." %}</p>
+					</div>
 
-                <div class="d-flex justify-content-end mb-3">
-                    <a href=""
-                       class="text-decoration-underline">{% trans 'Parolni unutdingizmi?' %}</a>
-                </div>
+					<div class="col-lg-6">
+						<form class="newsletter-form" data-toggle="validator">
+							<input type="email" class="form-control" placeholder="{% trans 'Email manzilingiz' %}" name="EMAIL" autocomplete="off">
 
-                <div class="mb-3 d-grid gap-2">
-                    <button type="submit" class="btn btn-primary">{% trans 'Kirish' %}</button>
-                </div>
-            </div>
-        </form>
-        <!-- Form ends -->
-    </div>
-    <!-- Auth wrapper ends -->
+							<button class="default-btn" type="button">
+								{% trans "Obuna bo‘lish" %}
+							</button>
+						</form>
+					</div>
+				</div>
+			</div>
+		</section>
+		<!-- END SUBSCRIBE AREA -->
 
-</div>
-<!-- Container ends -->
+		<script>
+			document.addEventListener("DOMContentLoaded", function () {
+				const passwordInput = document.getElementById("password");
+				const toggleButton = document.getElementById("togglePassword");
 
-<!-- Qo‘shimcha JavaScript -->
-<script>
-    function togglePassword() {
-        const pwd = document.getElementById('pwd');
-        const toggleIcon = document.getElementById('toggleIcon');
-        if (pwd.type === 'password') {
-            pwd.type = 'text';
-            toggleIcon.classList.remove('ri-eye-line');
-            toggleIcon.classList.add('ri-eye-off-line');
-        } else {
-            pwd.type = 'password';
-            toggleIcon.classList.remove('ri-eye-off-line');
-            toggleIcon.classList.add('ri-eye-line');
-        }
-    }
-</script>
+				if (!passwordInput || !toggleButton) {
+					return;
+				}
 
-</body>
-
-</html>
+				toggleButton.addEventListener("click", function () {
+					const isPassword = passwordInput.type === "password";
+					passwordInput.type = isPassword ? "text" : "password";
+					toggleButton.innerHTML = isPassword
+						? '<i class="bx bx-hide"></i>'
+						: '<i class="bx bx-show"></i>';
+				});
+			});
+		</script>
+{% endblock %}

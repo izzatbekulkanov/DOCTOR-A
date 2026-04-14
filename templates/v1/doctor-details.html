@@ -1,0 +1,737 @@
+{% extends "v1/base.html" %}
+{% load static i18n custom_filters %}
+
+{% block title %}{{ doctor.full_name }} - {{ t.doctors }}{% endblock %}
+
+{% block extra_head %}
+    <style>
+        .doctor-details-area {
+            --doctor-radius-sm: 4px;
+            --doctor-radius-md: 6px;
+        }
+
+        .doctor-profile-sidebar {
+            position: sticky;
+            top: 32px;
+        }
+
+        .doctor-surface-card {
+            border-radius: var(--doctor-radius-md);
+            background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+            border: 1px solid rgba(219, 228, 240, 0.95);
+            box-shadow: 0 18px 45px rgba(17, 33, 58, 0.09);
+        }
+
+        .doctor-hero-card {
+            padding: 34px;
+            margin-bottom: 24px;
+        }
+
+        .doctor-profile-media {
+            overflow: hidden;
+            border-radius: var(--doctor-radius-md) var(--doctor-radius-md) 0 0;
+            background: linear-gradient(135deg, #f6f8fb 0%, #eef3f9 100%);
+        }
+
+        .doctor-profile-media img {
+            display: block;
+            width: 100%;
+            aspect-ratio: 4 / 5;
+            object-fit: cover;
+        }
+
+        .doctor-profile-body {
+            padding: 28px;
+        }
+
+        .doctor-role-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 14px;
+            border-radius: var(--doctor-radius-sm);
+            background: rgba(226, 25, 25, 0.1);
+            color: #d21919;
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            margin-bottom: 14px;
+        }
+
+        .doctor-profile-name {
+            margin-bottom: 8px;
+            font-size: 31px;
+            line-height: 1.2;
+        }
+
+        .doctor-profile-specialty {
+            margin-bottom: 20px;
+            color: #5f6f86;
+            font-size: 16px;
+            line-height: 1.7;
+        }
+
+        .doctor-identity-badges {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 26px;
+        }
+
+        .doctor-identity-badges span {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 10px 14px;
+            border-radius: var(--doctor-radius-sm);
+            background: #f4f7fb;
+            color: #1b2740;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .doctor-side-section + .doctor-side-section {
+            margin-top: 26px;
+            padding-top: 24px;
+            border-top: 1px solid rgba(221, 229, 238, 0.95);
+        }
+
+        .doctor-side-title {
+            margin-bottom: 18px;
+            font-size: 20px;
+        }
+
+        .doctor-contact-list {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .doctor-contact-item {
+            display: grid;
+            grid-template-columns: 48px minmax(0, 1fr);
+            gap: 12px;
+            align-items: start;
+        }
+
+        .doctor-contact-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: var(--doctor-radius-sm);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: #def5ee;
+            color: #e21919;
+            font-size: 20px;
+        }
+
+        .doctor-contact-label {
+            display: block;
+            margin-bottom: 4px;
+            color: #5f6f86;
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+        }
+
+        .doctor-contact-value,
+        .doctor-contact-value a {
+            color: #15233c;
+            font-size: 15px;
+            line-height: 1.7;
+            overflow-wrap: anywhere;
+        }
+
+        .doctor-contact-value p:last-child {
+            margin-bottom: 0;
+        }
+
+        .doctor-social-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .doctor-social-links a {
+            width: 44px;
+            height: 44px;
+            border-radius: var(--doctor-radius-sm);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: #f4f7fb;
+            color: #e21919;
+            font-size: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .doctor-social-links a:hover {
+            background: #e21919;
+            color: #ffffff;
+            transform: translateY(-2px);
+        }
+
+        .doctor-overview-top {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            gap: 20px;
+            align-items: start;
+            margin-bottom: 18px;
+        }
+
+        .doctor-overview-top h2 {
+            margin-bottom: 8px;
+            font-size: 34px;
+            line-height: 1.2;
+        }
+
+        .doctor-overview-top p {
+            max-width: 620px;
+            margin-bottom: 0;
+            color: #61718a;
+            font-size: 16px;
+            line-height: 1.8;
+        }
+
+        .doctor-overview-actions {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .doctor-outline-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 50px;
+            padding: 12px 18px;
+            border-radius: 4px;
+            border: 1px solid rgba(226, 25, 25, 0.2);
+            color: #e21919;
+            font-size: 14px;
+            font-weight: 700;
+            line-height: 1;
+        }
+
+        .doctor-outline-btn:hover {
+            background: #e21919;
+            color: #ffffff;
+            border-color: #e21919;
+        }
+
+        .doctor-info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 18px;
+            margin-bottom: 24px;
+        }
+
+        .doctor-info-card {
+            padding: 22px;
+        }
+
+        .doctor-info-label {
+            display: block;
+            margin-bottom: 10px;
+            color: #68788e;
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+
+        .doctor-info-value,
+        .doctor-info-value a {
+            color: #15233c;
+            font-size: 18px;
+            font-weight: 700;
+            line-height: 1.55;
+            overflow-wrap: anywhere;
+        }
+
+        .doctor-section-card {
+            padding: 30px;
+            margin-bottom: 24px;
+        }
+
+        .doctor-section-title {
+            margin-bottom: 18px;
+            font-size: 24px;
+        }
+
+        .doctor-richtext {
+            color: #5f6f86;
+            font-size: 16px;
+            line-height: 1.85;
+        }
+
+        .doctor-richtext h1,
+        .doctor-richtext h2,
+        .doctor-richtext h3,
+        .doctor-richtext h4,
+        .doctor-richtext strong,
+        .doctor-richtext b {
+            color: #15233c;
+        }
+
+        .doctor-richtext p:last-child,
+        .doctor-richtext ul:last-child,
+        .doctor-richtext ol:last-child {
+            margin-bottom: 0;
+        }
+
+        .doctor-richtext ul,
+        .doctor-richtext ol {
+            padding-left: 20px;
+        }
+
+        .doctor-split-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 18px;
+            margin-bottom: 24px;
+        }
+
+        .doctor-bullet-list {
+            margin: 0;
+            padding-left: 20px;
+            color: #5f6f86;
+        }
+
+        .doctor-bullet-list li + li {
+            margin-top: 10px;
+        }
+
+        .doctor-activity-list {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+
+        .doctor-activity-item {
+            padding: 24px;
+            border-radius: var(--doctor-radius-md);
+            background: #f8fbff;
+            border: 1px solid rgba(221, 229, 238, 0.95);
+        }
+
+        .doctor-activity-head {
+            display: flex;
+            justify-content: space-between;
+            gap: 16px;
+            align-items: start;
+            margin-bottom: 14px;
+        }
+
+        .doctor-activity-head h4 {
+            margin-bottom: 8px;
+            font-size: 22px;
+        }
+
+        .doctor-activity-status {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 8px 14px;
+            border-radius: var(--doctor-radius-sm);
+            background: rgba(255, 171, 44, 0.14);
+            color: #a56400;
+            font-size: 13px;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .doctor-activity-status.is-complete {
+            background: rgba(13, 164, 110, 0.14);
+            color: #0c8a5d;
+        }
+
+        .doctor-activity-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 14px;
+        }
+
+        .doctor-activity-meta span {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            border-radius: var(--doctor-radius-sm);
+            background: #ffffff;
+            color: #42536b;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .doctor-activity-copy {
+            color: #5f6f86;
+            line-height: 1.8;
+            margin-bottom: 14px;
+        }
+
+        .doctor-activity-files {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .doctor-activity-files a {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: #e21919;
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        @media only screen and (max-width: 991px) {
+            .doctor-profile-sidebar {
+                position: static;
+            }
+
+            .doctor-overview-top,
+            .doctor-activity-head {
+                flex-direction: column;
+            }
+        }
+
+        @media only screen and (max-width: 767px) {
+            .doctor-hero-card,
+            .doctor-section-card,
+            .doctor-profile-body,
+            .doctor-info-card,
+            .doctor-activity-item {
+                padding: 22px;
+            }
+
+            .doctor-info-grid,
+            .doctor-split-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .doctor-profile-name,
+            .doctor-overview-top h2 {
+                font-size: 27px;
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    <div class="page-title-area bg-5">
+        <div class="container">
+            <div class="page-title-content">
+                <h2>{{ doctor.full_name }}</h2>
+                <ul>
+                    <li>
+                        <a href="{% url 'landing-v1' %}">
+                            {{ t.home }}
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{% url 'landing-v1-doctors' %}">
+                            {{ t.doctors }}
+                        </a>
+                    </li>
+                    <li class="active">{{ doctor.full_name }}</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <section class="doctor-details-area bg-color ptb-100">
+        <div class="container">
+            <div class="row g-4">
+                <div class="col-lg-4 col-md-12">
+                    <aside class="doctor-profile-sidebar">
+                        <div class="doctor-surface-card">
+                            <div class="doctor-profile-media">
+                                <img src="{{ doctor_image }}" alt="{{ doctor.full_name }}">
+                            </div>
+
+                            <div class="doctor-profile-body">
+                                <span class="doctor-role-chip">
+                                    <i class="bx bx-plus-medical"></i>
+                                    {{ doctor.job_title|default:doctor.medical_specialty|default:t.doctors }}
+                                </span>
+                                <h2 class="doctor-profile-name">{{ doctor.full_name }}</h2>
+                                <p class="doctor-profile-specialty">
+                                    {{ doctor.medical_specialty|default:doctor.department|default:t.not_set }}
+                                </p>
+
+                                <div class="doctor-identity-badges">
+                                    <span><i class="bx bx-briefcase-alt-2"></i>{{ doctor.department|default:t.not_set }}</span>
+                                    <span><i class="bx bx-id-card"></i>{{ doctor.employee_id|default:t.none_value }}</span>
+                                </div>
+
+                                <div class="doctor-side-section">
+                                    <h3 class="doctor-side-title">{{ t.contact_info }}</h3>
+                                    <div class="doctor-contact-list">
+                                        <div class="doctor-contact-item">
+                                            <span class="doctor-contact-icon"><i class="bx bx-map"></i></span>
+                                            <div>
+                                                <span class="doctor-contact-label">{{ t.address }}</span>
+                                                <div class="doctor-contact-value">
+                                                    {% if doctor.address %}
+                                                        {{ doctor.address|render_rich_text }}
+                                                    {% else %}
+                                                        {{ t.not_set }}
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="doctor-contact-item">
+                                            <span class="doctor-contact-icon"><i class="bx bx-phone-call"></i></span>
+                                            <div>
+                                                <span class="doctor-contact-label">{{ t.phone }}</span>
+                                                <div class="doctor-contact-value">
+                                                    {% if doctor.phone_number %}
+                                                        <a href="tel:{{ doctor.phone_number }}">{{ doctor.phone_number }}</a>
+                                                    {% else %}
+                                                        {{ t.none_value }}
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="doctor-contact-item">
+                                            <span class="doctor-contact-icon"><i class="bx bx-envelope"></i></span>
+                                            <div>
+                                                <span class="doctor-contact-label">{{ t.email }}</span>
+                                                <div class="doctor-contact-value">
+                                                    {% if doctor.email %}
+                                                        <a href="mailto:{{ doctor.email }}">{{ doctor.email }}</a>
+                                                    {% else %}
+                                                        {{ t.none_value }}
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="doctor-contact-item">
+                                            <span class="doctor-contact-icon"><i class="bx bx-user-pin"></i></span>
+                                            <div>
+                                                <span class="doctor-contact-label">{{ t.employee_id }}</span>
+                                                <div class="doctor-contact-value">{{ doctor.employee_id|default:t.none_value }}</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {% if telegram_username or instagram_username %}
+                                    <div class="doctor-side-section">
+                                        <h3 class="doctor-side-title">{{ t.social_profiles }}</h3>
+                                        <div class="doctor-social-links">
+                                            {% if telegram_username %}
+                                                <a href="https://t.me/{{ telegram_username }}" target="_blank" rel="noopener noreferrer" aria-label="Telegram">
+                                                    <i class="bx bxl-telegram"></i>
+                                                </a>
+                                            {% endif %}
+                                            {% if instagram_username %}
+                                                <a href="https://instagram.com/{{ instagram_username }}" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+                                                    <i class="bx bxl-instagram"></i>
+                                                </a>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </aside>
+                </div>
+
+                <div class="col-lg-8 col-md-12">
+                    <div class="doctor-surface-card doctor-hero-card">
+                        <div class="doctor-overview-top">
+                            <div>
+                                <span class="top-title">{{ t.overview }}</span>
+                                <h2>{{ doctor.full_name }}</h2>
+                                <p>{{ biography_excerpt }}</p>
+                            </div>
+                            <div class="doctor-overview-actions">
+                                <a href="{% url 'landing-v1-contact' %}" class="default-btn">{{ t.contact_button }}</a>
+                                <a href="{% url 'landing-v1-doctors' %}" class="doctor-outline-btn">{{ t.back_to_doctors }}</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="doctor-info-grid">
+                        <div class="doctor-surface-card doctor-info-card">
+                            <span class="doctor-info-label">{{ t.position }}</span>
+                            <div class="doctor-info-value">{{ doctor.job_title|default:t.not_set }}</div>
+                        </div>
+                        <div class="doctor-surface-card doctor-info-card">
+                            <span class="doctor-info-label">{{ t.phone }}</span>
+                            <div class="doctor-info-value">
+                                {% if doctor.phone_number %}
+                                    <a href="tel:{{ doctor.phone_number }}">{{ doctor.phone_number }}</a>
+                                {% else %}
+                                    {{ t.none_value }}
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="doctor-surface-card doctor-info-card">
+                            <span class="doctor-info-label">{{ t.birth_date }}</span>
+                            <div class="doctor-info-value">{{ doctor.date_of_birth|date:"d F Y"|default:t.not_set }}</div>
+                        </div>
+                        <div class="doctor-surface-card doctor-info-card">
+                            <span class="doctor-info-label">{{ t.specialty }}</span>
+                            <div class="doctor-info-value">{{ doctor.medical_specialty|default:t.none_value }}</div>
+                        </div>
+                        <div class="doctor-surface-card doctor-info-card">
+                            <span class="doctor-info-label">{{ t.license }}</span>
+                            <div class="doctor-info-value">{{ doctor.professional_license_number|default:t.none_value }}</div>
+                        </div>
+                        <div class="doctor-surface-card doctor-info-card">
+                            <span class="doctor-info-label">{{ t.schedule }}</span>
+                            <div class="doctor-info-value">
+                                {% if doctor.shift_schedule %}
+                                    {{ doctor.shift_schedule }}
+                                {% elif doctor.work_start_time and doctor.work_end_time %}
+                                    {{ doctor.work_start_time|time:"H:i" }} - {{ doctor.work_end_time|time:"H:i" }}
+                                {% else %}
+                                    {{ t.not_set }}
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="doctor-surface-card doctor-info-card">
+                            <span class="doctor-info-label">{{ t.telegram }}</span>
+                            <div class="doctor-info-value">
+                                {% if telegram_username %}
+                                    <a href="https://t.me/{{ telegram_username }}" target="_blank" rel="noopener noreferrer">@{{ telegram_username }}</a>
+                                {% else %}
+                                    {{ t.not_available }}
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="doctor-surface-card doctor-info-card">
+                            <span class="doctor-info-label">{{ t.instagram }}</span>
+                            <div class="doctor-info-value">
+                                {% if instagram_username %}
+                                    <a href="https://instagram.com/{{ instagram_username }}" target="_blank" rel="noopener noreferrer">@{{ instagram_username }}</a>
+                                {% else %}
+                                    {{ t.not_available }}
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="doctor-surface-card doctor-info-card">
+                            <span class="doctor-info-label">{{ t.department }}</span>
+                            <div class="doctor-info-value">{{ doctor.department|default:t.not_set }}</div>
+                        </div>
+                        <div class="doctor-surface-card doctor-info-card">
+                            <span class="doctor-info-label">{{ t.employment_date }}</span>
+                            <div class="doctor-info-value">{{ doctor.employment_date|date:"d F Y"|default:t.not_set }}</div>
+                        </div>
+                    </div>
+
+                    <div class="doctor-surface-card doctor-section-card">
+                        <h3 class="doctor-section-title">{{ t.biography }}</h3>
+                        <div class="doctor-richtext">
+                            {% if clean_bio_html %}
+                                {{ clean_bio_html|render_rich_text }}
+                            {% else %}
+                                <p>{{ t.no_bio }}</p>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    {% if bio_data.experience or bio_data.education %}
+                        <div class="doctor-split-grid">
+                            {% if bio_data.experience %}
+                                <div class="doctor-surface-card doctor-section-card">
+                                    <h3 class="doctor-section-title">{{ t.experience }}</h3>
+                                    <ul class="doctor-bullet-list">
+                                        {% for item in bio_data.experience %}
+                                            <li>{{ item }}</li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            {% endif %}
+
+                            {% if bio_data.education %}
+                                <div class="doctor-surface-card doctor-section-card">
+                                    <h3 class="doctor-section-title">{{ t.education }}</h3>
+                                    <ul class="doctor-bullet-list">
+                                        {% for item in bio_data.education %}
+                                            <li>{{ item }}</li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            {% endif %}
+                        </div>
+                    {% endif %}
+
+                    <div class="doctor-surface-card doctor-section-card">
+                        <h3 class="doctor-section-title">{{ t.activity_history }}</h3>
+                        {% if activity_history %}
+                            <div class="doctor-activity-list">
+                                {% for activity in activity_history %}
+                                    <article class="doctor-activity-item">
+                                        <div class="doctor-activity-head">
+                                            <div>
+                                                <h4>{{ activity.activity_name }}</h4>
+                                                <div class="doctor-activity-meta">
+                                                    <span><i class="bx bx-briefcase-alt-2"></i>{{ activity.get_activity_type_display }}</span>
+                                                    {% if activity.start_date or activity.end_date %}
+                                                        <span>
+                                                            <i class="bx bx-calendar"></i>
+                                                            {{ activity.start_date|date:"d F Y"|default:t.not_set }}
+                                                            {% if activity.end_date %}- {{ activity.end_date|date:"d F Y" }}{% endif %}
+                                                        </span>
+                                                    {% endif %}
+                                                    {% if activity.location_name or activity.city or activity.country %}
+                                                        <span>
+                                                            <i class="bx bx-map"></i>
+                                                            {{ activity.location_name|default:activity.city|default:activity.country }}
+                                                        </span>
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                            <span class="doctor-activity-status {% if activity.is_completed %}is-complete{% endif %}">
+                                                {% if activity.is_completed %}{{ t.completed }}{% else %}{{ t.ongoing }}{% endif %}
+                                            </span>
+                                        </div>
+
+                                        {% if activity.description %}
+                                            <div class="doctor-activity-copy">{{ activity.description|linebreaksbr }}</div>
+                                        {% endif %}
+
+                                        {% if activity.result_details %}
+                                            <div class="doctor-activity-copy">
+                                                <strong>{{ t.result }}:</strong> {{ activity.result_details }}
+                                            </div>
+                                        {% endif %}
+
+                                        {% if activity.certificate_file or activity.additional_files %}
+                                            <div class="doctor-activity-files">
+                                                {% if activity.certificate_file %}
+                                                    <a href="{{ activity.certificate_file.url }}" target="_blank" rel="noopener noreferrer">
+                                                        <i class="bx bx-certification"></i>{{ t.certificate }}
+                                                    </a>
+                                                {% endif %}
+                                                {% if activity.additional_files %}
+                                                    <a href="{{ activity.additional_files.url }}" target="_blank" rel="noopener noreferrer">
+                                                        <i class="bx bx-paperclip"></i>{{ t.attachment }}
+                                                    </a>
+                                                {% endif %}
+                                            </div>
+                                        {% endif %}
+                                    </article>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            <p class="doctor-richtext">{{ t.no_activity }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}

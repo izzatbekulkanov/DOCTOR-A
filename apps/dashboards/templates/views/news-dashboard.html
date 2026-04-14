@@ -189,6 +189,12 @@
         const getLocalizedText = (data, lang = getCurrentLang()) =>
             parseLocalized(data)[lang] || data.uz || "Tavsif mavjud emas";
 
+        const toPlainText = html => {
+            const temp = document.createElement("div");
+            temp.innerHTML = html || "";
+            return (temp.textContent || temp.innerText || "").trim();
+        };
+
         const makeRequest = (url, options = {}) =>
             $.ajax({
                 url,
@@ -198,7 +204,7 @@
             });
 
         const createNewsElement = news => {
-            const content = getLocalizedText(news.content);
+            const previewContent = toPlainText(getLocalizedText(news.content));
             return `
    <div class="dz-card style-2 blog-half m-b35">
                                             <div class="dz-media">
@@ -218,7 +224,7 @@
                                                 <h3 class="dz-title">
                                                     <a href="#">${getLocalizedText(news.title)}</a>
                                                 </h3>
-                                                <p>${getLocalizedText(news.content).substring(0, 500)}...</p>
+                                                <p>${previewContent.substring(0, 500)}...</p>
 
                                                 <!-- Read More tugmasi -->
                                                 <a href="/news/${news.id}/" class="btn icon-link-hover-end btn-primary radius-sm">

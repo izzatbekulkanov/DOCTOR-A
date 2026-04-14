@@ -118,9 +118,9 @@
                                 <span class="text-danger">Doctor A</span> {% trans "KLINIKASI" %}
                                 <img src="{% static 'dashboard/images/hero-banner/line.png' %}" alt="">
                             </h1>
-                            <p class="text wow fadeInUp" data-wow-delay="0.4s" data-wow-duration="0.8s">
-                                {{ banner.description|get_language_text:CURRENT_LANGUAGE }}!
-                            </p>
+                            <div class="text wow fadeInUp" data-wow-delay="0.4s" data-wow-duration="0.8s">
+                                {{ banner.description|get_language_text:CURRENT_LANGUAGE|render_rich_text }}
+                            </div>
                         </div>
                     </div>
                     <div class="col-lg-6 wow fadeInRight d-flex justify-content-center" data-wow-delay="0.8s"
@@ -463,7 +463,7 @@
                             </div>
                             <div class="icon-content">
                                 <h5 class="dz-title">{% trans "Manzil" %}</h5>
-                                <p class="text-white">{{ site_settings.address }}</p>
+                                <div class="text-white">{{ site_settings.address|render_rich_text }}</div>
                             </div>
                         </div>
                         <div class="icon-bx-wraper style-1 m-b20 wow fadeInUp" data-wow-delay="0.6s"
@@ -501,7 +501,7 @@
                             </div>
                             <div class="icon-content">
                                 <h5 class="dz-title">{% trans "Ish vaqti" %}</h5>
-                                <p class="text-white">{{ site_settings.working_hours }}</p>
+                                <div class="text-white">{{ site_settings.working_hours|render_rich_text }}</div>
                             </div>
                         </div>
                     </div>

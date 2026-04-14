@@ -17,6 +17,7 @@ from io import BytesIO
 from django.core.files.uploadedfile import InMemoryUploadedFile
 import sys
 from urllib.parse import urlparse
+from django.utils.html import strip_tags
 from django.utils.translation import gettext_lazy as _
 from config import settings
 from config.settings import LANGUAGES
@@ -46,42 +47,54 @@ class MainSettingsView(TemplateView):
         context['LANGUAGES'] = settings.LANGUAGES
         return context
 
-    def resize_image(self, image_file, width=136, height=40):
-        image = Image.open(image_file)
-        image = image.convert('RGBA')
-        image = image.resize((width, height), Image.LANCZOS)
-        buffer = BytesIO()
-        image.save(buffer, format='PNG')
-        return InMemoryUploadedFile(buffer, 'ImageField', image_file.name, 'image/png', sys.getsizeof(buffer), None)
+    @staticmethod
+    def normalize_rich_text(value):
+        normalized = (value or "").strip()
+        plain_text = strip_tags(normalized).replace("\xa0", " ").strip()
+        if not plain_text:
+            return ""
+        return normalized
 
-    def resize_banner_image(self, image_file, width=1920, height=180):
-        image = Image.open(image_file)
-        image = image.convert('RGBA')
-        image = image.resize((width, height), Image.LANCZOS)
-        buffer = BytesIO()
-        image.save(buffer, format='PNG')
-        return InMemoryUploadedFile(buffer, 'ImageField', image_file.name, 'image/png', sys.getsizeof(buffer), None)
+    @staticmethod
+    def normalize_uzbek_phone(value):
+        digits = "".join(ch for ch in (value or "") if ch.isdigit())
+        if digits.startswith("998"):
+            digits = digits[3:]
+        digits = digits[:9]
+
+        if not digits:
+            return ""
+
+        groups = [
+            digits[:2],
+            digits[2:5],
+            digits[5:7],
+            digits[7:9],
+        ]
+        return "+998 " + " ".join(group for group in groups if group)
 
     def post(self, request, *args, **kwargs):
         # SiteSettings uchun
         site_settings = SiteSettings.objects.first() or SiteSettings()
 
-        site_settings.site_name = request.POST.get('site_name', site_settings.site_name)
-        site_settings.contact_email = request.POST.get('contact_email', site_settings.contact_email)
-        site_settings.contact_phone = request.POST.get('contact_phone', site_settings.contact_phone)
-        site_settings.address = request.POST.get('address', site_settings.address)
+        site_settings.site_name = request.POST.get('site_name', "").strip()
+        site_settings.contact_email = request.POST.get('contact_email', "").strip()
+        site_settings.contact_phone = self.normalize_uzbek_phone(request.POST.get('contact_phone', ""))
+        site_settings.address = self.normalize_rich_text(request.POST.get('address', ""))
         site_settings.maintenance_mode = request.POST.get('maintenance_mode') == 'on'
-        site_settings.working_hours = request.POST.get('working_hours', site_settings.working_hours)
-        site_settings.facebook_url = request.POST.get('facebook_url', site_settings.facebook_url)
-        site_settings.telegram_url = request.POST.get('telegram_url', site_settings.telegram_url)
-        site_settings.instagram_url = request.POST.get('instagram_url', site_settings.instagram_url)
-        site_settings.youtube_url = request.POST.get('youtube_url', site_settings.youtube_url)
+        site_settings.working_hours = self.normalize_rich_text(request.POST.get('working_hours', ""))
+        site_settings.facebook_url = request.POST.get('facebook_url', "").strip()
+        site_settings.telegram_url = request.POST.get('telegram_url', "").strip()
+        site_settings.instagram_url = request.POST.get('instagram_url', "").strip()
+        site_settings.youtube_url = request.POST.get('youtube_url', "").strip()
 
         # Logotiplar
         if 'logo_dark' in request.FILES:
-            site_settings.logo_dark = self.resize_image(request.FILES['logo_dark'])
+            # Logo faylini original o'lcham va sifatini saqlagan holda yozamiz.
+            site_settings.logo_dark = request.FILES['logo_dark']
         if 'logo_light' in request.FILES:
-            site_settings.logo_light = self.resize_image(request.FILES['logo_light'])
+            # Logo faylini original o'lcham va sifatini saqlagan holda yozamiz.
+            site_settings.logo_light = request.FILES['logo_light']
 
         # 🔹 Video fayllarni saqlash
         if 'video1' in request.FILES:
@@ -95,7 +108,10 @@ class MainSettingsView(TemplateView):
 
         # Banner uchun
         image = request.FILES.get('banner_image')
-        description = {code: request.POST.get(f'description_{code}', "").strip() for code, name in settings.LANGUAGES}
+        description = {
+            code: self.normalize_rich_text(request.POST.get(f'description_{code}', ""))
+            for code, name in settings.LANGUAGES
+        }
 
         print(f"🟢 So‘rov qabul qilindi! image={'bor' if image else 'yo‘q'}")
 
@@ -110,6 +126,11 @@ class MainSettingsView(TemplateView):
             return render(request, self.template_name, context)
 
         banner = MainPageBanner.objects.first()
+
+        if not banner and not image:
+            messages.error(request, "📌 Banner rasmi majburiy.")
+            context = self.get_context_data()
+            return render(request, self.template_name, context)
 
         if banner:
             print(f"✏️ Banner yangilanmoqda... ID: {banner.id}")
@@ -597,7 +618,7 @@ class AddUsersView(View):
         emergency_contact = request.POST.get("emergency_contact")
         employment_date = request.POST.get("employment_date")
         employee_id = request.POST.get("employee_id")
-        bio = request.POST.get("bio")
+        bio = CustomUser.normalize_rich_text_content(request.POST.get("bio"))
         nationality = request.POST.get("nationality")
         professional_license_number = request.POST.get("professional_license_number")
         bank_account_number = request.POST.get("bank_account_number")
@@ -651,31 +672,31 @@ class AddUsersView(View):
         try:
             user = CustomUser(
                 full_name=full_name,
-                username=username,
-                address=address,
-                emergency_contact=emergency_contact,
-                insurance_number=insurance_number,
-                shift_schedule=shift_schedule,
+                username=username or "",
+                address=address or "",
+                emergency_contact=emergency_contact or "",
+                insurance_number=insurance_number or "",
+                shift_schedule=shift_schedule or "",
                 employment_date=employment_date,
-                tax_identification_number=tax_identification_number,
-                medical_specialty=medical_specialty,
-                bank_account_number=bank_account_number,
+                tax_identification_number=tax_identification_number or "",
+                medical_specialty=medical_specialty or "",
+                bank_account_number=bank_account_number or "",
                 contract_end_date=contract_end_date,
-                professional_license_number=professional_license_number,
-                department=department,
-                bio=bio,
-                nationality=nationality,
-                employee_id=employee_id,
+                professional_license_number=professional_license_number or "",
+                department=department or "",
+                bio=bio or "",
+                nationality=nationality or "",
+                employee_id=employee_id or "",
                 phone_number=phone_number,
                 gender=gender,
                 date_of_birth=date_of_birth,
-                job_title=job_title,
+                job_title=job_title or "",
                 is_active=is_active,
                 profile_picture=profile_picture,
                 work_start_time=work_start_time,
                 work_end_time=work_end_time,
-                telegram_username=telegram_username,
-                instagram_username=instagram_username
+                telegram_username=telegram_username or "",
+                instagram_username=instagram_username or ""
             )
 
             # Telegram kanaliga xabar yuborish
@@ -772,8 +793,11 @@ class EditUsersView(View):
         full_name = data.get("full_name")
         phone_number = data.get("phone_number")
         gender = data.get("gender")
+        bio = CustomUser.normalize_rich_text_content(data.get("bio"))
 
-        print(f"[POST] 🧾 Olingan ma’lumotlar: FIO = {full_name}, Tel = {phone_number}, Jins = {gender}")
+        print("="*50)
+        print(f"DEBUG BIO (Raw from request): {bio}")
+        print("="*50)
 
         if not full_name or not phone_number or not gender:
             print("[POST] ❌ Majburiy maydonlar to‘ldirilmagan!")
@@ -782,30 +806,30 @@ class EditUsersView(View):
 
         try:
             user.full_name = full_name
-            user.username = data.get("username")
+            user.username = data.get("username", "")
             user.phone_number = phone_number
             user.gender = gender
-            user.address = data.get("address")
-            user.emergency_contact = data.get("emergency_contact")
+            user.address = data.get("address") or ""
+            user.emergency_contact = data.get("emergency_contact") or ""
             user.employment_date = parse_date_safe(data.get("employment_date"))
-            user.employee_id = data.get("employee_id")
-            user.bio = data.get("bio")
-            user.nationality = data.get("nationality")
-            user.professional_license_number = data.get("professional_license_number")
-            user.bank_account_number = data.get("bank_account_number")
-            user.tax_identification_number = data.get("tax_identification_number")
-            user.insurance_number = data.get("insurance_number")
-            user.shift_schedule = data.get("shift_schedule")
-            user.medical_specialty = data.get("medical_specialty")
+            user.employee_id = data.get("employee_id") or ""
+            user.bio = bio or ""
+            user.nationality = data.get("nationality") or ""
+            user.professional_license_number = data.get("professional_license_number") or ""
+            user.bank_account_number = data.get("bank_account_number") or ""
+            user.tax_identification_number = data.get("tax_identification_number") or ""
+            user.insurance_number = data.get("insurance_number") or ""
+            user.shift_schedule = data.get("shift_schedule") or ""
+            user.medical_specialty = data.get("medical_specialty") or ""
             user.date_of_birth = parse_date_safe(data.get("date_of_birth"))
             user.contract_end_date = parse_date_safe(data.get("contract_end_date"))
-            user.department = data.get("department")
-            user.job_title = data.get("job_title")
+            user.department = data.get("department") or ""
+            user.job_title = data.get("job_title") or ""
             user.is_active = data.get("is_active") == "on"
             user.work_start_time = parse_time_safe(data.get("work_start_time"))
             user.work_end_time = parse_time_safe(data.get("work_end_time"))
-            user.telegram_username = data.get("telegram_username")
-            user.instagram_username = data.get("instagram_username")
+            user.telegram_username = data.get("telegram_username") or ""
+            user.instagram_username = data.get("instagram_username") or ""
 
             if profile_picture:
                 print("[POST] 📷 Yangi profil rasmi yuklandi")

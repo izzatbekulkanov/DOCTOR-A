@@ -1,210 +1,646 @@
 {% extends 'administrator/main.html' %}
-{% load static i18n %}
-{% load custom_filters %}
+{% load static i18n custom_filters %}
 
 {% block title %}
     {% trans "Sayt sozlamalari" %}
 {% endblock title %}
 
-{% block page_css %}
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+{% block vendor_css %}
+    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
     <style>
-        body {
-            background: #f8f9fa;
-            font-family: 'Arial', sans-serif;
+        :root {
+            --settings-bg: linear-gradient(180deg, #f4f7fb 0%, #eef3f8 100%);
+            --settings-card: #ffffff;
+            --settings-ink: #162033;
+            --settings-muted: #5f6f86;
+            --settings-line: #d7dfeb;
+            --settings-accent: #1254ff;
+            --settings-accent-soft: rgba(18, 84, 255, 0.08);
+            --settings-success: #18a36c;
         }
-        .card {
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-            margin-bottom: 20px;
+
+        .settings-page {
+            background: var(--settings-bg);
+            min-height: calc(100vh - 120px);
+            padding: 1.5rem 0 2rem;
         }
-        .card-header {
-            background: #343a40;
+
+        .settings-shell {
+            max-width: 1180px;
+            margin: 0 auto;
+        }
+
+        .settings-card {
+            background: var(--settings-card);
+            border: 1px solid rgba(215, 223, 235, 0.95);
+            border-radius: 24px;
+            box-shadow: 0 18px 45px rgba(17, 33, 58, 0.08);
+            overflow: hidden;
+        }
+
+        .settings-card + .settings-card {
+            margin-top: 1.5rem;
+        }
+
+        .settings-card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            padding: 1.4rem 1.6rem;
+            background: linear-gradient(135deg, #17233a 0%, #263758 100%);
             color: #fff;
-            border-radius: 8px 8px 0 0;
         }
-        .btn-primary {
-            transition: all 0.3s ease;
+
+        .settings-card-header h2,
+        .settings-card-header h3 {
+            margin: 0;
+            font-size: 1.15rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
         }
-        .btn-primary:hover {
-            background-color: #0d6efd;
-            transform: scale(1.05);
+
+        .settings-card-header p {
+            margin: 0.35rem 0 0;
+            color: rgba(255, 255, 255, 0.78);
+            font-size: 0.92rem;
         }
-        .form-label {
-            font-weight: 500;
+
+        .settings-card-body {
+            padding: 1.6rem;
         }
-        .form-control, .form-check-input {
-            border-radius: 4px;
+
+        .section-title {
+            margin: 0 0 1rem;
+            color: var(--settings-ink);
+            font-size: 1rem;
+            font-weight: 700;
         }
+
+        .section-hint {
+            margin: 0 0 1rem;
+            color: var(--settings-muted);
+            font-size: 0.92rem;
+        }
+
+        .settings-form .form-label {
+            color: var(--settings-ink);
+            font-weight: 700;
+            margin-bottom: 0.55rem;
+        }
+
+        .settings-form .form-control,
+        .settings-form .form-check-input {
+            border-radius: 14px;
+            border-color: var(--settings-line);
+            box-shadow: none;
+        }
+
+        .settings-form .form-control {
+            min-height: 50px;
+            padding: 0.85rem 1rem;
+        }
+
+        .settings-form .form-control:focus,
+        .settings-form .form-check-input:focus {
+            border-color: rgba(18, 84, 255, 0.45);
+            box-shadow: 0 0 0 0.25rem rgba(18, 84, 255, 0.12);
+        }
+
+        .mask-hint {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            margin-top: 0.5rem;
+            color: var(--settings-muted);
+            font-size: 0.86rem;
+        }
+
+        .editor-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 1rem;
+        }
+
+        .editor-card {
+            border: 1px solid var(--settings-line);
+            border-radius: 20px;
+            padding: 1rem;
+            background: linear-gradient(180deg, rgba(244, 247, 251, 0.9) 0%, rgba(255, 255, 255, 0.96) 100%);
+        }
+
+        .editor-card .form-label {
+            margin-bottom: 0.75rem;
+        }
+
+        .editor-shell .ql-toolbar.ql-snow,
+        .editor-shell .ql-container.ql-snow {
+            border-color: var(--settings-line);
+        }
+
+        .editor-shell .ql-toolbar.ql-snow {
+            border-radius: 16px 16px 0 0;
+            background: #fff;
+        }
+
+        .editor-shell .ql-container.ql-snow {
+            border-radius: 0 0 16px 16px;
+            background: #fff;
+        }
+
+        .editor-shell .ql-editor {
+            min-height: 180px;
+            color: var(--settings-ink);
+            font-size: 0.98rem;
+            line-height: 1.65;
+        }
+
+        .editor-shell.editor-shell-compact .ql-editor {
+            min-height: 140px;
+        }
+
+        .upload-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 1rem;
+        }
+
+        .upload-field {
+            position: relative;
+        }
+
+        .upload-surface {
+            display: flex;
+            flex-direction: column;
+            gap: 0.9rem;
+            min-height: 280px;
+            padding: 1.15rem;
+            border: 1.5px dashed #b8c6da;
+            border-radius: 22px;
+            background:
+                radial-gradient(circle at top right, rgba(18, 84, 255, 0.12), transparent 34%),
+                linear-gradient(180deg, rgba(245, 248, 252, 0.95) 0%, rgba(255, 255, 255, 0.98) 100%);
+            cursor: pointer;
+            transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .upload-surface:hover,
+        .upload-field.is-dragover .upload-surface {
+            transform: translateY(-2px);
+            border-color: rgba(18, 84, 255, 0.55);
+            box-shadow: 0 16px 30px rgba(18, 84, 255, 0.1);
+        }
+
+        .upload-copy {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 1rem;
+        }
+
+        .upload-copy h4 {
+            margin: 0 0 0.35rem;
+            color: var(--settings-ink);
+            font-size: 1rem;
+            font-weight: 700;
+        }
+
+        .upload-copy p {
+            margin: 0;
+            color: var(--settings-muted);
+            font-size: 0.9rem;
+            line-height: 1.45;
+        }
+
+        .upload-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 46px;
+            height: 46px;
+            border-radius: 14px;
+            background: var(--settings-accent-soft);
+            color: var(--settings-accent);
+            font-size: 1.35rem;
+            flex-shrink: 0;
+        }
+
+        .upload-preview {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 150px;
+            border-radius: 18px;
+            background: #fff;
+            border: 1px solid rgba(215, 223, 235, 0.8);
+            overflow: hidden;
+        }
+
+        .upload-preview img,
+        .upload-preview video {
+            width: 100%;
+            max-height: 240px;
+            object-fit: contain;
+            background: #f9fbfd;
+        }
+
+        .upload-placeholder {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 0.55rem;
+            color: var(--settings-muted);
+            text-align: center;
+            padding: 1.25rem;
+        }
+
+        .upload-placeholder i {
+            font-size: 2rem;
+            color: var(--settings-accent);
+        }
+
+        .upload-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+            color: var(--settings-muted);
+            font-size: 0.84rem;
+        }
+
+        .upload-footer strong {
+            color: var(--settings-ink);
+            font-weight: 700;
+        }
+
+        .settings-tabs {
+            border-bottom: 1px solid var(--settings-line);
+            gap: 0.35rem;
+        }
+
+        .settings-tabs .nav-link {
+            border: 0;
+            border-radius: 999px;
+            color: var(--settings-muted);
+            font-weight: 600;
+            padding: 0.65rem 1rem;
+        }
+
+        .settings-tabs .nav-link.active,
+        .settings-tabs .nav-link:hover {
+            background: var(--settings-accent-soft);
+            color: var(--settings-accent);
+        }
+
+        .settings-checkbox {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            padding: 1rem 1.15rem;
+            border: 1px solid var(--settings-line);
+            border-radius: 18px;
+            background: #fff;
+        }
+
+        .settings-checkbox h4 {
+            margin: 0 0 0.25rem;
+            color: var(--settings-ink);
+            font-size: 0.98rem;
+            font-weight: 700;
+        }
+
+        .settings-checkbox p {
+            margin: 0;
+            color: var(--settings-muted);
+            font-size: 0.88rem;
+        }
+
+        .settings-submit {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 1.5rem;
+        }
+
+        .settings-submit .btn {
+            min-width: 180px;
+            border-radius: 999px;
+            padding: 0.9rem 1.4rem;
+            font-weight: 700;
+            box-shadow: 0 16px 30px rgba(18, 84, 255, 0.18);
+        }
+
+        .banner-upload .upload-surface {
+            min-height: 340px;
+        }
+
         .alert {
-            border-radius: 4px;
+            border-radius: 18px;
+        }
+
+        @media (max-width: 991.98px) {
+            .editor-grid,
+            .upload-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .settings-card-body,
+            .settings-card-header {
+                padding: 1.25rem;
+            }
+
+            .settings-submit .btn {
+                width: 100%;
+            }
         }
     </style>
-{% endblock page_css %}
+{% endblock vendor_css %}
 
 {% block content %}
-<div class="container py-4">
-    <!-- Xabarlar ko‘rsatilishi -->
-    {% if messages %}
-        <div class="mb-4">
-            {% for message in messages %}
-                <div class="alert {% if message.tags == 'success' %}alert-success{% elif message.tags == 'error' %}alert-danger{% else %}alert-info{% endif %} alert-dismissible fade show" role="alert">
-                    {{ message }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    <div class="settings-page">
+        <div class="container-fluid settings-shell">
+            {% if messages %}
+                <div class="mb-4">
+                    {% for message in messages %}
+                        <div class="alert {% if message.tags == 'success' %}alert-success{% elif message.tags == 'error' %}alert-danger{% else %}alert-info{% endif %} alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    {% endfor %}
                 </div>
-            {% endfor %}
-        </div>
-    {% endif %}
+            {% endif %}
 
-    <!-- Sayt sozlamalari formasi -->
-    <div class="card">
-        <div class="card-header">
-            <h2 class="mb-0 fw-bold">{% trans "Sayt sozlamalarini tahrirlash" %}</h2>
-        </div>
-        <div class="card-body p-4">
-            <form method="POST" enctype="multipart/form-data">
+            <form method="POST" enctype="multipart/form-data" class="settings-form">
                 {% csrf_token %}
 
-                <!-- Sayt nomi -->
-                <div class="mb-3">
-                    <label for="site_name" class="form-label">{% trans "Sayt nomi" %}</label>
-                    <input type="text" name="site_name" id="site_name" class="form-control"
-                           value="{{ site_settings.site_name|default:'' }}" required>
-                </div>
-
-                <!-- Kontakt ma'lumotlari -->
-                <div class="row mb-3">
-                    <div class="col-md-6">
-                        <label for="contact_email" class="form-label">{% trans "Aloqa email" %}</label>
-                        <input type="email" name="contact_email" id="contact_email" class="form-control"
-                               value="{{ site_settings.contact_email|default:'' }}">
-                    </div>
-                    <div class="col-md-6">
-                        <label for="contact_phone" class="form-label">{% trans "Aloqa telefon" %}</label>
-                        <input type="text" name="contact_phone" id="contact_phone" class="form-control"
-                               value="{{ site_settings.contact_phone|default:'' }}">
-                    </div>
-                </div>
-
-                <!-- Manzil -->
-                <div class="mb-3">
-                    <label for="address" class="form-label">{% trans "Manzil" %}</label>
-                    <textarea name="address" id="address" class="form-control" rows="3">{{ site_settings.address|default:'' }}</textarea>
-                </div>
-
-                <!-- Ish vaqti -->
-                <div class="mb-3">
-                    <label for="working_hours" class="form-label">{% trans "Ish vaqti" %}</label>
-                    <input type="text" name="working_hours" id="working_hours" class="form-control"
-                           value="{{ site_settings.working_hours|default:'' }}"
-                           placeholder="{% trans 'Masalan: Dushanba - Juma 9:00 - 17:00' %}">
-                </div>
-
-                <!-- Video 1 -->
-                <div class="mb-3">
-                    <label for="video1" class="form-label">{% trans "Video 1" %}</label>
-                    <input type="file" name="video1" id="video1" class="form-control" accept="video/*">
-                    {% if site_settings.video1 %}
-                        <div class="mt-2">
-                            <video width="300" controls>
-                                <source src="{{ site_settings.video1.url }}" type="video/mp4">
-                                {% trans "Brauzeringiz video tagini qo‘llab-quvvatlamaydi." %}
-                            </video>
+                <div class="settings-card">
+                    <div class="settings-card-header">
+                        <div>
+                            <h2>{% trans "Sayt sozlamalarini tahrirlash" %}</h2>
+                            <p>{% trans "Kontaktlar, media fayllar va asosiy ko‘rinish sozlamalarini shu yerda yangilang." %}</p>
                         </div>
-                    {% endif %}
-                </div>
+                    </div>
 
-                <!-- Video 2 -->
-                <div class="mb-3">
-                    <label for="video2" class="form-label">{% trans "Video 2" %}</label>
-                    <input type="file" name="video2" id="video2" class="form-control" accept="video/*">
-                    {% if site_settings.video2 %}
-                        <div class="mt-2">
-                            <video width="300" controls>
-                                <source src="{{ site_settings.video2.url }}" type="video/mp4">
-                                {% trans "Brauzeringiz video tagini qo‘llab-quvvatlamaydi." %}
-                            </video>
-                        </div>
-                    {% endif %}
-                </div>
-                <!-- Ijtimoiy tarmoqlar -->
-                <div class="row mb-3">
-                    <div class="col-md-6">
-                        <label for="facebook_url" class="form-label">{% trans "Facebook URL" %}</label>
-                        <input type="url" name="facebook_url" id="facebook_url" class="form-control"
-                               value="{{ site_settings.facebook_url|default:'' }}">
-                    </div>
-                    <div class="col-md-6">
-                        <label for="telegram_url" class="form-label">{% trans "Telegram URL" %}</label>
-                        <input type="url" name="telegram_url" id="telegram_url" class="form-control"
-                               value="{{ site_settings.telegram_url|default:'' }}">
-                    </div>
-                </div>
-                <div class="row mb-3">
-                    <div class="col-md-6">
-                        <label for="instagram_url" class="form-label">{% trans "Instagram URL" %}</label>
-                        <input type="url" name="instagram_url" id="instagram_url" class="form-control"
-                               value="{{ site_settings.instagram_url|default:'' }}">
-                    </div>
-                    <div class="col-md-6">
-                        <label for="youtube_url" class="form-label">{% trans "YouTube URL" %}</label>
-                        <input type="url" name="youtube_url" id="youtube_url" class="form-control"
-                               value="{{ site_settings.youtube_url|default:'' }}">
-                    </div>
-                </div>
-
-                <!-- Logotiplar -->
-                <div class="row mb-3">
-                    <div class="col-md-6">
-                        <label for="logo_dark" class="form-label">{% trans "Dark rejim logotipi" %}</label>
-                        <input type="file" name="logo_dark" id="logo_dark" class="form-control">
-                        {% if site_settings.logo_dark %}
-                            <img src="{{ site_settings.logo_dark.url }}" class="mt-2 rounded" style="max-height: 40px;" alt="Dark Logo">
-                        {% endif %}
-                    </div>
-                    <div class="col-md-6">
-                        <label for="logo_light" class="form-label">{% trans "Light rejim logotipi" %}</label>
-                        <input type="file" name="logo_light" id="logo_light" class="form-control">
-                        {% if site_settings.logo_light %}
-                            <img src="{{ site_settings.logo_light.url }}" class="mt-2 rounded" style="max-height: 40px;" alt="Light Logo">
-                        {% endif %}
-                    </div>
-                </div>
-
-                <!-- Texnik xizmat rejimi -->
-                <div class="mb-3 form-check">
-                    <input type="checkbox" name="maintenance_mode" id="maintenance_mode" class="form-check-input"
-                           {% if site_settings.maintenance_mode %}checked{% endif %}>
-                    <label for="maintenance_mode" class="form-check-label">{% trans "Texnik xizmat rejimi" %}</label>
-                </div>
-
-<!-- Banner formasi -->
-                <div class="card mt-4">
-                    <div class="card-header">
-                        <h3 class="mb-0 fw-bold">{% trans "Asosiy sahifa banneri" %}</h3>
-                    </div>
-                    <div class="card-body p-4">
-                        <!-- Banner tasviri -->
-                        <div class="mb-3">
-                            <label for="banner_image" class="form-label">{% trans "Banner tasviri (1920x180)" %}</label>
-                            <input type="file" name="banner_image" id="banner_image" class="form-control">
-                            {% if banner.image %}
-                                <img src="{{ banner.image.url }}" class="mt-2 rounded" style="max-height: 180px;" alt="Banner">
-                            {% endif %}
+                    <div class="settings-card-body">
+                        <div class="mb-4">
+                            <h3 class="section-title">{% trans "Asosiy ma'lumotlar" %}</h3>
+                            <div class="row g-3">
+                                <div class="col-lg-4">
+                                    <label for="site_name" class="form-label">{% trans "Sayt nomi" %}</label>
+                                    <input type="text" name="site_name" id="site_name" class="form-control" value="{{ site_settings.site_name|default:'' }}" required>
+                                </div>
+                                <div class="col-lg-4">
+                                    <label for="contact_email" class="form-label">{% trans "Aloqa email" %}</label>
+                                    <input type="email" name="contact_email" id="contact_email" class="form-control" value="{{ site_settings.contact_email|default:'' }}">
+                                </div>
+                                <div class="col-lg-4">
+                                    <label for="contact_phone" class="form-label">{% trans "Aloqa telefon" %}</label>
+                                    <input
+                                        type="text"
+                                        name="contact_phone"
+                                        id="contact_phone"
+                                        class="form-control"
+                                        value="{{ site_settings.contact_phone|default:'' }}"
+                                        inputmode="numeric"
+                                        maxlength="17"
+                                        placeholder="+998 90 123 45 67"
+                                    >
+                                    <span class="mask-hint">
+                                        <i class="ri-phone-line"></i>
+                                        {% trans "Format" %}: +998 90 123 45 67
+                                    </span>
+                                </div>
+                            </div>
                         </div>
 
-                        <!-- Banner tavsifi (Tablar yordamida har bir til uchun) -->
-                        <ul class="nav nav-tabs mb-3" id="languageTabs" role="tablist">
+                        <div class="mb-4">
+                            <h3 class="section-title">{% trans "Matnli bloklar" %}</h3>
+                            <p class="section-hint">{% trans "Quill editor orqali matnni formatlab saqlashingiz mumkin." %}</p>
+                            <div class="editor-grid">
+                                <div class="editor-card">
+                                    <label for="address_editor" class="form-label">{% trans "Manzil" %}</label>
+                                    <div class="editor-shell">
+                                        <div id="address_editor" class="rich-editor"></div>
+                                    </div>
+                                    <textarea name="address" class="rich-editor-input d-none" data-editor="address_editor">{{ site_settings.address|default:'' }}</textarea>
+                                </div>
+
+                                <div class="editor-card">
+                                    <label for="working_hours_editor" class="form-label">{% trans "Ish vaqti" %}</label>
+                                    <div class="editor-shell">
+                                        <div id="working_hours_editor" class="rich-editor"></div>
+                                    </div>
+                                    <textarea name="working_hours" class="rich-editor-input d-none" data-editor="working_hours_editor">{{ site_settings.working_hours|default:'' }}</textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <h3 class="section-title">{% trans "Media fayllar" %}</h3>
+                            <p class="section-hint">{% trans "Faylni tashlab yuborish yoki kartochkani bosib tanlash mumkin." %}</p>
+                            <div class="upload-grid">
+                                <div class="upload-field" data-upload-card>
+                                    <input type="file" name="video1" id="video1" class="upload-input d-none" accept="video/*">
+                                    <div class="upload-surface" data-upload-trigger tabindex="0">
+                                        <div class="upload-copy">
+                                            <div>
+                                                <h4>{% trans "Video 1" %}</h4>
+                                                <p>{% trans "Asosiy sahifadagi birinchi video blok." %}</p>
+                                            </div>
+                                            <span class="upload-icon"><i class="ri-movie-2-line"></i></span>
+                                        </div>
+                                        <div class="upload-preview" data-upload-preview>
+                                            {% if site_settings.video1 %}
+                                                <video controls muted preload="metadata">
+                                                    <source src="{{ site_settings.video1.url }}" type="video/mp4">
+                                                </video>
+                                            {% else %}
+                                                <div class="upload-placeholder">
+                                                    <i class="ri-upload-cloud-2-line"></i>
+                                                    <span>{% trans "Video yuklash uchun bosing yoki tashlab yuboring" %}</span>
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                        <div class="upload-footer">
+                                            <span>{% trans "MP4, MOV, WEBM" %}</span>
+                                            <strong data-upload-filename>{% if site_settings.video1 %}{{ site_settings.video1.name }}{% else %}{% trans "Fayl tanlanmagan" %}{% endif %}</strong>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="upload-field" data-upload-card>
+                                    <input type="file" name="video2" id="video2" class="upload-input d-none" accept="video/*">
+                                    <div class="upload-surface" data-upload-trigger tabindex="0">
+                                        <div class="upload-copy">
+                                            <div>
+                                                <h4>{% trans "Video 2" %}</h4>
+                                                <p>{% trans "Asosiy sahifadagi ikkinchi video blok." %}</p>
+                                            </div>
+                                            <span class="upload-icon"><i class="ri-live-line"></i></span>
+                                        </div>
+                                        <div class="upload-preview" data-upload-preview>
+                                            {% if site_settings.video2 %}
+                                                <video controls muted preload="metadata">
+                                                    <source src="{{ site_settings.video2.url }}" type="video/mp4">
+                                                </video>
+                                            {% else %}
+                                                <div class="upload-placeholder">
+                                                    <i class="ri-upload-cloud-2-line"></i>
+                                                    <span>{% trans "Video yuklash uchun bosing yoki tashlab yuboring" %}</span>
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                        <div class="upload-footer">
+                                            <span>{% trans "MP4, MOV, WEBM" %}</span>
+                                            <strong data-upload-filename>{% if site_settings.video2 %}{{ site_settings.video2.name }}{% else %}{% trans "Fayl tanlanmagan" %}{% endif %}</strong>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="upload-field" data-upload-card>
+                                    <input type="file" name="logo_dark" id="logo_dark" class="upload-input d-none" accept=".svg,image/*">
+                                    <div class="upload-surface" data-upload-trigger tabindex="0">
+                                        <div class="upload-copy">
+                                            <div>
+                                                <h4>{% trans "Dark rejim logotipi" %}</h4>
+                                                <p>{% trans "Qorong‘i fonlarda ishlatiladigan logotip." %}</p>
+                                            </div>
+                                            <span class="upload-icon"><i class="ri-moon-clear-line"></i></span>
+                                        </div>
+                                        <div class="upload-preview" data-upload-preview>
+                                            {% if site_settings.logo_dark %}
+                                                <img src="{{ site_settings.logo_dark.url }}" alt="{% trans 'Dark logo' %}">
+                                            {% else %}
+                                                <div class="upload-placeholder">
+                                                    <i class="ri-image-add-line"></i>
+                                                    <span>{% trans "Logotip yuklash uchun bosing" %}</span>
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                        <div class="upload-footer">
+                                            <span>{% trans "PNG, JPG, SVG" %}</span>
+                                            <strong data-upload-filename>{% if site_settings.logo_dark %}{{ site_settings.logo_dark.name }}{% else %}{% trans "Fayl tanlanmagan" %}{% endif %}</strong>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="upload-field" data-upload-card>
+                                    <input type="file" name="logo_light" id="logo_light" class="upload-input d-none" accept=".svg,image/*">
+                                    <div class="upload-surface" data-upload-trigger tabindex="0">
+                                        <div class="upload-copy">
+                                            <div>
+                                                <h4>{% trans "Light rejim logotipi" %}</h4>
+                                                <p>{% trans "Yorug‘ fonlarda ishlatiladigan logotip." %}</p>
+                                            </div>
+                                            <span class="upload-icon"><i class="ri-sun-line"></i></span>
+                                        </div>
+                                        <div class="upload-preview" data-upload-preview>
+                                            {% if site_settings.logo_light %}
+                                                <img src="{{ site_settings.logo_light.url }}" alt="{% trans 'Light logo' %}">
+                                            {% else %}
+                                                <div class="upload-placeholder">
+                                                    <i class="ri-image-add-line"></i>
+                                                    <span>{% trans "Logotip yuklash uchun bosing" %}</span>
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                        <div class="upload-footer">
+                                            <span>{% trans "PNG, JPG, SVG" %}</span>
+                                            <strong data-upload-filename>{% if site_settings.logo_light %}{{ site_settings.logo_light.name }}{% else %}{% trans "Fayl tanlanmagan" %}{% endif %}</strong>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <h3 class="section-title">{% trans "Ijtimoiy tarmoqlar" %}</h3>
+                            <div class="row g-3">
+                                <div class="col-lg-6">
+                                    <label for="facebook_url" class="form-label">{% trans "Facebook URL" %}</label>
+                                    <input type="url" name="facebook_url" id="facebook_url" class="form-control" value="{{ site_settings.facebook_url|default:'' }}">
+                                </div>
+                                <div class="col-lg-6">
+                                    <label for="telegram_url" class="form-label">{% trans "Telegram URL" %}</label>
+                                    <input type="url" name="telegram_url" id="telegram_url" class="form-control" value="{{ site_settings.telegram_url|default:'' }}">
+                                </div>
+                                <div class="col-lg-6">
+                                    <label for="instagram_url" class="form-label">{% trans "Instagram URL" %}</label>
+                                    <input type="url" name="instagram_url" id="instagram_url" class="form-control" value="{{ site_settings.instagram_url|default:'' }}">
+                                </div>
+                                <div class="col-lg-6">
+                                    <label for="youtube_url" class="form-label">{% trans "YouTube URL" %}</label>
+                                    <input type="url" name="youtube_url" id="youtube_url" class="form-control" value="{{ site_settings.youtube_url|default:'' }}">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="settings-checkbox">
+                            <div>
+                                <h4>{% trans "Texnik xizmat rejimi" %}</h4>
+                                <p>{% trans "Faollashtirilsa sayt vaqtincha xizmat ko‘rsatish rejimiga o‘tadi." %}</p>
+                            </div>
+                            <div class="form-check form-switch m-0">
+                                <input type="checkbox" name="maintenance_mode" id="maintenance_mode" class="form-check-input" {% if site_settings.maintenance_mode %}checked{% endif %}>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="settings-card">
+                    <div class="settings-card-header">
+                        <div>
+                            <h3>{% trans "Asosiy sahifa banneri" %}</h3>
+                            <p>{% trans "Banner rasmi asl o‘lchamida saqlanadi, avtomatik siqilmaydi." %}</p>
+                        </div>
+                    </div>
+
+                    <div class="settings-card-body">
+                        <div class="upload-field banner-upload mb-4" data-upload-card>
+                            <input type="file" name="banner_image" id="banner_image" class="upload-input d-none" accept="image/*">
+                            <div class="upload-surface" data-upload-trigger tabindex="0">
+                                <div class="upload-copy">
+                                    <div>
+                                        <h4>{% trans "Banner tasviri" %}</h4>
+                                        <p>{% trans "Rasm qanday bo‘lsa, shu ko‘rinishda yuklanadi. Format: JPG, PNG, WEBP." %}</p>
+                                    </div>
+                                    <span class="upload-icon"><i class="ri-landscape-line"></i></span>
+                                </div>
+                                <div class="upload-preview" data-upload-preview>
+                                    {% if banner and banner.image %}
+                                        <img src="{{ banner.image.url }}" alt="{% trans 'Banner rasmi' %}">
+                                    {% else %}
+                                        <div class="upload-placeholder">
+                                            <i class="ri-gallery-upload-line"></i>
+                                            <span>{% trans "Banner rasmni yuklash uchun bosing yoki tashlab yuboring" %}</span>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                <div class="upload-footer">
+                                    <span>{% trans "JPG, PNG, WEBP" %}</span>
+                                    <strong data-upload-filename>{% if banner and banner.image %}{{ banner.image.name }}{% else %}{% trans "Fayl tanlanmagan" %}{% endif %}</strong>
+                                </div>
+                            </div>
+                        </div>
+
+                        <h3 class="section-title">{% trans "Banner tavsifi" %}</h3>
+                        <p class="section-hint">{% trans "Har bir til uchun formatlangan tavsif kiritishingiz mumkin." %}</p>
+
+                        <ul class="nav nav-tabs settings-tabs mb-3" id="languageTabs" role="tablist">
                             {% for lang_code, lang_name in LANGUAGES %}
                                 <li class="nav-item" role="presentation">
-                                    <button class="nav-link {% if forloop.first %}active{% endif %}"
-                                            id="tab-{{ lang_code }}"
-                                            data-bs-toggle="tab"
-                                            data-bs-target="#content-{{ lang_code }}"
-                                            type="button"
-                                            role="tab"
-                                            aria-controls="content-{{ lang_code }}"
-                                            aria-selected="{% if forloop.first %}true{% else %}false{% endif %}">
+                                    <button
+                                        class="nav-link {% if forloop.first %}active{% endif %}"
+                                        id="tab-{{ lang_code }}"
+                                        data-bs-toggle="tab"
+                                        data-bs-target="#content-{{ lang_code }}"
+                                        type="button"
+                                        role="tab"
+                                        aria-controls="content-{{ lang_code }}"
+                                        aria-selected="{% if forloop.first %}true{% else %}false{% endif %}"
+                                    >
                                         {{ lang_name }}
                                     </button>
                                 </li>
@@ -213,16 +649,24 @@
 
                         <div class="tab-content" id="languageTabContent">
                             {% for lang_code, lang_name in LANGUAGES %}
-                                <div class="tab-pane fade {% if forloop.first %}show active{% endif %}"
-                                     id="content-{{ lang_code }}"
-                                     role="tabpanel"
-                                     aria-labelledby="tab-{{ lang_code }}">
-                                    <div class="mb-3">
-                                        <label for="description_{{ lang_code }}" class="form-label">
+                                <div
+                                    class="tab-pane fade {% if forloop.first %}show active{% endif %}"
+                                    id="content-{{ lang_code }}"
+                                    role="tabpanel"
+                                    aria-labelledby="tab-{{ lang_code }}"
+                                >
+                                    <div class="editor-card">
+                                        <label class="form-label">
                                             {% trans "Tavsif" %} ({{ lang_name }}) {% if lang_code == 'uz' %}<span class="text-danger">*</span>{% endif %}
                                         </label>
-                                        <textarea name="description_{{ lang_code }}" id="description_{{ lang_code }}"
-                                                  class="form-control" rows="2" {% if lang_code == 'uz' %}required{% endif %}>{{ banner.description|default:''|get_language_text:lang_code }}</textarea>
+                                        <div class="editor-shell editor-shell-compact">
+                                            <div id="description_editor_{{ lang_code }}" class="rich-editor"></div>
+                                        </div>
+                                        <textarea
+                                            name="description_{{ lang_code }}"
+                                            class="rich-editor-input d-none"
+                                            data-editor="description_editor_{{ lang_code }}"
+                                        >{% if banner and banner.description %}{{ banner.description|lookup:lang_code }}{% endif %}</textarea>
                                     </div>
                                 </div>
                             {% endfor %}
@@ -230,15 +674,200 @@
                     </div>
                 </div>
 
-                <!-- Saqlash tugmasi -->
-                <div class="d-grid gap-2 mt-4">
+                <div class="settings-submit">
                     <button type="submit" class="btn btn-primary">{% trans "Saqlash" %}</button>
                 </div>
             </form>
         </div>
     </div>
-</div>
-
-<!-- Qo‘shimcha JavaScript -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 {% endblock content %}
+
+{% block vendor_js %}
+    <script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const form = document.querySelector(".settings-form");
+
+            function formatUzbekPhone(value) {
+                let digits = (value || "").replace(/\D/g, "");
+                if (digits.startsWith("998")) {
+                    digits = digits.slice(3);
+                }
+                digits = digits.slice(0, 9);
+
+                if (!digits.length) {
+                    return "";
+                }
+
+                let formatted = "+998";
+                if (digits.length > 0) {
+                    formatted += " " + digits.slice(0, 2);
+                }
+                if (digits.length > 2) {
+                    formatted += " " + digits.slice(2, 5);
+                }
+                if (digits.length > 5) {
+                    formatted += " " + digits.slice(5, 7);
+                }
+                if (digits.length > 7) {
+                    formatted += " " + digits.slice(7, 9);
+                }
+                return formatted;
+            }
+
+            const phoneInput = document.getElementById("contact_phone");
+            if (phoneInput) {
+                const syncPhoneValue = () => {
+                    phoneInput.value = formatUzbekPhone(phoneInput.value);
+                };
+
+                syncPhoneValue();
+                phoneInput.addEventListener("input", syncPhoneValue);
+                phoneInput.addEventListener("focus", function () {
+                    if (!phoneInput.value) {
+                        phoneInput.value = "+998 ";
+                    }
+                });
+                phoneInput.addEventListener("blur", function () {
+                    if (phoneInput.value.trim() === "+998") {
+                        phoneInput.value = "";
+                    }
+                });
+            }
+
+            const editorToolbar = [
+                ["bold", "italic", "underline", "strike"],
+                ["blockquote", "code-block"],
+                [{header: 1}, {header: 2}],
+                [{list: "ordered"}, {list: "bullet"}],
+                [{script: "sub"}, {script: "super"}],
+                [{indent: "-1"}, {indent: "+1"}],
+                [{direction: "rtl"}],
+                [{size: ["small", false, "large", "huge"]}],
+                [{header: [1, 2, 3, 4, 5, 6, false]}],
+                [{color: []}, {background: []}],
+                [{align: []}],
+                ["clean"]
+            ];
+
+            function normalizeEditorHtml(html) {
+                const temp = document.createElement("div");
+                temp.innerHTML = html || "";
+                const text = (temp.textContent || temp.innerText || "").replace(/\u00a0/g, " ").trim();
+                return text ? html.trim() : "";
+            }
+
+            document.querySelectorAll(".rich-editor-input").forEach(function (textarea) {
+                const editorId = textarea.dataset.editor;
+                const quill = new Quill(`#${editorId}`, {
+                    theme: "snow",
+                    modules: {
+                        toolbar: editorToolbar
+                    }
+                });
+
+                if (textarea.value.trim()) {
+                    quill.root.innerHTML = textarea.value;
+                }
+
+                const syncValue = function () {
+                    textarea.value = normalizeEditorHtml(quill.root.innerHTML);
+                };
+
+                syncValue();
+                quill.on("text-change", syncValue);
+
+                if (form) {
+                    form.addEventListener("submit", syncValue);
+                }
+            });
+
+            document.querySelectorAll("[data-upload-card]").forEach(function (field) {
+                const input = field.querySelector(".upload-input");
+                const trigger = field.querySelector("[data-upload-trigger]");
+                const preview = field.querySelector("[data-upload-preview]");
+                const filename = field.querySelector("[data-upload-filename]");
+
+                if (!input || !trigger || !preview || !filename) {
+                    return;
+                }
+
+                const openFileDialog = function () {
+                    input.click();
+                };
+
+                const setPreview = function (file) {
+                    if (!file) {
+                        return;
+                    }
+
+                    filename.textContent = file.name;
+
+                    if (field.dataset.objectUrl) {
+                        URL.revokeObjectURL(field.dataset.objectUrl);
+                    }
+
+                    const objectUrl = URL.createObjectURL(file);
+                    field.dataset.objectUrl = objectUrl;
+
+                    if (file.type.startsWith("image/")) {
+                        preview.innerHTML = `<img src="${objectUrl}" alt="${file.name}">`;
+                        return;
+                    }
+
+                    if (file.type.startsWith("video/")) {
+                        preview.innerHTML = `<video controls muted preload="metadata"><source src="${objectUrl}" type="${file.type}"></video>`;
+                        return;
+                    }
+
+                    preview.innerHTML = `
+                        <div class="upload-placeholder">
+                            <i class="ri-file-line"></i>
+                            <span>${file.name}</span>
+                        </div>
+                    `;
+                };
+
+                trigger.addEventListener("click", openFileDialog);
+                trigger.addEventListener("keydown", function (event) {
+                    if (event.key === "Enter" || event.key === " ") {
+                        event.preventDefault();
+                        openFileDialog();
+                    }
+                });
+
+                ["dragenter", "dragover"].forEach(function (eventName) {
+                    trigger.addEventListener(eventName, function (event) {
+                        event.preventDefault();
+                        field.classList.add("is-dragover");
+                    });
+                });
+
+                ["dragleave", "dragend"].forEach(function (eventName) {
+                    trigger.addEventListener(eventName, function () {
+                        field.classList.remove("is-dragover");
+                    });
+                });
+
+                trigger.addEventListener("drop", function (event) {
+                    event.preventDefault();
+                    field.classList.remove("is-dragover");
+
+                    if (!event.dataTransfer.files.length) {
+                        return;
+                    }
+
+                    input.files = event.dataTransfer.files;
+                    input.dispatchEvent(new Event("change", {bubbles: true}));
+                });
+
+                input.addEventListener("change", function () {
+                    const file = input.files && input.files[0];
+                    if (file) {
+                        setPreview(file);
+                    }
+                });
+            });
+        });
+    </script>
+{% endblock vendor_js %}

@@ -2,9 +2,16 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.utils.translation import gettext_lazy as _
 from django.core.validators import MinValueValidator
+from django.utils.html import strip_tags
+import re
 
 
 class CustomUser(AbstractUser):
+    BIO_DEBUG_PATTERN = re.compile(
+        r"-+\s*FRONTEND DEBUG:\s*Yuborilayotgan bio qiymati:\s*(.*?)\s*-+",
+        re.IGNORECASE | re.DOTALL,
+    )
+
     full_name = models.CharField(max_length=255, blank=True)
     phone_number = models.CharField(max_length=15, blank=True)
     address = models.TextField(blank=True)
@@ -58,11 +65,26 @@ class CustomUser(AbstractUser):
             return f"{self.work_start_time.strftime('%H:%M')} - {self.work_end_time.strftime('%H:%M')}"
         return "Ish vaqti belgilanmagan"
 
+    @classmethod
+    def normalize_rich_text_content(cls, value):
+        cleaned = (value or "").strip()
+        if not cleaned:
+            return ""
+
+        cleaned = cls.BIO_DEBUG_PATTERN.sub(lambda match: match.group(1).strip(), cleaned)
+        plain_text = strip_tags(cleaned).replace("\xa0", " ").strip()
+        if not plain_text:
+            return ""
+        return cleaned
+
+    def get_clean_bio(self):
+        return self.normalize_rich_text_content(self.bio)
+
     def get_bio(self):
         """ Bio ma'lumotlarini tartibga solish """
-        if self.bio:
+        bio = self.get_clean_bio()
+        if bio:
             # "TAJRIBASI:" va "TA’LIM:" bo'yicha bo'lish
-            bio = self.bio.strip()
             experience_list = []
             education_list = []
 

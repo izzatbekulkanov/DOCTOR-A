@@ -1,0 +1,525 @@
+{% extends "v1/base.html" %}
+{% load static custom_filters i18n %}
+
+{% block content %}
+		<!-- START BANNER AREA -->
+		<section id="home" class="banner-area">
+			<div class="d-table">
+				<div class="d-table-cell">
+					<div class="container">
+						<div class="row">
+							<div class="col-lg-6">
+								<div class="banner-content">
+									<span class="wow fadeInUp" data-wow-delay=".4s">{% ui_label 'welcome_to' CURRENT_LANG %} {{ site_settings.site_name|default:'Medic' }}</span>
+									<h1 class="wow fadeInUp" data-wow-delay=".6s">Exceptional Medical Specialty Healthcare</h1>
+									<p class="wow fadeInUp" data-wow-delay=".8s">Lorem ipsum dolor sit amet consectetur adipisicing elit. Quibusdam ad, adipisci fugiat maiores earum voluptatibus temporibus, optio libero provident.</p>
+		
+									<div class="banner-btn wow fadeInUp" data-wow-delay=".9s">
+										<a href="department-grid.html" class="default-btn">
+											View Departments
+										</a>
+										<a href="contact-style-one.html" class="default-btn active">
+											Contact Us
+										</a>
+									</div>
+								</div>
+							</div>
+
+							<div class="col-lg-6">
+								<div class="banner-img wow fadeInUp" data-wow-delay=".9s">
+									<img src="{% static 'medic/img/index/img3.png' %}" alt="Image">
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+		<!-- END BANNER AREA -->
+
+		<!-- START SERVICES AREA -->
+		<section id="services" class="services-area bg-color pt-100 pb-70">
+			<div class="container">
+				<div data-aos="fade-up" data-aos-duration="1200" class="section-title">
+					<span class="top-title">Our Services</span>
+					<h2>Our Healthcare <span>Services</span></h2>
+					<p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Labore perferendis deleniti illum necessitati voluptates ipsum, ratione dolorum veritatis minus mollitia placeat</p>
+				</div>
+				
+				<div class="row">
+					<div data-aos="fade-up" data-aos-duration="1400" class="col-lg-4 col-sm-6">
+						<div class="single-services">
+							<i class="flaticon-medicine"></i>
+							<h3>Medicine</h3>
+							<p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Quis odit, unde fugiat autem earum luptatem sequuntur.</p>
+
+							<a href="{% url 'landing-v1-services' %}" class="read-more">
+								Read More
+							</a>
+						</div>
+					</div>
+
+					<div data-aos="fade-up" data-aos-duration="1600" class="col-lg-4 col-sm-6">
+						<div class="single-services">
+							<i class="flaticon-neurology"></i>
+							<h3>Neurology</h3>
+							<p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Quis odit, unde fugiat autem earum luptatem sequuntur.</p>
+
+							<a href="{% url 'landing-v1-services' %}" class="read-more">
+								Read More
+							</a>
+						</div>
+					</div>
+
+					<div data-aos="fade-up" data-aos-duration="1800" class="col-lg-4 col-sm-6">
+						<div class="single-services">
+							<i class="flaticon-eye"></i>
+							<h3>Eye Care</h3>
+							<p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Quis odit, unde fugiat autem earum luptatem sequuntur.</p>
+
+							<a href="{% url 'landing-v1-services' %}" class="read-more">
+								Read More
+							</a>
+						</div>
+					</div>
+
+					<div data-aos="fade-up" data-aos-duration="2000" class="col-lg-4 col-sm-6">
+						<div class="single-services">
+							<i class="flaticon-heart"></i>
+							<h3>Cardiology</h3>
+							<p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Quis odit, unde fugiat autem earum luptatem sequuntur.</p>
+
+							<a href="{% url 'landing-v1-services' %}" class="read-more">
+								Read More
+							</a>
+						</div>
+					</div>
+
+					<div data-aos="fade-up" data-aos-duration="2200" class="col-lg-4 col-sm-6">
+						<div class="single-services">
+							<i class="flaticon-dental-care"></i>
+							<h3>Dental Care</h3>
+							<p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Quis odit, unde fugiat autem earum luptatem sequuntur.</p>
+
+							<a href="{% url 'landing-v1-services' %}" class="read-more">
+								Read More
+							</a>
+						</div>
+					</div>
+
+					<div data-aos="fade-up" data-aos-duration="2400" class="col-lg-4 col-sm-6">
+						<div class="single-services">
+							<i class="flaticon-lungs"></i>
+							<h3>Pulmonary</h3>
+							<p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Quis odit, unde fugiat autem earum luptatem sequuntur.</p>
+
+							<a href="{% url 'landing-v1-services' %}" class="read-more">
+								Read More
+							</a>
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+		<!-- END SERVICES AREA -->
+
+		<!-- START COUNTER AREA CSS -->
+		<section class="counter-area pt-70 pb-70">
+			<div class="container">
+				<div class="row">
+					<div data-aos="fade-up" data-aos-duration="1200" class="col-lg-3 col-sm-6">
+						<div class="single-counter">
+							<i class="bx bx-user-circle"></i>
+
+							<h2>
+								<span class="odometer" data-count="100">00</span>
+								<span class="target">+</span>
+							</h2>
+
+							<p>Xodimlar</p>
+						</div>
+					</div>
+
+					<div data-aos="fade-up" data-aos-duration="1400" class="col-lg-3 col-sm-6">
+						<div class="single-counter">
+							<i class="bx bx-check-circle"></i>
+
+							<h2>
+								<span class="odometer" data-count="25">00</span>
+								<span class="target">+</span>
+							</h2>
+
+							<p>Shifokorlar</p>
+						</div>
+					</div>
+
+					<div data-aos="fade-up" data-aos-duration="1600" class="col-lg-3 col-sm-6">
+						<div class="single-counter">
+							<i class="bx bx-trophy"></i>
+
+							<h2>
+								<span class="odometer" data-count="9">00</span>
+								<span class="traget">+</span>
+							</h2>
+
+							<p>Jarrohlar</p>
+						</div>
+					</div>
+
+					<div data-aos="fade-up" data-aos-duration="1800" class="col-lg-3 col-sm-6">
+						<div class="single-counter">
+							<i class="bx bx-certification"></i>
+
+							<h2>
+								<span class="odometer" data-count="400">00</span>
+								<span class="traget">+</span>
+							</h2>
+
+							<p>Bemorlar</p>
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+		<!-- END COUNTER AREA CSS -->
+
+		<!-- START DOCTORS AREA -->
+		<section id="doctors" class="doctor-area bg-color pt-100 pb-70">
+			<div class="container">
+				<div data-aos="fade-up" data-aos-duration="1200" class="section-title">
+					<span class="top-title">Our Doctor's</span>
+					<h2>Our Expert Doctor's</h2>
+					<p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Labore perferendis deleniti illum necessitati voluptates ipsum, ratione dolorum veritatis minus mollitia placeat</p>
+				</div>
+
+				<div class="row">
+					{% for doctor in doctors %}
+					<div data-aos="fade-up" data-aos-duration="{{ forloop.counter0|add:14 }}00" class="col-lg-4 col-sm-6">
+						<div class="single-doctor">
+							{% if doctor.profile_picture %}
+								<img src="{{ doctor.profile_picture.url }}" alt="{{ doctor.full_name|default:doctor.username }}">
+							{% else %}
+								<img src="{% static 'medic/img/doctor-placeholder.jpg' %}" alt="{{ doctor.full_name|default:doctor.username }}">
+							{% endif %}
+
+							<div class="doctor-content">
+								<h3>{{ doctor.full_name|default:doctor.username }}</h3>
+								<span>{{ doctor.medical_specialty|default:'Shifokor' }}{% if doctor.job_title %}, {{ doctor.job_title }}{% endif %}</span>
+							</div>
+
+							<ul>
+							  	<li>
+									{% if site_settings.facebook_url %}
+										<a href="{{ site_settings.facebook_url }}" target="_blank" rel="noopener noreferrer">
+											<i class="bx bxl-facebook"></i>
+										</a>
+									{% else %}
+										<a href="#" target="_blank" rel="noopener noreferrer">
+											<i class="bx bxl-facebook"></i>
+										</a>
+									{% endif %}
+								</li>
+							  	<li>
+									{% if doctor.telegram_username %}
+										<a href="https://t.me/{{ doctor.telegram_username }}" target="_blank" rel="noopener noreferrer">
+											<i class="bx bxl-telegram"></i>
+										</a>
+									{% else %}
+										<a href="#" target="_blank" rel="noopener noreferrer">
+											<i class="bx bxl-telegram"></i>
+										</a>
+									{% endif %}
+								</li>
+							  	<li>
+									{% if doctor.instagram_username %}
+										<a href="https://instagram.com/{{ doctor.instagram_username }}" target="_blank" rel="noopener noreferrer">
+											<i class="bx bxl-instagram"></i>
+										</a>
+									{% else %}
+										<a href="#" target="_blank" rel="noopener noreferrer">
+											<i class="bx bxl-instagram"></i>
+										</a>
+									{% endif %}
+								</li>
+							  	<li>
+									<a href="{% url 'landing-v1-contact' %}" class="contact-doctor-btn">
+										<i class="bx bx-envelope"></i>
+									</a>
+								</li>
+							</ul>
+						</div>
+					</div>
+					{% empty %}
+					<div data-aos="fade-up" data-aos-duration="1400" class="col-12 text-center">
+						<div class="single-doctor">
+							<h3>Hozircha shifokorlar ma'lumotlari mavjud emas</h3>
+							<p>Tez orada bu bo'limda shifokorlar ma'lumotlari joylashtiriladi.</p>
+						</div>
+					</div>
+					{% endfor %}
+				</div>
+			</div>
+		</section>
+		<!-- END DOCTORS AREA -->
+
+		<!-- START APPOINTMENT AREA -->
+		<section id="appointment" class="appointment-area ptb-100">
+			<div class="container">
+				<div class="row">
+					<div data-aos="fade-up" data-aos-duration="1200" class="col-lg-6">
+						<div class="appointment-here-form">
+							<span class="top-title">Make An Appointment</span>
+							<h2>We Are Here For You</h2>
+		
+							<form method="post">
+								<div class="row">
+									<div class="col-lg-6 col-sm-6">
+										<div class="form-group">
+											<input type="text" class="form-control" id="Name" placeholder="Enter Your Name" required>
+											<i class="bx bx-user"></i>
+										</div>
+									</div>
+		
+									<div class="col-lg-6 col-sm-6">
+										<div class="form-group">
+											<input type="text" class="form-control" id="Email" placeholder="Enter Your Email" required>
+											<i class="bx bx-user"></i>
+										</div>
+									</div>
+		
+									<div class="col-lg-6 col-sm-6">
+										<div class="form-group">
+											<input type="text" class="form-control" id="Phone" placeholder="Enter Your Phone" required>
+											<i class="bx bx-mobile-alt"></i>
+										</div>
+									</div>
+									
+									<div class="col-lg-6 col-sm-6">
+										<div class="form-group">
+											<select>
+												<option value="">Select Service</option>
+												<option value="">Surgery & Radiology</option>
+												<option value="">Neurology</option>
+												<option value="">Angiography</option>
+												<option value="">Children Care</option>
+												<option value="">Orthopedics</option>
+												<option value="">Nuclear Magnetic</option>
+												<option value="">Eye Treatment</option>
+												<option value="">X-Ray</option>
+											</select>	
+											<i class="bx bx-heart"></i>
+										</div>
+									</div>
+		
+									<div class="col-lg-6 col-sm-6">
+										<div class="form-group">
+											<div class="input-group date" id="datetimepicker2">
+												<input type="text" class="form-control" placeholder="Date" required>
+												<span class="input-group-addon">
+												</span>
+											</div>	
+											<i class="bx bx-calendar"></i>
+										</div>
+									</div>
+		
+									<div class="col-lg-6 col-sm-6">
+										<div class="form-group">
+											<select>
+												<option value="">Seclect Time</option>
+												<option value="2">09.00 AM To 10.00 AM</option>
+												<option value="0">10.00 AM To 11.00 AM</option>
+												<option value="3">11.00 AM To 12.00 PM</option>
+												<option value="4">12.00 PM To 01.00 PM</option>
+												<option value="5">01.00 PM To 03.00 PM</option>
+												<option value="6">04.00 PM To 06.00 PM</option>
+												<option value="7">07.00 PM To 10.00 PM</option>
+												<option value="8">10.00 PM To 11.00 PM</option>
+											</select>	
+											<i class="bx bx-time"></i>
+										</div>
+									</div>
+									
+									<div class="col-lg-12">
+										<div class="form-group">
+											<textarea name="message" class="form-control" id="Message" cols="30" rows="8" placeholder="Your Message" required></textarea>
+											<i class="bx bx-message"></i>
+										</div>
+									</div>
+									
+									<div class="col-12">
+										<button type="submit" class="default-btn">Send Request</button>
+									</div>
+								</div>
+							</form>
+						</div>
+					</div>
+
+					<div data-aos="fade-up" data-aos-duration="1600" class="col-lg-6">
+						<div class="appointment-img"></div>
+					</div>
+				</div>
+			</div>
+		</section>
+		<!-- END APPOINTMENT AREA -->
+
+		<!-- START BLOG AREA -->
+		<section id="blog" class="blog-area bg-color pt-100 pb-70">
+			<div class="container">
+				<div data-aos="fade-up" data-aos-duration="1200" class="section-title">
+					<span class="top-title">Yangiliklar</span>
+					<h2>So'nggi yangiliklar</h2>
+					<p>Klinikamizdagi so'nggi yangiliklar, xizmatlar yangilanishi va muhim ma'lumotlar shu bo'limda joylashtiriladi.</p>
+				</div>
+
+				<div class="row">
+					{% for news_item in latest_news %}
+					<div data-aos="fade-up" data-aos-duration="{{ forloop.counter0|add:16 }}00" class="col-lg-4 col-md-6">
+						<div class="single-blog">
+							<a href="{% url 'landing-v1-news-detail' news_item.pk %}">
+								{% if news_item.image %}
+									<img src="{{ news_item.image.url }}" alt="{{ news_item.title|get_language_text:CURRENT_LANGUAGE }}">
+								{% else %}
+									<img src="{% static 'medic/img/blog-placeholder.jpg' %}" alt="{{ news_item.title|get_language_text:CURRENT_LANGUAGE }}">
+								{% endif %}
+							</a>
+						
+							<div class="blog-content">
+								<ul>
+									<li>
+										{% if news_item.author %}
+											<a href="#">{{ news_item.author.full_name|default:news_item.author.username }}</a>
+										{% else %}
+											<a href="#">Admin</a>
+										{% endif %}
+									</li>
+									<li>
+										{{ news_item.published_date|date:"d / m / Y" }}
+									</li>
+								</ul>
+
+								<a href="{% url 'landing-v1-news-detail' news_item.pk %}">
+									<h3>{{ news_item.title|get_language_text:CURRENT_LANGUAGE }}</h3>
+								</a>
+								<p>{{ news_item.content|get_language_text:CURRENT_LANGUAGE|striptags|truncatechars:150 }}</p>
+
+								<a href="{% url 'landing-v1-news-detail' news_item.pk %}" class="read-more">
+									Batafsil
+								</a>
+							</div>
+						</div>
+					</div>
+					{% empty %}
+					<div data-aos="fade-up" data-aos-duration="1600" class="col-12 text-center">
+						<div class="single-blog">
+							<h3>Hozircha yangiliklar mavjud emas</h3>
+							<p>Tez orada bu bo'limda so'nggi yangiliklar joylashtiriladi.</p>
+						</div>
+					</div>
+					{% endfor %}
+				</div>
+			</div>
+		</section>
+		<!-- END BLOG AREA -->
+
+		<!-- START SUBSCRIBE AREA -->
+		<section class="subscribe-area">
+			<div class="container">
+				<div class="row align-items-center">
+					<div class="col-lg-6">
+						<h2>Subscribe Now</h2>
+						<p>Get our latest news & update regularly</p>
+					</div>
+
+					<div class="col-lg-6">
+						<form class="newsletter-form" data-toggle="validator">
+							<input type="email" class="form-control" placeholder="Enter Your Email" name="EMAIL" required autocomplete="off">
+
+							<button class="default-btn" type="submit">
+								Subscribe
+							</button>
+
+							<div id="validator-newsletter" class="form-result"></div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</section>
+		<!-- END SUBSCRIBE AREA  -->
+
+		<!-- START PARTNERS AREA -->
+		<section id="partners" class="about-area pt-100 pb-70">
+			<div class="container">
+				<div class="row align-items-center">
+					<div data-aos="fade-up" data-aos-duration="1200" class="col-lg-6">
+						<div class="about-content">
+							<span class="top-title">Hamkorlar</span>
+							<h2>Bizning Ishonchli Hamkorlarimiz</h2>
+							<p>DOCTOR A MED CLINIC sifatli tibbiy xizmat ko‘rsatishda ishonchli tashkilotlar va brendlar bilan hamkorlik qiladi. Hozirda bizning ekotizimimizda {{ active_partners|length }} ta faol hamkor mavjud.</p>
+
+							<ul>
+								<li>
+									<i class="bx bx-check"></i>
+									Uzoq muddatli va barqaror professional hamkorlik
+								</li>
+								<li>
+									<i class="bx bx-check"></i>
+									Sifatli tibbiy xizmatlarni kengaytiruvchi sheriklik
+								</li>
+								<li>
+									<i class="bx bx-check"></i>
+									Zamonaviy diagnostika va xizmat ekotizimi
+								</li>
+								<li>
+									<i class="bx bx-check"></i>
+									Bemorlar uchun qulay va ishonchli yo‘naltirish
+								</li>
+							</ul>
+
+							<a href="{% url 'landing-v1-contact' %}" class="default-btn">
+								Hamkorlik Uchun Aloqa
+							</a>
+						</div>
+					</div>
+
+					<div class="col-lg-6">
+						<div class="features-content">
+							<div class="row">
+								{% for partner in active_partners|slice:":4" %}
+								<div data-aos="fade-up" data-aos-duration="{{ forloop.counter0|add:7 }}00" class="col-lg-6 col-sm-6 d-flex">
+									<div class="single-features partner-feature-card h-100 w-100">
+										<div class="partner-feature-logo">
+											{% if partner.logo %}
+												<img src="{{ partner.logo.url }}" alt="{{ partner.name|get_language_text:CURRENT_LANGUAGE }}">
+											{% else %}
+												<span>{{ partner.name|get_language_text:CURRENT_LANGUAGE|get_initials }}</span>
+											{% endif %}
+										</div>
+										<h3>{{ partner.name|get_language_text:CURRENT_LANGUAGE }}</h3>
+										<p>{{ partner.description|get_language_text:CURRENT_LANGUAGE|truncatechars:120 }}</p>
+										{% if partner.website_url %}
+										<a href="{{ partner.website_url }}" target="_blank" rel="noopener noreferrer" class="read-more">
+											Saytga O'tish
+										</a>
+										{% endif %}
+									</div>
+								</div>
+								{% empty %}
+								<div data-aos="fade-up" data-aos-duration="1400" class="col-12">
+									<div class="single-features partner-feature-card">
+										<div class="partner-feature-logo">
+											<span>DA</span>
+										</div>
+										<h3>Hamkorlar qo‘shilmoqda</h3>
+										<p>Bu bo‘limda yaqin orada klinikaning rasmiy hamkorlari logotiplari va qisqacha ma’lumotlari joylashtiriladi.</p>
+									</div>
+								</div>
+								{% endfor %}
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+		<!-- END PARTNERS AREA -->
+
+{% endblock %}

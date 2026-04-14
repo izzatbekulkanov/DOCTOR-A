@@ -1,0 +1,228 @@
+{% extends "v1/base.html" %}
+{% load static custom_filters %}
+
+{% block title %}{{ about_page.page_title }}{% endblock %}
+
+{% block extra_head %}
+    <style>
+        .about-area-two {
+            --about-radius-sm: 4px;
+            --about-radius-md: 6px;
+        }
+
+        .about-banner-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+
+        .about-banner-frame {
+            border-radius: var(--about-radius-md);
+            overflow: hidden;
+            background: linear-gradient(180deg, #ffffff 0%, #f6f8fb 100%);
+            box-shadow: 0 18px 40px rgba(17, 33, 58, 0.12);
+            border: 1px solid rgba(225, 232, 242, 0.95);
+        }
+
+        .about-banner-frame img {
+            display: block;
+            width: 100%;
+            height: auto;
+            object-fit: cover;
+        }
+
+        .about-side-videos .row {
+            justify-content: center;
+        }
+
+        .clinic-video-tile {
+            width: 100%;
+            border-radius: var(--about-radius-md);
+            overflow: hidden;
+            background: linear-gradient(180deg, #10151d 0%, #1b2431 100%);
+            box-shadow: 0 16px 36px rgba(17, 33, 58, 0.14);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .clinic-video-tile video {
+            display: block;
+            width: 100%;
+            aspect-ratio: 10 / 16;
+            object-fit: cover;
+            background: #111111;
+        }
+
+        .about-banner-copy {
+            height: 100%;
+            padding: 28px 30px;
+            border-radius: var(--about-radius-md);
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.98) 0%, rgba(247, 249, 252, 0.95) 100%);
+            box-shadow: 0 18px 40px rgba(17, 33, 58, 0.08);
+            border: 1px solid rgba(225, 232, 242, 0.95);
+        }
+
+        .about-banner-copy .top-title {
+            display: inline-flex;
+            margin-bottom: 12px;
+        }
+
+        .about-banner-copy h2 {
+            margin-bottom: 18px;
+        }
+
+        .about-banner-copy-body {
+            color: #5c6f87;
+            font-size: 16px;
+            line-height: 1.8;
+        }
+
+        .about-banner-copy-body h1,
+        .about-banner-copy-body h2,
+        .about-banner-copy-body h3,
+        .about-banner-copy-body h4 {
+            color: #15233c;
+            margin-top: 0;
+        }
+
+        .about-banner-copy-body p:last-child {
+            margin-bottom: 0;
+        }
+
+        .about-banner-copy-body ul,
+        .about-banner-copy-body ol {
+            padding-left: 20px;
+            margin-bottom: 18px;
+        }
+
+        .about-banner-copy-body strong {
+            color: #15233c;
+        }
+
+        .about-banner-copy .default-btn {
+            margin-top: 26px;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    <div class="page-title-area bg-1">
+        <div class="container">
+            <div class="page-title-content">
+                <h2>{{ about_page.page_title }}</h2>
+                <ul>
+                    <li>
+                        <a href="{% url 'landing-v1' %}">
+                            {{ about_page.home_label }}
+                        </a>
+                    </li>
+                    <li class="active">{{ about_page.page_title }}</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <section class="about-area-two bg-color ptb-100">
+        <div class="container">
+            <div class="row align-items-start g-4">
+                <div data-aos="fade-up" data-aos-duration="1200" class="col-lg-6">
+                    <div class="about-banner-stack">
+                        <div class="about-banner-frame">
+                            {% if banner and banner.image %}
+                                <img decoding="async" src="{{ banner.image.url }}" alt="{{ about_page.clinic_name }}">
+                            {% else %}
+                                <img decoding="async" src="{% static 'medic/img/about-us/red.png' %}" alt="Doctor A Med Clinic">
+                            {% endif %}
+                        </div>
+
+                        {% if site_settings and site_settings.video1 or site_settings and site_settings.video2 %}
+                            <div class="about-side-videos">
+                                <div class="row g-3">
+                                    {% if site_settings and site_settings.video1 %}
+                                        <div class="col-sm-6 col-6 d-flex">
+                                            <div class="clinic-video-tile">
+                                                <video playsinline controls preload="metadata">
+                                                    <source src="{{ site_settings.video1.url }}">
+                                                </video>
+                                            </div>
+                                        </div>
+                                    {% endif %}
+                                    {% if site_settings and site_settings.video2 %}
+                                        <div class="col-sm-6 col-6 d-flex">
+                                            <div class="clinic-video-tile">
+                                                <video playsinline controls preload="metadata">
+                                                    <source src="{{ site_settings.video2.url }}">
+                                                </video>
+                                            </div>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div data-aos="fade-up" data-aos-duration="1600" class="col-lg-6">
+                    <div class="about-banner-copy">
+                        <span class="top-title">{{ about_page.top_title }}</span>
+                        {% if not banner or not banner.description %}
+                            <h2>{{ about_page.clinic_name }}</h2>
+                        {% endif %}
+
+                        <div class="about-banner-copy-body">
+                            {% if banner and banner.description %}
+                                {{ banner.description|get_language_text:CURRENT_LANGUAGE|render_rich_text }}
+                            {% else %}
+                                {% for section in about_page.sections %}
+                                    <h3>{{ section.title }}</h3>
+                                    {% if section.intro %}
+                                        <p>{{ section.intro }}</p>
+                                    {% endif %}
+                                    {% if section.items %}
+                                        <ul class="about-detail-list">
+                                            {% for item in section.items %}
+                                                <li>
+                                                    {% if item.label %}
+                                                        <strong>{{ item.label }}:</strong> {{ item.value }}
+                                                    {% else %}
+                                                        {{ item.text }}
+                                                    {% endif %}
+                                                </li>
+                                            {% endfor %}
+                                        </ul>
+                                    {% endif %}
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+
+                        <a href="{% url 'landing-v1-contact' %}" class="default-btn">
+                            {{ about_page.cta_label }}
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="subscribe-area">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6">
+                    <h2>Subscribe Now</h2>
+                    <p>Get our latest news & update regularly</p>
+                </div>
+
+                <div class="col-lg-6">
+                    <form class="newsletter-form" data-toggle="validator">
+                        <input type="email" class="form-control" placeholder="Enter Your Email" name="EMAIL" required autocomplete="off">
+
+                        <button class="default-btn" type="submit">
+                            Subscribe
+                        </button>
+
+                        <div id="validator-newsletter" class="form-result"></div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}

@@ -1,0 +1,61 @@
+{% extends "v1/base.html" %}
+{% load static i18n %}
+
+{% block title %}{{ name }} - {{ t.equipment }}{% endblock %}
+
+{% block content %}
+    <!-- START PAGE TITLE AREA -->
+    <div class="page-title-area bg-10">
+        <div class="container">
+            <div class="page-title-content">
+                <h2>{{ name }}</h2>
+                <ul>
+                    <li>
+                        <a href="{% url 'landing-v1' %}">
+                            {{ t.home }}
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{% url 'landing-v1-equipment' %}">
+                            {{ t.equipment }}
+                        </a>
+                    </li>
+                    <li class="active">{{ name }}</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!-- END PAGE TITLE AREA -->
+
+    <!-- START EQUIPMENT DETAILS AREA -->
+    <section class="equipment-details-area ptb-100">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-6 col-md-12">
+                    <div class="equipment-details-image">
+                        <img src="{{ equipment_image }}" alt="{{ name }}">
+                    </div>
+                </div>
+
+                <div class="col-lg-6 col-md-12">
+                    <div class="equipment-details-content">
+                        <h2>{{ name }}</h2>
+                        <span class="category">{{ equipment.category|default:"General" }}</span>
+                        
+                        <div class="details-info">
+                            <h3>{{ t.description }}</h3>
+                            <div class="description-text">
+                                {{ description|safe|linebreaks }}
+                            </div>
+                        </div>
+
+                        <div class="contact-btn mt-5">
+                            <a href="{% url 'landing-v1-contact' %}" class="default-btn">{% trans "Bog'lanish" %}</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- END EQUIPMENT DETAILS AREA -->
+{% endblock %}

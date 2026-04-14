@@ -1,0 +1,214 @@
+{% extends "v1/base.html" %}
+{% load static custom_filters %}
+
+{% block title %}{{ news_item.title|get_language_text:CURRENT_LANGUAGE }}{% endblock %}
+
+{% block content %}
+		<div class="page-title-area bg-10">
+			<div class="container">
+				<div class="page-title-content">
+					<h2>{{ news_page.page_title }}</h2>
+					<ul>
+						<li>
+							<a href="{% url 'landing-v1' %}">
+								{{ news_page.home_label }}
+							</a>
+						</li>
+						<li>
+							<a href="{% url 'landing-v1-blog' %}">
+								{{ news_page.page_title }}
+							</a>
+						</li>
+
+						<li class="active">{{ news_item.title|get_language_text:CURRENT_LANGUAGE|truncatechars:45 }}</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+
+		<section class="blog-area bg-color ptb-100">
+			<div class="container">
+				<div class="row">
+					<div class="col-lg-8 col-md-12">
+						<div class="blog-details-left-area blog-right-sidebar">
+							<div class="blog-details-single-post">
+								<div class="blog-details-img">
+									{% if news_item.image %}
+										<img src="{{ news_item.image.url }}" alt="{{ news_item.title|get_language_text:CURRENT_LANGUAGE }}">
+									{% else %}
+										<img src="{% static 'medic/img/blog-placeholder.jpg' %}" alt="{{ news_item.title|get_language_text:CURRENT_LANGUAGE }}">
+									{% endif %}
+								</div>
+
+								<ul>
+									<li>
+										<i class='bx bx-user'></i>
+										{% if news_item.author %}
+											{{ news_item.author.full_name|default:news_item.author.username }}
+										{% else %}
+											{{ news_page.author_fallback }}
+										{% endif %}
+									</li>
+									<li>
+										<i class='bx bx-calendar'></i>
+										{{ news_page.published_label }}: {{ news_item.published_date|date:"d / m / Y" }}
+									</li>
+									<li>
+										<i class='bx bx-show'></i>
+										{{ news_page.views_label }}: {{ news_item.views_count }}
+									</li>
+								</ul>
+
+								<h3>{{ news_item.title|get_language_text:CURRENT_LANGUAGE }}</h3>
+								<div class="blog-details-copy">
+									{{ news_item.content|get_language_text:CURRENT_LANGUAGE|render_rich_text }}
+								</div>
+
+								<a href="{% url 'landing-v1-blog' %}" class="default-btn">{{ news_page.back_to_news }}</a>
+							</div>
+
+							<div id="comments" class="comments-wrap">
+								<h3 class="title">{{ news_page.comments_title }} ({{ comments_count }})</h3>
+
+								{% if comment_success %}
+									<div class="alert alert-success comment-feedback" role="alert">
+										{{ news_page.comment_success }}
+									</div>
+								{% endif %}
+
+								{% if comment_error %}
+									<div class="alert alert-danger comment-feedback" role="alert">
+										{{ comment_error }}
+									</div>
+								{% endif %}
+
+								<ul>
+									{% for comment in comments %}
+										<li class="public-comment-item">
+											<div class="comment-avatar-badge">{{ comment.full_name|get_initials }}</div>
+											<h3>{{ comment.full_name }}</h3>
+											<span>{{ comment.created_at|date:"d / m / Y H:i" }}</span>
+											<p>{{ comment.text }}</p>
+										</li>
+									{% empty %}
+										<li class="public-comment-empty">
+											<p>{{ news_page.no_comments }}</p>
+										</li>
+									{% endfor %}
+								</ul>
+							</div>
+
+							<div class="contact-area">
+								<div class="contact-wrap comment-form-card">
+									<div class="contact-title">
+										<h2>{{ news_page.leave_comment_title }}</h2>
+									</div>
+
+									<form method="post" action="#comments">
+										{% csrf_token %}
+										<div class="row">
+											<div class="col-lg-6 col-md-6">
+												<div class="form-group">
+													<input
+														type="text"
+														name="author"
+														class="form-control"
+														placeholder="{{ news_page.name_placeholder }}"
+														value="{{ comment_form_data.author|default:'' }}"
+														required
+													>
+												</div>
+											</div>
+
+											<div class="col-lg-6 col-md-6">
+												<div class="form-group">
+													<input
+														type="text"
+														name="phone_number"
+														class="form-control"
+														placeholder="{{ news_page.phone_placeholder }}"
+														value="{{ comment_form_data.phone_number|default:'' }}"
+														required
+													>
+												</div>
+											</div>
+
+											<div class="col-lg-12">
+												<div class="form-group">
+													<textarea
+														name="comment"
+														class="form-control"
+														rows="6"
+														placeholder="{{ news_page.message_placeholder }}"
+														required
+													>{{ comment_form_data.comment|default:'' }}</textarea>
+												</div>
+											</div>
+
+											<div class="col-lg-12">
+												<button type="submit" class="default-btn">{{ news_page.submit_comment }}</button>
+											</div>
+										</div>
+									</form>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="col-lg-4 col-md-12">
+						<div class="blog-details-right-area blog-right-sidebar">
+							<div data-aos="fade-up" data-aos-duration="800" class="blog-widget search-widget">
+								<form class="search-form" method="get" action="{% url 'landing-v1-blog' %}">
+									<input type="search" name="q" class="form-control" placeholder="{{ news_page.search_placeholder }}">
+									<button type="submit">
+										<i class="bx bx-search"></i>
+									</button>
+								</form>
+							</div>
+
+							<div data-aos="fade-up" data-aos-duration="1000" class="blog-widget resent-post-widget news-summary-widget">
+								<h3 class="title">{{ news_page.recent_posts_title }}</h3>
+
+								<ul>
+									{% for related_item in recent_news %}
+										<li>
+											<a href="{% url 'landing-v1-news-detail' related_item.pk %}">
+												<span>{{ related_item.published_date|date:"d F Y" }}</span>
+												<h3>{{ related_item.title|get_language_text:CURRENT_LANGUAGE }}</h3>
+												<p>{{ related_item.content|get_language_text:CURRENT_LANGUAGE|striptags|truncatechars:90 }}</p>
+											</a>
+										</li>
+									{% empty %}
+										<li>
+											<a href="javascript:void(0);">
+												<h3>{{ news_page.empty_title }}</h3>
+											</a>
+										</li>
+									{% endfor %}
+								</ul>
+							</div>
+
+							<div data-aos="fade-up" data-aos-duration="1200" class="blog-widget archives-widget">
+								<h3 class="title">{{ news_page.archives_title }}</h3>
+								<ul>
+									{% for archive in news_archives %}
+										<li>
+											<a href="{% url 'landing-v1-blog' %}?month={{ archive.value }}">
+												{{ archive.label }}
+												<span>{{ archive.count }}</span>
+											</a>
+										</li>
+									{% empty %}
+										<li>
+											<a href="javascript:void(0);">{{ news_page.empty_title }}</a>
+										</li>
+									{% endfor %}
+								</ul>
+							</div>
+
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+{% endblock %}
