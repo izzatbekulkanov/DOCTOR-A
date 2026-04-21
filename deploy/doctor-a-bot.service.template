@@ -1,0 +1,18 @@
+[Unit]
+Description=Doctor A Telegram Bot Worker
+After=network.target doctor-a-web.service
+
+[Service]
+Type=simple
+User=__SERVICE_USER__
+Group=__SERVICE_GROUP__
+WorkingDirectory=__PROJECT_DIR__
+Environment=PYTHONUNBUFFERED=1
+Environment=DJANGO_SETTINGS_MODULE=config.settings
+EnvironmentFile=-__PROJECT_DIR__/.env
+ExecStart=/usr/bin/env bash __PROJECT_DIR__/deploy/start_bot.sh
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,26 @@
+server {
+    listen 80;
+    server_name __DOMAIN__;
+    client_max_body_size 50M;
+
+    location /static/ {
+        alias __PROJECT_DIR__/staticfiles/;
+        access_log off;
+        expires 30d;
+    }
+
+    location /media/ {
+        alias __PROJECT_DIR__/media/;
+        access_log off;
+        expires 7d;
+    }
+
+    location / {
+        proxy_pass http://__GUNICORN_BIND__;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_redirect off;
+    }
+}

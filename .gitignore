@@ -1,75 +1,71 @@
-# Python va Django
+# Python
 __pycache__/
 *.py[cod]
-*$py.class
+*.pyo
 *.so
 
-# Virtual muhit
+# Virtual environments
+.venv/
 venv/
 env/
 ENV/
 env.bak/
 venv.bak/
-.venv
 
-# Ma'lumotlar bazasi
-# Agar faqat PostgreSQL ishlatayotgan bo'lsangiz, SQLite fayllarini o'chirib tashlash mumkin
-db.sqlite3
-db.sqlite3-journal
-
-# Statik va media fayllar
-staticfiles/
-media/
-
-# .env fayllari (sezgir ma'lumotlarni saqlash uchun)
+# Environment files
 .env
 .env.*
 *.env
 
+# Databases
+db.sqlite3
+db.sqlite3-journal
+*.sqlite3
 
-# Loglar va kesh
+# Django generated assets
+staticfiles/
+media/
+
+# Logs, pid and sockets
 *.log
-*.pot
-*.mo
+*.pid
+*.sock
+runserver.err
+runserver.log
+bot-worker.err.log
+bot-worker.out.log
+
+# Test and cache output
 .cache/
 .pytest_cache/
 .mypy_cache/
-.dmypy.json
-dmypy.json
+.ruff_cache/
+.tox/
 .coverage
 .coverage.*
 coverage.xml
 htmlcov/
+.dmypy.json
+dmypy.json
 
-# Django maxsus fayllar
-migrations/*  # Agar migratsiya fayllarini versiya nazoratiga qo'shmoqchi bo'lmasangiz
-!migrations/__init__.py  # __init__.py ni saqlash uchun
+# Build artifacts
+build/
+dist/
+*.egg-info/
+__pypackages__/
 
-# IDE va muharrirlar
+# Translation build output
+*.pot
+
+# Editors and OS files
 .idea/
 .vscode/
-*.sublime-project
-*.sublime-workspace
-.spyderproject
-.spyproject
-.ropeproject
-
-# Boshqa
 .DS_Store
 Thumbs.db
-*.bak
 *.swp
-*.sage.py
-*.egg-info/
-dist/
-build/
-__pypackages__/
-celerybeat-schedule
-celerybeat.pid
+*.bak
 .ipynb_checkpoints/
 
-# Loyihangizga xos fayllar/papkalar
-# Agar maxsus fayllar yoki papkalar bo'lsa, ularni qo'shishingiz mumkin
-# Masalan:
-# requirements.txt.bak
-# *.backup
+# Runtime schedules
+celerybeat-schedule
+celerybeat.pid
