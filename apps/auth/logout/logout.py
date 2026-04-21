@@ -14,4 +14,4 @@ class LogoutView(View):
         else:
             print("🔹 Foydalanuvchi allaqachon tizimdan chiqqan.")
 
-        return redirect("main-dashboard")  # 🔄 Logout qilingandan keyin login sahifasiga qaytarish
+        return redirect("landing-v1")

@@ -1,12 +1,14 @@
 from io import BytesIO
 
+from django.contrib import admin
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase
 from django.urls import reverse
 from PIL import Image
 
+from apps.medical.admin import SiteSettingsAdmin
 from apps.medical.models import MainPageBanner, SiteSettings
-from members.models import CustomUser
+from apps.members.models import CustomUser
 
 
 class MainSettingsViewTests(TestCase):
@@ -60,3 +62,23 @@ class MainSettingsViewTests(TestCase):
         self.assertEqual(banner.description["uz"], "<p><strong>Banner tavsifi</strong></p>")
         self.assertEqual(banner.image.width, 400)
         self.assertEqual(banner.image.height, 300)
+
+
+class SiteSettingsAdminTests(TestCase):
+    def test_sitesettings_admin_uses_existing_social_fields(self):
+        admin_instance = SiteSettingsAdmin(SiteSettings, admin.site)
+
+        field_names = []
+        for _, options in admin_instance.fieldsets:
+            for field in options.get("fields", ()):
+                if isinstance(field, (list, tuple)):
+                    field_names.extend(field)
+                else:
+                    field_names.append(field)
+
+        self.assertIn("facebook_url", field_names)
+        self.assertIn("telegram_url", field_names)
+        self.assertIn("instagram_url", field_names)
+        self.assertIn("youtube_url", field_names)
+        self.assertNotIn("twitter_url", field_names)
+        self.assertNotIn("linkedin_url", field_names)

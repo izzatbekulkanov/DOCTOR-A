@@ -5,7 +5,7 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings')
 django.setup()
 
 from django.test import Client
-from members.models import CustomUser
+from apps.members.models import CustomUser
 from datetime import date
 
 c = Client()

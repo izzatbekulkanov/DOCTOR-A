@@ -1,0 +1,125 @@
+.admin-settings .settings-card-heading {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+}
+
+.admin-settings .settings-icon {
+  width: 42px;
+  height: 42px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  border-radius: 0.5rem;
+  font-size: 1.35rem;
+}
+
+.admin-settings .settings-section {
+  padding-top: 1.5rem;
+  margin-top: 1.5rem;
+  border-top: 1px solid var(--bs-border-color);
+}
+
+.admin-settings .settings-section:first-child {
+  padding-top: 0;
+  margin-top: 0;
+  border-top: 0;
+}
+
+.admin-settings .settings-section-title {
+  margin-bottom: 0.35rem;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.admin-settings .settings-section-subtitle {
+  margin-bottom: 1rem;
+  color: var(--bs-gray-600);
+}
+
+.admin-settings .settings-media-preview {
+  min-height: 180px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  padding: 1rem;
+  border: 1px dashed var(--bs-border-color);
+  border-radius: var(--bs-border-radius);
+  background: var(--bs-light);
+}
+
+.admin-settings .settings-media-preview.is-banner {
+  min-height: 280px;
+}
+
+.admin-settings .settings-media-preview img,
+.admin-settings .settings-media-preview video {
+  width: 100%;
+  max-height: 240px;
+  object-fit: contain;
+}
+
+.admin-settings .settings-media-preview.is-banner img {
+  max-height: 420px;
+}
+
+.admin-settings .settings-empty-preview {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--bs-gray-600);
+  text-align: center;
+}
+
+.admin-settings .settings-empty-preview i {
+  color: var(--bs-primary);
+  font-size: 2rem;
+}
+
+.admin-settings .settings-editor .ql-toolbar.ql-snow,
+.admin-settings .settings-editor .ql-container.ql-snow {
+  border-color: var(--bs-border-color);
+}
+
+.admin-settings .settings-editor .ql-toolbar.ql-snow {
+  border-radius: var(--bs-border-radius) var(--bs-border-radius) 0 0;
+  background: var(--bs-body-bg);
+}
+
+.admin-settings .settings-editor .ql-container.ql-snow {
+  border-radius: 0 0 var(--bs-border-radius) var(--bs-border-radius);
+  background: var(--bs-body-bg);
+}
+
+.admin-settings .settings-editor .ql-editor {
+  min-height: 150px;
+  font-size: 0.9rem;
+}
+
+.admin-settings .settings-editor.settings-editor-sm .ql-editor {
+  min-height: 120px;
+}
+
+.admin-settings .settings-submit-bar {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  padding: 1rem;
+  margin-top: 1.5rem;
+  border: 1px solid var(--bs-border-color);
+  border-radius: var(--bs-border-radius);
+  background: var(--bs-body-bg);
+}
+
+@media (max-width: 767.98px) {
+  .admin-settings .settings-card-heading {
+    align-items: flex-start;
+  }
+
+  .admin-settings .settings-submit-bar {
+    display: grid;
+  }
+}

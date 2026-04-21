@@ -1,199 +1,202 @@
 {% extends 'administrator/main.html' %}
-{% load static %}
 {% load i18n %}
 
 {% block title %}
     {% trans "Qabullar" %}
 {% endblock title %}
 
-{% block page_css %}
-
-
-<style>
-        .hover-btn-primary:hover {
-            background-color: #0d6efd !important;
-            color: white !important;
-            transform: scale(1.05);
-            transition: all 0.3s ease;
-        }
-        .table-hover tbody tr:hover {
-            background-color: #f1f3f5;
-            transition: background-color 0.3s ease;
-        }
-        .pagination .page-link {
-            transition: all 0.3s ease;
-        }
-        .pagination .page-link:hover {
-            background-color: #e9ecef;
-        }
-        .table-dark th {
-            background-color: #343a40 !important;
-        }
-    </style>
-
-
-{% endblock page_css %}
 {% block content %}
-<div class="app-body" style="background: linear-gradient(135deg, #f8f9fa, #e9ecef); min-height: 100vh; padding: 1.5rem;">
-
-        <h2 class="mb-4 fw-bold text-dark">{% trans "Qabullar" %}</h2>
-
-        <!-- Qidiruv formasi -->
-        <form method="GET" action="{% url 'appointment-view' %}" class="mb-4">
-            <div class="input-group">
-                <input type="text" name="q" value="{{ search_query }}"
-                       class="form-control border rounded-3 shadow-sm py-2 px-3"
-                       placeholder="🔍 {% trans 'Qabul qidirish...' %}"
-                       aria-label="Search">
-                <button type="submit"
-                        class="btn btn-primary fw-semibold px-4 py-2 rounded-3 hover-btn-primary">
-                    {% trans "Qidirish" %}
-                </button>
+    <div class="app-body">
+        {% if messages %}
+            <div class="mb-4">
+                {% for message in messages %}
+                    <div class="alert {% if message.tags == 'success' %}alert-success{% elif message.tags == 'error' %}alert-danger{% else %}alert-info{% endif %} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
             </div>
-        </form>
+        {% endif %}
 
-        <!-- Qabullar jadvali -->
-        <div class="table-responsive">
-            <table class="table table-bordered table-hover rounded-3 overflow-hidden">
-                <thead class="table-dark">
-                    <tr>
-                        <th scope="col" class="py-3">#</th>
-                        <th scope="col" class="py-3">{% trans "Ism" %}</th>
-                        <th scope="col" class="py-3">{% trans "Telefon" %}</th>
-                        <th scope="col" class="py-3">{% trans "Habar" %}</th>
-                        <th scope="col" class="py-3">{% trans "Hodim" %}</th>
-                        <th scope="col" class="py-3">{% trans "Sana" %}</th>
-                        <th scope="col" class="py-3">{% trans "Holat" %}</th>
-                        <th scope="col" class="py-3">{% trans "Amallar" %}</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for appointment in appointments %}
-                        <tr data-id="{{ appointment.id }}">
-                            <td class="py-3">{{ forloop.counter }}</td>
-                            <td class="py-3">{{ appointment.full_name }}</td>
-                            <td class="py-3">{{ appointment.phone_number }}</td>
-                            <td class="py-3">{{ appointment.message|truncatewords:20 }}</td>
-                            <td class="py-3">{{ appointment.employee.full_name }}</td>
-                            <td class="py-3">{{ appointment.created_at|date:"Y-m-d H:i" }}</td>
-                            <td class="py-3">
-                                <span class="badge
-                                    {% if appointment.status == 'pending' %}bg-warning{% endif %}
-                                    {% if appointment.status == 'approved' %}bg-success{% endif %}
-                                    {% if appointment.status == 'canceled' %}bg-danger{% endif %}">
-                                    {{ appointment.get_status_display }}
-                                </span>
-                            </td>
-                            <td class="py-3">
-                                <button class="btn btn-danger btn-sm hover-btn-danger"
-                                        onclick="deleteAppointment('{{ appointment.id }}')">
-                                    {% trans "O'chirish" %}
-                                </button>
-                            </td>
-                        </tr>
-                    {% empty %}
-                        <tr>
-                            <td colspan="8" class="text-center text-muted py-4">
-                                {% trans "Hozircha qabullar mavjud emas" %}
-                            </td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+        <div class="row g-3">
+            <div class="col-xl-3 col-sm-6">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center gap-3">
+                            <span class="icon-box md bg-primary-subtle rounded-5">
+                                <i class="ri-calendar-event-line fs-4 text-primary"></i>
+                            </span>
+                            <div>
+                                <h3 class="mb-0">{{ total_count }}</h3>
+                                <p class="mb-0 text-muted">{% trans "Jami qabullar" %}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-sm-6">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center gap-3">
+                            <span class="icon-box md bg-warning-subtle rounded-5">
+                                <i class="ri-time-line fs-4 text-warning"></i>
+                            </span>
+                            <div>
+                                <h3 class="mb-0">{{ pending_count }}</h3>
+                                <p class="mb-0 text-muted">{% trans "Kutilmoqda" %}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-sm-6">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center gap-3">
+                            <span class="icon-box md bg-success-subtle rounded-5">
+                                <i class="ri-checkbox-circle-line fs-4 text-success"></i>
+                            </span>
+                            <div>
+                                <h3 class="mb-0">{{ approved_count }}</h3>
+                                <p class="mb-0 text-muted">{% trans "Tasdiqlangan" %}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-sm-6">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center gap-3">
+                            <span class="icon-box md bg-danger-subtle rounded-5">
+                                <i class="ri-close-circle-line fs-4 text-danger"></i>
+                            </span>
+                            <div>
+                                <h3 class="mb-0">{{ canceled_count }}</h3>
+                                <p class="mb-0 text-muted">{% trans "Bekor qilingan" %}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <!-- Pagination -->
-        {% if appointments.has_previous or appointments.has_next %}
-            <nav class="mt-4">
-                <ul class="pagination justify-content-center">
-                    {% if appointments.has_previous %}
-                        <li class="page-item">
-                            <a class="page-link text-primary hover-bg-light rounded-3 px-3 py-2"
-                               href="?page=1&q={{ search_query }}">{% trans "Birinchi" %}</a>
-                        </li>
-                        <li class="page-item">
-                            <a class="page-link text-primary hover-bg-light rounded-3 px-3 py-2"
-                               href="?page={{ appointments.previous_page_number }}&q={{ search_query }}">{% trans "Oldingi" %}</a>
-                        </li>
-                    {% endif %}
-                    <li class="page-item active">
-                        <span class="page-link bg-primary text-white rounded-3 px-3 py-2">
-                            {{ appointments.number }} / {{ appointments.paginator.num_pages }}
-                        </span>
-                    </li>
-                    {% if appointments.has_next %}
-                        <li class="page-item">
-                            <a class="page-link text-primary hover-bg-light rounded-3 px-3 py-2"
-                               href="?page={{ appointments.next_page_number }}&q={{ search_query }}">{% trans "Keyingi" %}</a>
-                        </li>
-                        <li class="page-item">
-                            <a class="page-link text-primary hover-bg-light rounded-3 px-3 py-2"
-                               href="?page={{ appointments.paginator.num_pages }}&q={{ search_query }}">{% trans "Oxirgi" %}</a>
-                        </li>
-                    {% endif %}
-                </ul>
-            </nav>
-        {% endif %}
-</div>
+        <div class="card mt-4">
+            <div class="card-header">
+                <div class="d-flex align-items-center justify-content-between gap-3 flex-wrap">
+                    <div>
+                        <h4 class="card-title mb-1">{% trans "Qabullar" %}</h4>
+                        <p class="card-subtitle mb-0">{% trans "Murojaatlarni ko'rish, qidirish va status bo'yicha saralash." %}</p>
+                    </div>
+                    <span class="badge bg-primary-subtle text-primary">{{ filtered_count }}</span>
+                </div>
+            </div>
+
+            <div class="card-body">
+                <form method="GET" action="{% url 'appointment-view' %}" class="row g-2 align-items-end mb-4">
+                    <div class="col-lg-6">
+                        <label for="q" class="form-label">{% trans "Qidirish" %}</label>
+                        <input
+                            type="text"
+                            name="q"
+                            id="q"
+                            value="{{ search_query }}"
+                            class="form-control"
+                            placeholder="Ism, telefon, xabar yoki xodim bo'yicha qidirish"
+                        >
+                    </div>
+                    <div class="col-lg-3">
+                        <label for="status" class="form-label">{% trans "Status" %}</label>
+                        <select name="status" id="status" class="form-select">
+                            <option value="" {% if not status_filter %}selected{% endif %}>{% trans "Barchasi" %}</option>
+                            <option value="pending" {% if status_filter == 'pending' %}selected{% endif %}>{% trans "Kutilmoqda" %}</option>
+                            <option value="approved" {% if status_filter == 'approved' %}selected{% endif %}>{% trans "Tasdiqlangan" %}</option>
+                            <option value="canceled" {% if status_filter == 'canceled' %}selected{% endif %}>{% trans "Bekor qilingan" %}</option>
+                        </select>
+                    </div>
+                    <div class="col-lg-3">
+                        <button type="submit" class="btn btn-primary w-100">{% trans "Filterlash" %}</button>
+                    </div>
+                </form>
+
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>{% trans "Murojaatchi" %}</th>
+                                <th>{% trans "Telefon" %}</th>
+                                <th>{% trans "Xodim" %}</th>
+                                <th>{% trans "Xabar" %}</th>
+                                <th>{% trans "Sana" %}</th>
+                                <th>{% trans "Status" %}</th>
+                                <th>{% trans "Amal" %}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for appointment in appointments %}
+                                <tr>
+                                    <td>{{ forloop.counter }}</td>
+                                    <td class="fw-semibold">{{ appointment.full_name }}</td>
+                                    <td class="text-nowrap">
+                                        <a href="tel:{{ appointment.phone_number }}">{{ appointment.phone_number }}</a>
+                                    </td>
+                                    <td>{{ appointment.employee.full_name|default:appointment.employee.username }}</td>
+                                    <td>{{ appointment.message|truncatewords:14|default:"-" }}</td>
+                                    <td class="text-nowrap">{{ appointment.created_at|date:"Y-m-d H:i" }}</td>
+                                    <td>
+                                        {% if appointment.status == 'approved' %}
+                                            <span class="badge bg-success">{% trans "Tasdiqlangan" %}</span>
+                                        {% elif appointment.status == 'canceled' %}
+                                            <span class="badge bg-danger">{% trans "Bekor qilingan" %}</span>
+                                        {% else %}
+                                            <span class="badge bg-warning text-dark">{% trans "Kutilmoqda" %}</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <a href="{% url 'appointment-detail' appointment.id %}" class="btn btn-outline-primary btn-sm">
+                                            <i class="ri-eye-line me-1"></i>
+                                            {% trans "Batafsil" %}
+                                        </a>
+                                    </td>
+                                </tr>
+                            {% empty %}
+                                <tr>
+                                    <td colspan="8" class="text-center text-muted py-4">{% trans "Hozircha qabullar mavjud emas." %}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                {% if appointments.has_previous or appointments.has_next %}
+                    <nav class="mt-4">
+                        <ul class="pagination justify-content-center mb-0">
+                            {% if appointments.has_previous %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page=1{% if page_query %}&{{ page_query }}{% endif %}">{% trans "Birinchi" %}</a>
+                                </li>
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ appointments.previous_page_number }}{% if page_query %}&{{ page_query }}{% endif %}">{% trans "Oldingi" %}</a>
+                                </li>
+                            {% endif %}
+
+                            <li class="page-item active">
+                                <span class="page-link">{{ appointments.number }} / {{ appointments.paginator.num_pages }}</span>
+                            </li>
+
+                            {% if appointments.has_next %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ appointments.next_page_number }}{% if page_query %}&{{ page_query }}{% endif %}">{% trans "Keyingi" %}</a>
+                                </li>
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ appointments.paginator.num_pages }}{% if page_query %}&{{ page_query }}{% endif %}">{% trans "Oxirgi" %}</a>
+                                </li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                {% endif %}
+            </div>
+        </div>
+    </div>
 {% endblock content %}
-
-{% block vendor_js %}
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-    <script>
-        $(document).ready(function () {
-            // ✅ Qidirish
-            $("#searchInput").on("keyup", function () {
-                var value = $(this).val().toLowerCase();
-                $("#messagesTable tr").filter(function () {
-                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
-                });
-            });
-
-            // ✅ Holatni o‘zgartirish
-            $(".status-select").on("change", function () {
-                var messageId = $(this).data("id");
-                var status = $(this).val();
-
-                $.ajax({
-                    url: "{% url 'appointment-view' %}",  // Django URL
-                    type: "POST",
-                    data: {
-                        "message_id": messageId,
-                        "status": status,
-                        "csrfmiddlewaretoken": "{{ csrf_token }}"
-                    },
-                    success: function (response) {
-                        alert(response.message);
-                    },
-                    error: function () {
-                        alert("{% trans 'Xatolik yuz berdi' %}");
-                    }
-                });
-            });
-
-            // ✅ Habarni o‘chirish
-            $(".delete-message").on("click", function () {
-                var messageId = $(this).data("id");
-                var row = $(this).closest("tr");
-
-                if (confirm("{% trans 'Haqiqatan ham o‘chirmoqchimisiz?' %}")) {
-                    $.ajax({
-                        url: "{% url 'appointment-view' %}",  // Django URL
-                        type: "POST",
-                        data: {
-                            "message_id": messageId,
-                            "csrfmiddlewaretoken": "{{ csrf_token }}"
-                        },
-                        success: function (response) {
-                            row.fadeOut();
-                        },
-                        error: function () {
-                            alert("{% trans 'Xatolik yuz berdi' %}");
-                        }
-                    });
-                }
-            });
-        });
-    </script>
-{% endblock vendor_js %}

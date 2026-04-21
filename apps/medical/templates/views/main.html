@@ -1,394 +1,542 @@
 {% extends 'administrator/main.html' %}
-{% load static %}
+{% load static i18n custom_filters %}
+
 {% block title %}
-    Sayt sozlamalari
+    {% trans "Dashboard" %}
 {% endblock title %}
 
 {% block vendor_css %}
+    <link rel="stylesheet" href="{% static 'css/admin-dashboard.css' %}">
 {% endblock vendor_css %}
 
 {% block content %}
-<!-- App body starts -->
-<div class="app-body">
-    <!-- Row starts -->
-    <div class="row gx-3">
-        <div class="col-xxl-12 col-sm-12">
-            <div class="card mb-3 bg-2">
-                <div class="card-body">
-                    <div class="py-4 px-3 text-white">
-                        <h6>Good Morning,</h6>
-                        <h2>Dr. Patrick Kim</h2>
-                        <h5>Your schedule today.</h5>
-                        <div class="mt-4 d-flex gap-3">
-                            <div class="d-flex align-items-center">
-                                <div class="icon-box lg bg-arctic rounded-3 me-3">
-                                    <i class="ri-surgical-mask-line fs-4"></i>
+    <div class="app-body">
+        <div class="card mb-4 dashboard-hero-card bg-2 text-white">
+            <div class="card-body p-4">
+                <div class="row g-4 align-items-start">
+                    <div class="col-xxl-4">
+                        <span class="badge bg-primary text-white">{% trans "Administrator paneli" %}</span>
+                        <h3 class="mt-3 mb-2">{{ dashboard_site_name }}</h3>
+                        <p class="text-muted mb-4">
+                            {% trans "Tizimdagi foydalanuvchilar, murojaatlar, kontent va konfiguratsiya holati bir joyda jamlandi." %}
+                        </p>
+
+                        <div class="d-flex flex-column gap-2 small">
+                            <div class="d-flex align-items-center gap-2">
+                                <i class="ri-user-3-line text-primary"></i>
+                                <span>{{ main_user_name }}</span>
+                            </div>
+                            <div class="d-flex align-items-center gap-2">
+                                <i class="ri-calendar-line text-primary"></i>
+                                <span>{{ dashboard_now|date:"Y-m-d H:i" }}</span>
+                            </div>
+                            <div class="d-flex align-items-center gap-2">
+                                <i class="ri-mail-line text-primary"></i>
+                                <span>{% firstof site_settings.contact_email _("Email kiritilmagan") %}</span>
+                            </div>
+                            <div class="d-flex align-items-center gap-2">
+                                <i class="ri-phone-line text-primary"></i>
+                                <span>{% firstof site_settings.contact_phone _("Telefon kiritilmagan") %}</span>
+                            </div>
+                        </div>
+
+                        <div class="d-flex flex-wrap gap-2 mt-4">
+                            {% if site_settings and site_settings.maintenance_mode %}
+                                <span class="badge bg-warning text-dark">{% trans "Texnik rejim yoqilgan" %}</span>
+                            {% else %}
+                                <span class="badge bg-success">{% trans "Sayt ishlamoqda" %}</span>
+                            {% endif %}
+                            {% if banner %}
+                                <span class="badge bg-info-subtle text-info">{% trans "Banner tayyor" %}</span>
+                            {% endif %}
+                            <span class="badge bg-dark-subtle text-dark">
+                                {% blocktrans with count=total_content_views %}{{ count }} ko'rish{% endblocktrans %}
+                            </span>
+                            <span class="badge bg-secondary-subtle text-secondary">
+                                {% blocktrans with count=total_comments %}{{ count }} izoh{% endblocktrans %}
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="col-xxl-8">
+                        <div class="dashboard-hero-meta">
+                            {% for metric in hero_metrics %}
+                                <div class="dashboard-hero-metric">
+                                    <div class="d-flex align-items-start justify-content-between gap-3">
+                                        <div>
+                                            <div class="text-muted small mb-2">{{ metric.title }}</div>
+                                            <div class="dashboard-metric-value">{{ metric.value }}</div>
+                                            <div class="small text-muted mt-2">{{ metric.subtitle }}</div>
+                                        </div>
+                                        <span class="dashboard-tile-surface bg-{{ metric.accent }}-subtle text-{{ metric.accent }}">
+                                            <i class="{{ metric.icon }}"></i>
+                                        </span>
+                                    </div>
                                 </div>
-                                <div class="d-flex flex-column">
-                                    <h2 class="m-0 lh-1">9</h2>
-                                    <p class="m-0">Patients</p>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-3 mb-4">
+            {% for card in module_cards %}
+                <div class="col-xxl-3 col-md-6">
+                    <a href="{{ card.url }}" class="dashboard-stat-link">
+                        <div class="card dashboard-module-card">
+                            <div class="card-body">
+                                <div class="d-flex align-items-start justify-content-between gap-3 mb-3">
+                                    <div>
+                                        <div class="text-muted mb-1">{{ card.title }}</div>
+                                        <div class="dashboard-metric-value">{{ card.value }}</div>
+                                    </div>
+                                    <span class="dashboard-tile-surface bg-{{ card.accent }}-subtle text-{{ card.accent }}">
+                                        <i class="{{ card.icon }}"></i>
+                                    </span>
+                                </div>
+                                <p class="mb-1">{{ card.subtitle }}</p>
+                                <div class="dashboard-module-meta">{{ card.meta }}</div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            {% endfor %}
+        </div>
+
+        <div class="row g-4 align-items-start">
+            <div class="col-xxl-8">
+                <div class="card mb-4 dashboard-panel">
+                    <div class="card-header">
+                        <div class="d-flex align-items-center justify-content-between gap-3 flex-wrap">
+                            <div>
+                                <h4 class="card-title mb-1">{% trans "Murojaatlar oqimi" %}</h4>
+                                <p class="card-subtitle mb-0">{% trans "Qabullar va tibbiy ko'rik arizalarining joriy holati." %}</p>
+                            </div>
+                            <a href="{% url 'appointment-view' %}" class="btn btn-outline-primary btn-sm">{% trans "Qabullarga o'tish" %}</a>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-3 col-sm-6">
+                                <div class="dashboard-mini-card">
+                                    <div class="text-muted small mb-2">{% trans "Kutilayotgan qabullar" %}</div>
+                                    <div class="dashboard-mini-value text-warning">{{ pending_appointments }}</div>
                                 </div>
                             </div>
-                            <div class="d-flex align-items-center">
-                                <div class="icon-box lg bg-lime rounded-3 me-3">
-                                    <i class="ri-lungs-line fs-4"></i>
-                                </div>
-                                <div class="d-flex flex-column">
-                                    <h2 class="m-0 lh-1">3</h2>
-                                    <p class="m-0">Surgeries</p>
+                            <div class="col-md-3 col-sm-6">
+                                <div class="dashboard-mini-card">
+                                    <div class="text-muted small mb-2">{% trans "Tasdiqlangan qabullar" %}</div>
+                                    <div class="dashboard-mini-value text-success">{{ approved_appointments }}</div>
                                 </div>
                             </div>
-                            <div class="d-flex align-items-center">
-                                <div class="icon-box lg bg-peach rounded-3 me-3">
-                                    <i class="ri-walk-line fs-4"></i>
-                                </div>
-                                <div class="d-flex flex-column">
-                                    <h2 class="m-0 lh-1">2</h2>
-                                    <p class="m-0">Discharges</p>
+                            <div class="col-md-3 col-sm-6">
+                                <div class="dashboard-mini-card">
+                                    <div class="text-muted small mb-2">{% trans "Bekor qilinganlar" %}</div>
+                                    <div class="dashboard-mini-value text-danger">{{ canceled_appointments }}</div>
                                 </div>
                             </div>
+                            <div class="col-md-3 col-sm-6">
+                                <div class="dashboard-mini-card">
+                                    <div class="text-muted small mb-2">{% trans "Ko'rilmagan arizalar" %}</div>
+                                    <div class="dashboard-mini-value text-primary">{{ unseen_checkups }}</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row g-4 align-items-start">
+                            <div class="col-lg-6">
+                                <div class="d-flex align-items-center justify-content-between gap-2 mb-3">
+                                    <h5 class="mb-0">{% trans "So'nggi qabullar" %}</h5>
+                                    <span class="badge bg-primary-subtle text-primary">
+                                        {% blocktrans with count=monthly_appointments %}30 kunda {{ count }} ta{% endblocktrans %}
+                                    </span>
+                                </div>
+                                <div class="dashboard-section-list">
+                                    {% for appointment in recent_appointments %}
+                                        <div class="dashboard-feed-item">
+                                            <div class="dashboard-feed-main">
+                                                <div class="fw-semibold">{{ appointment.full_name }}</div>
+                                                <div class="dashboard-feed-meta">
+                                                    <span>{{ appointment.phone_number }}</span>
+                                                    <span>{{ appointment.employee.full_name|default:appointment.employee.username }}</span>
+                                                </div>
+                                            </div>
+                                            <div class="text-end">
+                                                {% if appointment.status == 'approved' %}
+                                                    <span class="badge bg-success-subtle text-success">{{ appointment.get_status_display }}</span>
+                                                {% elif appointment.status == 'canceled' %}
+                                                    <span class="badge bg-danger-subtle text-danger">{{ appointment.get_status_display }}</span>
+                                                {% else %}
+                                                    <span class="badge bg-warning-subtle text-warning">{{ appointment.get_status_display }}</span>
+                                                {% endif %}
+                                                <div class="small text-muted mt-2">{{ appointment.created_at|date:"Y-m-d H:i" }}</div>
+                                                <a href="{% url 'appointment-detail' appointment.pk %}" class="btn btn-outline-primary btn-sm mt-2">{% trans "Ko'rish" %}</a>
+                                            </div>
+                                        </div>
+                                    {% empty %}
+                                        <div class="dashboard-empty-state">{% trans "Qabullar hali mavjud emas." %}</div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+
+                            <div class="col-lg-6">
+                                <div class="d-flex align-items-center justify-content-between gap-2 mb-3">
+                                    <h5 class="mb-0">{% trans "So'nggi ko'rik arizalari" %}</h5>
+                                    <span class="badge bg-danger-subtle text-danger">
+                                        {% blocktrans with count=monthly_checkups %}30 kunda {{ count }} ta{% endblocktrans %}
+                                    </span>
+                                </div>
+                                <div class="dashboard-section-list">
+                                    {% for application in recent_checkups %}
+                                        <div class="dashboard-feed-item">
+                                            <div class="dashboard-feed-main">
+                                                <div class="fw-semibold">{{ application.full_name }}</div>
+                                                <div class="dashboard-feed-meta">
+                                                    <span>{{ application.phone_number }}</span>
+                                                    {% if application.message %}
+                                                        <span>{{ application.message|truncatechars:60 }}</span>
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                            <div class="text-end">
+                                                {% if application.is_seen %}
+                                                    <span class="badge bg-success-subtle text-success">{% trans "Ko'rilgan" %}</span>
+                                                {% else %}
+                                                    <span class="badge bg-warning-subtle text-warning">{% trans "Yangi" %}</span>
+                                                {% endif %}
+                                                <div class="small text-muted mt-2">{{ application.created_at|date:"Y-m-d H:i" }}</div>
+                                                <a href="{% url 'medical-checkup-application-detail' application.pk %}" class="btn btn-outline-primary btn-sm mt-2">{% trans "Ko'rish" %}</a>
+                                            </div>
+                                        </div>
+                                    {% empty %}
+                                        <div class="dashboard-empty-state">{% trans "Ko'rik arizalari hali mavjud emas." %}</div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card mb-4 dashboard-panel">
+                    <div class="card-header">
+                        <div class="d-flex align-items-center justify-content-between gap-3 flex-wrap">
+                            <div>
+                                <h4 class="card-title mb-1">{% trans "Kontent holati" %}</h4>
+                                <p class="card-subtitle mb-0">{% trans "Yangiliklar va e'lonlarning ko'rilishlari hamda nashr holati." %}</p>
+                            </div>
+                            <div class="d-flex gap-2">
+                                <a href="{% url 'news-view' %}" class="btn btn-outline-primary btn-sm">{% trans "Yangiliklar" %}</a>
+                                <a href="{% url 'announcemen-view' %}" class="btn btn-outline-secondary btn-sm">{% trans "E'lonlar" %}</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-3 col-sm-6">
+                                <div class="dashboard-mini-card">
+                                    <div class="text-muted small mb-2">{% trans "Yangiliklar" %}</div>
+                                    <div class="dashboard-mini-value">{{ published_news }}/{{ published_news|add:draft_news }}</div>
+                                    <div class="small text-muted mt-2">{% trans "Chop etilgan / jami" %}</div>
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-sm-6">
+                                <div class="dashboard-mini-card">
+                                    <div class="text-muted small mb-2">{% trans "E'lonlar" %}</div>
+                                    <div class="dashboard-mini-value">{{ published_announcements }}/{{ published_announcements|add:draft_announcements }}</div>
+                                    <div class="small text-muted mt-2">{% trans "Chop etilgan / jami" %}</div>
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-sm-6">
+                                <div class="dashboard-mini-card">
+                                    <div class="text-muted small mb-2">{% trans "Ko'rishlar" %}</div>
+                                    <div class="dashboard-mini-value">{{ total_content_views }}</div>
+                                    <div class="small text-muted mt-2">{% trans "Yangilik va e'lonlar bo'yicha" %}</div>
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-sm-6">
+                                <div class="dashboard-mini-card">
+                                    <div class="text-muted small mb-2">{% trans "Izohlar" %}</div>
+                                    <div class="dashboard-mini-value">{{ total_comments }}</div>
+                                    <div class="small text-muted mt-2">{% trans "Yangiliklarga qoldirilgan" %}</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row g-4 align-items-start">
+                            <div class="col-lg-6">
+                                <div class="d-flex align-items-center justify-content-between gap-2 mb-3">
+                                    <h5 class="mb-0">{% trans "Top yangiliklar" %}</h5>
+                                    <span class="badge bg-success-subtle text-success">{% trans "Ko'rishlar bo'yicha" %}</span>
+                                </div>
+                                <div class="dashboard-section-list">
+                                    {% for item in top_news %}
+                                        <div class="dashboard-feed-item">
+                                            <div class="dashboard-feed-main">
+                                                <div class="fw-semibold">{{ item.title|get_language_text:request.LANGUAGE_CODE|truncatechars:75 }}</div>
+                                                <div class="dashboard-feed-meta">
+                                                    <span>
+                                                        {% if item.author %}
+                                                            {{ item.author.full_name|default:item.author.username }}
+                                                        {% else %}
+                                                            -
+                                                        {% endif %}
+                                                    </span>
+                                                    <span>{{ item.published_date|date:"Y-m-d" }}</span>
+                                                </div>
+                                            </div>
+                                            <div class="text-end">
+                                                {% if item.is_published %}
+                                                    <span class="badge bg-success-subtle text-success">{% trans "Chop etilgan" %}</span>
+                                                {% else %}
+                                                    <span class="badge bg-warning-subtle text-warning">{% trans "Draft" %}</span>
+                                                {% endif %}
+                                                <div class="small text-muted mt-2">
+                                                    {% blocktrans with count=item.views_count %}{{ count }} ko'rish{% endblocktrans %}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    {% empty %}
+                                        <div class="dashboard-empty-state">{% trans "Yangiliklar topilmadi." %}</div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+
+                            <div class="col-lg-6">
+                                <div class="d-flex align-items-center justify-content-between gap-2 mb-3">
+                                    <h5 class="mb-0">{% trans "Top e'lonlar" %}</h5>
+                                    <span class="badge bg-secondary-subtle text-secondary">{% trans "Ko'rishlar bo'yicha" %}</span>
+                                </div>
+                                <div class="dashboard-section-list">
+                                    {% for item in top_announcements %}
+                                        <div class="dashboard-feed-item">
+                                            <div class="dashboard-feed-main">
+                                                <div class="fw-semibold">{{ item.title|get_language_text:request.LANGUAGE_CODE|truncatechars:75 }}</div>
+                                                <div class="dashboard-feed-meta">
+                                                    <span>
+                                                        {% if item.author %}
+                                                            {{ item.author.full_name|default:item.author.username }}
+                                                        {% else %}
+                                                            -
+                                                        {% endif %}
+                                                    </span>
+                                                    <span>{{ item.published_date|date:"Y-m-d" }}</span>
+                                                </div>
+                                            </div>
+                                            <div class="text-end">
+                                                {% if item.is_published %}
+                                                    <span class="badge bg-success-subtle text-success">{% trans "Chop etilgan" %}</span>
+                                                {% else %}
+                                                    <span class="badge bg-warning-subtle text-warning">{% trans "Draft" %}</span>
+                                                {% endif %}
+                                                <div class="small text-muted mt-2">
+                                                    {% blocktrans with count=item.views_count %}{{ count }} ko'rish{% endblocktrans %}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    {% empty %}
+                                        <div class="dashboard-empty-state">{% trans "E'lonlar topilmadi." %}</div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card dashboard-panel">
+                    <div class="card-header">
+                        <div class="d-flex align-items-center justify-content-between gap-3 flex-wrap">
+                            <div>
+                                <h4 class="card-title mb-1">{% trans "Jamoa va so'nggi faollik" %}</h4>
+                                <p class="card-subtitle mb-0">{% trans "Yangi foydalanuvchilar va xodimlar faoliyati." %}</p>
+                            </div>
+                            <a href="{% url 'employee-list' %}" class="btn btn-outline-primary btn-sm">{% trans "Xodimlarga o'tish" %}</a>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-4 align-items-start">
+                            <div class="col-lg-6">
+                                <h5 class="mb-3">{% trans "Yangi foydalanuvchilar" %}</h5>
+                                <div class="dashboard-section-list">
+                                    {% for item in recent_users %}
+                                        <div class="dashboard-feed-item">
+                                            <div class="d-flex align-items-start gap-3">
+                                                <span class="dashboard-avatar">{{ item.full_name|default:item.username|get_initials }}</span>
+                                                <div class="dashboard-feed-main">
+                                                    <div class="fw-semibold">{{ item.full_name|default:item.username }}</div>
+                                                    <div class="dashboard-feed-meta">
+                                                        <span>{{ item.email|default:"-" }}</span>
+                                                        {% if item.job_title %}
+                                                            <span>{{ item.job_title }}</span>
+                                                        {% endif %}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="text-end">
+                                                {% if item.is_active %}
+                                                    <span class="badge bg-success-subtle text-success">{% trans "Faol" %}</span>
+                                                {% else %}
+                                                    <span class="badge bg-danger-subtle text-danger">{% trans "Nofaol" %}</span>
+                                                {% endif %}
+                                                <div class="small text-muted mt-2">{{ item.date_joined|date:"Y-m-d" }}</div>
+                                                <a href="{% url 'edit-user' item.id %}" class="btn btn-outline-primary btn-sm mt-2">{% trans "Tahrirlash" %}</a>
+                                            </div>
+                                        </div>
+                                    {% empty %}
+                                        <div class="dashboard-empty-state">{% trans "Foydalanuvchilar topilmadi." %}</div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+
+                            <div class="col-lg-6">
+                                <h5 class="mb-3">{% trans "So'nggi faoliyat yozuvlari" %}</h5>
+                                <div class="dashboard-section-list">
+                                    {% for item in recent_activities %}
+                                        <div class="dashboard-feed-item">
+                                            <div class="dashboard-feed-main">
+                                                <div class="fw-semibold">{{ item.activity_name }}</div>
+                                                <div class="dashboard-feed-meta">
+                                                    <span>{{ item.user.full_name|default:item.user.username }}</span>
+                                                    <span>{{ item.get_activity_type_display }}</span>
+                                                    {% if item.start_date %}
+                                                        <span>{{ item.start_date|date:"Y-m-d" }}</span>
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                            <div class="text-end">
+                                                {% if item.is_completed %}
+                                                    <span class="badge bg-success-subtle text-success">{% trans "Yakunlangan" %}</span>
+                                                {% else %}
+                                                    <span class="badge bg-warning-subtle text-warning">{% trans "Jarayonda" %}</span>
+                                                {% endif %}
+                                                <div class="small text-muted mt-2">{{ item.created_at|date:"Y-m-d H:i" }}</div>
+                                                <a href="{% url 'employee-activity-detail' item.user.id item.id %}" class="btn btn-outline-primary btn-sm mt-2">{% trans "Ko'rish" %}</a>
+                                            </div>
+                                        </div>
+                                    {% empty %}
+                                        <div class="dashboard-empty-state">{% trans "Xodim faoliyati yozuvlari hali qo'shilmagan." %}</div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xxl-4">
+                <div class="card mb-4 dashboard-panel">
+                    <div class="card-header">
+                        <h4 class="card-title mb-1">{% trans "Tizim tayyorligi" %}</h4>
+                        <p class="card-subtitle mb-0">{% trans "Asosiy modul va konfiguratsiya qamrovi." %}</p>
+                    </div>
+                    <div class="card-body">
+                        {% for item in readiness_metrics %}
+                            <div class="dashboard-progress-row">
+                                <div class="dashboard-progress-label">
+                                    <span>{{ item.title }}</span>
+                                    <span>{{ item.value }}%</span>
+                                </div>
+                                <div class="progress" role="progressbar" aria-valuenow="{{ item.progress }}" aria-valuemin="0" aria-valuemax="100">
+                                    <div class="progress-bar bg-{{ item.accent }}" style="width: {{ item.progress }}%;"></div>
+                                </div>
+                                <div class="small text-muted mt-2">{{ item.description }}</div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div class="card mb-4 dashboard-panel">
+                    <div class="card-header">
+                        <h4 class="card-title mb-1">{% trans "Tizim holati" %}</h4>
+                        <p class="card-subtitle mb-0">{% trans "Konfiguratsiya va monitoring bo'yicha qisqa tekshiruv." %}</p>
+                    </div>
+                    <div class="card-body">
+                        <div class="dashboard-check-list">
+                            {% for item in system_checks %}
+                                <div class="dashboard-check-item">
+                                    <span class="dashboard-tile-surface {{ item.surface_class }}">
+                                        <i class="{{ item.icon }}"></i>
+                                    </span>
+                                    <div class="flex-grow-1 min-w-0">
+                                        <div class="d-flex align-items-center justify-content-between gap-2 flex-wrap">
+                                            <div class="fw-semibold">{{ item.title }}</div>
+                                            <span class="{{ item.badge_class }}">{{ item.value }}</span>
+                                        </div>
+                                        <div class="small text-muted mt-1">{{ item.detail }}</div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card mb-4 dashboard-panel">
+                    <div class="card-header">
+                        <h4 class="card-title mb-1">{% trans "Tezkor o'tish" %}</h4>
+                        <p class="card-subtitle mb-0">{% trans "Ko'p ishlatiladigan boshqaruv sahifalari." %}</p>
+                    </div>
+                    <div class="card-body">
+                        <div class="dashboard-quick-links">
+                            {% for item in quick_links %}
+                                <a href="{{ item.url }}" class="dashboard-quick-link">
+                                    <span class="dashboard-tile-surface bg-primary-subtle text-primary">
+                                        <i class="{{ item.icon }}"></i>
+                                    </span>
+                                    <div>
+                                        <div class="fw-semibold">{{ item.title }}</div>
+                                        <div class="small text-muted mt-1">{{ item.description }}</div>
+                                    </div>
+                                </a>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card dashboard-panel">
+                    <div class="card-header">
+                        <div class="d-flex align-items-center justify-content-between gap-3 flex-wrap">
+                            <div>
+                                <h4 class="card-title mb-1">{% trans "So'nggi loglar" %}</h4>
+                                <p class="card-subtitle mb-0">{% trans "Serverga tushgan oxirgi so'rovlar va status kodlari." %}</p>
+                            </div>
+                            <a href="{% url 'logs-view' %}" class="btn btn-outline-primary btn-sm">{% trans "Loglar" %}</a>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="dashboard-section-list">
+                            {% for item in recent_logs %}
+                                <div class="dashboard-feed-item">
+                                    <div class="dashboard-feed-main">
+                                        <div class="fw-semibold">{{ item.method }} {{ item.path|truncatechars:42 }}</div>
+                                        <div class="dashboard-feed-meta">
+                                            <span>
+                                                {% if item.user %}
+                                                    {{ item.user.full_name|default:item.user.username }}
+                                                {% else %}
+                                                    {% trans "Anonim" %}
+                                                {% endif %}
+                                            </span>
+                                            <span>{{ item.ip_address|default:"-" }}</span>
+                                        </div>
+                                    </div>
+                                    <div class="text-end">
+                                        {% if item.status_code >= 500 %}
+                                            <span class="badge bg-danger-subtle text-danger">{{ item.status_code }}</span>
+                                        {% elif item.status_code >= 400 %}
+                                            <span class="badge bg-warning-subtle text-warning">{{ item.status_code }}</span>
+                                        {% else %}
+                                            <span class="badge bg-success-subtle text-success">{{ item.status_code }}</span>
+                                        {% endif %}
+                                        <div class="small text-muted mt-2">{{ item.timestamp|date:"Y-m-d H:i" }}</div>
+                                    </div>
+                                </div>
+                            {% empty %}
+                                <div class="dashboard-empty-state">{% trans "Log yozuvlari topilmadi." %}</div>
+                            {% endfor %}
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <!-- Row ends -->
-    <!-- Row starts -->
-    <div class="row gx-3">
-        <div class="col-xl-3 col-sm-6 col-12">
-            <div class="card mb-3">
-                <div class="card-body">
-                    <div class="d-flex align-items-center">
-                        <div class="p-2 border border-success rounded-circle me-3">
-                            <div class="icon-box md bg-success-subtle rounded-5">
-                                <i class="ri-surgical-mask-line fs-4 text-success"></i>
-                            </div>
-                        </div>
-                        <div class="d-flex flex-column">
-                            <h2 class="lh-1">890</h2>
-                            <p class="m-0">New Patients</p>
-                        </div>
-                    </div>
-                    <div class="d-flex align-items-end justify-content-between mt-1">
-                        <a class="text-success" href="javascript:void(0);">
-                            <span>View All</span>
-                            <i class="ri-arrow-right-line text-success ms-1"></i>
-                        </a>
-                        <div class="text-end">
-                            <p class="mb-0 text-success">+40%</p>
-                            <span class="badge bg-success-subtle text-success small">this month</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-xl-3 col-sm-6 col-12">
-            <div class="card mb-3">
-                <div class="card-body">
-                    <div class="d-flex align-items-center">
-                        <div class="p-2 border border-primary rounded-circle me-3">
-                            <div class="icon-box md bg-primary-subtle rounded-5">
-                                <i class="ri-lungs-line fs-4 text-primary"></i>
-                            </div>
-                        </div>
-                        <div class="d-flex flex-column">
-                            <h2 class="lh-1">360</h2>
-                            <p class="m-0">OPD Patients</p>
-                        </div>
-                    </div>
-                    <div class="d-flex align-items-end justify-content-between mt-1">
-                        <a class="text-primary" href="javascript:void(0);">
-                            <span>View All</span>
-                            <i class="ri-arrow-right-line ms-1"></i>
-                        </a>
-                        <div class="text-end">
-                            <p class="mb-0 text-primary">+30%</p>
-                            <span class="badge bg-primary-subtle text-primary small">this month</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-xl-3 col-sm-6 col-12">
-            <div class="card mb-3">
-                <div class="card-body">
-                    <div class="d-flex align-items-center">
-                        <div class="p-2 border border-danger rounded-circle me-3">
-                            <div class="icon-box md bg-danger-subtle rounded-5">
-                                <i class="ri-microscope-line fs-4 text-danger"></i>
-                            </div>
-                        </div>
-                        <div class="d-flex flex-column">
-                            <h2 class="lh-1">980</h2>
-                            <p class="m-0">Lab tests</p>
-                        </div>
-                    </div>
-                    <div class="d-flex align-items-end justify-content-between mt-1">
-                        <a class="text-danger" href="javascript:void(0);">
-                            <span>View All</span>
-                            <i class="ri-arrow-right-line ms-1"></i>
-                        </a>
-                        <div class="text-end">
-                            <p class="mb-0 text-danger">+60%</p>
-                            <span class="badge bg-danger-subtle text-danger small">this month</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-xl-3 col-sm-6 col-12">
-            <div class="card mb-3">
-                <div class="card-body">
-                    <div class="d-flex align-items-center">
-                        <div class="p-2 border border-warning rounded-circle me-3">
-                            <div class="icon-box md bg-warning-subtle rounded-5">
-                                <i class="ri-money-dollar-circle-line fs-4 text-warning"></i>
-                            </div>
-                        </div>
-                        <div class="d-flex flex-column">
-                            <h2 class="lh-1">$98000</h2>
-                            <p class="m-0">Total Earnings</p>
-                        </div>
-                    </div>
-                    <div class="d-flex align-items-end justify-content-between mt-1">
-                        <a class="text-warning" href="javascript:void(0);">
-                            <span>View All</span>
-                            <i class="ri-arrow-right-line ms-1"></i>
-                        </a>
-                        <div class="text-end">
-                            <p class="mb-0 text-warning">+20%</p>
-                            <span class="badge bg-warning-subtle text-warning small">this month</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- Row ends -->
-    <!-- Row starts -->
-    <div class="row gx-3">
-        <div class="col-xl-2 col-sm-6 col-12">
-            <div class="card mb-3">
-                <div class="card-body">
-                    <div class="d-flex flex-column align-items-center">
-                        <div class="icon-box md rounded-5 bg-primary mb-3">
-                            <i class="ri-verified-badge-line fs-4 lh-1"></i>
-                        </div>
-                        <h6>Appointments</h6>
-                        <h2 class="text-primary m-0">639</h2>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-xl-2 col-sm-6 col-12">
-            <div class="card mb-3">
-                <div class="card-body">
-                    <div class="d-flex flex-column align-items-center">
-                        <div class="icon-box md rounded-5 bg-primary mb-3">
-                            <i class="ri-stethoscope-line fs-4 lh-1"></i>
-                        </div>
-                        <h6>Doctors</h6>
-                        <h2 class="text-primary m-0">83</h2>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-xl-2 col-sm-6 col-12">
-            <div class="card mb-3">
-                <div class="card-body">
-                    <div class="d-flex flex-column align-items-center">
-                        <div class="icon-box md rounded-5 bg-primary mb-3">
-                            <i class="ri-psychotherapy-line fs-4 lh-1"></i>
-                        </div>
-                        <h6>Staff</h6>
-                        <h2 class="text-primary m-0">296</h2>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-xl-2 col-sm-6 col-12">
-            <div class="card mb-3">
-                <div class="card-body">
-                    <div class="d-flex flex-column align-items-center">
-                        <div class="icon-box md rounded-5 bg-primary mb-3">
-                            <i class="ri-lungs-line fs-4 lh-1"></i>
-                        </div>
-                        <h6>Operations</h6>
-                        <h2 class="text-primary m-0">49</h2>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-xl-2 col-sm-6 col-12">
-            <div class="card mb-3">
-                <div class="card-body">
-                    <div class="d-flex flex-column align-items-center">
-                        <div class="icon-box md rounded-5 bg-primary mb-3">
-                            <i class="ri-hotel-bed-line fs-4 lh-1"></i>
-                        </div>
-                        <h6>Admitted</h6>
-                        <h2 class="text-primary m-0">372</h2>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-xl-2 col-sm-6 col-12">
-            <div class="card mb-3">
-                <div class="card-body">
-                    <div class="d-flex flex-column align-items-center">
-                        <div class="icon-box md rounded-5 bg-primary mb-3">
-                            <i class="ri-walk-line fs-4 lh-1"></i>
-                        </div>
-                        <h6>Discharged</h6>
-                        <h2 class="text-primary m-0">253</h2>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- Row ends -->
-    <!-- Row starts -->
-    <div class="row gx-3">
-        <div class="col-xxl-12 col-sm-12">
-            <div class="card mb-3">
-                <div class="card-header">
-                    <h5 class="card-title">Available Beds</h5>
-                </div>
-                <div class="card-body">
-                    <div id="availableBeds"></div>
-                </div>
-            </div>
-        </div>
-        <div class="col-xxl-6 col-sm-12">
-            <div class="card mb-3">
-                <div class="card-header">
-                    <h5 class="card-title">Patients</h5>
-                </div>
-                <div class="card-body">
-                    <div id="patients"></div>
-                </div>
-            </div>
-        </div>
-        <div class="col-xxl-6 col-sm-12">
-            <div class="card mb-3">
-                <div class="card-header">
-                    <h5 class="card-title">Treatment Type</h5>
-                </div>
-                <div class="card-body">
-                    <div id="treatment"></div>
-                </div>
-            </div>
-        </div>
-        <div class="col-xxl-6 col-sm-12">
-            <div class="card mb-3">
-                <div class="card-header">
-                    <h5 class="card-title">Hospital Earnings</h5>
-                </div>
-                <div class="card-body">
-                    <!-- Row start -->
-                    <div class="row g-3">
-                        <div class="col-sm-6 col-12">
-                            <div class="border rounded-2 d-flex align-items-center flex-row p-2">
-                                <div class="me-2">
-                                    <div id="sparkline1"></div>
-                                </div>
-                                <div class="m-0">
-                                    <div class="d-flex align-items-center">
-                                        <h4 class="m-0 fw-bold">$4900</h4>
-                                        <div class="ms-2 text-primary d-flex">
-                                            <small>20%</small> <i
-                                                class="ri-arrow-right-up-line ms-1 fw-bold"></i>
-                                        </div>
-                                    </div>
-                                    <small>Online Consultation</small>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-sm-6 col-12">
-                            <div class="border rounded-2 d-flex align-items-center flex-row p-2">
-                                <div class="me-2">
-                                    <div id="sparkline2"></div>
-                                </div>
-                                <div class="m-0">
-                                    <div class="d-flex align-items-center">
-                                        <div class="fs-4 fw-bold">$750</div>
-                                        <div class="ms-2 text-danger d-flex">
-                                            <small>26%</small> <i
-                                                class="ri-arrow-right-down-line ms-1 fw-bold"></i>
-                                        </div>
-                                    </div>
-                                    <small class="text-dark">Overall Purchases</small>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-sm-6 col-12">
-                            <div class="border rounded-2 d-flex align-items-center flex-row p-2">
-                                <div class="me-2">
-                                    <div id="sparkline3"></div>
-                                </div>
-                                <div class="m-0">
-                                    <div class="d-flex align-items-center">
-                                        <div class="fs-4 fw-bold">$560</div>
-                                        <div class="ms-2 text-primary d-flex">
-                                            <small>28%</small> <i
-                                                class="ri-arrow-right-up-line ms-1 fw-bold"></i>
-                                        </div>
-                                    </div>
-                                    <small class="text-dark">Pending Invoices</small>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-sm-6 col-12">
-                            <div class="border rounded-2 d-flex align-items-center flex-row p-2">
-                                <div class="me-2">
-                                    <div id="sparkline4"></div>
-                                </div>
-                                <div class="m-0">
-                                    <div class="d-flex align-items-center">
-                                        <div class="fs-4 fw-bold">$390</div>
-                                        <div class="ms-2 text-primary d-flex">
-                                            <small>30%</small> <i
-                                                class="ri-arrow-right-up-line ms-1 fw-bold"></i>
-                                        </div>
-                                    </div>
-                                    <small class="text-dark">Monthly Billing</small>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Row ends -->
-                </div>
-            </div>
-        </div>
-        <div class="col-xxl-3 col-sm-6">
-            <div class="card mb-3">
-                <div class="card-header">
-                    <h5 class="card-title">Insurance Claims</h5>
-                </div>
-                <div class="card-body">
-                    <div id="claims"></div>
-                </div>
-            </div>
-        </div>
-        <div class="col-xxl-3 col-sm-6">
-            <div class="card mb-3">
-                <div class="card-header">
-                    <h5 class="card-title">Patients by Gender</h5>
-                </div>
-                <div class="card-body">
-                    <div class="auto-align-graph">
-                        <div id="genderAge"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- Row ends -->
-</div>
-<!-- App body ends -->
 {% endblock content %}
-
-{% block vendor_js %}
-
-{% endblock vendor_js %}

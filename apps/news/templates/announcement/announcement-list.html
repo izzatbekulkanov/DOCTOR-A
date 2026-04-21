@@ -1,75 +1,219 @@
 {% extends 'administrator/main.html' %}
-{% load i18n static custom_filters %}
+{% load i18n custom_filters %}
 
 {% block title %}
     {% trans "E'lonlar" %}
 {% endblock title %}
 
-{% block vendor_css %}
-
-    <style>
-
-    </style>
-{% endblock vendor_css %}
-
 {% block content %}
-    <div class="app-body mt-4">
-        <div class="d-flex justify-content-between align-items-center">
-            <h2>{% trans "E'lonlar" %}</h2>
-            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addAnnouncementModal">{% trans "E'lon qo'shish" %}</button>
-        </div>
+    <div class="app-body">
+        {% if messages %}
+            <div class="mb-4">
+                {% for message in messages %}
+                    <div class="alert {% if message.tags == 'success' %}alert-success{% elif message.tags == 'error' %}alert-danger{% else %}alert-info{% endif %} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
 
-
-        <!-- 📌 E'lonlar ro'yxati -->
-        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 mt-3">
-            {% for announcement in announcements %}
-                <div class="col">
-                    <div class="card h-100 shadow-sm">
-                        <div class="card-body d-flex flex-column">
-                            <h5 class="card-title">{{ announcement.title|get_language_text:lang_code }}</h5>
-                            <p class="card-text flex-grow-1">
-                                {{ announcement.content|get_language_text:lang_code|truncatewords:20 }}
-                            </p>
-                            <p class="text-muted small">{% trans "Chop etilgan" %}: {{ announcement.published_date }}</p>
-                            <p class="text-muted small">{% trans "Ko'rishlar soni" %}: {{ announcement.views_count }}</p>
+        <div class="row g-3">
+            <div class="col-xl-3 col-sm-6">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center gap-3">
+                            <span class="icon-box md bg-primary-subtle rounded-5">
+                                <i class="ri-notification-3-line fs-4 text-primary"></i>
+                            </span>
+                            <div>
+                                <h3 class="mb-0">{{ total_count }}</h3>
+                                <p class="mb-0 text-muted">{% trans "Jami e'lonlar" %}</p>
+                            </div>
                         </div>
                     </div>
                 </div>
-            {% empty %}
-                <p class="text-muted">{% trans "Hozircha e'lonlar mavjud emas." %}</p>
-            {% endfor %}
+            </div>
+            <div class="col-xl-3 col-sm-6">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center gap-3">
+                            <span class="icon-box md bg-success-subtle rounded-5">
+                                <i class="ri-check-double-line fs-4 text-success"></i>
+                            </span>
+                            <div>
+                                <h3 class="mb-0">{{ published_count }}</h3>
+                                <p class="mb-0 text-muted">{% trans "Chop etilgan" %}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-sm-6">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center gap-3">
+                            <span class="icon-box md bg-warning-subtle rounded-5">
+                                <i class="ri-draft-line fs-4 text-warning"></i>
+                            </span>
+                            <div>
+                                <h3 class="mb-0">{{ draft_count }}</h3>
+                                <p class="mb-0 text-muted">{% trans "Qoralama" %}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-sm-6">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center gap-3">
+                            <span class="icon-box md bg-info-subtle rounded-5">
+                                <i class="ri-filter-3-line fs-4 text-info"></i>
+                            </span>
+                            <div>
+                                <h3 class="mb-0">{{ filtered_count }}</h3>
+                                <p class="mb-0 text-muted">{% trans "Joriy natija" %}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card mt-4">
+            <div class="card-header">
+                <div class="d-flex align-items-center justify-content-between gap-3 flex-wrap">
+                    <div>
+                        <h4 class="card-title mb-1">{% trans "E'lonlar ro'yxati" %}</h4>
+                        <p class="card-subtitle mb-0">{% trans "E'lonlarni qidirish, filtrlash va boshqarish." %}</p>
+                    </div>
+                    <a href="{% url 'announcement-create' %}" class="btn btn-primary">
+                        <i class="ri-add-line me-1"></i>
+                        {% trans "E'lon qo'shish" %}
+                    </a>
+                </div>
+            </div>
+            <div class="card-body">
+                <form method="GET" action="{% url 'announcemen-view' %}" class="row g-2 align-items-end mb-4">
+                    <div class="col-lg-6">
+                        <label for="q" class="form-label">{% trans "Qidirish" %}</label>
+                        <input
+                            type="text"
+                            name="q"
+                            id="q"
+                            value="{{ search_query }}"
+                            class="form-control"
+                            placeholder="ID, sarlavha yoki mazmun bo'yicha qidirish"
+                        >
+                    </div>
+                    <div class="col-lg-3">
+                        <label for="status" class="form-label">{% trans "Status" %}</label>
+                        <select name="status" id="status" class="form-select">
+                            <option value="" {% if not status_filter %}selected{% endif %}>{% trans "Barchasi" %}</option>
+                            <option value="published" {% if status_filter == 'published' %}selected{% endif %}>{% trans "Chop etilgan" %}</option>
+                            <option value="draft" {% if status_filter == 'draft' %}selected{% endif %}>{% trans "Qoralama" %}</option>
+                        </select>
+                    </div>
+                    <div class="col-lg-3">
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary flex-fill">{% trans "Filterlash" %}</button>
+                            <a href="{% url 'announcemen-view' %}" class="btn btn-outline-secondary flex-fill">{% trans "Tozalash" %}</a>
+                        </div>
+                    </div>
+                </form>
+
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>{% trans "E'lon" %}</th>
+                                <th>{% trans "Muallif" %}</th>
+                                <th>{% trans "Sana" %}</th>
+                                <th>{% trans "Ko'rishlar" %}</th>
+                                <th>{% trans "Status" %}</th>
+                                <th>{% trans "Amallar" %}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for announcement in announcements %}
+                                <tr>
+                                    <td>{{ forloop.counter }}</td>
+                                    <td>
+                                        <div class="fw-semibold">{{ announcement.title|get_language_text:lang_code }}</div>
+                                        <div class="text-muted small">{{ announcement.content|get_language_text:lang_code|striptags|truncatewords:18 }}</div>
+                                    </td>
+                                    <td>{{ announcement.author.full_name|default:announcement.author.username|default:"-" }}</td>
+                                    <td>{{ announcement.published_date|date:"Y-m-d H:i" }}</td>
+                                    <td>{{ announcement.views_count }}</td>
+                                    <td>
+                                        <form method="POST" class="d-flex flex-wrap gap-2 align-items-center">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="action" value="update_status">
+                                            <input type="hidden" name="announcement_id" value="{{ announcement.id }}">
+                                            <select name="status" class="form-select form-select-sm">
+                                                <option value="published" {% if announcement.is_published %}selected{% endif %}>{% trans "Chop etilgan" %}</option>
+                                                <option value="draft" {% if not announcement.is_published %}selected{% endif %}>{% trans "Qoralama" %}</option>
+                                            </select>
+                                            <button type="submit" class="btn btn-outline-secondary btn-sm">
+                                                <i class="ri-save-line"></i>
+                                            </button>
+                                        </form>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex flex-wrap gap-2">
+                                            <a href="{% url 'announcement-create' %}?edit={{ announcement.id }}" class="btn btn-outline-primary btn-sm">
+                                                <i class="ri-edit-line"></i>
+                                            </a>
+                                            <form method="POST" action="{% url 'announcemen-view' %}">
+                                                {% csrf_token %}
+                                                <input type="hidden" name="action" value="delete">
+                                                <input type="hidden" name="announcement_id" value="{{ announcement.id }}">
+                                                <button type="submit" class="btn btn-outline-danger btn-sm">
+                                                    <i class="ri-delete-bin-line"></i>
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% empty %}
+                                <tr>
+                                    <td colspan="7" class="text-center text-muted py-4">{% trans "Hozircha e'lonlar mavjud emas." %}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                {% if announcements.has_previous or announcements.has_next %}
+                    <nav class="mt-4">
+                        <ul class="pagination justify-content-center mb-0">
+                            {% if announcements.has_previous %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page=1{% if page_query %}&{{ page_query }}{% endif %}">{% trans "Birinchi" %}</a>
+                                </li>
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ announcements.previous_page_number }}{% if page_query %}&{{ page_query }}{% endif %}">{% trans "Oldingi" %}</a>
+                                </li>
+                            {% endif %}
+
+                            <li class="page-item active">
+                                <span class="page-link">{{ announcements.number }} / {{ announcements.paginator.num_pages }}</span>
+                            </li>
+
+                            {% if announcements.has_next %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ announcements.next_page_number }}{% if page_query %}&{{ page_query }}{% endif %}">{% trans "Keyingi" %}</a>
+                                </li>
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ announcements.paginator.num_pages }}{% if page_query %}&{{ page_query }}{% endif %}">{% trans "Oxirgi" %}</a>
+                                </li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                {% endif %}
+            </div>
         </div>
     </div>
-
-    {% include 'announcement/announcement-modals.html' %}
 {% endblock content %}
-
-{% block vendor_js %}
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script>
-        $(document).ready(function () {
-            $("#announcementForm").submit(function (event) {
-                event.preventDefault();
-
-                let formData = $(this).serialize();
-
-                $.ajax({
-                    type: "POST",
-                    url: "{% url 'announcement-create' %}",
-                    data: formData,
-                    dataType: "json",
-                    success: function (response) {
-                        alert(response.message);
-                        location.reload();  // Sahifani qayta yuklash
-                    },
-                    error: function (xhr) {
-                        let errorMessage = xhr.responseJSON?.error || "Xatolik yuz berdi!";
-                        alert(errorMessage);
-                    }
-                });
-            });
-        });
-    </script>
-
-{% endblock vendor_js %}

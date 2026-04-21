@@ -1,0 +1,148 @@
+{% extends 'administrator/main.html' %}
+{% load i18n %}
+
+{% block title %}
+    {% trans "Qabul tafsilotlari" %}
+{% endblock title %}
+
+{% block content %}
+    <div class="app-body">
+        {% if messages %}
+            <div class="mb-4">
+                {% for message in messages %}
+                    <div class="alert {% if message.tags == 'success' %}alert-success{% elif message.tags == 'error' %}alert-danger{% else %}alert-info{% endif %} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <div class="d-flex justify-content-between align-items-center gap-3 flex-wrap mb-4">
+            <div>
+                <h4 class="mb-1">{% trans "Qabul tafsilotlari" %}</h4>
+                <p class="text-muted mb-0">{% trans "Murojaat bo'yicha to'liq ma'lumot va status boshqaruvi." %}</p>
+            </div>
+            <a href="{% url 'appointment-view' %}" class="btn btn-outline-secondary">
+                <i class="ri-arrow-left-line me-1"></i>
+                {% trans "Ro'yxatga qaytish" %}
+            </a>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-xl-8">
+                <div class="card h-100">
+                    <div class="card-header">
+                        <div class="d-flex align-items-center justify-content-between gap-3 flex-wrap">
+                            <div>
+                                <h4 class="card-title mb-1">{{ appointment.full_name }}</h4>
+                                <p class="card-subtitle mb-0">{{ appointment.created_at|date:"Y-m-d H:i:s" }}</p>
+                            </div>
+                            {% if appointment.status == 'approved' %}
+                                <span class="badge bg-success">{% trans "Tasdiqlangan" %}</span>
+                            {% elif appointment.status == 'canceled' %}
+                                <span class="badge bg-danger">{% trans "Bekor qilingan" %}</span>
+                            {% else %}
+                                <span class="badge bg-warning text-dark">{% trans "Kutilmoqda" %}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="card-body">
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-6">
+                                <div class="border rounded p-3 h-100">
+                                    <span class="text-muted d-block mb-1">{% trans "Ism va familiya" %}</span>
+                                    <strong>{{ appointment.full_name }}</strong>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="border rounded p-3 h-100">
+                                    <span class="text-muted d-block mb-1">{% trans "Telefon raqami" %}</span>
+                                    <a href="tel:{{ appointment.phone_number }}" class="fw-semibold">{{ appointment.phone_number }}</a>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="border rounded p-3 h-100">
+                                    <span class="text-muted d-block mb-1">{% trans "Biriktirilgan xodim" %}</span>
+                                    <strong>{{ appointment.employee.full_name|default:appointment.employee.username }}</strong>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="border rounded p-3 h-100">
+                                    <span class="text-muted d-block mb-1">{% trans "Joriy status" %}</span>
+                                    <strong>{{ appointment.get_status_display }}</strong>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="border rounded p-3 h-100">
+                                    <span class="text-muted d-block mb-1">{% trans "Bo'lim" %}</span>
+                                    <strong>{{ appointment.employee.department|default:"-" }}</strong>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="border rounded p-3 h-100">
+                                    <span class="text-muted d-block mb-1">{% trans "Lavozim" %}</span>
+                                    <strong>{{ appointment.employee.job_title|default:"-" }}</strong>
+                                </div>
+                            </div>
+                        </div>
+
+                        <h5 class="mb-3">{% trans "Xabar" %}</h5>
+                        <div class="border rounded p-3 bg-light">
+                            {% if appointment.message %}
+                                {{ appointment.message|linebreaksbr }}
+                            {% else %}
+                                <span class="text-muted">{% trans "Xabar qoldirilmagan." %}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="card-title mb-1">{% trans "Statusni o'zgartirish" %}</h4>
+                        <p class="card-subtitle mb-0">{% trans "Qabul jarayonining holatini belgilang." %}</p>
+                    </div>
+                    <div class="card-body">
+                        <form method="POST">
+                            {% csrf_token %}
+                            <input type="hidden" name="action" value="update_status">
+                            <div class="mb-3">
+                                <label for="status" class="form-label">{% trans "Status" %}</label>
+                                <select name="status" id="status" class="form-select">
+                                    <option value="pending" {% if appointment.status == 'pending' %}selected{% endif %}>{% trans "Kutilmoqda" %}</option>
+                                    <option value="approved" {% if appointment.status == 'approved' %}selected{% endif %}>{% trans "Tasdiqlangan" %}</option>
+                                    <option value="canceled" {% if appointment.status == 'canceled' %}selected{% endif %}>{% trans "Bekor qilingan" %}</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-primary w-100">
+                                <i class="ri-save-3-line me-1"></i>
+                                {% trans "Saqlash" %}
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="card mt-4">
+                    <div class="card-header">
+                        <h4 class="card-title mb-1">{% trans "Amallar" %}</h4>
+                        <p class="card-subtitle mb-0">{% trans "Keraksiz yoki xato qabulni o'chirish." %}</p>
+                    </div>
+                    <div class="card-body">
+                        <form method="POST">
+                            {% csrf_token %}
+                            <input type="hidden" name="action" value="delete">
+                            <button type="submit" class="btn btn-outline-danger w-100">
+                                <i class="ri-delete-bin-line me-1"></i>
+                                {% trans "Qabulni o'chirish" %}
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}

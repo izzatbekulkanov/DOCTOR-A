@@ -1,68 +1,72 @@
 from django.urls import path
 from django.views.generic import RedirectView
-from .views import DashboardsView, NewsView, AnnouncementView, EmployeeView, VideosView, NewsDetailDashboard, \
-    AnnouncementDetailView, EmployeeDetailView, ClinicEquipmentListView, EquipmentDetailView, LandingPageV1View, \
-    AboutStyleTwoView, ServicesOverviewView, VideosLandingView, BlogRightSidebarView, AnnouncementRightSidebarView, \
-    AnnouncementLandingDetailView, DoctorGridView, ContactStyleTwoView, EquipmentLeftSidebarView, NewsLandingDetailView, \
-    DoctorLandingDetailView, EquipmentLandingDetailView
-from django.contrib.auth.decorators import login_required
+
+from .views import (
+    AboutStyleTwoView,
+    AnnouncementLandingDetailView,
+    AnnouncementRightSidebarView,
+    BlogRightSidebarView,
+    ContactStyleTwoView,
+    DoctorGridView,
+    DoctorLandingDetailView,
+    EquipmentLandingDetailView,
+    EquipmentLeftSidebarView,
+    LandingPageV1View,
+    NewsLandingDetailView,
+    ServicesOverviewView,
+    VideosLandingView,
+)
 
 urlpatterns = [
-    path("", DashboardsView.as_view(template_name="views/main-dashboard.html"), name="main-dashboard", ),
-    path("news/", NewsView.as_view(template_name="views/news-dashboard.html"), name="news-dashboard", ),
-    path("news/<int:pk>/", NewsDetailDashboard.as_view(), name="news_detail_dashboard"),  # Yangilik tafsilotlari
+    path("", LandingPageV1View.as_view(), name="landing-v1"),
+    path("v1/", RedirectView.as_view(pattern_name="landing-v1", permanent=True)),
 
-    path("announcement/", AnnouncementView.as_view(template_name="views/announcement-dashboard.html"),
-         name="announcement-dashboard", ),
+    path("about/", AboutStyleTwoView.as_view(), name="landing-v1-about"),
+    path("services/", ServicesOverviewView.as_view(), name="landing-v1-services"),
+    path("videos/", VideosLandingView.as_view(), name="landing-v1-videos"),
+    path("doctors/", DoctorGridView.as_view(), name="landing-v1-doctors"),
+    path("doctors/<int:pk>/", DoctorLandingDetailView.as_view(), name="landing-v1-doctor-detail"),
+    path("news/", BlogRightSidebarView.as_view(), name="landing-v1-blog"),
+    path("news/<int:pk>/", NewsLandingDetailView.as_view(), name="landing-v1-news-detail"),
+    path("announcements/", AnnouncementRightSidebarView.as_view(), name="landing-v1-announcements"),
+    path("announcements/<int:pk>/", AnnouncementLandingDetailView.as_view(), name="landing-v1-announcement-detail"),
+    path("equipment/", EquipmentLeftSidebarView.as_view(), name="landing-v1-equipment"),
+    path("equipment/<int:pk>/", EquipmentLandingDetailView.as_view(), name="landing-v1-equipment-detail"),
+    path("contact/", ContactStyleTwoView.as_view(), name="landing-v1-contact"),
+    path("blog/", RedirectView.as_view(pattern_name="landing-v1-blog", permanent=True)),
+    path("about-style-two.html", RedirectView.as_view(pattern_name="landing-v1-about", permanent=True)),
+    path("blog-right-sidebar.html", RedirectView.as_view(pattern_name="landing-v1-blog", permanent=True)),
+    path(
+        "announcements-right-sidebar.html",
+        RedirectView.as_view(pattern_name="landing-v1-announcements", permanent=True),
+    ),
+    path("doctor-grid.html", RedirectView.as_view(pattern_name="landing-v1-doctors", permanent=True)),
+    path("contact-style-two.html", RedirectView.as_view(pattern_name="landing-v1-contact", permanent=True)),
+    path("blog-left-sidebar.html", RedirectView.as_view(pattern_name="landing-v1-equipment", permanent=True)),
 
-    path("announcement/<int:pk>/", AnnouncementDetailView.as_view(), name="announcement_detail"),
-
-    path("employee/", EmployeeView.as_view(template_name="views/employee-dashboard.html"), name="employee-dashboard", ),
-    path("employees/<int:pk>/", EmployeeDetailView.as_view(), name="employee_detail"),
-    path("videos/", VideosView.as_view(template_name="views/videos-dashboard.html"), name="videos-dashboard", ),
-    path('equipments/', ClinicEquipmentListView.as_view(), name='equipment_list'),
-    path('equipments/<int:pk>/', EquipmentDetailView.as_view(), name='equipment_detail'),
-
-    # 🆕 Yangi landing page (v1) - medic template asosida
-    path('v1/', LandingPageV1View.as_view(), name='landing-v1'),
-    path('v1/about/', AboutStyleTwoView.as_view(), name='landing-v1-about'),
-    path('v1/services/', ServicesOverviewView.as_view(), name='landing-v1-services'),
-    path('v1/videos/', VideosLandingView.as_view(), name='landing-v1-videos'),
-    path('v1/doctors/', DoctorGridView.as_view(), name='landing-v1-doctors'),
-    path('v1/doctors/<int:pk>/', DoctorLandingDetailView.as_view(), name='landing-v1-doctor-detail'),
-    path('v1/news/', BlogRightSidebarView.as_view(), name='landing-v1-blog'),
-    path('v1/news/<int:pk>/', NewsLandingDetailView.as_view(), name='landing-v1-news-detail'),
-    path('v1/announcements/', AnnouncementRightSidebarView.as_view(), name='landing-v1-announcements'),
-    path('v1/announcements/<int:pk>/', AnnouncementLandingDetailView.as_view(), name='landing-v1-announcement-detail'),
-    path('v1/equipment/', EquipmentLeftSidebarView.as_view(), name='landing-v1-equipment'),
-    path('v1/equipment/<int:pk>/', EquipmentLandingDetailView.as_view(), name='landing-v1-equipment-detail'),
-    path('v1/contact/', ContactStyleTwoView.as_view(), name='landing-v1-contact'),
+    path("v1/about/", RedirectView.as_view(pattern_name="landing-v1-about", permanent=True)),
+    path("v1/services/", RedirectView.as_view(pattern_name="landing-v1-services", permanent=True)),
+    path("v1/videos/", RedirectView.as_view(pattern_name="landing-v1-videos", permanent=True)),
+    path("v1/doctors/", RedirectView.as_view(pattern_name="landing-v1-doctors", permanent=True)),
+    path("v1/doctors/<int:pk>/", RedirectView.as_view(pattern_name="landing-v1-doctor-detail", permanent=True)),
+    path("v1/news/", RedirectView.as_view(pattern_name="landing-v1-blog", permanent=True)),
+    path("v1/news/<int:pk>/", RedirectView.as_view(pattern_name="landing-v1-news-detail", permanent=True)),
+    path("v1/announcements/", RedirectView.as_view(pattern_name="landing-v1-announcements", permanent=True)),
     path(
-        'v1/blog/',
-        RedirectView.as_view(pattern_name='landing-v1-blog', permanent=True),
+        "v1/announcements/<int:pk>/",
+        RedirectView.as_view(pattern_name="landing-v1-announcement-detail", permanent=True),
     ),
+    path("v1/equipment/", RedirectView.as_view(pattern_name="landing-v1-equipment", permanent=True)),
+    path("v1/equipment/<int:pk>/", RedirectView.as_view(pattern_name="landing-v1-equipment-detail", permanent=True)),
+    path("v1/contact/", RedirectView.as_view(pattern_name="landing-v1-contact", permanent=True)),
+    path("v1/blog/", RedirectView.as_view(pattern_name="landing-v1-blog", permanent=True)),
+    path("v1/about-style-two.html", RedirectView.as_view(pattern_name="landing-v1-about", permanent=True)),
+    path("v1/blog-right-sidebar.html", RedirectView.as_view(pattern_name="landing-v1-blog", permanent=True)),
     path(
-        'v1/about-style-two.html',
-        RedirectView.as_view(pattern_name='landing-v1-about', permanent=True),
+        "v1/announcements-right-sidebar.html",
+        RedirectView.as_view(pattern_name="landing-v1-announcements", permanent=True),
     ),
-    path(
-        'v1/blog-right-sidebar.html',
-        RedirectView.as_view(pattern_name='landing-v1-blog', permanent=True),
-    ),
-    path(
-        'v1/announcements-right-sidebar.html',
-        RedirectView.as_view(pattern_name='landing-v1-announcements', permanent=True),
-    ),
-    path(
-        'v1/doctor-grid.html',
-        RedirectView.as_view(pattern_name='landing-v1-doctors', permanent=True),
-    ),
-    path(
-        'v1/contact-style-two.html',
-        RedirectView.as_view(pattern_name='landing-v1-contact', permanent=True),
-    ),
-    path(
-        'v1/blog-left-sidebar.html',
-        RedirectView.as_view(pattern_name='landing-v1-equipment', permanent=True),
-    ),
+    path("v1/doctor-grid.html", RedirectView.as_view(pattern_name="landing-v1-doctors", permanent=True)),
+    path("v1/contact-style-two.html", RedirectView.as_view(pattern_name="landing-v1-contact", permanent=True)),
+    path("v1/blog-left-sidebar.html", RedirectView.as_view(pattern_name="landing-v1-equipment", permanent=True)),
 ]

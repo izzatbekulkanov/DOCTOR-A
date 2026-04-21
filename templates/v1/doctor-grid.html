@@ -61,12 +61,31 @@
 								<span>{{ doctor.medical_specialty }}</span>
 							</div>
 
+							{% if doctor.telegram_username or doctor.instagram_username or doctor.phone_number %}
 							<ul>
-							  	<li><a href="#"><i class="bx bxl-facebook"></i></a></li>
-							  	<li><a href="#"><i class="bx bxl-twitter"></i></a></li>
-							  	<li><a href="#"><i class="bx bxl-instagram"></i></a></li>
-							  	<li><a href="#"><i class="bx bxl-linkedin"></i></a></li>
+								{% if doctor.telegram_username %}
+							  	<li>
+									<a href="https://t.me/{{ doctor.telegram_username }}" target="_blank" rel="noopener noreferrer" aria-label="Telegram">
+										<i class="bx bxl-telegram"></i>
+									</a>
+								</li>
+								{% endif %}
+								{% if doctor.instagram_username %}
+							  	<li>
+									<a href="https://instagram.com/{{ doctor.instagram_username }}" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+										<i class="bx bxl-instagram"></i>
+									</a>
+								</li>
+								{% endif %}
+								{% if doctor.phone_number %}
+							  	<li>
+									<a href="tel:{{ doctor.phone_number }}" aria-label="Phone">
+										<i class="bx bx-phone-call"></i>
+									</a>
+								</li>
+								{% endif %}
 							</ul>
+							{% endif %}
 						</div>
 					</div>
 					{% empty %}

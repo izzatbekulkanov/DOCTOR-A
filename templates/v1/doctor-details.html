@@ -553,7 +553,6 @@
                             <div>
                                 <span class="top-title">{{ t.overview }}</span>
                                 <h2>{{ doctor.full_name }}</h2>
-                                <p>{{ biography_excerpt }}</p>
                             </div>
                             <div class="doctor-overview-actions">
                                 <a href="{% url 'landing-v1-contact' %}" class="default-btn">{{ t.contact_button }}</a>
@@ -700,7 +699,7 @@
                                         </div>
 
                                         {% if activity.description %}
-                                            <div class="doctor-activity-copy">{{ activity.description|linebreaksbr }}</div>
+                                            <div class="doctor-activity-copy">{{ activity.description|render_rich_text }}</div>
                                         {% endif %}
 
                                         {% if activity.result_details %}

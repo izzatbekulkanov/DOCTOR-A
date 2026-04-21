@@ -1,5 +1,83 @@
 {% load static i18n custom_filters %}
 <style>
+	.header-area .v1-test-mode-ticker {
+		position: relative;
+		overflow: hidden;
+		width: 100%;
+		min-height: 30px;
+		display: flex;
+		align-items: center;
+		background: #121521;
+		color: #ffffff;
+	}
+
+	.header-area .v1-test-mode-track {
+		display: flex;
+		align-items: center;
+		width: max-content;
+		white-space: nowrap;
+		animation: v1-test-mode-marquee 26s linear infinite;
+	}
+
+	.header-area .v1-test-mode-group {
+		display: flex;
+		align-items: center;
+		justify-content: space-around;
+		flex: 0 0 auto;
+		min-width: 100vw;
+		gap: 32px;
+	}
+
+	.header-area .v1-test-mode-text {
+		display: inline-flex;
+		align-items: center;
+		gap: 10px;
+		font-size: 13px;
+		font-weight: 700;
+		line-height: 1;
+		letter-spacing: 0;
+		text-transform: uppercase;
+	}
+
+	.header-area .v1-test-mode-dot {
+		width: 7px;
+		height: 7px;
+		border-radius: 50%;
+		background: #ff0000;
+		box-shadow: 0 0 0 4px rgba(255, 0, 0, 0.18);
+		flex: 0 0 auto;
+	}
+
+	@keyframes v1-test-mode-marquee {
+		0% {
+			transform: translateX(0);
+		}
+
+		100% {
+			transform: translateX(-50%);
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.header-area .v1-test-mode-track {
+			animation: none;
+		}
+	}
+
+	.header-area .top-header-area {
+		padding-top: 10px;
+		padding-bottom: 10px;
+	}
+
+	.header-area .v1-top-header-row {
+		row-gap: 10px;
+	}
+
+	.header-area .v1-contact-col,
+	.header-area .v1-action-col {
+		min-width: 0;
+	}
+
 	.header-area .heading-left-part.v1-contact-list {
 		display: grid;
 		grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -7,6 +85,7 @@
 		width: 100%;
 		line-height: normal;
 		margin-bottom: 0;
+		padding-left: 0;
 	}
 
 	.header-area .heading-left-part.v1-contact-list li {
@@ -30,6 +109,7 @@
 		display: flex;
 		align-items: center;
 		min-width: 0;
+		max-width: 100%;
 		line-height: 1.45;
 	}
 
@@ -37,22 +117,163 @@
 		display: inline-flex;
 		align-items: center;
 		min-width: 0;
+		max-width: 100%;
 		overflow-wrap: anywhere;
+		word-break: break-word;
+	}
+
+	.header-area .v1-header-action-wrap {
+		display: flex;
+		align-items: center;
+		justify-content: flex-end;
+		flex-wrap: wrap;
+		gap: 10px 14px;
+		min-width: 0;
 	}
 
 	.header-area .v1-header-actions {
 		float: none;
 		display: flex;
 		align-items: center;
+		justify-content: flex-end;
 		flex-wrap: wrap;
-		gap: 0;
+		gap: 6px;
 		margin-bottom: 0;
 		padding-left: 0;
 	}
 
+	.header-area .v1-header-actions li,
+	.header-area .v1-header-actions li a {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+	}
+
+	.header-area .v1-header-actions li a {
+		padding: 0;
+	}
+
+	.header-area .v1-language-option {
+		flex: 0 0 auto;
+	}
+
+	.header-area .v1-language-toggle {
+		display: inline-flex;
+		align-items: center;
+		gap: 6px;
+		min-height: 30px;
+		cursor: pointer;
+		white-space: nowrap;
+	}
+
+	.header-area .v1-language-label {
+		font-size: 13px;
+		font-weight: 600;
+		color: #545454;
+		margin-top: 2px;
+	}
+
+	.header-area .v1-language-menu {
+		border: none;
+		box-shadow: 0 5px 25px rgba(0, 0, 0, 0.1);
+		border-radius: 8px;
+		min-width: 140px;
+		padding: 10px 0;
+		margin-top: 12px;
+		border-top: 2px solid #e21919;
+	}
+
+	.header-area .v1-login-link {
+		gap: 6px;
+		min-height: 30px;
+		padding: 0 10px !important;
+		border-radius: 16px;
+		background: #ffffff;
+		border: 1px solid rgba(255, 0, 0, 0.14);
+		color: #121521;
+	}
+
+	.header-area .v1-login-link i {
+		background-color: transparent !important;
+		color: #ff0000 !important;
+		width: auto !important;
+		height: auto !important;
+		line-height: 1 !important;
+	}
+
+	.header-area .v1-login-label {
+		font-size: 13px;
+		font-weight: 600;
+		line-height: 1;
+	}
+
+	.header-area .v1-login-link:hover {
+		background: #ff0000;
+		color: #ffffff;
+	}
+
+	.header-area .v1-login-link:hover i {
+		color: #ffffff !important;
+	}
+
 	@media only screen and (max-width: 991px) {
+		.header-area .top-header-area {
+			padding-top: 12px;
+			padding-bottom: 12px;
+		}
+
+		.header-area .heading-left-part.v1-contact-list {
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+			text-align: left;
+		}
+
+		.header-area .v1-header-action-wrap,
+		.header-area .v1-header-actions {
+			justify-content: center;
+		}
+	}
+
+	@media only screen and (max-width: 767px) {
 		.header-area .heading-left-part.v1-contact-list {
 			grid-template-columns: 1fr;
+			gap: 8px;
+		}
+
+		.header-area .heading-left-part.v1-contact-list li {
+			justify-content: center;
+			text-align: left;
+		}
+
+		.header-area .v1-header-action-wrap {
+			gap: 8px 12px;
+		}
+
+		.header-area .v1-language-menu {
+			right: 0;
+			left: auto;
+		}
+	}
+
+	@media only screen and (max-width: 420px) {
+		.header-area .heading-left-part.v1-contact-list li {
+			justify-content: flex-start;
+		}
+
+		.header-area .v1-header-action-wrap {
+			justify-content: space-between;
+			width: 100%;
+		}
+
+		.header-area .v1-header-actions {
+			justify-content: flex-start;
+		}
+
+		.header-area .v1-language-toggle {
+			min-height: 34px;
+		}
+
+		.header-area .v1-login-link {
+			min-height: 34px;
 		}
 	}
 </style>
@@ -60,10 +281,24 @@
 		<!-- START HEADER AREA --> 
 		{% get_current_language as CURRENT_LANG %}
 		<header class="header-area">
+			<div class="v1-test-mode-ticker" aria-label="Sayt test rejimida ishlamoqda">
+				<div class="v1-test-mode-track">
+					<div class="v1-test-mode-group">
+						<span class="v1-test-mode-text"><span class="v1-test-mode-dot"></span>Sayt test rejimida ishlamoqda</span>
+						<span class="v1-test-mode-text"><span class="v1-test-mode-dot"></span>Sayt test rejimida ishlamoqda</span>
+						<span class="v1-test-mode-text"><span class="v1-test-mode-dot"></span>Sayt test rejimida ishlamoqda</span>
+					</div>
+					<div class="v1-test-mode-group" aria-hidden="true">
+						<span class="v1-test-mode-text"><span class="v1-test-mode-dot"></span>Sayt test rejimida ishlamoqda</span>
+						<span class="v1-test-mode-text"><span class="v1-test-mode-dot"></span>Sayt test rejimida ishlamoqda</span>
+						<span class="v1-test-mode-text"><span class="v1-test-mode-dot"></span>Sayt test rejimida ishlamoqda</span>
+					</div>
+				</div>
+			</div>
 			<div class="top-header-area">
 				<div class="container">
-					<div class="row align-items-center">
-							<div class="col-lg-6">
+					<div class="row align-items-center v1-top-header-row">
+							<div class="col-lg-6 v1-contact-col">
 								<ul class="heading-left-part v1-contact-list">
 									<li>
 										<i class="bx bx-phone-call"></i>
@@ -80,8 +315,8 @@
 								</ul>
 							</div>
 
-						<div class="col-lg-6">
-							<div class="d-flex align-items-center justify-content-lg-end justify-content-center flex-wrap" style="gap: 14px;">
+						<div class="col-lg-6 v1-action-col">
+							<div class="v1-header-action-wrap">
 								<ul class="heading-right-part v1-header-actions">
 									<li>
 										<a href="{{ site_settings.facebook_url|default:'#' }}" target="_blank" rel="noopener noreferrer">
@@ -104,15 +339,16 @@
 										</a>
 									</li>
 									<li>
-										<a href="{% url 'login' %}" aria-label="{% ui_label 'login' CURRENT_LANG %}" title="{% ui_label 'login' CURRENT_LANG %}">
+										<a class="v1-login-link" href="{% url 'login' %}" aria-label="{% ui_label 'login' CURRENT_LANG %}" title="{% ui_label 'login' CURRENT_LANG %}">
 											<i class="bx bx-log-in-circle"></i>
+											<span class="v1-login-label">{% ui_label 'login' CURRENT_LANG %}</span>
 										</a>
 									</li>
 								</ul>
-								<div class="dropdown language-option">
-									<a class="dropdown-toggle" href="#" id="v1LanguageDropdown" role="button" data-toggle="dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="display: inline-flex; align-items: center; gap: 6px; cursor: pointer;">
+								<div class="dropdown language-option v1-language-option">
+									<a class="dropdown-toggle v1-language-toggle" href="#" id="v1LanguageDropdown" role="button" data-toggle="dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 										<i class="bx bx-globe"></i>
-										<span style="font-size: 13px; font-weight: 600; color: #545454; margin-top: 2px;">
+										<span class="v1-language-label">
 											{% if CURRENT_LANG == 'uz' %}O'zbek
 											{% elif CURRENT_LANG == 'ru' %}Русский
 											{% elif CURRENT_LANG == 'en' %}English
@@ -121,7 +357,7 @@
 											{% endif %}
 										</span>
 									</a>
-									<div class="dropdown-menu dropdown-menu-right" aria-labelledby="v1LanguageDropdown" style="border: none; box-shadow: 0 5px 25px rgba(0,0,0,0.1); border-radius: 8px; min-width: 140px; padding: 10px 0; margin-top: 15px; border-top: 2px solid #e21919;">
+									<div class="dropdown-menu dropdown-menu-right v1-language-menu" aria-labelledby="v1LanguageDropdown">
 										<form action="{% url 'set_language' %}" method="post" style="margin:0;">
 											{% csrf_token %}
 											<input name="next" type="hidden" value="{{ request.get_full_path }}">

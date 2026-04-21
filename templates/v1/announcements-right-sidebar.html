@@ -1,5 +1,5 @@
 {% extends "v1/base.html" %}
-{% load static %}
+{% load static custom_filters %}
 
 {% block title %}{{ news_page.page_title }}{% endblock %}
 
@@ -59,7 +59,7 @@
 											{% else %}
 												<h3>{{ announcement.title }}</h3>
 											{% endif %}
-											<p>{{ announcement.summary|truncatechars:150 }}</p>
+											<p>{{ announcement.summary|striptags|truncatechars:150 }}</p>
 
 											{% if announcement.id %}
 												<a href="{% url 'landing-v1-announcement-detail' announcement.id %}" class="read-more">{{ news_page.read_more|default:"Read More" }}</a>

@@ -3,7 +3,7 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 # Create your models here.
 from django.contrib.auth.models import User
-from members.models import CustomUser
+from apps.members.models import CustomUser
 
 
 # Create your models here.

@@ -2,7 +2,7 @@ from django.test import TestCase
 from django.urls import reverse
 
 from apps.news.models import News
-from members.models import CustomUser
+from apps.members.models import CustomUser
 
 
 class NewsRichTextTests(TestCase):

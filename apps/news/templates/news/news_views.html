@@ -1,316 +1,260 @@
 {% extends 'administrator/main.html' %}
-{% load i18n %}
-{% load custom_filters %}  {# get_language_text filtrini yuklash #}
+{% load i18n static custom_filters %}
 
 {% block title %}
     {% trans "Yangiliklar" %}
 {% endblock title %}
-<!-- Qo‘shimcha CSS fayllar uchun blok -->
-{% block vendor_css %}
 
-    <style>
-        .hover-btn-primary:hover {
-            background-color: #0d6efd !important;
-            color: white !important;
-            transform: scale(1.05);
-            transition: all 0.3s ease;
-        }
-
-        .hover-btn-success:hover {
-            background-color: #198754 !important;
-            color: white !important;
-            transform: scale(1.05);
-            transition: all 0.3s ease;
-        }
-
-        .hover-btn-info:hover {
-            background-color: #0dcaf0 !important;
-            transform: scale(1.05);
-            transition: all 0.3s ease;
-        }
-
-        .hover-btn-danger:hover {
-            background-color: #dc3545 !important;
-            transform: scale(1.05);
-            transition: all 0.3s ease;
-        }
-
-        .hover-bg-light:hover {
-            background-color: #e9ecef !important;
-        }
-
-        .object-fit-cover {
-            object-fit: cover;
-        }
-    </style>
-{% endblock vendor_css %}
 {% block content %}
-    {% load i18n static %}
-    <div class="app-body"
-         style="background: linear-gradient(135deg, #f8f9fa, #e9ecef); min-height: 100vh; padding: 1.5rem;">
-
-        <!-- 🔍 Qidiruv formasi -->
-        <form method="GET" action="{% url 'news-view' %}" class="mb-4">
-            <div class="d-flex align-items-center gap-2">
-                <div class="input-group flex-grow-1">
-                    <span class="input-group-text bg-white border rounded-start-3 shadow-sm px-3">🔍</span>
-                    <input type="text" name="q" value="{{ search_query }}"
-                           class="form-control border shadow-sm py-2 px-3"
-                           placeholder="{% trans 'Qidirish...' %}"
-                           aria-label="Search">
-                    <button type="submit"
-                            class="btn btn-primary fw-semibold px-4 py-2 rounded-end-3 hover-btn-primary">
-                        {% trans "Qidirish" %}
-                    </button>
-                </div>
-                <a href="{% url 'add-news-view' %}"
-                   class="btn btn-primary fw-semibold px-4 py-2 rounded-3 hover-btn-success">
-                    {% trans "Qo‘shish" %}
-                </a>
+    <div class="app-body">
+        {% if messages %}
+            <div class="mb-4">
+                {% for message in messages %}
+                    <div class="alert {% if message.tags == 'success' %}alert-success{% elif message.tags == 'error' %}alert-danger{% else %}alert-info{% endif %} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
             </div>
-        </form>
+        {% endif %}
 
-
-        <!-- Yangiliklar ro‘yxati -->
-        <div id="news-list" class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
-            {% for news in news_list %}
-                <div class="col" id="news-{{ news.id }}">
-                    <div class="card h-100 shadow-sm border-0 rounded-3 overflow-hidden">
-                        <div class="card-img-top" style="height: 200px; overflow: hidden;">
-                            {% if news.image %}
-                                <img src="{{ news.image.url }}"
-                                     class="w-100 h-100 object-fit-cover rounded-top"
-                                     alt="{{ news.title|get_language_text:request.LANGUAGE_CODE }}">
-                            {% else %}
-                                <img src="{% static 'dashboard/images/blog/grid/default-image.webp' %}"
-                                     class="w-100 h-100 object-fit-cover rounded-top"
-                                     alt="Default image">
-                            {% endif %}
-                        </div>
-                        <div class="card-body p-4">
-                            <h5 class="card-title fw-bold text-dark mb-2">
-                                {{ news.title|get_language_text:request.LANGUAGE_CODE }}
-                            </h5>
-                            <p class="small text-muted mb-2">
-                                {% trans "Chop etilgan" %} - {{ news.published_date|date:"Y-m-d" }}
-                            </p>
-                            <p class="text-muted mb-4">
-                                {{ news.content|get_language_text:request.LANGUAGE_CODE|striptags|truncatewords:20 }}
-                            </p>
-                            <div class="d-flex gap-2">
-                                <!-- Batafsil tugmasi -->
-                                <button onclick="setSelectedNews({{ news.id }})"
-                                        class="btn btn-info text-white fw-semibold px-3 py-1 rounded-3 hover-btn-info">
-                                    {% trans "Batafsil" %}
-                                </button>
-
-                                <!-- Switch tugmasi (Chiroq) -->
-                                <button onclick="togglePublishStatus({{ news.id }})"
-                                        class="btn text-white fw-semibold px-3 py-1 rounded-3"
-                                        id="publish-btn-{{ news.id }}"
-                                        style="background-color: {% if news.is_published %}green{% else %}gray{% endif %};">
-                                    {% if news.is_published %}
-                                        {% trans "Faol" %}
-                                    {% else %}
-                                        {% trans "Nofaol" %}
-                                    {% endif %}
-                                </button>
-
-                                <!-- O'chirish tugmasi -->
-                                <button onclick="deleteNews({{ news.id }})"
-                                        class="btn btn-danger text-white fw-semibold px-3 py-1 rounded-3 hover-btn-danger">
-                                    {% trans "O‘chirish" %}
-                                </button>
+        <div class="row g-3">
+            <div class="col-xl-3 col-sm-6">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center gap-3">
+                            <span class="icon-box md bg-primary-subtle rounded-5">
+                                <i class="ri-newspaper-line fs-4 text-primary"></i>
+                            </span>
+                            <div>
+                                <h3 class="mb-0">{{ total_count }}</h3>
+                                <p class="mb-0 text-muted">{% trans "Jami yangiliklar" %}</p>
                             </div>
-
                         </div>
                     </div>
                 </div>
-            {% empty %}
-                <p class="text-muted text-center col-12 py-4">
-                    {% trans "Hozircha yangiliklar mavjud emas." %}
-                </p>
-            {% endfor %}
+            </div>
+            <div class="col-xl-3 col-sm-6">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center gap-3">
+                            <span class="icon-box md bg-success-subtle rounded-5">
+                                <i class="ri-check-double-line fs-4 text-success"></i>
+                            </span>
+                            <div>
+                                <h3 class="mb-0">{{ published_count }}</h3>
+                                <p class="mb-0 text-muted">{% trans "Chop etilgan" %}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-sm-6">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center gap-3">
+                            <span class="icon-box md bg-warning-subtle rounded-5">
+                                <i class="ri-draft-line fs-4 text-warning"></i>
+                            </span>
+                            <div>
+                                <h3 class="mb-0">{{ draft_count }}</h3>
+                                <p class="mb-0 text-muted">{% trans "Qoralama" %}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-sm-6">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center gap-3">
+                            <span class="icon-box md bg-info-subtle rounded-5">
+                                <i class="ri-filter-3-line fs-4 text-info"></i>
+                            </span>
+                            <div>
+                                <h3 class="mb-0">{{ filtered_count }}</h3>
+                                <p class="mb-0 text-muted">{% trans "Joriy natija" %}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <!-- Pagination -->
-        <nav class="mt-4">
-            <ul class="pagination justify-content-center">
-                {% if news_list.has_previous %}
-                    <li class="page-item">
-                        <a class="page-link text-primary hover-bg-light rounded-3 px-3 py-2"
-                           href="?q={{ search_query }}&page=1">{% trans "Birinchi" %}</a>
-                    </li>
-                    <li class="page-item">
-                        <a class="page-link text-primary hover-bg-light rounded-3 px-3 py-2"
-                           href="?q={{ search_query }}&page={{ news_list.previous_page_number }}">«</a>
-                    </li>
-                {% endif %}
+        <div class="card mt-4">
+            <div class="card-header">
+                <div class="d-flex align-items-center justify-content-between gap-3 flex-wrap">
+                    <div>
+                        <h4 class="card-title mb-1">{% trans "Yangiliklar ro'yxati" %}</h4>
+                        <p class="card-subtitle mb-0">{% trans "Yangiliklarni qidirish, filtrlash va boshqarish." %}</p>
+                    </div>
+                    <a href="{% url 'add-news-view' %}" class="btn btn-primary">
+                        <i class="ri-add-line me-1"></i>
+                        {% trans "Yangilik qo'shish" %}
+                    </a>
+                </div>
+            </div>
+            <div class="card-body">
+                <form method="GET" action="{% url 'news-view' %}" class="row g-2 align-items-end mb-4">
+                    <div class="col-lg-6">
+                        <label for="q" class="form-label">{% trans "Qidirish" %}</label>
+                        <input
+                            type="text"
+                            name="q"
+                            id="q"
+                            value="{{ search_query }}"
+                            class="form-control"
+                            placeholder="ID, sarlavha yoki mazmun bo'yicha qidirish"
+                        >
+                    </div>
+                    <div class="col-lg-3">
+                        <label for="status" class="form-label">{% trans "Status" %}</label>
+                        <select name="status" id="status" class="form-select">
+                            <option value="" {% if not status_filter %}selected{% endif %}>{% trans "Barchasi" %}</option>
+                            <option value="published" {% if status_filter == 'published' %}selected{% endif %}>{% trans "Chop etilgan" %}</option>
+                            <option value="draft" {% if status_filter == 'draft' %}selected{% endif %}>{% trans "Qoralama" %}</option>
+                        </select>
+                    </div>
+                    <div class="col-lg-3">
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary flex-fill">{% trans "Filterlash" %}</button>
+                            <a href="{% url 'news-view' %}" class="btn btn-outline-secondary flex-fill">{% trans "Tozalash" %}</a>
+                        </div>
+                    </div>
+                </form>
 
-                <li class="page-item active">
-                    <span class="page-link bg-primary text-white rounded-3 px-3 py-2">
-                        {{ news_list.number }} / {{ news_list.paginator.num_pages }}
-                    </span>
-                </li>
+                <div class="row g-4">
+                    {% for news in news_list %}
+                        <div class="col-md-6 col-xl-4">
+                            <div class="card h-100 overflow-hidden">
+                                <div class="ratio ratio-16x9 bg-light">
+                                    {% if news.image %}
+                                        <img
+                                            src="{{ news.image.url }}"
+                                            class="w-100 h-100 object-fit-cover"
+                                            alt="{{ news.title|get_language_text:lang_code }}"
+                                        >
+                                    {% else %}
+                                        <div class="d-flex flex-column align-items-center justify-content-center text-muted">
+                                            <i class="ri-image-line fs-1 mb-2"></i>
+                                            <span>{% trans "Rasm yuklanmagan" %}</span>
+                                        </div>
+                                    {% endif %}
+                                </div>
 
-                {% if news_list.has_next %}
-                    <li class="page-item">
-                        <a class="page-link text-primary hover-bg-light rounded-3 px-3 py-2"
-                           href="?q={{ search_query }}&page={{ news_list.next_page_number }}">»</a>
-                    </li>
-                    <li class="page-item">
-                        <a class="page-link text-primary hover-bg-light rounded-3 px-3 py-2"
-                           href="?q={{ search_query }}&page={{ news_list.paginator.num_pages }}">{% trans "Oxirgi" %}</a>
-                    </li>
+                                <div class="card-body d-flex flex-column">
+                                    <div>
+                                        <div class="d-flex justify-content-between align-items-start gap-3 mb-2">
+                                            <h5 class="card-title mb-0">{{ news.title|get_language_text:lang_code }}</h5>
+                                            <div class="d-flex flex-column align-items-end gap-2">
+                                                <span class="badge bg-light text-dark border">#{{ news.id }}</span>
+                                                {% if news.is_published %}
+                                                    <span class="badge bg-success-subtle text-success border border-success-subtle">{% trans "Chop etilgan" %}</span>
+                                                {% else %}
+                                                    <span class="badge bg-warning-subtle text-warning border border-warning-subtle">{% trans "Qoralama" %}</span>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+
+                                        <p class="text-muted small mb-3">{{ news.content|get_language_text:lang_code|striptags|truncatewords:24 }}</p>
+
+                                        <div class="row g-2 text-muted small mb-4">
+                                            <div class="col-6">
+                                                <span class="d-block">{% trans "Muallif" %}</span>
+                                                <strong class="text-body">{{ news.author.full_name|default:news.author.username|default:"-" }}</strong>
+                                            </div>
+                                            <div class="col-6">
+                                                <span class="d-block">{% trans "Sana" %}</span>
+                                                <strong class="text-body">{{ news.published_date|date:"Y-m-d" }}</strong>
+                                            </div>
+                                            <div class="col-6">
+                                                <span class="d-block">{% trans "Ko'rishlar" %}</span>
+                                                <strong class="text-body">{{ news.views_count }}</strong>
+                                            </div>
+                                            <div class="col-6">
+                                                <span class="d-block">{% trans "Yangilangan" %}</span>
+                                                <strong class="text-body">{{ news.updated_at|date:"Y-m-d" }}</strong>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="mt-auto d-grid gap-3">
+                                        <form method="POST" action="{% url 'news-view' %}" class="d-flex gap-2 align-items-center">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="action" value="update_status">
+                                            <input type="hidden" name="news_id" value="{{ news.id }}">
+                                            <input type="hidden" name="return_path" value="{{ current_path }}">
+                                            <select name="status" class="form-select form-select-sm">
+                                                <option value="published" {% if news.is_published %}selected{% endif %}>{% trans "Chop etilgan" %}</option>
+                                                <option value="draft" {% if not news.is_published %}selected{% endif %}>{% trans "Qoralama" %}</option>
+                                            </select>
+                                            <button type="submit" class="btn btn-outline-secondary btn-sm">
+                                                <i class="ri-save-line"></i>
+                                            </button>
+                                        </form>
+
+                                        <div class="d-flex gap-2">
+                                            <form method="POST" action="{% url 'news-view' %}" class="flex-fill">
+                                                {% csrf_token %}
+                                                <input type="hidden" name="action" value="open_detail">
+                                                <input type="hidden" name="news_id" value="{{ news.id }}">
+                                                <input type="hidden" name="return_path" value="{{ current_path }}">
+                                                <button type="submit" class="btn btn-primary w-100">
+                                                    <i class="ri-eye-line me-1"></i>
+                                                    {% trans "Batafsil" %}
+                                                </button>
+                                            </form>
+                                            <form method="POST" action="{% url 'news-view' %}">
+                                                {% csrf_token %}
+                                                <input type="hidden" name="action" value="delete">
+                                                <input type="hidden" name="news_id" value="{{ news.id }}">
+                                                <input type="hidden" name="return_path" value="{{ current_path }}">
+                                                <button type="submit" class="btn btn-outline-danger">
+                                                    <i class="ri-delete-bin-line"></i>
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% empty %}
+                        <div class="col-12">
+                            <div class="border rounded text-center text-muted py-5">
+                                {% trans "Hozircha yangiliklar mavjud emas." %}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+
+                {% if news_list.has_previous or news_list.has_next %}
+                    <nav class="mt-4">
+                        <ul class="pagination justify-content-center mb-0">
+                            {% if news_list.has_previous %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page=1{% if page_query %}&{{ page_query }}{% endif %}">{% trans "Birinchi" %}</a>
+                                </li>
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ news_list.previous_page_number }}{% if page_query %}&{{ page_query }}{% endif %}">{% trans "Oldingi" %}</a>
+                                </li>
+                            {% endif %}
+
+                            <li class="page-item active">
+                                <span class="page-link">{{ news_list.number }} / {{ news_list.paginator.num_pages }}</span>
+                            </li>
+
+                            {% if news_list.has_next %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ news_list.next_page_number }}{% if page_query %}&{{ page_query }}{% endif %}">{% trans "Keyingi" %}</a>
+                                </li>
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ news_list.paginator.num_pages }}{% if page_query %}&{{ page_query }}{% endif %}">{% trans "Oxirgi" %}</a>
+                                </li>
+                            {% endif %}
+                        </ul>
+                    </nav>
                 {% endif %}
-            </ul>
-        </nav>
+            </div>
+        </div>
     </div>
 {% endblock content %}
-
-{% block vendor_js %}
-    <!-- jQuery kutubxonasini yuklash -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-    <script>
-        // Cookie dan tilni olish funksiyasi
-        function getCookie(name) {
-            let cookieValue = null;
-            if (document.cookie && document.cookie !== "") {
-                let cookies = document.cookie.split(";");
-                for (let i = 0; i < cookies.length; i++) {
-                    let cookie = cookies[i].trim();
-                    if (cookie.startsWith(name + "=")) {
-                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                        break;
-                    }
-                }
-            }
-            return cookieValue;
-        }
-
-        // Cookie ga yangi tilni saqlash funksiyasi
-        function setCookie(name, value, days) {
-            let expires = "";
-            if (days) {
-                let date = new Date();
-                date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
-                expires = "; expires=" + date.toUTCString();
-            }
-            document.cookie = name + "=" + encodeURIComponent(value) + "; path=/" + expires;
-        }
-
-    </script>
-
-
-    <script>
-        function setSelectedNews(newsId) {
-            fetch("{% url 'set-selected-news' %}", {  // ✅ Yangilikni sessionga saqlash uchun maxsus endpoint
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/x-www-form-urlencoded",
-                    "X-CSRFToken": "{{ csrf_token }}"
-                },
-                body: "news_id=" + encodeURIComponent(newsId)
-            })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.status === "success") {
-                        window.location.href = "{% url 'news-detail' %}";  // ✅ Endi to‘g‘ri ishlaydi
-                    } else {
-                        alert("❌ Xatolik: " + data.error);
-                    }
-                })
-                .catch(error => {
-                    alert("❌ Xatolik yuz berdi: " + error);
-                });
-        }
-    </script>
-
-    <!-- ✅ Yangilikni o‘chirish funksiyasi -->
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-    <script>
-        function deleteNews(newsId) {
-            Swal.fire({
-                title: "⚠️ Ishonchingiz komilmi?",
-                text: "Bu yangilikni o‘chirishni xohlaysizmi?",
-                icon: "warning",
-                showCancelButton: true,
-                confirmButtonColor: "#d33",
-                cancelButtonColor: "#3085d6",
-                confirmButtonText: "Ha, o‘chirish!",
-                cancelButtonText: "Bekor qilish"
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    $.ajax({
-                        url: "{% url 'news-delete' %}", // 🔗 Django view'ga DELETE so‘rov yuborish
-                        type: "POST",
-                        data: {
-                            "news_id": newsId,
-                            "csrfmiddlewaretoken": "{{ csrf_token }}"
-                        },
-                        success: function (response) {
-                            Swal.fire({
-                                icon: "success",
-                                title: "✅ O‘chirildi!",
-                                text: response.message,
-                                confirmButtonText: "OK"
-                            }).then(() => {
-                                $("#news-" + newsId).remove(); // 🔥 Yangilikni sahifadan olib tashlash
-                            });
-                        },
-                        error: function (xhr) {
-                            Swal.fire({
-                                icon: "error",
-                                title: "❌ Xatolik!",
-                                text: xhr.responseText,
-                                confirmButtonText: "OK"
-                            });
-                        }
-                    });
-                }
-            });
-        }
-    </script>
-    <script>
-        function togglePublishStatus(newsId) {
-            fetch(`/toggle-status/${newsId}/`, {
-                method: "POST",
-                headers: {
-                    "X-CSRFToken": getCookie("csrftoken"),
-                    "Content-Type": "application/json",
-                },
-            })
-                .then(response => response.json())
-                .then(data => {
-                    let btn = document.getElementById(`publish-btn-${newsId}`);
-                    if (data.is_published) {
-                        btn.style.backgroundColor = "green";
-                        btn.innerHTML = "🔆 Faol";
-                    } else {
-                        btn.style.backgroundColor = "gray";
-                        btn.innerHTML = "🌑 Nofaol";
-                    }
-                })
-                .catch(error => console.error("Xatolik:", error));
-        }
-
-        // CSRF token olish funksiyasi
-        function getCookie(name) {
-            let cookieValue = null;
-            if (document.cookie && document.cookie !== '') {
-                const cookies = document.cookie.split(';');
-                for (let i = 0; i < cookies.length; i++) {
-                    const cookie = cookies[i].trim();
-                    if (cookie.startsWith(name + '=')) {
-                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                        break;
-                    }
-                }
-            }
-            return cookieValue;
-        }
-    </script>
-
-{% endblock vendor_js %}

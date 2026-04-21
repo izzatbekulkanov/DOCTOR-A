@@ -1,0 +1,308 @@
+{% extends 'administrator/main.html' %}
+{% load i18n %}
+
+{% block title %}
+    {% trans "Xodimlar faoliyati" %}
+{% endblock title %}
+
+{% block content %}
+    <div class="app-body">
+        {% if messages %}
+            <div class="mb-4">
+                {% for message in messages %}
+                    <div class="alert {% if message.tags == 'success' %}alert-success{% elif message.tags == 'error' %}alert-danger{% else %}alert-info{% endif %} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <div class="row g-3">
+            <div class="col-xl-3 col-sm-6">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center gap-3">
+                            <span class="icon-box md bg-primary-subtle rounded-5">
+                                <i class="ri-team-line fs-4 text-primary"></i>
+                            </span>
+                            <div>
+                                <h3 class="mb-0">{{ total_employees }}</h3>
+                                <p class="mb-0 text-muted">{% trans "Faol xodimlar" %}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-sm-6">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center gap-3">
+                            <span class="icon-box md bg-info-subtle rounded-5">
+                                <i class="ri-calendar-check-line fs-4 text-info"></i>
+                            </span>
+                            <div>
+                                <h3 class="mb-0">{{ total_activities }}</h3>
+                                <p class="mb-0 text-muted">{% trans "Jami faoliyatlar" %}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-sm-6">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center gap-3">
+                            <span class="icon-box md bg-success-subtle rounded-5">
+                                <i class="ri-checkbox-circle-line fs-4 text-success"></i>
+                            </span>
+                            <div>
+                                <h3 class="mb-0">{{ completed_activities }}</h3>
+                                <p class="mb-0 text-muted">{% trans "Yakunlangan" %}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-sm-6">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center gap-3">
+                            <span class="icon-box md bg-warning-subtle rounded-5">
+                                <i class="ri-time-line fs-4 text-warning"></i>
+                            </span>
+                            <div>
+                                <h3 class="mb-0">{{ open_activities }}</h3>
+                                <p class="mb-0 text-muted">{% trans "Jarayonda" %}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card mt-4">
+            <div class="card-header">
+                <div class="d-flex align-items-center justify-content-between gap-3 flex-wrap">
+                    <div>
+                        <h4 class="card-title mb-1">{% trans "Xodimlar faoliyati" %}</h4>
+                        <p class="card-subtitle mb-0">{% trans "Xodim faoliyatlarini qo'shish, ko'rish, tahrirlash va o'chirish." %}</p>
+                    </div>
+                    <span class="badge bg-primary-subtle text-primary">{{ employees.paginator.count }}</span>
+                </div>
+            </div>
+
+            <div class="card-body">
+                <form method="GET" action="{% url 'employee-list' %}" class="row g-2 align-items-end mb-4">
+                    <div class="col-lg-9">
+                        <label for="q" class="form-label">{% trans "Qidirish" %}</label>
+                        <input
+                            type="text"
+                            name="q"
+                            id="q"
+                            value="{{ search_query }}"
+                            class="form-control"
+                            placeholder="F.I.O, lavozim, bo'lim yoki xodim ID bo'yicha qidirish"
+                        >
+                    </div>
+                    <div class="col-lg-3">
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="ri-search-line me-1"></i>
+                            {% trans "Qidirish" %}
+                        </button>
+                    </div>
+                </form>
+
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>{% trans "Xodim" %}</th>
+                                <th>{% trans "Bo'lim" %}</th>
+                                <th>{% trans "Ish jadvali" %}</th>
+                                <th>{% trans "Faoliyatlar" %}</th>
+                                <th>{% trans "Holat" %}</th>
+                                <th>{% trans "Amallar" %}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for employee in employees %}
+                                <tr>
+                                    <td>{{ forloop.counter }}</td>
+                                    <td>
+                                        <div class="fw-semibold">{{ employee.full_name|default:employee.username }}</div>
+                                        <div class="text-muted small">
+                                            {{ employee.job_title|default:"-" }}
+                                            {% if employee.employee_id %} / {{ employee.employee_id }}{% endif %}
+                                        </div>
+                                    </td>
+                                    <td>{{ employee.department|default:"-" }}</td>
+                                    <td class="text-nowrap">{{ employee.get_work_schedule }}</td>
+                                    <td>
+                                        {% with activities=employee.activity_history.all %}
+                                            <span class="badge bg-primary-subtle text-primary">{{ activities|length }}</span>
+                                        {% endwith %}
+                                    </td>
+                                    <td>
+                                        {% if employee.is_active %}
+                                            <span class="badge bg-success">{% trans "Faol" %}</span>
+                                        {% else %}
+                                            <span class="badge bg-danger">{% trans "Nofaol" %}</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <div class="d-flex flex-wrap gap-2">
+                                            <a href="{% url 'add-employee-activity' employee.id %}" class="btn btn-primary btn-sm">
+                                                <i class="ri-add-line me-1"></i>
+                                                {% trans "Qo'shish" %}
+                                            </a>
+                                            <button type="button" class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#activityModal{{ employee.id }}">
+                                                <i class="ri-eye-line me-1"></i>
+                                                {% trans "Ko'rish" %}
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% empty %}
+                                <tr>
+                                    <td colspan="7" class="text-center text-muted py-4">{% trans "Faol xodimlar topilmadi." %}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                {% if employees.has_previous or employees.has_next %}
+                    <nav class="mt-4">
+                        <ul class="pagination justify-content-center mb-0">
+                            {% if employees.has_previous %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page=1{% if search_query %}&q={{ search_query }}{% endif %}">{% trans "Birinchi" %}</a>
+                                </li>
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ employees.previous_page_number }}{% if search_query %}&q={{ search_query }}{% endif %}">{% trans "Oldingi" %}</a>
+                                </li>
+                            {% endif %}
+
+                            <li class="page-item active">
+                                <span class="page-link">{{ employees.number }} / {{ employees.paginator.num_pages }}</span>
+                            </li>
+
+                            {% if employees.has_next %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ employees.next_page_number }}{% if search_query %}&q={{ search_query }}{% endif %}">{% trans "Keyingi" %}</a>
+                                </li>
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ employees.paginator.num_pages }}{% if search_query %}&q={{ search_query }}{% endif %}">{% trans "Oxirgi" %}</a>
+                                </li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    {% for employee in employees %}
+        <div class="modal fade" id="activityModal{{ employee.id }}" tabindex="-1" aria-labelledby="activityModalLabel{{ employee.id }}" aria-hidden="true">
+            <div class="modal-dialog modal-xl modal-dialog-scrollable">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <div>
+                            <h5 class="modal-title" id="activityModalLabel{{ employee.id }}">{{ employee.full_name|default:employee.username }}</h5>
+                            <p class="text-muted mb-0 small">{% trans "Faoliyatlar tarixi" %}</p>
+                        </div>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{% trans 'Yopish' %}"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle mb-0">
+                                <thead>
+                                    <tr>
+                                        <th>{% trans "Faoliyat" %}</th>
+                                        <th>{% trans "Turi" %}</th>
+                                        <th>{% trans "Joylashuv" %}</th>
+                                        <th>{% trans "Boshlanish" %}</th>
+                                        <th>{% trans "Muddat" %}</th>
+                                        <th>{% trans "Status" %}</th>
+                                        <th>{% trans "Xarajat" %}</th>
+                                        <th>{% trans "Amallar" %}</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for activity in employee.activity_history.all|dictsortreversed:"start_date" %}
+                                        <tr>
+                                            <td>
+                                                <div class="fw-semibold">{{ activity.activity_name }}</div>
+                                                <div class="text-muted small">{{ activity.description|truncatewords:8|default:"-" }}</div>
+                                            </td>
+                                            <td>{{ activity.get_activity_type_display|default:"-" }}</td>
+                                            <td>
+                                                {% if activity.location_name or activity.city or activity.country %}
+                                                    {{ activity.location_name|default:"" }}
+                                                    {% if activity.city %}{{ activity.city }}{% endif %}
+                                                    {% if activity.country %}{{ activity.country }}{% endif %}
+                                                {% else %}
+                                                    -
+                                                {% endif %}
+                                            </td>
+                                            <td class="text-nowrap">{{ activity.start_date|date:"Y-m-d"|default:"-" }}</td>
+                                            <td>{{ activity.get_duration }}</td>
+                                            <td>
+                                                {% if activity.is_completed %}
+                                                    <span class="badge bg-success">{% trans "Yakunlangan" %}</span>
+                                                {% else %}
+                                                    <span class="badge bg-warning text-dark">{% trans "Jarayonda" %}</span>
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                {% if activity.cost %}
+                                                    <span class="text-nowrap">{{ activity.cost }} {% trans "so'm" %}</span>
+                                                    {% if activity.funded_by_clinic %}
+                                                        <span class="badge bg-info-subtle text-info">{% trans "Klinika" %}</span>
+                                                    {% endif %}
+                                                {% else %}
+                                                    -
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                <div class="d-flex flex-wrap gap-2">
+                                                    <a href="{% url 'employee-activity-detail' employee.id activity.id %}" class="btn btn-outline-primary btn-sm">
+                                                        <i class="ri-eye-line"></i>
+                                                    </a>
+                                                    <a href="{% url 'edit-employee-activity' employee.id activity.id %}" class="btn btn-outline-secondary btn-sm">
+                                                        <i class="ri-edit-line"></i>
+                                                    </a>
+                                                    <form method="POST" action="{% url 'delete-employee-activity' %}">
+                                                        {% csrf_token %}
+                                                        <input type="hidden" name="activity_id" value="{{ activity.id }}">
+                                                        <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                                                        <button type="submit" class="btn btn-outline-danger btn-sm">
+                                                            <i class="ri-delete-bin-line"></i>
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    {% empty %}
+                                        <tr>
+                                            <td colspan="8" class="text-center text-muted py-4">{% trans "Bu xodimda hali faoliyat mavjud emas." %}</td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <a href="{% url 'add-employee-activity' employee.id %}" class="btn btn-primary">
+                            <i class="ri-add-line me-1"></i>
+                            {% trans "Faoliyat qo'shish" %}
+                        </a>
+                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">{% trans "Yopish" %}</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+{% endblock content %}

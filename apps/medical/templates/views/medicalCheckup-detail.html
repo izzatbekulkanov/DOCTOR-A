@@ -1,0 +1,137 @@
+{% extends 'administrator/main.html' %}
+{% load i18n %}
+
+{% block title %}
+    {% trans "Ariza tafsilotlari" %}
+{% endblock title %}
+
+{% block content %}
+    <div class="app-body">
+        {% if messages %}
+            <div class="mb-4">
+                {% for message in messages %}
+                    <div class="alert {% if message.tags == 'success' %}alert-success{% elif message.tags == 'error' %}alert-danger{% else %}alert-info{% endif %} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <div class="d-flex justify-content-between align-items-center gap-3 flex-wrap mb-4">
+            <div>
+                <h4 class="mb-1">{% trans "Ariza tafsilotlari" %}</h4>
+                <p class="text-muted mb-0">{% trans "Murojaat bo'yicha to'liq ma'lumot va status boshqaruvi." %}</p>
+            </div>
+            <a href="{% url 'medical-checkup-applications' %}" class="btn btn-outline-secondary">
+                <i class="ri-arrow-left-line me-1"></i>
+                {% trans "Ro'yxatga qaytish" %}
+            </a>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-xl-8">
+                <div class="card h-100">
+                    <div class="card-header">
+                        <div class="d-flex align-items-center justify-content-between gap-3 flex-wrap">
+                            <div>
+                                <h4 class="card-title mb-1">{{ application.full_name }}</h4>
+                                <p class="card-subtitle mb-0">{{ application.created_at|date:"Y-m-d H:i:s" }}</p>
+                            </div>
+                            {% if application.is_seen %}
+                                <span class="badge bg-success">{% trans "Ko'rildi" %}</span>
+                            {% else %}
+                                <span class="badge bg-warning text-dark">{% trans "Ko'rilmadi" %}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="card-body">
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-6">
+                                <div class="border rounded p-3 h-100">
+                                    <span class="text-muted d-block mb-1">{% trans "Ism va familiya" %}</span>
+                                    <strong>{{ application.full_name }}</strong>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="border rounded p-3 h-100">
+                                    <span class="text-muted d-block mb-1">{% trans "Telefon raqami" %}</span>
+                                    <a href="tel:{{ application.phone_number }}" class="fw-semibold">{{ application.phone_number }}</a>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="border rounded p-3 h-100">
+                                    <span class="text-muted d-block mb-1">{% trans "Yaratilgan vaqt" %}</span>
+                                    <strong>{{ application.created_at|date:"Y-m-d H:i:s" }}</strong>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="border rounded p-3 h-100">
+                                    <span class="text-muted d-block mb-1">{% trans "Joriy status" %}</span>
+                                    {% if application.is_seen %}
+                                        <strong>{% trans "Ko'rildi" %}</strong>
+                                    {% else %}
+                                        <strong>{% trans "Ko'rilmadi" %}</strong>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+
+                        <h5 class="mb-3">{% trans "Xabar" %}</h5>
+                        <div class="border rounded p-3 bg-light">
+                            {% if application.message %}
+                                {{ application.message|linebreaksbr }}
+                            {% else %}
+                                <span class="text-muted">{% trans "Xabar qoldirilmagan." %}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="card-title mb-1">{% trans "Statusni o'zgartirish" %}</h4>
+                        <p class="card-subtitle mb-0">{% trans "Ariza ko'rilgan yoki ko'rilmagan holatini belgilang." %}</p>
+                    </div>
+                    <div class="card-body">
+                        <form method="POST">
+                            {% csrf_token %}
+                            <input type="hidden" name="action" value="update_status">
+                            <div class="mb-3">
+                                <label for="status" class="form-label">{% trans "Status" %}</label>
+                                <select name="status" id="status" class="form-select">
+                                    <option value="unseen" {% if not application.is_seen %}selected{% endif %}>{% trans "Ko'rilmadi" %}</option>
+                                    <option value="seen" {% if application.is_seen %}selected{% endif %}>{% trans "Ko'rildi" %}</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-primary w-100">
+                                <i class="ri-save-3-line me-1"></i>
+                                {% trans "Saqlash" %}
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="card mt-4">
+                    <div class="card-header">
+                        <h4 class="card-title mb-1">{% trans "Amallar" %}</h4>
+                        <p class="card-subtitle mb-0">{% trans "Keraksiz yoki xato arizani o'chirish." %}</p>
+                    </div>
+                    <div class="card-body">
+                        <form method="POST">
+                            {% csrf_token %}
+                            <input type="hidden" name="action" value="delete">
+                            <button type="submit" class="btn btn-outline-danger w-100">
+                                <i class="ri-delete-bin-line me-1"></i>
+                                {% trans "Arizani o'chirish" %}
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}

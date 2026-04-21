@@ -73,8 +73,8 @@ class AnnouncementSerializer(serializers.ModelSerializer):
     def get_detail_url(self, obj):
         request = self.context.get("request")
         if request:
-            return request.build_absolute_uri(f"/v1/announcements/{obj.id}/")
-        return f"/v1/announcements/{obj.id}/"
+            return request.build_absolute_uri(f"/announcements/{obj.id}/")
+        return f"/announcements/{obj.id}/"
 
 
 class MedicalCheckupApplicationSerializer(serializers.ModelSerializer):

@@ -1,0 +1,219 @@
+{% extends 'administrator/main.html' %}
+{% load static i18n %}
+
+{% block title %}
+    {% if activity %}
+        {% trans "Faoliyatni tahrirlash" %}
+    {% else %}
+        {% trans "Xodimga faoliyat qo'shish" %}
+    {% endif %}
+{% endblock title %}
+
+{% block vendor_css %}
+    <link rel="stylesheet" href="{% static 'vendor/quill/quill.core.css' %}">
+    <link rel="stylesheet" href="{% static 'css/admin-settings.css' %}">
+{% endblock vendor_css %}
+
+{% block content %}
+    <div class="app-body admin-settings">
+        {% if messages %}
+            <div class="mb-4">
+                {% for message in messages %}
+                    <div class="alert {% if message.tags == 'success' %}alert-success{% elif message.tags == 'error' %}alert-danger{% else %}alert-info{% endif %} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <div class="d-flex justify-content-between align-items-center gap-3 flex-wrap mb-4">
+            <div>
+                <h4 class="mb-1">
+                    {% if activity %}
+                        {% trans "Faoliyatni tahrirlash" %}
+                    {% else %}
+                        {% trans "Xodimga faoliyat qo'shish" %}
+                    {% endif %}
+                </h4>
+                <p class="text-muted mb-0">{{ employee.full_name|default:employee.username }}</p>
+            </div>
+            <a href="{% url 'employee-list' %}" class="btn btn-outline-secondary">
+                <i class="ri-arrow-left-line me-1"></i>
+                {% trans "Ro'yxatga qaytish" %}
+            </a>
+        </div>
+
+        <form method="POST" enctype="multipart/form-data" class="settings-form">
+            {% csrf_token %}
+
+            <div class="row g-4">
+                <div class="col-xl-8">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4 class="card-title mb-1">{% trans "Asosiy ma'lumotlar" %}</h4>
+                            <p class="card-subtitle mb-0">{% trans "Faoliyat nomi, turi, sanasi va natijasi." %}</p>
+                        </div>
+                        <div class="card-body">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label for="activity_name" class="form-label">{% trans "Faoliyat nomi" %} <span class="text-danger">*</span></label>
+                                    <input type="text" name="activity_name" id="activity_name" class="form-control" value="{{ activity.activity_name|default:'' }}" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="activity_type" class="form-label">{% trans "Faoliyat turi" %}</label>
+                                    <select name="activity_type" id="activity_type" class="form-select">
+                                        {% for value, label in activity_type_choices %}
+                                            <option value="{{ value }}" {% if activity and activity.activity_type == value %}selected{% elif not activity and value == 'training' %}selected{% endif %}>{{ label }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="col-12">
+                                    <label for="description" class="form-label">{% trans "Tavsif" %}</label>
+                                    <div class="settings-editor">
+                                        <div id="description_editor" class="rich-editor"></div>
+                                    </div>
+                                    <textarea name="description" id="description" class="rich-editor-input d-none" data-editor="description_editor">{{ activity.description|default:'' }}</textarea>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="start_date" class="form-label">{% trans "Boshlanish sanasi" %}</label>
+                                    <input type="date" name="start_date" id="start_date" class="form-control" value="{{ activity.start_date|date:'Y-m-d' }}">
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="end_date" class="form-label">{% trans "Tugash sanasi" %}</label>
+                                    <input type="date" name="end_date" id="end_date" class="form-control" value="{{ activity.end_date|date:'Y-m-d' }}">
+                                </div>
+                                <div class="col-md-5">
+                                    <div class="form-check mt-4">
+                                        <input class="form-check-input" type="checkbox" name="is_completed" id="is_completed" {% if activity and activity.is_completed %}checked{% endif %}>
+                                        <label class="form-check-label" for="is_completed">{% trans "Yakunlangan" %}</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-7">
+                                    <label for="result_details" class="form-label">{% trans "Natija tavsifi" %}</label>
+                                    <input type="text" name="result_details" id="result_details" class="form-control" value="{{ activity.result_details|default:'' }}">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card mt-4">
+                        <div class="card-header">
+                            <h4 class="card-title mb-1">{% trans "Joylashuv va qo'shimcha ma'lumotlar" %}</h4>
+                            <p class="card-subtitle mb-0">{% trans "Faoliyat o'tkazilgan joy va mas'ul shaxslar." %}</p>
+                        </div>
+                        <div class="card-body">
+                            <div class="row g-3">
+                                <div class="col-md-4">
+                                    <label for="location_name" class="form-label">{% trans "Joy nomi" %}</label>
+                                    <input type="text" name="location_name" id="location_name" class="form-control" value="{{ activity.location_name|default:'' }}">
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="city" class="form-label">{% trans "Shahar" %}</label>
+                                    <input type="text" name="city" id="city" class="form-control" value="{{ activity.city|default:'' }}">
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="country" class="form-label">{% trans "Davlat" %}</label>
+                                    <input type="text" name="country" id="country" class="form-control" value="{{ activity.country|default:'' }}">
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="related_operation" class="form-label">{% trans "Bog'liq operatsiya" %}</label>
+                                    <input type="text" name="related_operation" id="related_operation" class="form-control" value="{{ activity.related_operation|default:'' }}">
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="supervisor" class="form-label">{% trans "Rahbar yoki trener" %}</label>
+                                    <input type="text" name="supervisor" id="supervisor" class="form-control" value="{{ activity.supervisor|default:'' }}">
+                                </div>
+                                <div class="col-12">
+                                    <label for="notes" class="form-label">{% trans "Eslatmalar" %}</label>
+                                    <div class="settings-editor">
+                                        <div id="notes_editor" class="rich-editor"></div>
+                                    </div>
+                                    <textarea name="notes" id="notes" class="rich-editor-input d-none" data-editor="notes_editor">{{ activity.notes|default:'' }}</textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xl-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4 class="card-title mb-1">{% trans "Xarajatlar" %}</h4>
+                            <p class="card-subtitle mb-0">{% trans "Moliyalashtirish va hisobot fayli." %}</p>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <label for="cost" class="form-label">{% trans "Xarajat" %}</label>
+                                <input type="number" name="cost" id="cost" class="form-control" step="0.01" min="0" value="{{ activity.cost|default_if_none:'' }}">
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="funded_by_clinic" id="funded_by_clinic" {% if activity and activity.funded_by_clinic %}checked{% endif %}>
+                                <label class="form-check-label" for="funded_by_clinic">{% trans "Klinika tomonidan moliyalashtirilgan" %}</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card mt-4">
+                        <div class="card-header">
+                            <h4 class="card-title mb-1">{% trans "Fayllar" %}</h4>
+                            <p class="card-subtitle mb-0">{% trans "Yangi fayl yuklansa, eski fayl o'rnini bosadi." %}</p>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <label for="certificate_file" class="form-label">{% trans "Sertifikat fayli" %}</label>
+                                <input type="file" name="certificate_file" id="certificate_file" class="form-control">
+                                {% if activity.certificate_file %}
+                                    <a href="{{ activity.certificate_file.url }}" target="_blank" class="d-inline-block mt-2">{% trans "Joriy faylni ko'rish" %}</a>
+                                {% endif %}
+                            </div>
+                            <div class="mb-3">
+                                <label for="additional_files" class="form-label">{% trans "Qo'shimcha fayllar" %}</label>
+                                <input type="file" name="additional_files" id="additional_files" class="form-control">
+                                {% if activity.additional_files %}
+                                    <a href="{{ activity.additional_files.url }}" target="_blank" class="d-inline-block mt-2">{% trans "Joriy faylni ko'rish" %}</a>
+                                {% endif %}
+                            </div>
+                            <div>
+                                <label for="expense_report" class="form-label">{% trans "Xarajat hisoboti" %}</label>
+                                <input type="file" name="expense_report" id="expense_report" class="form-control">
+                                {% if activity.expense_report %}
+                                    <a href="{{ activity.expense_report.url }}" target="_blank" class="d-inline-block mt-2">{% trans "Joriy faylni ko'rish" %}</a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card mt-4">
+                        <div class="card-body">
+                            <div class="d-grid gap-2">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="ri-save-3-line me-1"></i>
+                                    {% if activity %}
+                                        {% trans "Yangilash" %}
+                                    {% else %}
+                                        {% trans "Saqlash" %}
+                                    {% endif %}
+                                </button>
+                                {% if activity %}
+                                    <a href="{% url 'employee-activity-detail' employee.id activity.id %}" class="btn btn-outline-secondary">
+                                        {% trans "Batafsilga qaytish" %}
+                                    </a>
+                                {% else %}
+                                    <a href="{% url 'employee-list' %}" class="btn btn-outline-secondary">
+                                        {% trans "Bekor qilish" %}
+                                    </a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+{% endblock content %}
+
+{% block vendor_js %}
+    <script src="{% static 'vendor/quill/quill.min.js' %}"></script>
+    <script src="{% static 'js/admin-settings.js' %}"></script>
+{% endblock vendor_js %}

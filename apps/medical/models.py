@@ -3,7 +3,41 @@ from django.utils.translation import gettext_lazy as _
 from django.core.exceptions import ValidationError
 from django.contrib.auth.models import User
 from django.core.validators import RegexValidator
-from members.models import CustomUser
+from apps.members.models import CustomUser
+
+
+FLATICON_ICON_CHOICES = [
+    ("flaticon-ambulance", _("Ambulance")),
+    ("flaticon-brain", _("Brain")),
+    ("flaticon-call", _("Call")),
+    ("flaticon-call-1", _("Phone Call")),
+    ("flaticon-capsules", _("Capsules")),
+    ("flaticon-cardiogram", _("Cardiogram")),
+    ("flaticon-conference", _("Conference")),
+    ("flaticon-dental-care", _("Dental Care")),
+    ("flaticon-doctor", _("Doctor")),
+    ("flaticon-envelope", _("Envelope")),
+    ("flaticon-eye", _("Eye")),
+    ("flaticon-first-aid-kit", _("First Aid Kit")),
+    ("flaticon-heart", _("Heart")),
+    ("flaticon-heart-rate", _("Heart Rate")),
+    ("flaticon-kidney", _("Kidney")),
+    ("flaticon-kidneys", _("Kidneys")),
+    ("flaticon-lungs", _("Lungs")),
+    ("flaticon-medicine", _("Medicine")),
+    ("flaticon-neurology", _("Neurology")),
+    ("flaticon-paper-plane", _("Paper Plane")),
+    ("flaticon-personal-information", _("Personal Information")),
+    ("flaticon-phone", _("Phone")),
+    ("flaticon-pills", _("Pills")),
+    ("flaticon-rate", _("Rate")),
+    ("flaticon-scissors", _("Scissors")),
+    ("flaticon-stethoscope", _("Stethoscope")),
+    ("flaticon-tooth", _("Tooth")),
+    ("flaticon-tooth-1", _("Tooth Variant")),
+    ("flaticon-user-experience", _("User Experience")),
+    ("flaticon-wheelchair", _("Wheelchair")),
+]
 
 
 class SiteSettings(models.Model):
@@ -135,6 +169,38 @@ class Partner(models.Model):
         Tavsifni til kodi asosida olish.
         """
         return self.description.get(lang_code, self.description.get('uz', _('Tavsif mavjud emas')))
+
+
+class ClinicService(models.Model):
+    title = models.JSONField(default=dict, help_text=_("Har xil tillarda xizmat nomi (JSON formatda)"))
+    summary = models.JSONField(default=dict, help_text=_("Har xil tillarda xizmat tavsifi (JSON formatda)"))
+    icon_class = models.CharField(
+        max_length=64,
+        choices=FLATICON_ICON_CHOICES,
+        default="flaticon-medicine",
+        help_text=_("Xizmat uchun flaticon klassini tanlang"),
+    )
+    sort_order = models.PositiveIntegerField(default=0, help_text=_("Xizmat ko'rinish tartibi"))
+    is_active = models.BooleanField(default=True, help_text=_("Xizmat faol yoki faol emas"))
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = _("Xizmat")
+        verbose_name_plural = _("Xizmatlar")
+        ordering = ["sort_order", "id"]
+
+    def __str__(self):
+        return self.get_title()
+
+    def get_title(self, language_code="uz"):
+        return self.title.get(language_code, self.title.get("uz", self.title.get("en", _("Nomi mavjud emas"))))
+
+    def get_summary(self, language_code="uz"):
+        return self.summary.get(
+            language_code,
+            self.summary.get("uz", self.summary.get("en", _("Tavsif mavjud emas"))),
+        )
 
 class MedicalCheckupApplication(models.Model):
     full_name = models.CharField(max_length=255, verbose_name="Ism va familiya")

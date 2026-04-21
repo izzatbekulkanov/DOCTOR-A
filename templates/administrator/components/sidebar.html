@@ -47,6 +47,12 @@
                     <span class="menu-text">Videolar</span>
                 </a>
             </li>
+            <li class="{% if request.resolver_match.url_name == 'service-list' or request.resolver_match.url_name == 'service-create' or request.resolver_match.url_name == 'service-edit' %}active current-page{% endif %}">
+                <a href="{% url 'service-list' %}">
+                    <i class="ri-layout-grid-line"></i>
+                    <span class="menu-text">Xizmatlar</span>
+                </a>
+            </li>
             <li class="{% if request.resolver_match.url_name == 'clinic-equipment' %}active current-page{% endif %}">
                 <a href="{% url 'clinic-equipment' %}">
                     <i class="ri-device-line"></i>
@@ -75,6 +81,12 @@
                 <a href="{% url 'admin-setting-index' %}">
                     <i class="ri-building-line"></i>
                     <span class="menu-text">Klinika ma'lumotlari</span>
+                </a>
+            </li>
+            <li class="{% if request.resolver_match.url_name == 'bot-control' %}active current-page{% endif %}">
+                <a href="{% url 'bot-control' %}">
+                    <i class="ri-robot-2-line"></i>
+                    <span class="menu-text">Bot</span>
                 </a>
             </li>
             <li class="{% if request.resolver_match.url_name == 'roles-view' %}active current-page{% endif %}">

@@ -1,77 +1,283 @@
 {% extends 'administrator/main.html' %}
-{% load static %}
-{% load custom_filters %}
+{% load static i18n %}
+
 {% block title %}
-    <title>Rollar</title>
+    {% trans "Rollar" %}
 {% endblock title %}
+
+{% block vendor_css %}
+    <link rel="stylesheet" href="{% static 'css/admin-roles.css' %}">
+{% endblock vendor_css %}
+
 {% block content %}
-    <div class="row">
-        <div class="col-md-12">
-            <div class="card">
-                <div class="card-header">
-                    <h4 class="card-title">Doctor A haqida yangi ma'lumot qo‘shish</h4>
-                </div>
-                <div class="card-body">
-                    <form id="doctorAForm" enctype="multipart/form-data">
-                        {% csrf_token %}
-                        <input type="hidden" id="doctor_id" name="doctor_id">
-                        <!-- Rasm yuklash -->
-                        <div class="mb-3 text-center">
-                            <div class="position-relative d-inline-block">
-                                <input type="file" class="form-control d-none" id="image" name="image" accept="image/*"
-                                       onchange="previewImage(event)">
-                                <div class="image-preview" onclick="document.getElementById('image').click()">
-                                    <img id="image_preview" src="{% static 'images/placeholder.png' %}"
-                                         class="img-thumbnail"
-                                         style="max-height: 200px; cursor: pointer;">
-                                    <div class="overlay">Rasm yuklang</div>
-                                </div>
+    <div class="app-body admin-roles">
+        {% if messages %}
+            <div class="mb-4">
+                {% for message in messages %}
+                    <div class="alert {% if message.tags == 'success' %}alert-success{% elif message.tags == 'error' %}alert-danger{% else %}alert-info{% endif %} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <div class="row g-3">
+            <div class="col-xl-3 col-sm-6">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center gap-3">
+                            <span class="roles-icon bg-primary-subtle text-primary"><i class="ri-group-line"></i></span>
+                            <div>
+                                <h3 class="mb-0">{{ total_users }}</h3>
+                                <p class="mb-0 text-muted">{% trans "Barcha foydalanuvchilar" %}</p>
                             </div>
                         </div>
-                        <!-- Tilga asoslangan tablar -->
-                        <ul class="nav nav-tabs">
-                            {% for code, name in LANGUAGES %}
-                                <li class="nav-item">
-                                    <button class="nav-link {% if forloop.first %}active{% endif %}"
-                                            data-bs-toggle="tab"
-                                            data-bs-target="#{{ code }}">
-                                        <img src="{% static 'vendor/fonts/flags/1x1/' %}{{ code }}.svg" width="20"
-                                             class="me-1"> {{ name }}
-                                    </button>
-                                </li>
-                            {% endfor %}
-                        </ul>
-                        <div class="tab-content mt-3">
-                            {% for code, name in LANGUAGES %}
-                                <div class="tab-pane fade {% if forloop.first %}show active{% endif %}" id="{{ code }}">
-                                    <label class="form-label">
-                                        <img src="{% static 'vendor/fonts/flags/1x1/' %}{{ code }}.svg" width="20"
-                                             class="me-1">
-                                        Sarlavha ({{ name }})
-                                    </label>
-                                    <input type="text" class="form-control" id="title_{{ code }}"
-                                           name="title[{{ code }}]" required>
-                                    <label class="form-label mt-2">
-                                        <img src="{% static 'vendor/fonts/flags/1x1/' %}{{ code }}.svg" width="20"
-                                             class="me-1">
-                                        Tavsif ({{ name }})
-                                    </label>
-                                    <textarea class="form-control" id="description_{{ code }}"
-                                              name="description[{{ code }}]" required></textarea>
-                                </div>
-                            {% endfor %}
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-sm-6">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center gap-3">
+                            <span class="roles-icon bg-danger-subtle text-danger"><i class="ri-shield-keyhole-line"></i></span>
+                            <div>
+                                <h3 class="mb-0">{{ superuser_count }}</h3>
+                                <p class="mb-0 text-muted">{% trans "Super adminlar" %}</p>
+                            </div>
                         </div>
-                        <div class="mt-4 d-flex justify-content-between">
-                            <button type="button" class="btn btn-success" onclick="submitDoctorAForm()">Saqlash</button>
-                            <button type="button" class="btn btn-secondary" onclick="resetDoctorAForm()">Tozalash
-                            </button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-sm-6">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center gap-3">
+                            <span class="roles-icon bg-info-subtle text-info"><i class="ri-dashboard-line"></i></span>
+                            <div>
+                                <h3 class="mb-0">{{ staff_count }}</h3>
+                                <p class="mb-0 text-muted">{% trans "Admin panel" %}</p>
+                            </div>
                         </div>
-                    </form>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-sm-6">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center gap-3">
+                            <span class="roles-icon bg-success-subtle text-success"><i class="ri-user-heart-line"></i></span>
+                            <div>
+                                <h3 class="mb-0">{{ employee_count }}</h3>
+                                <p class="mb-0 text-muted">{% trans "Faol xodimlar" %}</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
 
+        <div class="row g-4 mt-1">
+            <div class="col-xl-5">
+                <div class="card h-100">
+                    <div class="card-header">
+                        <div class="roles-card-heading">
+                            <span class="roles-icon bg-primary-subtle text-primary">
+                                <i class="ri-lock-2-line"></i>
+                            </span>
+                            <div>
+                                <h4 class="card-title mb-1">{% trans "Tizim rollari" %}</h4>
+                                <p class="card-subtitle mb-0">{% trans "Foydalanuvchi bayroqlari asosidagi asosiy rollar." %}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="list-group list-group-flush">
+                            {% for role in system_roles %}
+                                <div class="list-group-item px-0">
+                                    <div class="d-flex align-items-start justify-content-between gap-3">
+                                        <div>
+                                            <h6 class="mb-1">{{ role.name }}</h6>
+                                            <p class="mb-0 text-muted">{{ role.description }}</p>
+                                        </div>
+                                        <span class="badge {{ role.badge }}">{{ role.count }}</span>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-7">
+                <div class="card h-100">
+                    <div class="card-header">
+                        <div class="roles-card-heading">
+                            <span class="roles-icon bg-secondary-subtle text-primary">
+                                <i class="ri-team-line"></i>
+                            </span>
+                            <div>
+                                <h4 class="card-title mb-1">{% trans "Guruh rollari" %}</h4>
+                                <p class="card-subtitle mb-0">{% trans "Django group rollari va ularga biriktirilgan foydalanuvchilar." %}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <form method="POST" class="row g-2 align-items-end mb-4">
+                            {% csrf_token %}
+                            <div class="col-md-8">
+                                <label for="role_name" class="form-label">{% trans "Yangi rol nomi" %}</label>
+                                <input type="text" id="role_name" name="role_name" class="form-control" placeholder="{% trans 'Masalan: Moderator' %}">
+                            </div>
+                            <div class="col-md-4">
+                                <button type="submit" class="btn btn-primary w-100">
+                                    <i class="ri-add-line me-1"></i>
+                                    {% trans "Qo'shish" %}
+                                </button>
+                            </div>
+                        </form>
+
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle mb-0">
+                                <thead>
+                                    <tr>
+                                        <th>{% trans "Rol" %}</th>
+                                        <th>{% trans "Foydalanuvchilar" %}</th>
+                                        <th>{% trans "Permission" %}</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for row in groups %}
+                                        <tr>
+                                            <td class="fw-semibold">{{ row.group.name }}</td>
+                                            <td><span class="badge bg-primary-subtle text-primary">{{ row.user_count }}</span></td>
+                                            <td><span class="badge bg-secondary-subtle text-secondary">{{ row.permissions_count }}</span></td>
+                                        </tr>
+                                    {% empty %}
+                                        <tr>
+                                            <td colspan="3" class="text-center text-muted py-4">{% trans "Hozircha group rol yo'q." %}</td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card mt-4">
+            <div class="card-header">
+                <div class="d-flex align-items-center justify-content-between gap-3 flex-wrap">
+                    <div class="roles-card-heading">
+                        <span class="roles-icon bg-success-subtle text-success">
+                            <i class="ri-user-settings-line"></i>
+                        </span>
+                        <div>
+                            <h4 class="card-title mb-1">{% trans "Foydalanuvchi rollari" %}</h4>
+                            <p class="card-subtitle mb-0">{% trans "Har bir foydalanuvchining amaldagi rollari." %}</p>
+                        </div>
+                    </div>
+                    <span class="badge bg-light text-primary">{{ users.paginator.count }}</span>
+                </div>
+            </div>
+            <div class="card-body">
+                <form method="GET" class="mb-4">
+                    <div class="input-group">
+                        <input type="text" name="q" value="{{ search_query }}" class="form-control" placeholder="{% trans 'F.I.O, username, bo‘lim yoki rol bo‘yicha qidirish' %}">
+                        <button type="submit" class="btn btn-primary">{% trans "Qidirish" %}</button>
+                    </div>
+                </form>
+
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>{% trans "Foydalanuvchi" %}</th>
+                                <th>{% trans "Bo'lim" %}</th>
+                                <th>{% trans "Lavozim" %}</th>
+                                <th>{% trans "Rollar" %}</th>
+                                <th>{% trans "Holat" %}</th>
+                                <th>{% trans "Amal" %}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for user in users %}
+                                <tr>
+                                    <td>{{ forloop.counter }}</td>
+                                    <td>
+                                        <div class="fw-semibold">{{ user.full_name|default:user.username }}</div>
+                                        <div class="text-muted small">{{ user.username }}</div>
+                                    </td>
+                                    <td>{{ user.department|default:"-" }}</td>
+                                    <td>{{ user.job_title|default:"-" }}</td>
+                                    <td>
+                                        <div class="d-flex flex-wrap gap-1">
+                                            {% if user.is_superuser %}
+                                                <span class="badge bg-danger-subtle text-danger">{% trans "Super admin" %}</span>
+                                            {% endif %}
+                                            {% if user.is_staff %}
+                                                <span class="badge bg-primary-subtle text-primary">{% trans "Admin panel" %}</span>
+                                            {% endif %}
+                                            {% if user.is_active_employee %}
+                                                <span class="badge bg-success-subtle text-success">{% trans "Xodim" %}</span>
+                                            {% endif %}
+                                            {% for group in user.groups.all %}
+                                                <span class="badge bg-secondary-subtle text-secondary">{{ group.name }}</span>
+                                            {% endfor %}
+                                        </div>
+                                    </td>
+                                    <td>
+                                        {% if user.is_active %}
+                                            <span class="badge bg-success">{% trans "Faol" %}</span>
+                                        {% else %}
+                                            <span class="badge bg-danger">{% trans "Nofaol" %}</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <a href="{% url 'edit-user' user.id %}" class="btn btn-outline-primary btn-sm">
+                                            <i class="ri-edit-box-line"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            {% empty %}
+                                <tr>
+                                    <td colspan="7" class="text-center text-muted py-4">{% trans "Foydalanuvchi topilmadi." %}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                {% if users.has_previous or users.has_next %}
+                    <nav class="mt-4">
+                        <ul class="pagination justify-content-center mb-0">
+                            {% if users.has_previous %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page=1&q={{ search_query }}">{% trans "Birinchi" %}</a>
+                                </li>
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ users.previous_page_number }}&q={{ search_query }}">{% trans "Oldingi" %}</a>
+                                </li>
+                            {% endif %}
+
+                            <li class="page-item active">
+                                <span class="page-link">{{ users.number }} / {{ users.paginator.num_pages }}</span>
+                            </li>
+
+                            {% if users.has_next %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ users.next_page_number }}&q={{ search_query }}">{% trans "Keyingi" %}</a>
+                                </li>
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ users.paginator.num_pages }}&q={{ search_query }}">{% trans "Oxirgi" %}</a>
+                                </li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                {% endif %}
+            </div>
+        </div>
+    </div>
 {% endblock content %}
-{% block vendor_js %}
-{% endblock vendor_js %}

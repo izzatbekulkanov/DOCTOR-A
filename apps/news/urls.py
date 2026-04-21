@@ -14,7 +14,8 @@ viewspatterns = [
     path("news-delete", NewsDeleteView.as_view(), name="news-delete"),
 
     path("announcemen-view", login_required(AnnouncementView.as_view()), name="announcemen-view", ),
-    path("announcement-create", AnnouncementCreateView.as_view(), name="announcement-create"),
+    path("announcement-create", login_required(AnnouncementCreateView.as_view()), name="announcement-create"),
+    path("announcement-edit/<int:pk>/", login_required(AnnouncementCreateView.as_view()), name="announcement-edit"),
 
     path("partners", login_required(PartnerInfoView.as_view()), name="partners-info", ),
     path("get-partner-info", get_partner_info, name="get-partner-info"),

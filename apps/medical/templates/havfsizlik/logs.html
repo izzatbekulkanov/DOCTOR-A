@@ -1,13 +1,110 @@
 {% extends 'administrator/main.html' %}
-{% load static %}
-{% load custom_filters %}
+{% load i18n %}
+
 {% block title %}
-    <title>Loglar</title>
+    {% trans "Loglar" %}
 {% endblock title %}
+
 {% block content %}
+    <div class="app-body">
+        <div class="card">
+            <div class="card-header">
+                <div class="d-flex align-items-center justify-content-between gap-3 flex-wrap">
+                    <div>
+                        <h4 class="card-title mb-1">{% trans "Loglar" %}</h4>
+                        <p class="card-subtitle mb-0">{% trans "So'nggi server so'rovlari va status kodlari." %}</p>
+                    </div>
+                    <span class="badge bg-primary-subtle text-primary">{{ total_logs }}</span>
+                </div>
+            </div>
 
+            <div class="card-body">
+                <form method="GET" class="mb-4">
+                    <div class="input-group">
+                        <input
+                            type="text"
+                            name="q"
+                            value="{{ search_query }}"
+                            class="form-control"
+                            placeholder="{% trans 'URL, IP, metod yoki foydalanuvchi bo‘yicha qidirish' %}"
+                        >
+                        <button type="submit" class="btn btn-primary">{% trans "Qidirish" %}</button>
+                    </div>
+                </form>
 
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>{% trans "Sana" %}</th>
+                                <th>{% trans "Metod" %}</th>
+                                <th>{% trans "URL" %}</th>
+                                <th>{% trans "IP" %}</th>
+                                <th>{% trans "Foydalanuvchi" %}</th>
+                                <th>{% trans "Status" %}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for log in logs %}
+                                <tr>
+                                    <td>{{ forloop.counter }}</td>
+                                    <td class="text-nowrap">{{ log.timestamp|date:"Y-m-d H:i:s" }}</td>
+                                    <td><span class="badge bg-secondary-subtle text-primary">{{ log.method }}</span></td>
+                                    <td class="text-break">{{ log.path }}</td>
+                                    <td class="text-nowrap">{{ log.ip_address|default:"-" }}</td>
+                                    <td>
+                                        {% if log.user %}
+                                            {{ log.user.full_name|default:log.user.username }}
+                                        {% else %}
+                                            <span class="text-muted">{% trans "Anonim" %}</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <span class="badge {% if log.status_code >= 400 %}bg-danger{% else %}bg-success{% endif %}">
+                                            {{ log.status_code }}
+                                        </span>
+                                    </td>
+                                </tr>
+                            {% empty %}
+                                <tr>
+                                    <td colspan="7" class="text-center text-muted py-4">
+                                        {% trans "Loglar topilmadi." %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                {% if logs.has_previous or logs.has_next %}
+                    <nav class="mt-4">
+                        <ul class="pagination justify-content-center mb-0">
+                            {% if logs.has_previous %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page=1&q={{ search_query }}">{% trans "Birinchi" %}</a>
+                                </li>
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ logs.previous_page_number }}&q={{ search_query }}">{% trans "Oldingi" %}</a>
+                                </li>
+                            {% endif %}
+
+                            <li class="page-item active">
+                                <span class="page-link">{{ logs.number }} / {{ logs.paginator.num_pages }}</span>
+                            </li>
+
+                            {% if logs.has_next %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ logs.next_page_number }}&q={{ search_query }}">{% trans "Keyingi" %}</a>
+                                </li>
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ logs.paginator.num_pages }}&q={{ search_query }}">{% trans "Oxirgi" %}</a>
+                                </li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                {% endif %}
+            </div>
+        </div>
+    </div>
 {% endblock content %}
-{% block vendor_js %}
-
-{% endblock vendor_js %}

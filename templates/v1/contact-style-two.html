@@ -67,6 +67,14 @@
         overflow-wrap: anywhere;
     }
 
+    .contact-info-item .copy p {
+        margin-bottom: 6px;
+    }
+
+    .contact-info-item .copy p:last-child {
+        margin-bottom: 0;
+    }
+
     .contact-map-shell {
         overflow: hidden;
         min-height: 100%;
@@ -235,9 +243,16 @@
                                 </div>
                                 <div>
                                     <span>{{ t.address }}</span>
-                                    <a href="https://maps.app.goo.gl/xEtPruqrfG9f6q3H7" target="_blank" rel="noopener noreferrer">
-                                        {{ site_settings.address|default:"Doctor-A Med Clinic, Namangan, Uzbekistan"|striptags }}
-                                    </a>
+                                    <div class="copy">
+                                        {% if site_settings and site_settings.address %}
+                                            {{ site_settings.address|render_rich_text }}
+                                        {% else %}
+                                            Doctor-A Med Clinic, Namangan, Uzbekistan
+                                        {% endif %}
+                                        <div>
+                                            <a href="https://maps.app.goo.gl/xEtPruqrfG9f6q3H7" target="_blank" rel="noopener noreferrer">Google Maps</a>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
 

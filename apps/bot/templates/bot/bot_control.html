@@ -1,0 +1,665 @@
+{% extends 'administrator/main.html' %}
+{% load i18n %}
+
+{% block title %}{% trans "Bot boshqaruvi" %}{% endblock title %}
+
+{% block vendor_css %}
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/admin-bot-control.css' %}">
+{% endblock vendor_css %}
+
+{% block content %}
+<div class="app-body bot-admin">
+    {% if messages %}
+        <div class="mb-4">
+            {% for message in messages %}
+                <div class="alert {% if message.tags == 'success' %}alert-success{% elif message.tags == 'error' %}alert-danger{% elif message.tags == 'warning' %}alert-warning{% else %}alert-info{% endif %} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <div class="row g-3 mb-4">
+        <div class="col-xl-3 col-sm-6"><div class="card h-100"><div class="card-body"><div class="text-muted small mb-1">{% trans "Konfiguratsiya" %}</div><h4 class="mb-1">{% if is_configured %}{% trans "Sozlangan" %}{% else %}{% trans "To'liq emas" %}{% endif %}</h4><div class="text-muted">{% trans "Token va asosiy kanal" %}</div></div></div></div>
+        <div class="col-xl-3 col-sm-6"><div class="card h-100"><div class="card-body"><div class="text-muted small mb-1">{% trans "Bot holati" %}</div><h4 class="mb-1"><span class="bot-status-dot {% if bot_settings.is_active and bot_settings.last_status != 'error' %}is-online{% elif bot_settings.is_active %}is-warning{% else %}is-offline{% endif %}"></span>{% if bot_settings.is_active %}{% trans "Yoqilgan" %}{% else %}{% trans "O'chirilgan" %}{% endif %}</h4><div class="text-muted">{% if bot_settings.last_tested_at %}{{ bot_settings.last_tested_at|date:"Y-m-d H:i" }}{% else %}{% trans "Tekshirilmagan" %}{% endif %}</div></div></div></div>
+        <div class="col-xl-3 col-sm-6"><div class="card h-100"><div class="card-body"><div class="text-muted small mb-1">{% trans "A'zo" %}</div><h4 class="mb-1">{{ joined_channels_count }}</h4><div class="text-muted">{% trans "Bot a'zo bo'lgan kanallar" %}</div></div></div></div>
+        <div class="col-xl-3 col-sm-6"><div class="card h-100"><div class="card-body"><div class="text-muted small mb-1">{% trans "Admin" %}</div><h4 class="mb-1">{{ admin_channels_count }}</h4><div class="text-muted">{% trans "Bot admin bo'lgan kanallar" %}</div></div></div></div>
+    </div>
+
+    <div class="row g-4 mb-4">
+        <div class="col-xl-8">
+            <div class="card h-100">
+                <div class="card-header">
+                    <h4 class="card-title mb-1">{% trans "Bot sozlamalari" %}</h4>
+                    <p class="card-subtitle mb-0">{% trans "Token, asosiy kanal va yuborish formatini saqlang." %}</p>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{% url 'bot-control' %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="action" value="save_settings">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label for="bot_name" class="form-label">{% trans "Bot nomi" %}</label>
+                                <input type="text" id="bot_name" name="bot_name" class="form-control" value="{{ effective_bot_name }}">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="parse_mode" class="form-label">{% trans "Parse mode" %}</label>
+                                <select id="parse_mode" name="parse_mode" class="form-select">
+                                    {% for value, label in parse_mode_choices %}
+                                        <option value="{{ value }}" {% if effective_parse_mode == value %}selected{% endif %}>{{ label }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-12">
+                                <label for="bot_token" class="form-label">{% trans "Bot token" %}</label>
+                                <input type="password" id="bot_token" name="bot_token" class="form-control" value="{{ effective_token }}" autocomplete="off">
+                            </div>
+                            <div class="col-12">
+                                <label for="chat_id" class="form-label">{% trans "Asosiy kanal username, chat ID yoki havola" %}</label>
+                                <input type="text" id="chat_id" name="chat_id" class="form-control" value="{{ effective_chat_id }}" placeholder="@kanal_nomi, -1001234567890 yoki https://t.me/kanal_nomi">
+                                <div class="form-text">{% trans "Username, numeric chat ID yoki t.me havola qabul qilinadi. Saqlashda avtomatik tozalanadi." %}</div>
+                            </div>
+                            <div class="col-12">
+                                <label for="default_publish_channel" class="form-label">{% trans "Botdan kelgan fayllar yuboriladigan kanal" %}</label>
+                                <select id="default_publish_channel" name="default_publish_channel" class="form-select">
+                                    <option value="">{% trans "Asosiy kanal qiymatidan foydalanish" %}</option>
+                                    {% for channel in tracked_channels %}
+                                        <option value="{{ channel.id }}" {% if default_publish_channel_id == channel.id|stringformat:"s" %}selected{% endif %}>{{ channel.display_name }} ({{ channel.chat_id }})</option>
+                                    {% endfor %}
+                                </select>
+                                <div class="form-text">{% trans "Botga fayl va ID yuborilganda shu kanalga post qilinadi." %}</div>
+                            </div>
+                            <div class="col-12">
+                                <label for="notes" class="form-label">{% trans "Ichki izoh" %}</label>
+                                <textarea id="notes" name="notes" class="form-control" rows="4">{{ bot_settings.notes }}</textarea>
+                            </div>
+                            <div class="col-12">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="is_active" name="is_active" {% if bot_settings.is_active %}checked{% endif %}>
+                                    <label class="form-check-label" for="is_active">{% trans "Bot faol bo'lsin" %}</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="d-flex gap-2 mt-4">
+                            <button type="submit" class="btn btn-primary"><i class="ri-save-3-line me-1"></i>{% trans "Saqlash" %}</button>
+                            <a href="{% url 'bot-control' %}" class="btn btn-outline-secondary"><i class="ri-refresh-line me-1"></i>{% trans "Yangilash" %}</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-4">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h4 class="card-title mb-1">{% trans "Joriy holat" %}</h4>
+                    <p class="card-subtitle mb-0">{% trans "Saqlangan ma'lumotlar va oxirgi jo'natish natijasi." %}</p>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3"><div class="text-muted small">{% trans "Bot nomi" %}</div><div class="fw-semibold">{{ effective_bot_name }}</div></div>
+                    <div class="mb-3"><div class="text-muted small">{% trans "Asosiy kanal" %}</div><div class="fw-semibold">{{ effective_masked_chat_id }}</div></div>
+                    <div class="mb-3"><div class="text-muted small">{% trans "Token" %}</div><div class="fw-semibold">{{ effective_masked_token }}</div></div>
+                    <div class="mb-3"><div class="text-muted small">{% trans "Webhook URL" %}</div><div class="small text-break">{{ webhook_url }}</div></div>
+                    <div class="border rounded-3 p-3 mb-3 bot-worker-panel" data-worker-status-url="{% url 'bot-worker-status' %}">
+                        <div class="d-flex align-items-center justify-content-between gap-2 mb-2">
+                            <div>
+                                <div class="text-muted small">{% trans "Polling worker" %}</div>
+                                <div class="fw-semibold">
+                                    <span class="bot-status-dot {% if worker_state.is_running %}is-online{% else %}is-offline{% endif %}" data-worker-status-dot></span>
+                                    <span data-worker-status-label>{% if worker_state.is_running %}{% trans "Ishlayapti" %}{% else %}{% trans "To'xtagan" %}{% endif %}</span>
+                                </div>
+                            </div>
+                            <span class="badge bg-light text-muted">PID: <span data-worker-pids>{% for process in worker_state.processes %}{{ process.pid }}{% if not forloop.last %}, {% endif %}{% empty %}-{% endfor %}</span></span>
+                        </div>
+                        <div class="small text-muted mb-2">{% trans "Period" %}: <span data-worker-period>{{ worker_state.period.period_label }}</span></div>
+                        <div class="small text-muted mb-3">{% trans "Oxirgi polling" %}: <span data-worker-last-poll>{{ worker_state.last_polling.processed_at|default:"-" }}</span></div>
+                        <div class="d-flex flex-wrap gap-2">
+                            <form method="POST" action="{% url 'bot-control' %}" class="d-flex gap-2 align-items-center">
+                                {% csrf_token %}
+                                <input type="hidden" name="action" value="start_worker">
+                                <input type="hidden" name="poll_timeout" value="{{ worker_state.period.poll_timeout }}">
+                                <input type="hidden" name="sleep" value="{{ worker_state.period.sleep }}">
+                                <button type="submit" class="btn btn-outline-success btn-sm"><i class="ri-play-line me-1"></i>{% trans "Worker start" %}</button>
+                            </form>
+                            <form method="POST" action="{% url 'bot-control' %}">
+                                {% csrf_token %}
+                                <input type="hidden" name="action" value="stop_worker">
+                                <button type="submit" class="btn btn-outline-warning btn-sm"><i class="ri-stop-line me-1"></i>{% trans "Worker stop" %}</button>
+                            </form>
+                            <form method="POST" action="{% url 'bot-control' %}" class="d-flex gap-2 align-items-center">
+                                {% csrf_token %}
+                                <input type="hidden" name="action" value="restart_worker">
+                                <input type="number" name="poll_timeout" class="form-control form-control-sm bot-worker-period-input" value="{{ worker_state.period.poll_timeout }}" min="1" aria-label="{% trans 'Polling timeout' %}">
+                                <input type="number" name="sleep" class="form-control form-control-sm bot-worker-period-input" value="{{ worker_state.period.sleep }}" min="0.2" step="0.1" aria-label="{% trans 'Polling sleep' %}">
+                                <button type="submit" class="btn btn-outline-dark btn-sm"><i class="ri-restart-line me-1"></i>{% trans "Worker restart" %}</button>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="row g-2">
+                        <div class="col-4"><div class="border rounded-3 p-3 text-center"><div class="small text-muted">OK</div><div class="fw-semibold">{{ success_count }}</div></div></div>
+                        <div class="col-4"><div class="border rounded-3 p-3 text-center"><div class="small text-muted">ERR</div><div class="fw-semibold">{{ error_count }}</div></div></div>
+                        <div class="col-4"><div class="border rounded-3 p-3 text-center"><div class="small text-muted">SKIP</div><div class="fw-semibold">{{ skipped_count }}</div></div></div>
+                    </div>
+                    <div class="d-flex flex-wrap gap-2 mt-3">
+                        <form method="POST" action="{% url 'bot-control' %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="action" value="check_status">
+                            <button type="submit" class="btn btn-outline-primary btn-sm"><i class="ri-pulse-line me-1"></i>{% trans "Holatni tekshirish" %}</button>
+                        </form>
+                        <form method="POST" action="{% url 'bot-control' %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="action" value="set_webhook">
+                            <button type="submit" class="btn btn-outline-info btn-sm"><i class="ri-links-line me-1"></i>{% trans "Webhook ulash" %}</button>
+                        </form>
+                        <form method="POST" action="{% url 'bot-control' %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="action" value="delete_webhook">
+                            <button type="submit" class="btn btn-outline-secondary btn-sm"><i class="ri-link-unlink me-1"></i>{% trans "Webhook o'chirish" %}</button>
+                        </form>
+                        <form method="POST" action="{% url 'bot-control' %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="action" value="restart_bot">
+                            <button type="submit" class="btn btn-outline-dark btn-sm"><i class="ri-restart-line me-1"></i>{% trans "Qayta ishga tushirish" %}</button>
+                        </form>
+                        {% if bot_settings.is_active %}
+                            <form method="POST" action="{% url 'bot-control' %}">
+                                {% csrf_token %}
+                                <input type="hidden" name="action" value="toggle_bot">
+                                <input type="hidden" name="enabled" value="0">
+                                <button type="submit" class="btn btn-outline-warning btn-sm"><i class="ri-pause-line me-1"></i>{% trans "O'chirish" %}</button>
+                            </form>
+                        {% else %}
+                            <form method="POST" action="{% url 'bot-control' %}">
+                                {% csrf_token %}
+                                <input type="hidden" name="action" value="toggle_bot">
+                                <input type="hidden" name="enabled" value="1">
+                                <button type="submit" class="btn btn-outline-success btn-sm"><i class="ri-play-line me-1"></i>{% trans "Yoqish" %}</button>
+                            </form>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title mb-1">{% trans "Sinov xabari" %}</h4>
+                    <p class="card-subtitle mb-0">{% trans "Avval ro'yxatdan kanal tanlang, keyin test yuboring." %}</p>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{% url 'bot-control' %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="action" value="send_test">
+                        <div class="mb-3">
+                            <label for="target_channel_id" class="form-label">{% trans "Kanal" %}</label>
+                            <select id="target_channel_id" name="target_channel_id" class="form-select" {% if not selectable_channels %}disabled{% endif %}>
+                                {% for channel in selectable_channels %}
+                                    <option value="{{ channel.id }}" {% if selected_test_channel_id == channel.id|stringformat:"s" %}selected{% endif %}>{{ channel.display_name }} ({{ channel.chat_id }})</option>
+                                {% empty %}
+                                    <option value="">{% trans "Avval kanal qo'shing" %}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="test_message" class="form-label">{% trans "Xabar matni" %}</label>
+                            <textarea id="test_message" name="test_message" class="form-control" rows="6">{{ last_test_message }}</textarea>
+                        </div>
+                        <button type="submit" class="btn btn-outline-primary" {% if not selectable_channels %}disabled{% endif %}><i class="ri-send-plane-line me-1"></i>{% trans "Sinov yuborish" %}</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <div class="d-flex align-items-center justify-content-between gap-3 flex-wrap">
+                <div>
+                    <h4 class="card-title mb-1">{% trans "Kanal kuzatuvi" %}</h4>
+                    <p class="card-subtitle mb-0">{% trans "Telegram bot API barcha kanallarni avtomatik chiqarmaydi. Shu ro'yxat qo'lda yuritiladi va Telegram orqali tekshiriladi." %}</p>
+                </div>
+                <form method="POST" action="{% url 'bot-control' %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="verify_all_channels">
+                    <button type="submit" class="btn btn-outline-primary"><i class="ri-refresh-line me-1"></i>{% trans "Barchasini tekshirish" %}</button>
+                </form>
+            </div>
+        </div>
+        <div class="card-body border-bottom">
+            <form method="POST" action="{% url 'bot-control' %}" class="row g-3 align-items-end">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="add_channel">
+                <div class="col-lg-5">
+                    <label for="tracked_chat_id" class="form-label">{% trans "Username, chat ID yoki havola" %}</label>
+                    <input type="text" id="tracked_chat_id" name="tracked_chat_id" class="form-control" placeholder="@kanal_nomi, -1001234567890 yoki https://t.me/kanal_nomi">
+                </div>
+                <div class="col-lg-5">
+                    <label for="tracked_label" class="form-label">{% trans "Ichki nom" %}</label>
+                    <input type="text" id="tracked_label" name="tracked_label" class="form-control" placeholder="{% trans 'Masalan, yangiliklar kanali' %}">
+                </div>
+                <div class="col-lg-2">
+                    <button type="submit" class="btn btn-primary w-100"><i class="ri-add-line me-1"></i>{% trans "Qo'shish" %}</button>
+                </div>
+            </form>
+            <div class="small text-muted mt-3">{% trans "Agar 'chat not found' chiqsa, odatda username noto'g'ri, kanal private, yoki bot hali kanalga qo'shilmagan bo'ladi." %}</div>
+        </div>
+        <div class="card-body">
+            <div class="d-flex flex-wrap gap-2 mb-3">
+                <span class="badge bg-primary-subtle text-primary">
+                    {% blocktrans with count=file_submissions_count %}Jami {{ count }} ta yozuv{% endblocktrans %}
+                </span>
+                <span class="badge bg-info-subtle text-info">{% trans "Har sahifada 20 ta yozuv" %}</span>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th>{% trans "Kanal" %}</th>
+                            <th>{% trans "ID / Username" %}</th>
+                            <th>{% trans "Turi" %}</th>
+                            <th>{% trans "Bot statusi" %}</th>
+                            <th>{% trans "Oxirgi tekshiruv" %}</th>
+                            <th>{% trans "Amallar" %}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for channel in tracked_channels %}
+                            <tr>
+                                <td>
+                                    <div class="fw-semibold">{{ channel.display_name }}</div>
+                                    {% if channel.last_error %}<div class="small text-danger mt-1">{{ channel.last_error }}</div>{% endif %}
+                                </td>
+                                <td><div>{{ channel.chat_id }}</div><div class="small text-muted">{{ channel.resolved_username|default:"-" }}</div></td>
+                                <td>{{ channel.chat_type|default:"-" }}</td>
+                                <td>
+                                    {% if channel.member_status == 'administrator' or channel.member_status == 'creator' %}
+                                        <span class="badge bg-primary-subtle text-primary">{{ channel.get_member_status_display }}</span>
+                                    {% elif channel.member_status == 'member' or channel.member_status == 'restricted' %}
+                                        <span class="badge bg-success-subtle text-success">{{ channel.get_member_status_display }}</span>
+                                    {% elif channel.member_status == 'left' or channel.member_status == 'kicked' %}
+                                        <span class="badge bg-warning-subtle text-warning">{{ channel.get_member_status_display }}</span>
+                                    {% elif channel.member_status == 'error' or channel.member_status == 'not_found' %}
+                                        <span class="badge bg-danger-subtle text-danger">{{ channel.get_member_status_display }}</span>
+                                    {% else %}
+                                        <span class="badge bg-secondary-subtle text-secondary">{{ channel.get_member_status_display }}</span>
+                                    {% endif %}
+                                </td>
+                                <td>{% if channel.last_verified_at %}{{ channel.last_verified_at|date:"Y-m-d H:i" }}{% else %}-{% endif %}</td>
+                                <td>
+                                    <div class="d-flex gap-2">
+                                        <form method="POST" action="{% url 'bot-control' %}">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="action" value="verify_channel">
+                                            <input type="hidden" name="channel_id" value="{{ channel.id }}">
+                                            <button type="submit" class="btn btn-outline-primary btn-sm"><i class="ri-refresh-line"></i></button>
+                                        </form>
+                                        <form method="POST" action="{% url 'bot-control' %}">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="action" value="delete_channel">
+                                            <input type="hidden" name="channel_id" value="{{ channel.id }}">
+                                            <button type="submit" class="btn btn-outline-danger btn-sm"><i class="ri-delete-bin-line"></i></button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% empty %}
+                            <tr><td colspan="6" class="text-center text-muted py-4">{% trans "Hozircha kanal qo'shilmagan." %}</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% if file_submissions.has_previous or file_submissions.has_next %}
+                <nav class="mt-4">
+                    <ul class="pagination justify-content-center mb-0">
+                        {% if file_submissions.has_previous %}
+                            <li class="page-item">
+                                <a class="page-link" href="?submissions_page=1{% if file_submissions_query %}&{{ file_submissions_query }}{% endif %}">{% trans "Birinchi" %}</a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="?submissions_page={{ file_submissions.previous_page_number }}{% if file_submissions_query %}&{{ file_submissions_query }}{% endif %}">{% trans "Oldingi" %}</a>
+                            </li>
+                        {% endif %}
+                        <li class="page-item active">
+                            <span class="page-link">{{ file_submissions.number }} / {{ file_submissions.paginator.num_pages }}</span>
+                        </li>
+                        {% if file_submissions.has_next %}
+                            <li class="page-item">
+                                <a class="page-link" href="?submissions_page={{ file_submissions.next_page_number }}{% if file_submissions_query %}&{{ file_submissions_query }}{% endif %}">{% trans "Keyingi" %}</a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="?submissions_page={{ file_submissions.paginator.num_pages }}{% if file_submissions_query %}&{{ file_submissions_query }}{% endif %}">{% trans "Oxirgi" %}</a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="row g-4 mb-4">
+        <div class="col-xl-6">
+            <div class="card h-100">
+                <div class="card-header"><h4 class="card-title mb-1">{% trans "Bot a'zo bo'lgan kanallar ro'yxati" %}</h4></div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead><tr><th>{% trans "Kanal" %}</th><th>{% trans "Status" %}</th><th>{% trans "Tekshirildi" %}</th></tr></thead>
+                            <tbody>
+                                {% for channel in joined_channels %}
+                                    <tr><td><div class="fw-semibold">{{ channel.display_name }}</div><div class="small text-muted">{{ channel.chat_id }}</div></td><td><span class="badge bg-success-subtle text-success">{{ channel.get_member_status_display }}</span></td><td>{% if channel.last_verified_at %}{{ channel.last_verified_at|date:"Y-m-d H:i" }}{% else %}-{% endif %}</td></tr>
+                                {% empty %}
+                                    <tr><td colspan="3" class="text-center text-muted py-4">{% trans "Bot a'zo bo'lgan kanal topilmadi." %}</td></tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-6">
+            <div class="card h-100">
+                <div class="card-header"><h4 class="card-title mb-1">{% trans "Bot admin bo'lgan kanallar ro'yxati" %}</h4></div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead><tr><th>{% trans "Kanal" %}</th><th>{% trans "Rol" %}</th><th>{% trans "Tekshirildi" %}</th></tr></thead>
+                            <tbody>
+                                {% for channel in admin_channels %}
+                                    <tr><td><div class="fw-semibold">{{ channel.display_name }}</div><div class="small text-muted">{{ channel.chat_id }}</div></td><td><span class="badge bg-primary-subtle text-primary">{{ channel.get_member_status_display }}</span></td><td>{% if channel.last_verified_at %}{{ channel.last_verified_at|date:"Y-m-d H:i" }}{% else %}-{% endif %}</td></tr>
+                                {% empty %}
+                                    <tr><td colspan="3" class="text-center text-muted py-4">{% trans "Bot admin bo'lgan kanal topilmadi." %}</td></tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <div class="d-flex align-items-center justify-content-between gap-3 flex-wrap">
+                <div>
+                    <h4 class="card-title mb-1">{% trans "Bot orqali kelgan fayllar" %}</h4>
+                    <p class="card-subtitle mb-0">{% trans "Bot foydalanuvchisi yuborgan fayl, ID, kanal message_id va muallif ma'lumotlari." %}</p>
+                </div>
+                <span class="badge bg-primary-subtle text-primary">
+                    {% blocktrans with count=file_submissions_count %}Jami {{ count }} ta yozuv{% endblocktrans %}
+                </span>
+            </div>
+        </div>
+        <div class="card-body border-bottom">
+            <form method="GET" action="{% url 'bot-control' %}" class="row g-2 align-items-end">
+                <div class="col-lg-10">
+                    <label for="submission_id" class="form-label">{% trans "ID bo'yicha qidirish" %}</label>
+                    <input type="text" id="submission_id" name="submission_id" class="form-control" value="{{ submission_search_query }}" placeholder="26575">
+                </div>
+                <div class="col-lg-2">
+                    <button type="submit" class="btn btn-primary w-100">{% trans "Qidirish" %}</button>
+                </div>
+            </form>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th>{% trans "ID" %}</th>
+                            <th>{% trans "Fayl" %}</th>
+                            <th>{% trans "Holat" %}</th>
+                            <th>{% trans "Kanal" %}</th>
+                            <th>{% trans "Message ID" %}</th>
+                            <th>{% trans "Muallif" %}</th>
+                            <th>{% trans "Mazmun" %}</th>
+                            <th>{% trans "Sana" %}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in file_submissions %}
+                            <tr>
+                                <td class="fw-semibold">{{ item.custom_id|default:"-" }}</td>
+                                <td>
+                                    {% if item.file_id or item.file_type %}
+                                        <div class="bot-file-preview">
+                                            {% if item.file_type == 'photo' %}
+                                                <a href="{% url 'bot-file-proxy' item.id %}" target="_blank" rel="noopener">
+                                                    <img src="{% url 'bot-file-proxy' item.id %}" alt="{% trans 'Fayl' %}" class="bot-file-thumb">
+                                                </a>
+                                            {% else %}
+                                                <a href="{% url 'bot-file-proxy' item.id %}" class="btn btn-outline-primary btn-sm bot-file-link" target="_blank" rel="noopener">
+                                                    <i class="ri-file-search-line me-1"></i>{% trans "Ko'rish" %}
+                                                </a>
+                                            {% endif %}
+                                            <div class="small text-muted">{{ item.file_type|default:"file" }}</div>
+                                        </div>
+                                    {% else %}
+                                        <span class="text-muted">-</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if item.status == 'published' %}
+                                        <span class="badge bg-success-subtle text-success">{{ item.get_status_display }}</span>
+                                    {% elif item.status == 'error' %}
+                                        <span class="badge bg-danger-subtle text-danger">{{ item.get_status_display }}</span>
+                                    {% else %}
+                                        <span class="badge bg-warning-subtle text-warning">{{ item.get_status_display }}</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <div>{{ item.target_channel.display_name|default:"-" }}</div>
+                                    <div class="small text-muted">{{ item.target_chat_id|default:"-" }}</div>
+                                </td>
+                                <td>{{ item.target_message_id|default:"-" }}</td>
+                                <td>
+                                    <div>{{ item.author_display }}</div>
+                                    <div class="small text-muted">{{ item.telegram_user_id|default:"-" }}</div>
+                                </td>
+                                <td>
+                                    <div>{{ item.generated_caption|default:item.error_text|truncatechars:120 }}</div>
+                                    {% if item.file_type %}<div class="small text-muted">{{ item.file_type }}</div>{% endif %}
+                                </td>
+                                <td class="text-nowrap">{{ item.created_at|date:"Y-m-d H:i" }}</td>
+                            </tr>
+                        {% empty %}
+                            <tr><td colspan="8" class="text-center text-muted py-4">{% trans "Fayl yozuvlari topilmadi." %}</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <div class="d-flex align-items-center justify-content-between gap-3 flex-wrap">
+                <div>
+                    <h4 class="card-title mb-1">{% trans "Telegram update'lar" %}</h4>
+                    <p class="card-subtitle mb-0">{% trans "getUpdates orqali kelgan xabarlarni ko'ring. Local serverda webhook ishlamasa, shu tugma fayl va ID xabarlarini ham qayta ishlaydi." %}</p>
+                </div>
+                <form method="POST" action="{% url 'bot-control' %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="fetch_updates">
+                    <button type="submit" class="btn btn-outline-primary">
+                        <i class="ri-download-cloud-line me-1"></i>{% trans "Update'larni olish" %}
+                    </button>
+                </form>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="d-flex flex-wrap gap-2 mb-3">
+                <span class="badge bg-primary-subtle text-primary">
+                    {% blocktrans with count=telegram_updates_count %}Jami {{ count }} ta update{% endblocktrans %}
+                </span>
+                <span class="badge bg-info-subtle text-info">{% trans "Har sahifada 20 ta update" %}</span>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th>{% trans "Update" %}</th>
+                            <th>{% trans "Kanal / chat" %}</th>
+                            <th>{% trans "Chat ID" %}</th>
+                            <th>{% trans "Muallif" %}</th>
+                            <th>{% trans "Xabar" %}</th>
+                            <th>{% trans "Workflow" %}</th>
+                            <th>{% trans "Sana" %}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in telegram_updates %}
+                            <tr>
+                                <td>
+                                    <div class="fw-semibold">#{{ item.update_id }}</div>
+                                    <div class="small text-muted">{{ item.update_type }}</div>
+                                </td>
+                                <td>
+                                    <div class="fw-semibold">{{ item.display_chat }}</div>
+                                    <div class="small text-muted">{{ item.chat_type|default:"-" }}{% if item.chat_username %} · @{{ item.chat_username }}{% endif %}</div>
+                                </td>
+                                <td class="text-nowrap">{{ item.chat_id|default:"-" }}</td>
+                                <td>{{ item.author_name|default:"-" }}</td>
+                                <td>
+                                    <div>{{ item.display_text|truncatechars:140 }}</div>
+                                    <div class="small text-muted">
+                                        {% if item.has_photo %}{% trans "Rasm bor" %}{% endif %}
+                                        {% if item.has_reply_markup %}{% if item.has_photo %} · {% endif %}{% trans "Inline tugma bor" %}{% endif %}
+                                    </div>
+                                </td>
+                                <td>
+                                    {% if item.workflow_processed %}
+                                        {% if item.workflow_status == 'error' %}
+                                            <span class="badge bg-danger-subtle text-danger">{{ item.workflow_status }}</span>
+                                        {% elif item.workflow_status == 'ignored' %}
+                                            <span class="badge bg-secondary-subtle text-secondary">{{ item.workflow_status }}</span>
+                                        {% elif item.workflow_status == 'awaiting_id' %}
+                                            <span class="badge bg-warning-subtle text-warning">{{ item.workflow_status }}</span>
+                                        {% else %}
+                                            <span class="badge bg-success-subtle text-success">{{ item.workflow_status|default:"processed" }}</span>
+                                        {% endif %}
+                                        {% if item.workflow_error %}<div class="small text-danger mt-1">{{ item.workflow_error|truncatechars:90 }}</div>{% endif %}
+                                    {% else %}
+                                        <span class="badge bg-light text-muted">{% trans "Kutilmoqda" %}</span>
+                                    {% endif %}
+                                </td>
+                                <td class="text-nowrap">{% if item.message_date %}{{ item.message_date|date:"Y-m-d H:i" }}{% else %}-{% endif %}</td>
+                            </tr>
+                        {% empty %}
+                            <tr><td colspan="7" class="text-center text-muted py-4">{% trans "Hozircha Telegram update olinmagan." %}</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% if telegram_updates.has_previous or telegram_updates.has_next %}
+                <nav class="mt-4">
+                    <ul class="pagination justify-content-center mb-0">
+                        {% if telegram_updates.has_previous %}
+                            <li class="page-item">
+                                <a class="page-link" href="?updates_page=1{% if telegram_updates_query %}&{{ telegram_updates_query }}{% endif %}">{% trans "Birinchi" %}</a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="?updates_page={{ telegram_updates.previous_page_number }}{% if telegram_updates_query %}&{{ telegram_updates_query }}{% endif %}">{% trans "Oldingi" %}</a>
+                            </li>
+                        {% endif %}
+                        <li class="page-item active">
+                            <span class="page-link">{{ telegram_updates.number }} / {{ telegram_updates.paginator.num_pages }}</span>
+                        </li>
+                        {% if telegram_updates.has_next %}
+                            <li class="page-item">
+                                <a class="page-link" href="?updates_page={{ telegram_updates.next_page_number }}{% if telegram_updates_query %}&{{ telegram_updates_query }}{% endif %}">{% trans "Keyingi" %}</a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="?updates_page={{ telegram_updates.paginator.num_pages }}{% if telegram_updates_query %}&{{ telegram_updates_query }}{% endif %}">{% trans "Oxirgi" %}</a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <h4 class="card-title mb-1">{% trans "Jo'natish loglari" %}</h4>
+            <p class="card-subtitle mb-0">{% trans "Bot orqali yuborilgan yoki yuborilmagan xabarlar tarixi." %}</p>
+        </div>
+        <div class="card-body">
+            <form method="GET" action="{% url 'bot-control' %}" class="row g-2 align-items-end mb-4">
+                <div class="col-lg-5">
+                    <label for="q" class="form-label">{% trans "Qidirish" %}</label>
+                    <input type="text" id="q" name="q" class="form-control" value="{{ search_query }}" placeholder='{% trans "Chat, xabar yoki xato matni bo'yicha qidirish" %}'>
+                </div>
+                <div class="col-lg-3">
+                    <label for="status" class="form-label">{% trans "Status" %}</label>
+                    <select id="status" name="status" class="form-select">
+                        <option value="">{% trans "Barchasi" %}</option>
+                        {% for value, label in status_choices %}
+                            <option value="{{ value }}" {% if status_filter == value %}selected{% endif %}>{{ label }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-lg-2">
+                    <label for="event" class="form-label">{% trans "Turi" %}</label>
+                    <select id="event" name="event" class="form-select">
+                        <option value="">{% trans "Barchasi" %}</option>
+                        {% for value, label in event_choices %}
+                            <option value="{{ value }}" {% if event_filter == value %}selected{% endif %}>{{ label }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-lg-2"><button type="submit" class="btn btn-primary w-100">{% trans "Filterlash" %}</button></div>
+            </form>
+
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead><tr><th>{% trans "Vaqt" %}</th><th>{% trans "Turi" %}</th><th>{% trans "Status" %}</th><th>{% trans "Qabul qiluvchi" %}</th><th>{% trans "Xabar" %}</th><th>{% trans "Xato" %}</th></tr></thead>
+                    <tbody>
+                        {% for log in bot_logs %}
+                            <tr>
+                                <td class="text-nowrap">{{ log.created_at|date:"Y-m-d H:i" }}</td>
+                                <td>{{ log.get_event_type_display }}</td>
+                                <td>
+                                    {% if log.status == 'success' %}
+                                        <span class="badge bg-success-subtle text-success">{{ log.get_status_display }}</span>
+                                    {% elif log.status == 'error' %}
+                                        <span class="badge bg-danger-subtle text-danger">{{ log.get_status_display }}</span>
+                                    {% elif log.status == 'skipped' %}
+                                        <span class="badge bg-warning-subtle text-warning">{{ log.get_status_display }}</span>
+                                    {% else %}
+                                        <span class="badge bg-secondary-subtle text-secondary">{{ log.get_status_display }}</span>
+                                    {% endif %}
+                                </td>
+                                <td class="text-break">{{ log.target_chat_id|default:"-" }}</td>
+                                <td class="text-break">{{ log.message_preview|default:"-" }}</td>
+                                <td class="text-break">{{ log.error_text|default:"-" }}</td>
+                            </tr>
+                        {% empty %}
+                            <tr><td colspan="6" class="text-center text-muted py-4">{% trans "Hozircha bot loglari mavjud emas." %}</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            {% if bot_logs.has_previous or bot_logs.has_next %}
+                <nav class="mt-4">
+                    <ul class="pagination justify-content-center mb-0">
+                        {% if bot_logs.has_previous %}
+                            <li class="page-item"><a class="page-link" href="?page=1{% if page_query %}&{{ page_query }}{% endif %}">{% trans "Birinchi" %}</a></li>
+                            <li class="page-item"><a class="page-link" href="?page={{ bot_logs.previous_page_number }}{% if page_query %}&{{ page_query }}{% endif %}">{% trans "Oldingi" %}</a></li>
+                        {% endif %}
+                        <li class="page-item active"><span class="page-link">{{ bot_logs.number }} / {{ bot_logs.paginator.num_pages }}</span></li>
+                        {% if bot_logs.has_next %}
+                            <li class="page-item"><a class="page-link" href="?page={{ bot_logs.next_page_number }}{% if page_query %}&{{ page_query }}{% endif %}">{% trans "Keyingi" %}</a></li>
+                            <li class="page-item"><a class="page-link" href="?page={{ bot_logs.paginator.num_pages }}{% if page_query %}&{{ page_query }}{% endif %}">{% trans "Oxirgi" %}</a></li>
+                        {% endif %}
+                    </ul>
+                </nav>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+{% block vendor_js %}
+    {% load static %}
+    <script src="{% static 'js/admin-bot-control.js' %}"></script>
+{% endblock vendor_js %}

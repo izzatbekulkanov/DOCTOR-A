@@ -24,8 +24,9 @@ urlpatterns = [
     path("", include("apps.auth.urls")),
     # Medical URLs
     path("administrator/", include("apps.medical.urls")),
+    path("bot/", include("apps.bot.urls")),
     # Members (foydalanuvchilar)
-    path("members/", include("members.urls")),
+    path("members/", include("apps.members.urls")),
     # Logs
     path("logs/", include("apps.logs.urls")),
     # Til sozlamalari

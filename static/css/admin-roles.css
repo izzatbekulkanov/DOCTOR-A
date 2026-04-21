@@ -1,0 +1,30 @@
+.admin-roles .roles-card-heading {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+}
+
+.admin-roles .roles-icon {
+  width: 42px;
+  height: 42px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  border-radius: 0.5rem;
+  font-size: 1.35rem;
+}
+
+.admin-roles .list-group-item:first-child {
+  padding-top: 0;
+}
+
+.admin-roles .list-group-item:last-child {
+  padding-bottom: 0;
+}
+
+@media (max-width: 767.98px) {
+  .admin-roles .roles-card-heading {
+    align-items: flex-start;
+  }
+}

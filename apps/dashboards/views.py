@@ -1,355 +1,369 @@
 from collections import Counter
 from datetime import date
 from django.conf import settings
-from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.db.models import Count
 from django.http import JsonResponse
 from django.shortcuts import redirect
 from django.views.generic import TemplateView, DetailView
 from django.utils.html import strip_tags
-from django.utils.translation import gettext_lazy as _
-from django.utils.translation import gettext as _
 from django.db.models import Q
 from django.db import models
-from django.views.generic import ListView
 from django.utils.translation import get_language
-from apps.medical.models import Video, ClinicEquipment, SiteSettings, MedicalCheckupApplication
+import unicodedata
+from apps.medical.models import Video, ClinicEquipment, SiteSettings, MedicalCheckupApplication, ClinicService
 from apps.news.models import News, Comment, Announcement
-from members.models import CustomUser, Appointment
+from apps.members.models import CustomUser, Appointment
 
-
-class DashboardsView(TemplateView):
-    template_name = "views/main-dashboard.html"
-
-    def get_context_data(self, **kwargs):
-        """ Asosiy sahifa uchun barcha ma'lumotlarni olish """
-        context = super().get_context_data(**kwargs)
-        site_settings = SiteSettings.objects.first()  # Faqat birinchi sozlama
-        context['site_settings'] = site_settings
-        return context
-
-
-class NewsView(TemplateView):
-    template_name = "views/news-dashboard.html"
-
-    def get_context_data(self, **kwargs):
-        """ Asosiy sahifa uchun barcha ma'lumotlarni olish """
-        context = super().get_context_data(**kwargs)
-
-        # 📌 Oxirgi 4 ta yangilikni olish
-        latest_news = News.objects.filter(is_published=True).order_by('-published_date')[:4]
-
-        # 📌 Oylik yangiliklar sonini hisoblash
-        monthly_news_counts = (
-            News.objects.filter(is_published=True)
-            .values('published_date__month')
-            .annotate(count=Count('id'))
-            .order_by('-published_date__month')
-        )
-
-        # 📌 O'zbekcha oy nomlari
-        MONTH_NAMES = {
-            1: _("Yanvar"),
-            2: _("Fevral"),
-            3: _("Mart"),
-            4: _("Aprel"),
-            5: _("May"),
-            6: _("Iyun"),
-            7: _("Iyul"),
-            8: _("Avgust"),
-            9: _("Sentabr"),
-            10: _("Oktabr"),
-            11: _("Noyabr"),
-            12: _("Dekabr"),
-        }
-
-        # 📌 Oylik yangiliklar sonini o'zbekcha formatda chiqarish
-        monthly_news_data = [
-            {"month": MONTH_NAMES.get(entry['published_date__month'], "Noma'lum"),
-             "count": entry["count"],
-             "month_number": entry['published_date__month']}
-            for entry in monthly_news_counts
-        ]
-
-        context['latest_news'] = latest_news
-        context['monthly_news_data'] = monthly_news_data  # 📌 Oylik statistikani kontekstga qo'shish
-
-        return context
-
-
-class NewsDetailDashboard(DetailView):
-    model = News
-    template_name = "views/news-detail-dashboard.html"
-    context_object_name = "news"
-
-    def get_object(self, queryset=None):
-        """ Yangilikni olish va ko‘rishlar sonini oshirish """
-        obj = super().get_object(queryset)
-        obj.views_count = models.F('views_count') + 1  # Ko‘rishlar sonini oshirish
-        obj.save(update_fields=['views_count'])  # Faqat views_count ni saqlash
-        obj.refresh_from_db()  # Yangilangan qiymatni olish
-        return obj
-
-    def get_context_data(self, **kwargs):
-        """ Yangilik tafsilotlarini olish """
-        context = super().get_context_data(**kwargs)
-
-        # 📌 O'xshash yangiliklarni olish
-        related_news = News.objects.filter(
-            is_published=True
-        ).exclude(id=self.object.id).order_by('-published_date')[:4]
-
-        # 📌 Izohlarni olish
-        comments = self.object.comments.all().order_by('-created_at')
-
-        context["related_news"] = related_news  # 📌 O'xshash yangiliklar
-        context["comments"] = comments  # 📌 Yangilik izohlari
-        context["comments_count"] = comments.count()  # 📌 Izohlar soni
-        context["views_count"] = self.object.views_count  # 📌 Yangilik ko‘rilishlar soni
-
-        return context
-
-    def post(self, request, *args, **kwargs):
-        """ Foydalanuvchi yangi izoh qoldirsa, uni saqlash """
-        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':  # AJAX ekanligini tekshirish
-            try:
-                news = self.get_object()
-                full_name = request.POST.get("author")
-                phone_number = request.POST.get("phone_number")
-                comment_text = request.POST.get("comment")
-
-                if not (full_name and phone_number and comment_text):
-                    return JsonResponse({"success": False, "message": "Barcha maydonlarni to‘ldiring!"}, status=400)
-
-                # Yangi izohni saqlash
-                Comment.objects.create(news=news, full_name=full_name, phone_number=phone_number, text=comment_text)
-
-                return JsonResponse({"success": True, "message": "Izoh muvaffaqiyatli qo‘shildi!"})
-            except Exception as e:
-                return JsonResponse({"success": False, "message": f"Xatolik yuz berdi: {str(e)}"}, status=500)
-        else:
-            return JsonResponse({"success": False, "message": "Faqat AJAX so‘rov qabul qilinadi!"}, status=400)
-
-
-
-class AnnouncementView(TemplateView):
-    template_name = "views/announcement-dashboard.html"
-
-    def get_context_data(self, **kwargs):
-        """ E'lonlar ro'yxatini pagination va qidirish bilan olish """
-        context = super().get_context_data(**kwargs)
-
-        # Qidirish so'rovini olish
-        search_query = self.request.GET.get("q", "").strip()
-
-        # Faqat chop etilgan e'lonlarni olish
-        announcements = Announcement.objects.filter(is_published=True)
-
-        # Qidirishni qo'llash (JSONField ichidagi ma'lumotni qidirish)
-        if search_query:
-            announcements = announcements.filter(
-                Q(title__icontains=search_query) |
-                Q(content__icontains=search_query)
-            )
-
-        # Pagination
-        page_number = self.request.GET.get("page", 1)
-        paginator = Paginator(announcements, 10)  # Har bir sahifada 10 ta e'lon
-        page_obj = paginator.get_page(page_number)
-
-        context["announcements"] = page_obj  # Sahifalangan e'lonlar
-        context["search_query"] = search_query  # Qidiruv so'rovi
-
-        return context
-
-
-class AnnouncementDetailView(DetailView):
-    model = Announcement
-    template_name = "views/announcement-detail-dashboard.html"
-    context_object_name = "announcement"
-
-    def get_object(self, queryset=None):
-        """ E'lonni topish va ko'rishlar sonini oshirish """
-        obj = super().get_object(queryset)
-        obj.increment_views()  # Ko'rishlar sonini oshirish
-        return obj
-
-    def get_context_data(self, **kwargs):
-        """ Kontekstga qo'shimcha ma'lumotlar qo'shish """
-        context = super().get_context_data(**kwargs)
-        context["related_announcements"] = Announcement.objects.filter(
-            is_published=True
-        ).exclude(id=self.object.id).order_by('-published_date')[:4]  # O'xshash e'lonlar
-        return context
-
-
-class EmployeeView(TemplateView):
-    template_name = "views/employee-dashboard.html"
-
-    def get_context_data(self, **kwargs):
-        """ Xodimlar ro'yxati uchun qidirish va pagination qo'shish """
-        context = super().get_context_data(**kwargs)
-
-        # 🔍 Qidiruv so‘rovini olish
-        search_query = self.request.GET.get('q', '').strip()
-
-        # 📌 Faqat faol xodimlarni olish
-        employees = CustomUser.objects.filter(is_active_employee=True, is_superuser=False)
-
-        # ✅ Qidiruv: ism, telefon raqam yoki lavozim bo‘yicha
-        if search_query:
-            employees = employees.filter(
-                Q(full_name__icontains=search_query) |
-                Q(phone_number__icontains=search_query) |
-                Q(job_title__icontains=search_query)
-            )
-
-        # 📌 8 tadan sahifalash
-        paginator = Paginator(employees, 8)
-        page_number = self.request.GET.get('page')
-        employees_page = paginator.get_page(page_number)
-
-        # 📌 Kontekstga ma’lumotlarni qo‘shish
-        context["employees"] = employees_page
-        context["search_query"] = search_query
-        return context
-
-class EmployeeDetailView(DetailView):
-    model = CustomUser
-    template_name = "views/employee-detail-dashboard.html"
-    context_object_name = "employee"
-
-    def get_queryset(self):
-        # Faqat faol xodimlarni ko'rsatish
-        return CustomUser.objects.filter(is_active_employee=True)
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        # Xodimning faoliyat tarixini qo'shish
-        context['activity_history'] = self.object.activity_history.all()
-        # Sayt sozlamalari (masalan, telefon raqami uchun)
-
-        return context
-
-class VideosView(TemplateView):
-    template_name = "views/videos-dashboard.html"
-    redirect_field_name = 'redirect_to'
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-
-        search_query = self.request.GET.get('q', '').strip()
-
-        videos = Video.objects.filter(is_active=True)
-
-        if search_query:
-            videos = videos.filter(
-                Q(title__contains=search_query)
-            )
-
-        videos = videos.order_by('-created_at')
-
-        paginator = Paginator(videos, 6)
-        page_number = self.request.GET.get('page')
-        try:
-            videos_page = paginator.page(page_number)
-        except PageNotAnInteger:
-            videos_page = paginator.page(1)
-        except EmptyPage:
-            videos_page = paginator.page(paginator.num_pages)
-
-        context.update({
-            'videos': videos_page,
-            'search_query': search_query,
-        })
-        return context
-
-
-class ClinicEquipmentListView(ListView):
-    model = ClinicEquipment
-    template_name = 'views/equipment_list.html'
-    context_object_name = 'equipments'
-    paginate_by = 6
-
-    def get_queryset(self):
-        queryset = ClinicEquipment.objects.filter(is_active=True).order_by('-created_at')
-        query = self.request.GET.get('q')
-        if query:
-            queryset = queryset.filter(
-                Q(name__icontains=query) | Q(description__icontains=query)
-            )
-        return queryset
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['language_code'] = get_language()
-        return context
-
-    def get(self, request, *args, **kwargs):
-        self.object_list = self.get_queryset()
-        paginator = Paginator(self.object_list, self.paginate_by)
-        page = request.GET.get('page', 1)
-
-        try:
-            page_obj = paginator.page(page)
-        except PageNotAnInteger:
-            # If page is not an integer, deliver first page
-            page_obj = paginator.page(1)
-        except EmptyPage:
-            # If page is out of range, deliver last page of results
-            page_obj = paginator.page(paginator.num_pages)
-
-        context = self.get_context_data(page_obj=page_obj)
-        return self.render_to_response(context)
-class EquipmentDetailView(DetailView):
-    model = ClinicEquipment
-    template_name = 'views/equipment_detail.html'
-    context_object_name = 'equipment'
-
-    def get_queryset(self):
-        # Faqat faol qurilmalarni ko'rsatish
-        return ClinicEquipment.objects.filter(is_active=True)
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        language_code = get_language()
-        context['language_code'] = language_code
-
-
-        return context
 
 
 class LandingPageV1View(TemplateView):
-    """Yangi landing page - /v1/ URL da ishlaydi (medic template asosida)"""
+    """Yangi landing page - root URL da ishlaydi (medic template asosida)"""
     template_name = "v1/index.html"
+
+    PAGE_TRANSLATIONS = {
+        "hero_title": {
+            "uz": "Har bir davolash bosqichi uchun zamonaviy va ishonchli tibbiy xizmatlar",
+            "ru": "Современная и надежная медицинская помощь на каждом этапе лечения",
+            "en": "Comprehensive medical care for every stage of treatment",
+            "de": "Moderne und zuverlassige medizinische Versorgung fur jede Behandlungsphase",
+            "tr": "Tedavinin her asamasi icin modern ve guvenilir tibbi hizmetler",
+        },
+        "hero_intro": {
+            "uz": "Doctor A Med Clinic diagnostika, mutaxassis qabul, instrumental tekshiruv va tezkor yonaltirish xizmatlarini bir joyda taqdim etadi.",
+            "ru": "Doctor A Med Clinic объединяет диагностику, прием специалистов, инструментальные обследования и быстрые маршруты лечения в одном месте.",
+            "en": "Doctor A Med Clinic brings diagnostics, specialist consultations, instrumental examinations, and fast treatment routing together in one place.",
+            "de": "Doctor A Med Clinic vereint Diagnostik, Facharzttermine, instrumentelle Untersuchungen und schnelle Behandlungswege an einem Ort.",
+            "tr": "Doctor A Med Clinic tashxis, mutaxassis qabuli, instrumental tekshiruv va tezkor davolash yonaltirishini bir joyda birlashtiradi.",
+        },
+        "services_top_title": {
+            "uz": "Xizmatlarimiz",
+            "ru": "Наши услуги",
+            "en": "Our Services",
+            "de": "Unsere Leistungen",
+            "tr": "Hizmetlerimiz",
+        },
+        "services_heading_lead": {
+            "uz": "Bizning tibbiy",
+            "ru": "Наши медицинские",
+            "en": "Our Healthcare",
+            "de": "Unsere medizinischen",
+            "tr": "Saglik",
+        },
+        "services_heading_highlight": {
+            "uz": "xizmatlarimiz",
+            "ru": "услуги",
+            "en": "Services",
+            "de": "Leistungen",
+            "tr": "Hizmetlerimiz",
+        },
+        "services_intro": {
+            "uz": "Klinikamizda diagnostika, konsultatsiya va davolashning asosiy yonalishlari yagona tizim asosida tashkil qilingan.",
+            "ru": "Основные направления диагностики, консультации и лечения в нашей клинике организованы как единая система.",
+            "en": "The clinic organizes its core diagnostic, consultation, and treatment directions as one coordinated care system.",
+            "de": "Die zentralen Bereiche Diagnose, Beratung und Behandlung sind in unserer Klinik als einheitliches Versorgungssystem organisiert.",
+            "tr": "Klinigimizdagi tashxis, konsultatsiya va davolashning asosiy yonalishlari yagona tizim sifatida tashkil etilgan.",
+        },
+        "services_read_more": {
+            "uz": "Batafsil",
+            "ru": "Подробнее",
+            "en": "Read More",
+            "de": "Mehr erfahren",
+            "tr": "Detaylar",
+        },
+        "services_empty_title": {
+            "uz": "Xizmatlar hali qoshilmagan",
+            "ru": "Услуги пока не добавлены",
+            "en": "Services have not been added yet",
+            "de": "Es wurden noch keine Leistungen hinzugefugt",
+            "tr": "Hizmetler henuz eklenmedi",
+        },
+        "services_empty_description": {
+            "uz": "Bu bolim tez orada malumotlar bilan toldiriladi.",
+            "ru": "Этот раздел будет заполнен в ближайшее время.",
+            "en": "This section will be filled with content shortly.",
+            "de": "Dieser Bereich wird in Kurze mit Inhalten gefullt.",
+            "tr": "Bu bolum yakinda malumot bilan toldiriladi.",
+        },
+        "counter_staff": {
+            "uz": "Xodimlar",
+            "ru": "Сотрудники",
+            "en": "Staff",
+            "de": "Mitarbeiter",
+            "tr": "Xodimlar",
+        },
+        "counter_doctors": {
+            "uz": "Shifokorlar",
+            "ru": "Врачи",
+            "en": "Doctors",
+            "de": "Arzte",
+            "tr": "Doktorlar",
+        },
+        "counter_surgeons": {
+            "uz": "Jarrohlar",
+            "ru": "Хирурги",
+            "en": "Surgeons",
+            "de": "Chirurgen",
+            "tr": "Cerrahlar",
+        },
+        "counter_patients": {
+            "uz": "Bemorlar",
+            "ru": "Пациенты",
+            "en": "Patients",
+            "de": "Patienten",
+            "tr": "Hastalar",
+        },
+        "doctors_top_title": {
+            "uz": "Shifokorlar",
+            "ru": "Наши врачи",
+            "en": "Our Doctors",
+            "de": "Unsere Arzte",
+            "tr": "Doktorlarimiz",
+        },
+        "doctors_heading": {
+            "uz": "Tajribali mutaxassislar",
+            "ru": "Опытные специалисты",
+            "en": "Experienced Specialists",
+            "de": "Erfahrene Spezialisten",
+            "tr": "Deneyimli uzmanlar",
+        },
+        "doctors_intro": {
+            "uz": "Bemorlarga individual yondashuv, aniq tashxis va izchil kuzatuv olib boradigan mutaxassislar jamoasi.",
+            "ru": "Команда специалистов, которая обеспечивает индивидуальный подход, точную диагностику и последовательное сопровождение пациента.",
+            "en": "A team of specialists delivering individual care, accurate diagnostics, and consistent patient follow-up.",
+            "de": "Ein Team von Spezialisten mit individueller Betreuung, genauer Diagnostik und konsequenter Nachverfolgung.",
+            "tr": "Bemorlarga individual yondashuv, aniq tashxis va muntazam kuzatuv olib boradigan mutaxassislar jamoasi.",
+        },
+        "doctor_fallback_specialty": {
+            "uz": "Shifokor",
+            "ru": "Врач",
+            "en": "Doctor",
+            "de": "Arzt",
+            "tr": "Doktor",
+        },
+        "doctors_empty_title": {
+            "uz": "Hozircha shifokorlar malumotlari mavjud emas",
+            "ru": "Пока нет данных о врачах",
+            "en": "Doctor profiles are not available yet",
+            "de": "Arzteprofile sind noch nicht verfugbar",
+            "tr": "Henuz doktor malumotlari mavjud emas",
+        },
+        "doctors_empty_description": {
+            "uz": "Tez orada bu bolimda shifokorlar malumotlari joylashtiriladi.",
+            "ru": "В этом разделе скоро появится информация о врачах.",
+            "en": "Doctor information will appear in this section soon.",
+            "de": "In diesem Bereich werden bald Arztinformationen angezeigt.",
+            "tr": "Bu bolumda yaqinda doktorlar malumotlari joylashtiriladi.",
+        },
+        "doctors_view_all": {
+            "uz": "Barchasini ko'rish",
+            "ru": "Все врачи",
+            "en": "View All Doctors",
+            "de": "Alle Arzte",
+            "tr": "Tum doktorlar",
+        },
+        "news_top_title": {
+            "uz": "Yangiliklar",
+            "ru": "Новости",
+            "en": "News",
+            "de": "Nachrichten",
+            "tr": "Haberler",
+        },
+        "news_heading": {
+            "uz": "Songgi yangiliklar",
+            "ru": "Последние новости",
+            "en": "Latest News",
+            "de": "Aktuelle Nachrichten",
+            "tr": "Son haberler",
+        },
+        "news_intro": {
+            "uz": "Klinikamizdagi songgi yangiliklar, xizmatlar yangilanishi va muhim malumotlar shu bolimda joylashtiriladi.",
+            "ru": "Последние новости клиники, обновления услуг и важные объявления публикуются в этом разделе.",
+            "en": "The latest clinic news, service updates, and important announcements are published in this section.",
+            "de": "Neuigkeiten der Klinik, Leistungsupdates und wichtige Mitteilungen werden in diesem Bereich veroffentlicht.",
+            "tr": "Klinigimizdagi songgi yangiliklar, xizmat yangilanishlari va muhim malumotlar shu bolumda beriladi.",
+        },
+        "news_author_fallback": {
+            "uz": "Admin",
+            "ru": "Админ",
+            "en": "Admin",
+            "de": "Admin",
+            "tr": "Admin",
+        },
+        "news_read_more": {
+            "uz": "Batafsil",
+            "ru": "Подробнее",
+            "en": "Read More",
+            "de": "Mehr erfahren",
+            "tr": "Detaylar",
+        },
+        "news_empty_title": {
+            "uz": "Hozircha yangiliklar mavjud emas",
+            "ru": "Пока нет новостей",
+            "en": "There are no news items yet",
+            "de": "Es gibt noch keine Nachrichten",
+            "tr": "Henuz yangiliklar mavjud emas",
+        },
+        "news_empty_description": {
+            "uz": "Tez orada bu bolimda songgi yangiliklar joylashtiriladi.",
+            "ru": "В этом разделе скоро появятся последние новости.",
+            "en": "The latest updates will be added to this section soon.",
+            "de": "Die neuesten Meldungen werden bald in diesem Bereich erscheinen.",
+            "tr": "Bu bolumda yaqinda songgi yangiliklar joylashtiriladi.",
+        },
+        "subscribe_title": {
+            "uz": "Yangiliklarga obuna boling",
+            "ru": "Подпишитесь на обновления",
+            "en": "Subscribe for Updates",
+            "de": "Updates abonnieren",
+            "tr": "Guncellemelere abone olun",
+        },
+        "subscribe_intro": {
+            "uz": "Klinika yangiliklari va xizmatlar boyicha songgi malumotlarni muntazam oling.",
+            "ru": "Регулярно получайте последние новости клиники и обновления услуг.",
+            "en": "Receive the latest clinic news and service updates on a regular basis.",
+            "de": "Erhalten Sie regelmassig die neuesten Klinikmeldungen und Service-Updates.",
+            "tr": "Klinika yangiliklari va xizmatlar boyicha songgi malumotlarni muntazam oling.",
+        },
+        "subscribe_placeholder": {
+            "uz": "Email manzilingizni kiriting",
+            "ru": "Введите ваш email",
+            "en": "Enter your email",
+            "de": "E-Mail eingeben",
+            "tr": "E-posta adresinizi girin",
+        },
+        "subscribe_button": {
+            "uz": "Obuna bolish",
+            "ru": "Подписаться",
+            "en": "Subscribe",
+            "de": "Abonnieren",
+            "tr": "Abone ol",
+        },
+        "partners_top_title": {
+            "uz": "Hamkorlar",
+            "ru": "Партнеры",
+            "en": "Partners",
+            "de": "Partner",
+            "tr": "Partnerler",
+        },
+        "partners_heading": {
+            "uz": "Bizning ishonchli hamkorlarimiz",
+            "ru": "Наши надежные партнеры",
+            "en": "Our Trusted Partners",
+            "de": "Unsere zuverlassigen Partner",
+            "tr": "Guvenilir partnerlerimiz",
+        },
+        "partners_intro": {
+            "uz": "DOCTOR A MED CLINIC sifatli tibbiy xizmat korsatishda ishonchli tashkilotlar va brendlar bilan hamkorlik qiladi. Hozirda bizning ekotizimimizda {count} ta faol hamkor mavjud.",
+            "ru": "DOCTOR A MED CLINIC сотрудничает с надежными организациями и брендами для качественного оказания медицинских услуг. Сейчас в нашей экосистеме {count} активных партнеров.",
+            "en": "DOCTOR A MED CLINIC works with trusted organizations and brands to deliver quality medical care. Our ecosystem currently includes {count} active partners.",
+            "de": "DOCTOR A MED CLINIC arbeitet mit zuverlassigen Organisationen und Marken zusammen, um hochwertige medizinische Leistungen zu bieten. Unser Okosystem umfasst derzeit {count} aktive Partner.",
+            "tr": "DOCTOR A MED CLINIC sifatli tibbi xizmat korsatish uchun ishonchli tashkilot va brendlar bilan hamkorlik qiladi. Hozir ekotizimimizda {count} ta faol hamkor mavjud.",
+        },
+        "partners_cta": {
+            "uz": "Hamkorlik uchun aloqa",
+            "ru": "Связаться для партнерства",
+            "en": "Contact for Partnership",
+            "de": "Kontakt fur Partnerschaft",
+            "tr": "Hamkorlik uchun aloqa",
+        },
+        "partners_site_link": {
+            "uz": "Saytga otish",
+            "ru": "Перейти на сайт",
+            "en": "Visit Website",
+            "de": "Zur Website",
+            "tr": "Siteye git",
+        },
+        "partners_empty_title": {
+            "uz": "Hamkorlar qoshilmoqda",
+            "ru": "Партнеры добавляются",
+            "en": "Partners are being added",
+            "de": "Partner werden hinzugefugt",
+            "tr": "Partnerlar qoshilmoqda",
+        },
+        "partners_empty_description": {
+            "uz": "Bu bolimda yaqinda klinikaning rasmiy hamkorlari logotiplari va qisqa malumotlari joylashtiriladi.",
+            "ru": "В этом разделе скоро появятся логотипы и краткая информация об официальных партнерах клиники.",
+            "en": "Official partner logos and short profiles will be added to this section soon.",
+            "de": "Offizielle Partnerlogos und kurze Informationen werden bald in diesem Bereich erscheinen.",
+            "tr": "Bu bolumda yaqinda klinikaning rasmiy partnerlari logotiplari va qisqa malumotlari joylashtiriladi.",
+        },
+        "partner_bullets": {
+            "uz": [
+                "Uzoq muddatli va barqaror professional hamkorlik",
+                "Sifatli tibbiy xizmatlarni kengaytiruvchi sheriklik",
+                "Zamonaviy diagnostika va xizmat ekotizimi",
+                "Bemorlar uchun qulay va ishonchli yonaltirish",
+            ],
+            "ru": [
+                "Долгосрочное и стабильное профессиональное сотрудничество",
+                "Партнерство, расширяющее качественные медицинские услуги",
+                "Современная экосистема диагностики и сервиса",
+                "Удобное и надежное направление пациентов",
+            ],
+            "en": [
+                "Long-term and stable professional partnerships",
+                "Alliances that expand quality medical services",
+                "A modern diagnostics and service ecosystem",
+                "Convenient and reliable patient referral routes",
+            ],
+            "de": [
+                "Langfristige und stabile professionelle Partnerschaften",
+                "Kooperationen zur Erweiterung hochwertiger medizinischer Leistungen",
+                "Modernes Okosystem fur Diagnostik und Service",
+                "Bequeme und verlassliche Patientenweiterleitung",
+            ],
+            "tr": [
+                "Uzoq muddatli va barqaror professional hamkorlik",
+                "Sifatli tibbi xizmatlarni kengaytiruvchi sheriklik",
+                "Zamonaviy diagnostika va xizmat ekotizimi",
+                "Bemorlar uchun qulay va ishonchli yonaltirish",
+            ],
+        },
+    }
+
+    def translate_homepage_value(self, value, language_code):
+        if isinstance(value, dict):
+            return value.get(language_code) or value.get("uz") or value.get("en") or ""
+        return value
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        
-        # Site settings
+        current_lang = (get_language() or "uz").split("-")[0].lower()
+
         site_settings = SiteSettings.objects.first()
-        context['site_settings'] = site_settings
-        
-        # Faol shifokorlarni olish (faqat 3 ta)
+        context["site_settings"] = site_settings
+        context["current_lang"] = current_lang
+
         doctors = CustomUser.objects.filter(
             is_active_employee=True,
-            medical_specialty__isnull=False
+            medical_specialty__isnull=False,
         ).exclude(
-            profile_picture=''
+            profile_picture="",
         )[:3]
-        context['doctors'] = doctors
-        
-        # Hamkorlarni olish
+        context["doctors"] = doctors
+
         from apps.medical.models import Partner
         active_partners = Partner.objects.filter(is_active=True)
-        context['active_partners'] = active_partners
-        
-        # Oxirgi yangiliklarni olish (3 ta)
+        context["active_partners"] = active_partners
+
         from apps.news.models import News
-        latest_news = News.objects.filter(is_published=True).order_by('-published_date')[:3]
-        context['latest_news'] = latest_news
-        
+        latest_news = News.objects.filter(is_published=True).order_by("-published_date")[:3]
+        context["latest_news"] = latest_news
+        context["homepage_services"] = ClinicService.objects.filter(is_active=True).order_by("sort_order", "id")[:6]
+
+        home_page = {
+            key: self.translate_homepage_value(value, current_lang)
+            for key, value in self.PAGE_TRANSLATIONS.items()
+            if key != "partner_bullets"
+        }
+        home_page["partner_bullets"] = self.PAGE_TRANSLATIONS["partner_bullets"].get(
+            current_lang,
+            self.PAGE_TRANSLATIONS["partner_bullets"]["uz"],
+        )
+        home_page["partners_intro"] = home_page["partners_intro"].format(count=active_partners.count())
+        context["home_page"] = home_page
+
         return context
 
 
@@ -690,10 +704,10 @@ class AboutStyleTwoView(TemplateView):
         if not isinstance(value, dict):
             return value
         return (
-            value.get(language_code)
-            or value.get(language_code.split("-")[0])
-            or value.get("uz")
-            or next(iter(value.values()), "")
+                value.get(language_code)
+                or value.get(language_code.split("-")[0])
+                or value.get("uz")
+                or next(iter(value.values()), "")
         )
 
     def get_context_data(self, **kwargs):
@@ -730,38 +744,57 @@ class AboutStyleTwoView(TemplateView):
 
 class ServicesOverviewView(TemplateView):
     template_name = "v1/services-overview.html"
-    service_cards = [
-        {
-            "icon": "flaticon-medicine",
-            "title": "Medicine",
-            "summary": "Comprehensive internal medicine support for routine care, diagnostics, and long-term health management.",
+    PAGE_TRANSLATIONS = {
+        "page_title": {
+            "uz": "Xizmatlar",
+            "ru": "Услуги",
+            "en": "Services",
+            "de": "Leistungen",
+            "tr": "Hizmetler",
         },
-        {
-            "icon": "flaticon-neurology",
-            "title": "Neurology",
-            "summary": "Specialized neurological assessment for headaches, neuropathy, stroke follow-up, and brain health concerns.",
+        "section_top_title": {
+            "uz": "Bizning xizmatlar",
+            "ru": "Наши услуги",
+            "en": "Our Services",
+            "de": "Unsere Leistungen",
+            "tr": "Hizmetlerimiz",
         },
-        {
-            "icon": "flaticon-eye",
-            "title": "Eye Care",
-            "summary": "Preventive and diagnostic eye care with structured screening, examination, and referral pathways.",
+        "section_heading_lead": {
+            "uz": "Bizning tibbiy",
+            "ru": "Наши медицинские",
+            "en": "Our Healthcare",
+            "de": "Unsere medizinischen",
+            "tr": "Tibbi",
         },
-        {
-            "icon": "flaticon-heart",
-            "title": "Cardiology",
-            "summary": "Cardiac consultation, ECG-based evaluation, and monitoring support for ongoing cardiovascular care.",
+        "section_heading_highlight": {
+            "uz": "xizmatlarimiz",
+            "ru": "услуги",
+            "en": "Services",
+            "de": "Leistungen",
+            "tr": "hizmetlerimiz",
         },
-        {
-            "icon": "flaticon-dental-care",
-            "title": "Dental Care",
-            "summary": "Oral health services covering preventive dentistry, treatment planning, and follow-up visits.",
+        "section_intro": {
+            "uz": "Klinikamiz xizmatlari konsultatsiya, diagnostika, davolash rejalashtirish va keyingi nazorat bosqichlarini yagona oqimda birlashtiradi. Har bir yo'nalish bemorga aniq yo'l-yo'riq, o'z vaqtida mutaxassis ko'rigi va tiklanishgacha zarur tibbiy yordamni taqdim etish uchun tashkil etilgan.",
+            "ru": "Услуги нашей клиники объединяют консультацию, диагностику, планирование лечения и последующее наблюдение в едином процессе. Каждое направление организовано так, чтобы пациент получал понятный маршрут, своевременный доступ к специалисту и необходимую медицинскую поддержку до полного восстановления.",
+            "en": "Our healthcare services bring consultation, diagnostics, treatment planning, and follow-up into one coordinated care flow. Each department is designed to give patients clear direction, timely specialist access, and the clinical support needed from first visit to recovery.",
+            "de": "Unsere Leistungen verbinden Beratung, Diagnostik, Behandlungsplanung und Nachsorge in einem koordinierten Ablauf. Jede Fachrichtung ist so aufgebaut, dass Patienten klare Orientierung, schnellen Zugang zu Spezialisten und die notwendige medizinische Begleitung bis zur Genesung erhalten.",
+            "tr": "Klinik hizmetlerimiz muayene, tani, tedavi planlamasi ve takip surecini tek bir duzenli akista birlestirir. Her bolum hastaya acik yonlendirme, zamaninda uzman destegi ve iyilesmeye kadar gerekli tibbi yardimi sunacak sekilde yapilanmistir.",
         },
-        {
-            "icon": "flaticon-lungs",
-            "title": "Pulmonary",
-            "summary": "Respiratory assessment and pulmonary care for chronic breathing conditions and recovery support.",
+        "empty_title": {
+            "uz": "Xizmatlar hali qo'shilmagan",
+            "ru": "Услуги пока не добавлены",
+            "en": "Services have not been added yet",
+            "de": "Es wurden noch keine Leistungen hinzugefugt",
+            "tr": "Hizmetler henuz eklenmedi",
         },
-    ]
+        "empty_description": {
+            "uz": "Bu bo'limdagi ma'lumotlar tez orada yangilanadi.",
+            "ru": "Информация в этом разделе будет обновлена в ближайшее время.",
+            "en": "This section will be updated with service information soon.",
+            "de": "Dieser Bereich wird in Kurze mit Leistungsinformationen aktualisiert.",
+            "tr": "Bu bolum yakinda hizmet bilgileri ile guncellenecektir.",
+        },
+    }
     service_features = [
         {
             "icon": "flaticon-doctor",
@@ -799,10 +832,27 @@ class ServicesOverviewView(TemplateView):
         "Ongoing observation for recovery, prevention, and long-term care",
     ]
 
+    @staticmethod
+    def _translate(value, language_code):
+        if not isinstance(value, dict):
+            return value
+        return (
+            value.get(language_code)
+            or value.get(language_code.split("-")[0])
+            or value.get("uz")
+            or next(iter(value.values()), "")
+        )
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        current_lang = (get_language() or "uz").split("-")[0].lower()
         context.update({
-            "service_cards": self.service_cards,
+            "current_lang": current_lang,
+            "service_cards": ClinicService.objects.filter(is_active=True).order_by("sort_order", "id"),
+            "services_page": {
+                key: self._translate(value, current_lang)
+                for key, value in self.PAGE_TRANSLATIONS.items()
+            },
             "service_features": self.service_features,
             "service_points": self.service_points,
         })
@@ -825,7 +875,7 @@ class VideosLandingView(TemplateView):
             videos = [
                 video for video in videos
                 if search_term in video.get_title(language_code).lower()
-                or search_term in video.embed_url.lower()
+                   or search_term in video.embed_url.lower()
             ]
 
         paginator = Paginator(videos, self.paginate_by)
@@ -1331,6 +1381,7 @@ class AnnouncementLandingMixin(NewsLandingMixin):
         },
     }
 
+
 class AnnouncementRightSidebarView(AnnouncementLandingMixin, TemplateView):
     template_name = "v1/announcements-right-sidebar.html"
     paginate_by = 6
@@ -1368,7 +1419,8 @@ class AnnouncementRightSidebarView(AnnouncementLandingMixin, TemplateView):
         content = announcement.content.get(language_code) or announcement.content.get("uz") or ""
         author_name = "Admin"
         if announcement.author:
-            author_name = getattr(announcement.author, "full_name", "") or getattr(announcement.author, "username", "Admin")
+            author_name = getattr(announcement.author, "full_name", "") or getattr(announcement.author, "username",
+                                                                                   "Admin")
 
         return {
             "id": announcement.id,
@@ -1411,8 +1463,8 @@ class AnnouncementRightSidebarView(AnnouncementLandingMixin, TemplateView):
             filtered_announcements = [
                 item for item in filtered_announcements
                 if search_term in item["title"].lower()
-                or search_term in item["summary"].lower()
-                or search_term in item["author_name"].lower()
+                   or search_term in item["summary"].lower()
+                   or search_term in item["author_name"].lower()
             ]
 
         if month_query:
@@ -1477,12 +1529,12 @@ class AnnouncementLandingDetailView(AnnouncementLandingMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         language_code = self.get_language_code()
-        
+
         # Build sidebar data using same logic as list view
         sidebar_view = AnnouncementRightSidebarView()
         sidebar_view.request = self.request
         all_announcements = sidebar_view._build_announcement_items(language_code)
-        
+
         archive_counter = Counter(item["published_date"].strftime("%B %Y") for item in all_announcements)
         archives = []
         seen_archives = set()
@@ -1506,10 +1558,12 @@ class AnnouncementLandingDetailView(AnnouncementLandingMixin, DetailView):
             "announcement_tags": self.get_topic_tags(language_code),
             "language_code": language_code,
             # Pass a serialized version of self for easy templating
-            "serialized_announcement": sidebar_view._serialize_announcement(self.object, self.object.id or 0, language_code),
+            "serialized_announcement": sidebar_view._serialize_announcement(self.object, self.object.id or 0,
+                                                                            language_code),
             "announcement_content": self.object.content.get(language_code) or self.object.content.get("uz") or ""
         })
         return context
+
 
 class DoctorGridView(TemplateView):
     template_name = "v1/doctor-grid.html"
@@ -1569,7 +1623,7 @@ class DoctorGridView(TemplateView):
         }
 
         context['t'] = {k: v.get(language_code, v['en']) for k, v in translations.items()}
-        
+
         # Prepare doctors data with image logic
         default_doctor_img = settings.STATIC_URL + "medic/img/doctors/user.jpeg"
         doctors_data = []
@@ -1580,6 +1634,9 @@ class DoctorGridView(TemplateView):
                 "full_name": doctor.full_name,
                 "medical_specialty": doctor.medical_specialty,
                 "image_url": image_url,
+                "telegram_username": (doctor.telegram_username or "").lstrip("@"),
+                "instagram_username": (doctor.instagram_username or "").lstrip("@"),
+                "phone_number": doctor.phone_number or "",
             })
 
         context['page_obj'] = page_obj
@@ -1631,8 +1688,10 @@ class DoctorLandingDetailView(DetailView):
             "activity_history": {"uz": "Faoliyat tarixi", "en": "Activity History", "ru": "История деятельности"},
             "overview": {"uz": "Hodim haqida", "en": "About the Specialist", "ru": "О сотруднике"},
             "social_profiles": {"uz": "Ijtimoiy tarmoqlar", "en": "Social Profiles", "ru": "Социальные сети"},
-            "no_bio": {"uz": "Biografiya mavjud emas", "en": "Biography is not available", "ru": "Биография недоступна"},
-            "no_activity": {"uz": "Faoliyat tarixi mavjud emas", "en": "No activity history available", "ru": "История деятельности отсутствует"},
+            "no_bio": {"uz": "Biografiya mavjud emas", "en": "Biography is not available",
+                       "ru": "Биография недоступна"},
+            "no_activity": {"uz": "Faoliyat tarixi mavjud emas", "en": "No activity history available",
+                            "ru": "История деятельности отсутствует"},
             "not_set": {"uz": "Belgilanmagan", "en": "Not specified", "ru": "Не указано"},
             "not_available": {"uz": "Mavjud emas", "en": "Unavailable", "ru": "Недоступно"},
             "none_value": {"uz": "Yo'q", "en": "None", "ru": "Нет"},
@@ -1667,6 +1726,342 @@ class DoctorLandingDetailView(DetailView):
         return context
 
 
+EQUIPMENT_CATEGORY_RULES = [
+    {
+        "key": "imaging",
+        "label": {
+            "uz": "Tasvirlash",
+            "en": "Imaging",
+            "ru": "Визуализация",
+            "de": "Bildgebung",
+            "tr": "Goruntuleme",
+        },
+        "capability": {
+            "uz": "Tomografiya va yuqori aniqlikdagi tasvirlash",
+            "en": "Tomography and high-resolution imaging",
+            "ru": "Томография и визуализация высокого разрешения",
+            "de": "Tomographie und hochauflosende Bildgebung",
+            "tr": "Tomografi ve yuksek cozunurluklu goruntuleme",
+        },
+        "highlight": {
+            "uz": "%(name)s bilan kengaytirilgan tasvirlash",
+            "en": "Advanced imaging with %(name)s",
+            "ru": "Расширенная визуализация с %(name)s",
+            "de": "Erweiterte Bildgebung mit %(name)s",
+            "tr": "%(name)s ile gelismis goruntuleme",
+        },
+        "keywords": [
+            "mri", "mrt", "ct", "kt", "mskt", "tomograf", "tomography", "scan",
+            "рентген", "rentgen", "x-ray", "xray", "radiology", "radiograf",
+            "магнит", "мрт", "мскт", "рентген", "рентгенография",
+        ],
+    },
+    {
+        "key": "diagnostics",
+        "label": {
+            "uz": "Diagnostika",
+            "en": "Diagnostics",
+            "ru": "Диагностика",
+            "de": "Diagnostik",
+            "tr": "Diagnostik",
+        },
+        "capability": {
+            "uz": "Skrining va funktsional diagnostika",
+            "en": "Screening and functional diagnostics",
+            "ru": "Скрининг и функциональная диагностика",
+            "de": "Screening und funktionelle Diagnostik",
+            "tr": "Tarama ve fonksiyonel diagnostik",
+        },
+        "highlight": {
+            "uz": "%(name)s bilan diagnostik tekshiruv",
+            "en": "Diagnostic assessment with %(name)s",
+            "ru": "Диагностическое исследование с %(name)s",
+            "de": "Diagnostische Untersuchung mit %(name)s",
+            "tr": "%(name)s ile diagnostik inceleme",
+        },
+        "keywords": [
+            "uzi", "ultrasound", "ultrason", "doppler", "ekg", "ecg", "eeg", "holter",
+            "эндоскоп", "endoscop", "эндоскопия", "ультразвук", "ультразву", "diagnostic",
+            "diagnost", "screen", "skrining", "скрининг",
+        ],
+    },
+    {
+        "key": "monitoring",
+        "label": {
+            "uz": "Monitoring",
+            "en": "Monitoring",
+            "ru": "Мониторинг",
+            "de": "Monitoring",
+            "tr": "Izleme",
+        },
+        "capability": {
+            "uz": "Real vaqt bemor monitoringi",
+            "en": "Real-time patient monitoring",
+            "ru": "Мониторинг пациента в реальном времени",
+            "de": "Patientenmonitoring in Echtzeit",
+            "tr": "Gercek zamanli hasta izleme",
+        },
+        "highlight": {
+            "uz": "%(name)s bilan uzluksiz kuzatuv",
+            "en": "Continuous observation with %(name)s",
+            "ru": "Непрерывное наблюдение с %(name)s",
+            "de": "Kontinuierliche Uberwachung mit %(name)s",
+            "tr": "%(name)s ile kesintisiz izleme",
+        },
+        "keywords": [
+            "monitor", "monitoring", "telemetry", "saturation", "pulse ox",
+            "пациент монитор", "мониторинг", "bedside", "icu monitor",
+        ],
+    },
+    {
+        "key": "critical_care",
+        "label": {
+            "uz": "Reanimatsiya",
+            "en": "Critical Care",
+            "ru": "Реанимация",
+            "de": "Intensivpflege",
+            "tr": "Yogun Bakim",
+        },
+        "capability": {
+            "uz": "Reanimatsiya va hayotni qo'llab-quvvatlash",
+            "en": "Critical care and life-support systems",
+            "ru": "Реанимация и системы жизнеобеспечения",
+            "de": "Intensivpflege und lebenserhaltende Systeme",
+            "tr": "Yogun bakim ve yasam destegi sistemleri",
+        },
+        "highlight": {
+            "uz": "%(name)s bilan intensiv yordam",
+            "en": "Intensive care support with %(name)s",
+            "ru": "Интенсивная поддержка с %(name)s",
+            "de": "Intensivunterstutzung mit %(name)s",
+            "tr": "%(name)s ile yogun bakim destegi",
+        },
+        "keywords": [
+            "ventilator", "defibrillator", "defib", "infusion pump", "syringe pump",
+            "resusc", "reanima", "icu", "respirator", "кислород", "дефибрил",
+            "вентилятор", "реанима", "инфуз", "кардиореспиратор",
+        ],
+    },
+    {
+        "key": "laboratory",
+        "label": {
+            "uz": "Laboratoriya",
+            "en": "Laboratory",
+            "ru": "Лаборатория",
+            "de": "Labor",
+            "tr": "Laboratuvar",
+        },
+        "capability": {
+            "uz": "Laborator tahlil va tezkor skrining",
+            "en": "Laboratory analysis and rapid screening",
+            "ru": "Лабораторный анализ и быстрый скрининг",
+            "de": "Laboranalyse und schnelles Screening",
+            "tr": "Laboratuvar analizi ve hizli tarama",
+        },
+        "highlight": {
+            "uz": "%(name)s bilan laborator tahlil",
+            "en": "Laboratory analysis with %(name)s",
+            "ru": "Лабораторный анализ с %(name)s",
+            "de": "Laboranalyse mit %(name)s",
+            "tr": "%(name)s ile laboratuvar analizi",
+        },
+        "keywords": [
+            "analyzer", "analiz", "analysis", "pcr", "lab", "laborator",
+            "centrifuge", "microscope", "реагент", "лаборат", "анализатор",
+            "микроскоп", "центрифуг",
+        ],
+    },
+    {
+        "key": "surgery",
+        "label": {
+            "uz": "Jarrohlik",
+            "en": "Surgery",
+            "ru": "Хирургия",
+            "de": "Chirurgie",
+            "tr": "Cerrahi",
+        },
+        "capability": {
+            "uz": "Operatsion va anesteziya yordamchi tizimlari",
+            "en": "Operating room and anesthesia support systems",
+            "ru": "Операционные и анестезиологические системы поддержки",
+            "de": "OP- und Anasthesie-Unterstutzungssysteme",
+            "tr": "Ameliyathane ve anestezi destek sistemleri",
+        },
+        "highlight": {
+            "uz": "%(name)s bilan operatsion yordam",
+            "en": "Surgical support with %(name)s",
+            "ru": "Хирургическая поддержка с %(name)s",
+            "de": "Chirurgische Unterstutzung mit %(name)s",
+            "tr": "%(name)s ile cerrahi destek",
+        },
+        "keywords": [
+            "anesthesia", "anaesthesia", "operating", "surgical", "surgery",
+            "laparoscope", "эндоскоп", "операцион", "анестез", "хирург",
+            "jarroh", "anestezi", "operats", "laparoskop",
+        ],
+    },
+    {
+        "key": "therapy",
+        "label": {
+            "uz": "Davolash",
+            "en": "Therapy",
+            "ru": "Терапия",
+            "de": "Therapie",
+            "tr": "Tedavi",
+        },
+        "capability": {
+            "uz": "Davolash va reabilitatsiya uskunalari",
+            "en": "Therapy and rehabilitation equipment",
+            "ru": "Оборудование для терапии и реабилитации",
+            "de": "Therapie- und Rehabilitationsgerate",
+            "tr": "Tedavi ve rehabilitasyon ekipmanlari",
+        },
+        "highlight": {
+            "uz": "%(name)s bilan davolash jarayoni",
+            "en": "Treatment workflow with %(name)s",
+            "ru": "Лечебный процесс с %(name)s",
+            "de": "Behandlungsablauf mit %(name)s",
+            "tr": "%(name)s ile tedavi sureci",
+        },
+        "keywords": [
+            "laser", "therapy", "rehab", "rehabil", "dialysis", "physio",
+            "физио", "реабил", "лазер", "диализ", "davolash", "reabilitats",
+        ],
+    },
+    {
+        "key": "general",
+        "label": {
+            "uz": "Ko'p maqsadli",
+            "en": "Multidisciplinary",
+            "ru": "Универсальное",
+            "de": "Universell",
+            "tr": "Cok Amacli",
+        },
+        "capability": {
+            "uz": "Ko'p maqsadli klinik uskunalar",
+            "en": "Multidisciplinary clinical equipment",
+            "ru": "Универсальное клиническое оборудование",
+            "de": "Universelle klinische Gerate",
+            "tr": "Cok amacli klinik ekipmanlar",
+        },
+        "highlight": {
+            "uz": "%(name)s bilan klinik qo'llanma",
+            "en": "Clinical workflow with %(name)s",
+            "ru": "Клинический рабочий процесс с %(name)s",
+            "de": "Klinischer Ablauf mit %(name)s",
+            "tr": "%(name)s ile klinik is akisi",
+        },
+        "keywords": [],
+    },
+]
+EQUIPMENT_CATEGORY_MAP = {rule["key"]: rule for rule in EQUIPMENT_CATEGORY_RULES}
+
+
+def _translate_equipment_copy(value, language_code):
+    if not isinstance(value, dict):
+        return value
+    normalized_language = (language_code or "en").split("-")[0].lower()
+    return (
+        value.get(normalized_language)
+        or value.get("uz")
+        or value.get("en")
+        or next(iter(value.values()), "")
+    )
+
+
+def _normalize_equipment_text(value):
+    text = strip_tags(value or "")
+    normalized = unicodedata.normalize("NFKD", text)
+    normalized = "".join(ch for ch in normalized.lower() if not unicodedata.combining(ch))
+    return " ".join(normalized.split())
+
+
+def _detect_equipment_category_key(name, description):
+    haystack = _normalize_equipment_text(f"{name} {description}")
+    priority_keys = (
+        "critical_care",
+        "imaging",
+        "diagnostics",
+        "monitoring",
+        "laboratory",
+        "surgery",
+        "therapy",
+    )
+    for category_key in priority_keys:
+        rule = EQUIPMENT_CATEGORY_MAP[category_key]
+        if any(keyword in haystack for keyword in rule["keywords"]):
+            return category_key
+    return "general"
+
+
+def _format_equipment_count_label(label, count, language_code):
+    normalized_language = (language_code or "en").split("-")[0].lower()
+    if normalized_language == "uz":
+        return f"{label} ({count} ta uskuna)"
+    if normalized_language == "ru":
+        return f"{label} ({count} ед.)"
+    if normalized_language == "de":
+        return f"{label} ({count} Gerate)"
+    if normalized_language == "tr":
+        return f"{label} ({count} ekipman)"
+    return f"{label} ({count} devices)"
+
+
+def _format_equipment_total_label(total, language_code):
+    variants = {
+        "uz": "Faol katalogda %(count)s ta uskuna mavjud",
+        "en": "%(count)s active devices are available in the catalog",
+        "ru": "В каталоге доступно %(count)s единиц активного оборудования",
+        "de": "Im Katalog sind %(count)s aktive Gerate verfugbar",
+        "tr": "Katalogda %(count)s aktif ekipman bulunuyor",
+    }
+    template = _translate_equipment_copy(variants, language_code)
+    return template % {"count": total}
+
+
+def _build_equipment_highlight(item, language_code):
+    if item["category_key"] == "general" or not item["name"]:
+        return ""
+
+    rule = EQUIPMENT_CATEGORY_MAP[item["category_key"]]
+    name_matches_category = any(
+        keyword in _normalize_equipment_text(item["name"])
+        for keyword in rule["keywords"]
+    )
+    if not name_matches_category:
+        return ""
+    return _translate_equipment_copy(rule["highlight"], language_code) % {"name": item["name"]}
+
+
+def _build_equipment_capabilities(catalog, language_code):
+    if not catalog:
+        return []
+
+    category_counts = Counter(item["category_key"] for item in catalog)
+    capabilities = []
+
+    for category_key, count in category_counts.most_common():
+        if category_key == "general" and len(category_counts) > 1:
+            continue
+        capability_label = _translate_equipment_copy(
+            EQUIPMENT_CATEGORY_MAP[category_key]["capability"],
+            language_code,
+        )
+        capabilities.append(_format_equipment_count_label(capability_label, count, language_code))
+
+    for item in catalog:
+        if len(capabilities) >= 8:
+            break
+        highlight = _build_equipment_highlight(item, language_code)
+        if highlight and highlight not in capabilities:
+            capabilities.append(highlight)
+
+    if not capabilities:
+        capabilities.append(_format_equipment_total_label(len(catalog), language_code))
+
+    return capabilities[:8]
+
+
 class EquipmentLandingDetailView(DetailView):
     model = ClinicEquipment
     template_name = "v1/equipment-details.html"
@@ -1678,26 +2073,34 @@ class EquipmentLandingDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         language_code = get_language().split('-')[0]
-        
+        name = self.object.name.get(language_code, self.object.name.get('uz', ''))
+        description = self.object.description.get(language_code, self.object.description.get('uz', ''))
+        category_key = _detect_equipment_category_key(name, description)
+
         # Static translations
         translations = {
             "home": {"uz": "Bosh sahifa", "en": "Home", "ru": "Главная"},
             "equipment": {"uz": "Uskunalar", "en": "Equipment", "ru": "Оборудование"},
             "details": {"uz": "Batafsil ma'lumot", "en": "Details", "ru": "Подробности"},
             "description": {"uz": "Tavsif", "en": "Description", "ru": "Описание"},
-            "specs": {"uz": "Texnik xususiyatlari", "en": "Technical Specifications", "ru": "Технические характеристики"},
+            "specs": {"uz": "Texnik xususiyatlari", "en": "Technical Specifications",
+                      "ru": "Технические характеристики"},
         }
-        
+
         context['t'] = {k: v.get(language_code, v['en']) for k, v in translations.items()}
-        
+
         # Image logic
         default_equipment_img = settings.STATIC_URL + "medic/img/equipment/equipment.jpeg"
         context['equipment_image'] = self.object.image.url if self.object.image else default_equipment_img
-        
+
         # Multi-language content
-        context['name'] = self.object.name.get(language_code, self.object.name.get('uz', ''))
-        context['description'] = self.object.description.get(language_code, self.object.description.get('uz', ''))
-        
+        context['name'] = name
+        context['description'] = description
+        context['equipment_category'] = _translate_equipment_copy(
+            EQUIPMENT_CATEGORY_MAP[category_key]["label"],
+            language_code,
+        )
+
         return context
 
 
@@ -1717,7 +2120,7 @@ class ContactStyleTwoView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         language_code = get_language().split('-')[0]
-        
+
         # Static translations
         translations = {
             "page_title": {"uz": "Bog'lanish", "en": "Contact", "ru": "Контакт"},
@@ -1747,7 +2150,8 @@ class ContactStyleTwoView(TemplateView):
             "employee_label": {"uz": "Shifokorni tanlang", "en": "Choose a Doctor", "ru": "Выберите врача"},
             "employee_placeholder": {"uz": "Shifokorni tanlang", "en": "Select a doctor", "ru": "Выберите врача"},
             "contact_form_title": {"uz": "Tezkor murojaat", "en": "Quick Request", "ru": "Быстрое обращение"},
-            "forms_heading": {"uz": "So'rov va qabul formasi", "en": "Request and Appointment Forms", "ru": "Формы обращения и записи"},
+            "forms_heading": {"uz": "So'rov va qabul formasi", "en": "Request and Appointment Forms",
+                              "ru": "Формы обращения и записи"},
             "forms_desc": {
                 "uz": "Pastdagi katta kartada tezkor murojaat yuborish yoki aniq shifokor qabuliga yozilish mumkin.",
                 "en": "Use the large card below either to send a quick request or to book an appointment with a specific doctor.",
@@ -1779,7 +2183,7 @@ class ContactStyleTwoView(TemplateView):
                 "ru": "Произошла ошибка при отправке заявки на прием. Проверьте поля и попробуйте снова.",
             }
         }
-        
+
         context['t'] = {k: v.get(language_code, v['en']) for k, v in translations.items()}
         context['site_settings'] = SiteSettings.objects.first()
         context['employees'] = CustomUser.objects.filter(
@@ -1838,7 +2242,8 @@ class EquipmentLeftSidebarView(TemplateView):
         context = super().get_context_data(**kwargs)
         language_code = get_language().split('-')[0]
         search_query = self.request.GET.get("q", "").strip()
-        
+        normalized_search_query = _normalize_equipment_text(search_query)
+
         # Static translations
         translations = {
             "page_title": {
@@ -1897,45 +2302,41 @@ class EquipmentLeftSidebarView(TemplateView):
                 "ru": "Попробуйте другое название или категорию.",
             }
         }
-        
+
         context['t'] = {k: v.get(language_code, v['en']) for k, v in translations.items()}
 
         # Database dan qurilmalarni olish
         db_equipments = ClinicEquipment.objects.filter(is_active=True).order_by('-created_at')
-        
+
         default_equipment_img = settings.STATIC_URL + "medic/img/equipment/equipment.jpeg"
-        
+
         # Translate and prepare data
         catalog = []
         for eq in db_equipments:
             name = eq.name.get(language_code, eq.name.get('uz', ''))
             summary = eq.description.get(language_code, eq.description.get('uz', ''))
             image_url = eq.image.url if eq.image else default_equipment_img
-            
-            # Simple category detection
-            category = "General"
-            if "Imaging" in summary or "MRI" in name or "CT" in name: category = "Imaging"
-            elif "Diagnostic" in summary or "Ultrasound" in name: category = "Diagnostics"
-            elif "Radiology" in summary or "X-Ray" in name: category = "Radiology"
-            elif "Critical Care" in summary or "Ventilator" in name: category = "Critical Care"
-            elif "Monitoring" in summary or "Monitor" in name: category = "Monitoring"
+            category_key = _detect_equipment_category_key(name, summary)
+            category_label = _translate_equipment_copy(
+                EQUIPMENT_CATEGORY_MAP[category_key]["label"],
+                language_code,
+            )
 
             catalog.append({
                 "id": eq.id,
                 "name": name,
-                "category": category,
+                "category_key": category_key,
+                "category": category_label,
                 "published_date": eq.created_at,
                 "summary": summary,
                 "image_url": image_url,
+                "search_index": _normalize_equipment_text(f"{name} {category_label} {summary}"),
             })
 
-        if search_query:
-            search_term = search_query.lower()
+        if normalized_search_query:
             filtered_catalog = [
                 item for item in catalog
-                if search_term in item["name"].lower()
-                or search_term in item["category"].lower()
-                or search_term in item["summary"].lower()
+                if normalized_search_query in item["search_index"]
             ]
         else:
             filtered_catalog = catalog
@@ -1950,7 +2351,19 @@ class EquipmentLeftSidebarView(TemplateView):
         except EmptyPage:
             page_obj = paginator.page(paginator.num_pages)
 
-        category_counts = Counter(item["category"] for item in catalog)
+        sidebar_source = filtered_catalog if normalized_search_query else catalog
+        category_counts = Counter(item["category_key"] for item in sidebar_source)
+        equipment_categories = []
+        for category_key, count in category_counts.most_common():
+            if category_key == "general" and len(category_counts) > 1:
+                continue
+            equipment_categories.append({
+                "name": _translate_equipment_copy(
+                    EQUIPMENT_CATEGORY_MAP[category_key]["label"],
+                    language_code,
+                ),
+                "count": count,
+            })
 
         # Capabilities translations
         capabilities_list = {
@@ -1960,12 +2373,14 @@ class EquipmentLeftSidebarView(TemplateView):
                 "Emergency cardiac response", "Operating room anesthesia support",
             ],
             "uz": [
-                "Yuqori aniqlikdagi vizualizatsiya", "Real vaqtda yotoq yonida monitoring", "Reanimatsiya hayotni qo'llab-quvvatlash",
+                "Yuqori aniqlikdagi vizualizatsiya", "Real vaqtda yotoq yonida monitoring",
+                "Reanimatsiya hayotni qo'llab-quvvatlash",
                 "Favqulodda reanimatsiya", "Aniq dori yetkazib berish", "Tezkor diagnostik skrining",
                 "Favqulodda yurak javobi", "Operatsiya xonasida anesteziya yordami",
             ],
             "ru": [
-                "Визуализация высокого разрешения", "Прикроватный мониторинг в реальном времени", "Жизнеобеспечение в интенсивной терапии",
+                "Визуализация высокого разрешения", "Прикроватный мониторинг в реальном времени",
+                "Жизнеобеспечение в интенсивной терапии",
                 "Экстренная реанимация", "Точная доставка лекарств", "Быстрый диагностический скрининг",
                 "Экстренное реагирование сердца", "Анестезиологическая поддержка в операционной",
             ]
@@ -1975,10 +2390,7 @@ class EquipmentLeftSidebarView(TemplateView):
             "search_query": search_query,
             "page_obj": page_obj,
             "equipments": page_obj.object_list,
-            "equipment_categories": [
-                {"name": category, "count": count}
-                for category, count in category_counts.most_common()
-            ],
-            "capabilities": capabilities_list.get(language_code, capabilities_list["en"]),
+            "equipment_categories": equipment_categories,
+            "capabilities": _build_equipment_capabilities(sidebar_source, language_code),
         })
         return context

@@ -6,7 +6,8 @@ from django.utils.translation import gettext_lazy as _
 
 
 from .models import (
-    SiteSettings, MainPageBanner, DoctorAInfo, ContactPhone, Partner, MedicalCheckupApplication, ClinicEquipment, Video
+    SiteSettings, MainPageBanner, DoctorAInfo, ContactPhone, Partner, ClinicService, MedicalCheckupApplication,
+    ClinicEquipment, Video
 )
 
 
@@ -23,7 +24,7 @@ class SiteSettingsAdmin(admin.ModelAdmin):
             'fields': ('logo_dark', 'logo_light')
         }),
         ("Ijtimoiy Tarmoqlar", {
-            'fields': ('facebook_url', 'twitter_url', 'instagram_url', 'linkedin_url')
+            'fields': ('facebook_url', 'telegram_url', 'instagram_url', 'youtube_url')
         }),
         ("Tizim ma'lumotlari", {
             'fields': ('created_at', 'updated_at')
@@ -109,6 +110,46 @@ class PartnerAdmin(admin.ModelAdmin):
     preview_logo.short_description = "Logotip"
 
 
+
+
+@admin.register(ClinicService)
+class ClinicServiceAdmin(admin.ModelAdmin):
+    list_display = ("icon_preview", "title_uz", "sort_order", "is_active", "updated_at")
+    list_filter = ("is_active",)
+    search_fields = ("title__uz", "title__en", "summary__uz", "summary__en", "icon_class")
+    list_editable = ("sort_order", "is_active")
+    ordering = ("sort_order", "id")
+    readonly_fields = ("created_at", "updated_at")
+    formfield_overrides = {
+        models.JSONField: {'widget': JSONEditorWidget},
+    }
+    fieldsets = (
+        (_("Xizmat ma'lumotlari"), {
+            'fields': ('title', 'summary', 'icon_class', 'sort_order', 'is_active'),
+        }),
+        (_("Vaqt ma'lumotlari"), {
+            'fields': ('created_at', 'updated_at'),
+            'classes': ('collapse',),
+        }),
+    )
+
+    class Media:
+        css = {"all": ("medic/css/flaticon.css",)}
+
+    def title_uz(self, obj):
+        return obj.get_title("uz")
+
+    title_uz.short_description = _("Nomi (O'zbek)")
+
+    def icon_preview(self, obj):
+        return format_html(
+            '<span style="display:inline-flex;align-items:center;gap:8px;">'
+            '<i class="{}" style="font-size:20px;"></i><span>{}</span></span>',
+            obj.icon_class,
+            obj.icon_class,
+        )
+
+    icon_preview.short_description = _("Ikonka")
 
 
 @admin.register(MedicalCheckupApplication)

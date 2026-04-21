@@ -1,0 +1,227 @@
+{% extends 'administrator/main.html' %}
+{% load static i18n custom_filters %}
+
+{% block title %}
+    {% trans "Xizmatlar" %}
+{% endblock title %}
+
+{% block vendor_css %}
+    <link rel="stylesheet" href="{% static 'medic/css/flaticon.css' %}">
+{% endblock vendor_css %}
+
+{% block content %}
+    <div class="app-body">
+        {% if messages %}
+            <div class="mb-4">
+                {% for message in messages %}
+                    <div class="alert {% if message.tags == 'success' %}alert-success{% elif message.tags == 'error' %}alert-danger{% else %}alert-info{% endif %} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <div class="row g-3">
+            <div class="col-xl-3 col-sm-6">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center gap-3">
+                            <span class="icon-box md bg-primary-subtle rounded-5">
+                                <i class="ri-layout-grid-line fs-4 text-primary"></i>
+                            </span>
+                            <div>
+                                <h3 class="mb-0">{{ total_count }}</h3>
+                                <p class="mb-0 text-muted">{% trans "Jami xizmatlar" %}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-sm-6">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center gap-3">
+                            <span class="icon-box md bg-success-subtle rounded-5">
+                                <i class="ri-checkbox-circle-line fs-4 text-success"></i>
+                            </span>
+                            <div>
+                                <h3 class="mb-0">{{ active_count }}</h3>
+                                <p class="mb-0 text-muted">{% trans "Faol" %}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-sm-6">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center gap-3">
+                            <span class="icon-box md bg-danger-subtle rounded-5">
+                                <i class="ri-close-circle-line fs-4 text-danger"></i>
+                            </span>
+                            <div>
+                                <h3 class="mb-0">{{ inactive_count }}</h3>
+                                <p class="mb-0 text-muted">{% trans "Faol emas" %}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-sm-6">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center gap-3">
+                            <span class="icon-box md bg-info-subtle rounded-5">
+                                <i class="ri-filter-3-line fs-4 text-info"></i>
+                            </span>
+                            <div>
+                                <h3 class="mb-0">{{ filtered_count }}</h3>
+                                <p class="mb-0 text-muted">{% trans "Joriy natija" %}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card mt-4">
+            <div class="card-header">
+                <div class="d-flex align-items-center justify-content-between gap-3 flex-wrap">
+                    <div>
+                        <h4 class="card-title mb-1">{% trans "Xizmatlar ro'yxati" %}</h4>
+                        <p class="card-subtitle mb-0">{% trans "Landing sahifadagi xizmatlarni qidiring, statusini o'zgartiring va tahrirlang." %}</p>
+                    </div>
+                    <a href="{% url 'service-create' %}?next={{ current_path|urlencode }}" class="btn btn-primary">
+                        <i class="ri-add-line me-1"></i>
+                        {% trans "Xizmat qo'shish" %}
+                    </a>
+                </div>
+            </div>
+            <div class="card-body">
+                <form method="GET" action="{% url 'service-list' %}" class="row g-2 align-items-end mb-4">
+                    <div class="col-lg-7">
+                        <label for="q" class="form-label">{% trans "Qidirish" %}</label>
+                        <input
+                            type="text"
+                            name="q"
+                            id="q"
+                            value="{{ search_query }}"
+                            class="form-control"
+                            placeholder="ID, nom, tavsif yoki ikonka bo'yicha qidirish"
+                        >
+                    </div>
+                    <div class="col-lg-3">
+                        <label for="status" class="form-label">{% trans "Status" %}</label>
+                        <select name="status" id="status" class="form-select">
+                            <option value="" {% if not status_filter %}selected{% endif %}>{% trans "Barchasi" %}</option>
+                            <option value="active" {% if status_filter == 'active' %}selected{% endif %}>{% trans "Faol" %}</option>
+                            <option value="inactive" {% if status_filter == 'inactive' %}selected{% endif %}>{% trans "Faol emas" %}</option>
+                        </select>
+                    </div>
+                    <div class="col-lg-2">
+                        <button type="submit" class="btn btn-primary w-100">{% trans "Filterlash" %}</button>
+                    </div>
+                </form>
+
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>{% trans "Ikonka" %}</th>
+                                <th>{% trans "Xizmat" %}</th>
+                                <th>{% trans "Tartib" %}</th>
+                                <th>{% trans "Yangilangan" %}</th>
+                                <th>{% trans "Holat" %}</th>
+                                <th>{% trans "Amallar" %}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for service in services %}
+                                <tr>
+                                    <td>{{ service.id }}</td>
+                                    <td>
+                                        <span class="icon-box md bg-primary-subtle rounded-5">
+                                            <i class="{{ service.icon_class }} fs-4 text-primary"></i>
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <div class="fw-semibold">{{ service.title|get_language_text:'uz' }}</div>
+                                        <div class="text-muted small">{{ service.summary|get_language_text:'uz'|striptags|truncatechars:110 }}</div>
+                                        <div class="text-muted small mt-1">{{ service.icon_class }}</div>
+                                    </td>
+                                    <td>{{ service.sort_order }}</td>
+                                    <td class="text-nowrap">{{ service.updated_at|date:"Y-m-d H:i" }}</td>
+                                    <td style="min-width: 180px;">
+                                        <form method="POST" action="{% url 'service-list' %}" class="d-flex gap-2 align-items-center">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="action" value="update_status">
+                                            <input type="hidden" name="service_id" value="{{ service.id }}">
+                                            <input type="hidden" name="return_path" value="{{ current_path }}">
+                                            <select name="status" class="form-select form-select-sm">
+                                                <option value="active" {% if service.is_active %}selected{% endif %}>{% trans "Faol" %}</option>
+                                                <option value="inactive" {% if not service.is_active %}selected{% endif %}>{% trans "Faol emas" %}</option>
+                                            </select>
+                                            <button type="submit" class="btn btn-outline-primary btn-sm">
+                                                <i class="ri-save-3-line"></i>
+                                            </button>
+                                        </form>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex flex-wrap gap-2">
+                                            <a href="{% url 'service-edit' service.id %}?next={{ current_path|urlencode }}" class="btn btn-outline-primary btn-sm">
+                                                <i class="ri-pencil-line"></i>
+                                            </a>
+                                            <form method="POST" action="{% url 'service-list' %}">
+                                                {% csrf_token %}
+                                                <input type="hidden" name="action" value="delete">
+                                                <input type="hidden" name="service_id" value="{{ service.id }}">
+                                                <input type="hidden" name="return_path" value="{{ current_path }}">
+                                                <button type="submit" class="btn btn-outline-danger btn-sm">
+                                                    <i class="ri-delete-bin-line"></i>
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% empty %}
+                                <tr>
+                                    <td colspan="7" class="text-center text-muted py-4">{% trans "Hozircha xizmatlar mavjud emas." %}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                {% if services.has_previous or services.has_next %}
+                    <nav class="mt-4">
+                        <ul class="pagination justify-content-center mb-0">
+                            {% if services.has_previous %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page=1{% if page_query %}&{{ page_query }}{% endif %}">{% trans "Birinchi" %}</a>
+                                </li>
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ services.previous_page_number }}{% if page_query %}&{{ page_query }}{% endif %}">{% trans "Oldingi" %}</a>
+                                </li>
+                            {% endif %}
+
+                            <li class="page-item active">
+                                <span class="page-link">{{ services.number }} / {{ services.paginator.num_pages }}</span>
+                            </li>
+
+                            {% if services.has_next %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ services.next_page_number }}{% if page_query %}&{{ page_query }}{% endif %}">{% trans "Keyingi" %}</a>
+                                </li>
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ services.paginator.num_pages }}{% if page_query %}&{{ page_query }}{% endif %}">{% trans "Oxirgi" %}</a>
+                                </li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock content %}

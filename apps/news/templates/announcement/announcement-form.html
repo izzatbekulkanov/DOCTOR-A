@@ -1,0 +1,157 @@
+{% extends 'administrator/main.html' %}
+{% load static i18n custom_filters %}
+
+{% block title %}
+    {% trans page_title %}
+{% endblock title %}
+
+{% block vendor_css %}
+    <link rel="stylesheet" href="{% static 'vendor/quill/quill.core.css' %}">
+    <link rel="stylesheet" href="{% static 'css/admin-settings.css' %}">
+{% endblock vendor_css %}
+
+{% block content %}
+    <div class="app-body admin-settings">
+        {% if messages %}
+            <div class="mb-4">
+                {% for message in messages %}
+                    <div class="alert {% if message.tags == 'success' %}alert-success{% elif message.tags == 'error' %}alert-danger{% else %}alert-info{% endif %} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <div class="d-flex justify-content-between align-items-center gap-3 flex-wrap mb-4">
+            <div>
+                <h4 class="mb-1">{% trans page_title %}</h4>
+                <p class="text-muted mb-0">{% trans page_subtitle %}</p>
+            </div>
+            <a href="{% url 'announcemen-view' %}" class="btn btn-outline-secondary">
+                <i class="ri-arrow-left-line me-1"></i>
+                {% trans "Ro'yxatga qaytish" %}
+            </a>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-xl-8">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="card-title mb-1">{% trans "Asosiy ma'lumotlar" %}</h4>
+                        <p class="card-subtitle mb-0">{% trans "Har bir til uchun sarlavha va mazmunni kiriting." %}</p>
+                    </div>
+                    <div class="card-body">
+                        <form method="POST" action="{{ form_action_url }}" class="settings-form">
+                            {% csrf_token %}
+
+                            <ul class="nav nav-tabs mb-3" id="announcementTabs" role="tablist">
+                                {% for lang_code, lang_name in LANGUAGES %}
+                                    <li class="nav-item" role="presentation">
+                                        <button
+                                            class="nav-link {% if forloop.first %}active{% endif %}"
+                                            id="announcement-tab-{{ lang_code }}"
+                                            data-bs-toggle="tab"
+                                            data-bs-target="#announcement-pane-{{ lang_code }}"
+                                            type="button"
+                                            role="tab"
+                                            aria-controls="announcement-pane-{{ lang_code }}"
+                                            aria-selected="{% if forloop.first %}true{% else %}false{% endif %}"
+                                        >
+                                            {{ lang_name }}
+                                        </button>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+
+                            <div class="tab-content">
+                                {% for lang_code, lang_name in LANGUAGES %}
+                                    <div
+                                        class="tab-pane fade {% if forloop.first %}show active{% endif %}"
+                                        id="announcement-pane-{{ lang_code }}"
+                                        role="tabpanel"
+                                        aria-labelledby="announcement-tab-{{ lang_code }}"
+                                    >
+                                        <div class="mb-3">
+                                            <label for="title_{{ lang_code }}" class="form-label">
+                                                {% trans "Sarlavha" %} ({{ lang_name }}){% if lang_code == 'uz' %} <span class="text-danger">*</span>{% endif %}
+                                            </label>
+                                            <input
+                                                type="text"
+                                                name="title_{{ lang_code }}"
+                                                id="title_{{ lang_code }}"
+                                                class="form-control"
+                                                value="{{ form_title|lookup:lang_code }}"
+                                                {% if lang_code == 'uz' %}required{% endif %}
+                                            >
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="content_{{ lang_code }}" class="form-label">
+                                                {% trans "Mazmun" %} ({{ lang_name }}){% if lang_code == 'uz' %} <span class="text-danger">*</span>{% endif %}
+                                            </label>
+                                            <div class="settings-editor">
+                                                <div id="content_editor_{{ lang_code }}" class="rich-editor"></div>
+                                            </div>
+                                            <textarea
+                                                name="content_{{ lang_code }}"
+                                                id="content_{{ lang_code }}"
+                                                class="rich-editor-input d-none"
+                                                data-editor="content_editor_{{ lang_code }}"
+                                            >{{ form_content|lookup:lang_code }}</textarea>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+
+                            <div class="form-check mb-4">
+                                <input class="form-check-input" type="checkbox" name="is_published" id="is_published" {% if form_is_published %}checked{% endif %}>
+                                <label class="form-check-label" for="is_published">{% trans "Chop etilgan holatda saqlash" %}</label>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary">
+                                <i class="ri-save-3-line me-1"></i>
+                                {% trans submit_label %}
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="card-title mb-1">{% trans "Ma'lumot" %}</h4>
+                        <p class="card-subtitle mb-0">{% trans "E'lon sahifada ko'rinishi va boshqaruvi." %}</p>
+                    </div>
+                    <div class="card-body">
+                        <div class="border rounded p-3 mb-3">
+                            <span class="text-muted d-block mb-1">{% trans "Holat" %}</span>
+                            <strong>
+                                {% if form_is_published %}
+                                    {% trans "Chop etilgan" %}
+                                {% else %}
+                                    {% trans "Qoralama" %}
+                                {% endif %}
+                            </strong>
+                        </div>
+                        <div class="border rounded p-3">
+                            <span class="text-muted d-block mb-1">{% trans "Amal" %}</span>
+                            <strong>
+                                {% if announcement %}
+                                    {% trans "Tahrirlash" %}
+                                {% else %}
+                                    {% trans "Yangi yozuv" %}
+                                {% endif %}
+                            </strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}
+
+{% block vendor_js %}
+    <script src="{% static 'vendor/quill/quill.min.js' %}"></script>
+    <script src="{% static 'js/admin-settings.js' %}"></script>
+{% endblock vendor_js %}

@@ -1,180 +1,197 @@
 {% extends 'administrator/main.html' %}
-{% load static i18n %}
+{% load i18n %}
 
 {% block title %}
-    {% trans "Tibbiy ko‘rik arizalari" %}
+    {% trans "Tibbiy ko'rik arizalari" %}
 {% endblock title %}
 
-{% block page_css %}
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        body {
-            background: #f8f9fa;
-            font-family: 'Arial', sans-serif;
-        }
-        .table {
-            background: #fff;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-        }
-        .table thead th {
-            background: #343a40;
-            color: #fff;
-            border: none;
-        }
-        .table tbody tr:hover {
-            background: #f1f3f5;
-            transition: background 0.3s ease;
-        }
-        .btn-primary, .btn-danger {
-            transition: all 0.3s ease;
-        }
-        .btn-primary:hover {
-            background-color: #0d6efd;
-            transform: scale(1.05);
-        }
-        .btn-danger:hover {
-            background-color: #dc3545;
-            transform: scale(1.05);
-        }
-        .pagination .page-link {
-            color: #0d6efd;
-            border-radius: 4px;
-        }
-        .pagination .page-item.active .page-link {
-            background-color: #0d6efd;
-            border-color: #0d6efd;
-        }
-        .pagination .page-link:hover {
-            background: #e9ecef;
-        }
-        .badge-seen {
-            background-color: #28a745;
-        }
-        .badge-unseen {
-            background-color: #6c757d;
-        }
-    </style>
-{% endblock page_css %}
-
 {% block content %}
-    <!-- CSRF token meta tegi -->
-<meta name="csrf-token" content="{{ csrf_token }}">
-<div class="app-body py-4">
-
-    <!-- Qidiruv formasi -->
-    <form method="GET" action="{% url 'medical-checkup-applications' %}" class="mb-4">
-        <div class="input-group">
-            <input type="text" name="q" value="{{ search_query }}"
-                   class="form-control border-0 shadow-sm py-2 px-3"
-                   placeholder="{% trans 'Ariza qidirish...' %}"
-                   aria-label="Search">
-            <button type="submit" class="btn btn-primary px-3 py-2">{% trans "Qidirish" %}</button>
-        </div>
-    </form>
-
-    <!-- Arizalar jadvali -->
-    <div class="table-responsive table-bordered">
-        <table class="table table-hover">
-            <thead>
-                <tr>
-                    <th scope="col">#</th>
-                    <th scope="col">{% trans "Ism va familiya" %}</th>
-                    <th scope="col">{% trans "Telefon raqami" %}</th>
-                    <th scope="col">{% trans "Xabar" %}</th>
-                    <th scope="col">{% trans "Yaratilgan vaqt" %}</th>
-                    <th scope="col">{% trans "Holati" %}</th>
-                    <th scope="col">{% trans "Amal" %}</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for application in applications %}
-                    <tr>
-                        <td>{{ forloop.counter }}</td>
-                        <td>{{ application.full_name }}</td>
-                        <td>{{ application.phone_number }}</td>
-                        <td>{{ application.message|truncatewords:15|default:"-" }}</td>
-                        <td>{{ application.created_at|date:"Y-m-d H:i" }}</td>
-                        <td>
-                            <span class="badge text-dark {% if application.is_seen %}badge-seen{% else %}badge-unseen{% endif %}">
-                                {% if application.is_seen %}{% trans "Ko‘rildi" %}{% else %}{% trans "Ko‘rilmadi" %}{% endif %}
-                            </span>
-                        </td>
-                        <td>
-                            <button class="btn btn-danger btn-sm delete-application"
-                                    data-id="{{ application.id }}">{% trans "O‘chirish" %}</button>
-                        </td>
-                    </tr>
-                {% empty %}
-                    <tr>
-                        <td colspan="7" class="text-center text-muted py-3">{% trans "Hozircha arizalar mavjud emas" %}</td>
-                    </tr>
+    <div class="app-body">
+        {% if messages %}
+            <div class="mb-4">
+                {% for message in messages %}
+                    <div class="alert {% if message.tags == 'success' %}alert-success{% elif message.tags == 'error' %}alert-danger{% else %}alert-info{% endif %} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
                 {% endfor %}
-            </tbody>
-        </table>
+            </div>
+        {% endif %}
+
+        <div class="row g-3">
+            <div class="col-xl-3 col-sm-6">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center gap-3">
+                            <span class="icon-box md bg-primary-subtle rounded-5">
+                                <i class="ri-file-list-3-line fs-4 text-primary"></i>
+                            </span>
+                            <div>
+                                <h3 class="mb-0">{{ total_count }}</h3>
+                                <p class="mb-0 text-muted">{% trans "Jami arizalar" %}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-sm-6">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center gap-3">
+                            <span class="icon-box md bg-warning-subtle rounded-5">
+                                <i class="ri-eye-off-line fs-4 text-warning"></i>
+                            </span>
+                            <div>
+                                <h3 class="mb-0">{{ unseen_count }}</h3>
+                                <p class="mb-0 text-muted">{% trans "Ko'rilmagan" %}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-sm-6">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center gap-3">
+                            <span class="icon-box md bg-success-subtle rounded-5">
+                                <i class="ri-eye-line fs-4 text-success"></i>
+                            </span>
+                            <div>
+                                <h3 class="mb-0">{{ seen_count }}</h3>
+                                <p class="mb-0 text-muted">{% trans "Ko'rilgan" %}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-sm-6">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center gap-3">
+                            <span class="icon-box md bg-info-subtle rounded-5">
+                                <i class="ri-filter-3-line fs-4 text-info"></i>
+                            </span>
+                            <div>
+                                <h3 class="mb-0">{{ filtered_count }}</h3>
+                                <p class="mb-0 text-muted">{% trans "Joriy natija" %}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card mt-4">
+            <div class="card-header">
+                <div class="d-flex align-items-center justify-content-between gap-3 flex-wrap">
+                    <div>
+                        <h4 class="card-title mb-1">{% trans "Tibbiy ko'rik arizalari" %}</h4>
+                        <p class="card-subtitle mb-0">{% trans "Murojaatlarni ko'rish, qidirish va status bo'yicha saralash." %}</p>
+                    </div>
+                    <span class="badge bg-primary-subtle text-primary">{{ filtered_count }}</span>
+                </div>
+            </div>
+
+            <div class="card-body">
+                <form method="GET" action="{% url 'medical-checkup-applications' %}" class="row g-2 align-items-end mb-4">
+                    <div class="col-lg-6">
+                        <label for="q" class="form-label">{% trans "Qidirish" %}</label>
+                        <input
+                            type="text"
+                            name="q"
+                            id="q"
+                            value="{{ search_query }}"
+                            class="form-control"
+                            placeholder="{% trans 'Ism, telefon yoki xabar bo‘yicha qidirish' %}"
+                        >
+                    </div>
+                    <div class="col-lg-3">
+                        <label for="status" class="form-label">{% trans "Status" %}</label>
+                        <select name="status" id="status" class="form-select">
+                            <option value="" {% if not status_filter %}selected{% endif %}>{% trans "Barchasi" %}</option>
+                            <option value="unseen" {% if status_filter == 'unseen' %}selected{% endif %}>{% trans "Ko'rilmagan" %}</option>
+                            <option value="seen" {% if status_filter == 'seen' %}selected{% endif %}>{% trans "Ko'rilgan" %}</option>
+                        </select>
+                    </div>
+                    <div class="col-lg-3">
+                        <button type="submit" class="btn btn-primary w-100">{% trans "Filterlash" %}</button>
+                    </div>
+                </form>
+
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>{% trans "Ism va familiya" %}</th>
+                                <th>{% trans "Telefon" %}</th>
+                                <th>{% trans "Xabar" %}</th>
+                                <th>{% trans "Yaratilgan vaqt" %}</th>
+                                <th>{% trans "Status" %}</th>
+                                <th>{% trans "Amal" %}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for application in applications %}
+                                <tr>
+                                    <td>{{ forloop.counter }}</td>
+                                    <td class="fw-semibold">{{ application.full_name }}</td>
+                                    <td class="text-nowrap">
+                                        <a href="tel:{{ application.phone_number }}">{{ application.phone_number }}</a>
+                                    </td>
+                                    <td>{{ application.message|truncatewords:14|default:"-" }}</td>
+                                    <td class="text-nowrap">{{ application.created_at|date:"Y-m-d H:i" }}</td>
+                                    <td>
+                                        {% if application.is_seen %}
+                                            <span class="badge bg-success">{% trans "Ko'rildi" %}</span>
+                                        {% else %}
+                                            <span class="badge bg-warning text-dark">{% trans "Ko'rilmadi" %}</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <a href="{% url 'medical-checkup-application-detail' application.id %}" class="btn btn-outline-primary btn-sm">
+                                            <i class="ri-eye-line me-1"></i>
+                                            {% trans "Batafsil" %}
+                                        </a>
+                                    </td>
+                                </tr>
+                            {% empty %}
+                                <tr>
+                                    <td colspan="7" class="text-center text-muted py-4">{% trans "Hozircha arizalar mavjud emas." %}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                {% if applications.has_previous or applications.has_next %}
+                    <nav class="mt-4">
+                        <ul class="pagination justify-content-center mb-0">
+                            {% if applications.has_previous %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page=1{% if page_query %}&{{ page_query }}{% endif %}">{% trans "Birinchi" %}</a>
+                                </li>
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ applications.previous_page_number }}{% if page_query %}&{{ page_query }}{% endif %}">{% trans "Oldingi" %}</a>
+                                </li>
+                            {% endif %}
+
+                            <li class="page-item active">
+                                <span class="page-link">{{ applications.number }} / {{ applications.paginator.num_pages }}</span>
+                            </li>
+
+                            {% if applications.has_next %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ applications.next_page_number }}{% if page_query %}&{{ page_query }}{% endif %}">{% trans "Keyingi" %}</a>
+                                </li>
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ applications.paginator.num_pages }}{% if page_query %}&{{ page_query }}{% endif %}">{% trans "Oxirgi" %}</a>
+                                </li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                {% endif %}
+            </div>
+        </div>
     </div>
-
-    <!-- Pagination -->
-    {% if applications.has_previous or applications.has_next %}
-        <nav class="mt-4">
-            <ul class="pagination justify-content-center">
-                {% if applications.has_previous %}
-                    <li class="page-item">
-                        <a class="page-link" href="?page=1&q={{ search_query }}">{% trans "Birinchi" %}</a>
-                    </li>
-                    <li class="page-item">
-                        <a class="page-link" href="?page={{ applications.previous_page_number }}&q={{ search_query }}">{% trans "Oldingi" %}</a>
-                    </li>
-                {% endif %}
-                <li class="page-item active">
-                    <span class="page-link">{{ applications.number }} / {{ applications.paginator.num_pages }}</span>
-                </li>
-                {% if applications.has_next %}
-                    <li class="page-item">
-                        <a class="page-link" href="?page={{ applications.next_page_number }}&q={{ search_query }}">{% trans "Keyingi" %}</a>
-                    </li>
-                    <li class="page-item">
-                        <a class="page-link" href="?page={{ applications.paginator.num_pages }}&q={{ search_query }}">{% trans "Oxirgi" %}</a>
-                    </li>
-                {% endif %}
-            </ul>
-        </nav>
-    {% endif %}
-</div>
-
 {% endblock content %}
-
-{% block vendor_js %}
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-    $(document).ready(function() {
-        // CSRF tokenni olish
-        function getCSRFToken() {
-            return $('meta[name="csrf-token"]').attr('content');
-        }
-
-        $('.delete-application').on('click', function() {
-            const applicationId = $(this).data('id');
-
-            if (confirm('{% trans "Arizani o‘chirishni tasdiqlaysizmi?" %}')) {
-                $.ajax({
-                    url: '?application_id=' + applicationId,
-                    method: 'DELETE',
-                    headers: { 'X-CSRFToken': getCSRFToken() },
-                    success: function(result) {
-                        alert(result.message);
-                        if (result.status === 'success') {
-                            location.reload();
-                        }
-                    },
-                    error: function() {
-                        alert('{% trans "Xatolik yuz berdi!" %}');
-                    }
-                });
-            }
-        });
-    });
-</script>
-{% endblock vendor_js %}

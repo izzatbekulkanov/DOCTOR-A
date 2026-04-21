@@ -33,7 +33,7 @@ LOCAL_APPS = [
     "apps.common",
     "apps.news",
     "apps.api",
-    "members",
+    "apps.members",
 ]
 
 WEB_APPS = [

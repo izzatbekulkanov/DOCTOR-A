@@ -1,5 +1,5 @@
 {% extends "v1/base.html" %}
-{% load static i18n %}
+{% load static i18n custom_filters %}
 
 {% block title %}{{ name }} - {{ t.equipment }}{% endblock %}
 
@@ -40,12 +40,12 @@
                 <div class="col-lg-6 col-md-12">
                     <div class="equipment-details-content">
                         <h2>{{ name }}</h2>
-                        <span class="category">{{ equipment.category|default:"General" }}</span>
+                        <span class="category">{{ equipment_category }}</span>
                         
                         <div class="details-info">
                             <h3>{{ t.description }}</h3>
                             <div class="description-text">
-                                {{ description|safe|linebreaks }}
+                                {{ description|render_rich_text }}
                             </div>
                         </div>
 

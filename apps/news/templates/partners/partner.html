@@ -1,281 +1,385 @@
 {% extends 'administrator/main.html' %}
-{% load static %}
-{% load custom_filters %}
+{% load static i18n custom_filters %}
+
 {% block title %}
-    Hamkorlar haqida ma'lumot
+    {% trans "Hamkorlar" %}
 {% endblock title %}
+
 {% block vendor_css %}
-
-    <style>
-
-    </style>
+    <link rel="stylesheet" href="{% static 'vendor/quill/quill.core.css' %}">
+    <link rel="stylesheet" href="{% static 'css/admin-settings.css' %}">
 {% endblock vendor_css %}
 
 {% block content %}
-    <div class="app-body">
-        <div class="row">
-            <div class="col-md-12">
-                <div class="card">
-                    <div class="card-header">
-                        <h4 class="card-title">Hamkorlari ma'lumoti qo‘shish</h4>
+    <div class="app-body admin-settings">
+        {% if messages %}
+            <div class="mb-4">
+                {% for message in messages %}
+                    <div class="alert {% if message.tags == 'success' %}alert-success{% elif message.tags == 'error' %}alert-danger{% else %}alert-info{% endif %} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <div class="row g-3">
+            <div class="col-xl-3 col-sm-6">
+                <div class="card">
                     <div class="card-body">
-                        <form id="partnerForm" enctype="multipart/form-data">
-                            {% csrf_token %}
-                            <input type="hidden" id="partner_id" name="partner_id">
-
-                            <!-- Rasm yuklash -->
-                            <div class="mb-3 text-center">
-                                <div class="position-relative d-inline-block">
-                                    <input type="file" class="form-control d-none" id="image" name="logo"
-                                           accept="image/*"
-                                           onchange="previewImage(event)">
-                                    <div class="logo-preview" onclick="document.getElementById('image').click()">
-                                        <img id="logo_preview" src="{% static 'images/input_images.png' %}"
-                                             class="img-thumbnail"
-                                             style="max-height: 200px; cursor: pointer;">
-                                        <div class="overlay">Rasm yuklang</div>
-                                    </div>
-                                </div>
+                        <div class="d-flex align-items-center gap-3">
+                            <span class="icon-box md bg-primary-subtle rounded-5">
+                                <i class="ri-handshake-line fs-4 text-primary"></i>
+                            </span>
+                            <div>
+                                <h3 class="mb-0">{{ total_count }}</h3>
+                                <p class="mb-0 text-muted">{% trans "Jami hamkorlar" %}</p>
                             </div>
-
-                            <!-- Tilga asoslangan tablar -->
-                            <ul class="nav nav-tabs">
-                                {% for code, name in LANGUAGES %}
-                                    <li class="nav-item">
-                                        <button class="nav-link {% if forloop.first %}active{% endif %}"
-                                                data-bs-toggle="tab"
-                                                data-bs-target="#{{ code }}">
-                                            <img src="{% static 'fonts/flag-icon-css/flags/' %}{{ code }}.svg" width="20"
-                                                 class="me-1"> {{ name }}
-                                        </button>
-                                    </li>
-                                {% endfor %}
-                            </ul>
-
-                            <div class="tab-content mt-3">
-                                {% for code, name in LANGUAGES %}
-                                    <div class="tab-pane fade {% if forloop.first %}show active{% endif %}"
-                                         id="{{ code }}">
-                                        <label class="form-label">
-                                            <img src="{% static 'fonts/flag-icon-css/flags/' %}{{ code }}.svg" width="20"
-                                                 class="me-1">
-                                            Nomi ({{ name }})
-                                        </label>
-                                        <input type="text" class="form-control" id="name_{{ code }}"
-                                               name="name[{{ code }}]" required>
-                                        <label class="form-label mt-2">
-                                            <img src="{% static 'fonts/flag-icon-css/flags/' %}{{ code }}.svg" width="20"
-                                                 class="me-1">
-                                            Tavsif ({{ name }})
-                                        </label>
-                                        <textarea class="form-control" id="description_{{ code }}"
-                                                  name="description[{{ code }}]" required></textarea>
-                                    </div>
-                                {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-sm-6">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center gap-3">
+                            <span class="icon-box md bg-success-subtle rounded-5">
+                                <i class="ri-checkbox-circle-line fs-4 text-success"></i>
+                            </span>
+                            <div>
+                                <h3 class="mb-0">{{ active_count }}</h3>
+                                <p class="mb-0 text-muted">{% trans "Faol" %}</p>
                             </div>
-
-                            <!-- Qo'shimcha maydonlar -->
-                            <div class="mt-3">
-                                <label class="form-label">Veb-sayt manzili</label>
-                                <input type="url" class="form-control" id="website_url" name="website_url"
-                                       placeholder="https://example.com">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-sm-6">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center gap-3">
+                            <span class="icon-box md bg-danger-subtle rounded-5">
+                                <i class="ri-close-circle-line fs-4 text-danger"></i>
+                            </span>
+                            <div>
+                                <h3 class="mb-0">{{ inactive_count }}</h3>
+                                <p class="mb-0 text-muted">{% trans "Faol emas" %}</p>
                             </div>
-
-                            <div class="mt-3 form-check">
-                                <input class="form-check-input" type="checkbox" id="is_active" name="is_active" checked>
-                                <label class="form-check-label" for="is_active">Hamkor faol</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-sm-6">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center gap-3">
+                            <span class="icon-box md bg-info-subtle rounded-5">
+                                <i class="ri-filter-3-line fs-4 text-info"></i>
+                            </span>
+                            <div>
+                                <h3 class="mb-0">{{ filtered_count }}</h3>
+                                <p class="mb-0 text-muted">{% trans "Joriy natija" %}</p>
                             </div>
-
-                            <div class="mt-4 d-flex justify-content-between">
-                                <button type="button" class="btn btn-success" onclick="submitPartnerForm()">Saqlash
-                                </button>
-                                <button type="button" class="btn btn-secondary" onclick="resetPartnerForm()">Tozalash
-                                </button>
-                            </div>
-                        </form>
-
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-        <!-- Partner Ma'lumotlari Ro‘yxati -->
-        <div class="row mt-4">
-            {% for partner in partner_list %}
-                <div class="col-md-3">
-                    <div class="card shadow-sm">
-                        <div class="card-header text-center">
-                            <h5 class="card-title">Hamkorlar haqida</h5>
-                        </div>
-                        <div class="card-body text-center">
-                            <img src="{{ partner.logo.url }}" class="img-fluid rounded mb-3"
-                                 style="max-height: 200px; object-fit: cover;">
 
-                            <!-- Faqat joriy til uchun ma'lumot chiqarish -->
-                            {% with request.LANGUAGE_CODE as current_language %}
-                                <h5>{{ partner.name|get_language_text:current_language }}</h5>
-                                <a href="{{ partner.website_url }}" target="_blank"
-                                   class="text-muted">{{ partner.website_url }}</a>
-
-                            {% endwith %}
-                        </div>
-                        <div class="card-footer text-center">
-                            <button class="btn btn-primary" onclick="editPartner('{{ partner.id }}')">Tahrirlash
-                            </button>
-                            <button class="btn btn-danger" onclick="deletePartner('{{ partner.id }}')">O‘chirish
-                            </button>
+        <div class="row g-4 mt-1">
+            <div class="col-xl-5">
+                <div class="card h-100">
+                    <div class="card-header">
+                        <div class="d-flex align-items-center justify-content-between gap-3 flex-wrap">
+                            <div>
+                                <h4 class="card-title mb-1">
+                                    {% if form_partner_id %}
+                                        {% trans "Hamkorni tahrirlash" %}
+                                    {% else %}
+                                        {% trans "Yangi hamkor qo'shish" %}
+                                    {% endif %}
+                                </h4>
+                                <p class="card-subtitle mb-0">{% trans "Nomi, tavsifi, logo va havolasini kiriting." %}</p>
+                            </div>
+                            {% if form_partner_id %}
+                                <a href="{% url 'partners-info' %}" class="btn btn-outline-secondary btn-sm">
+                                    {% trans "Yangi forma" %}
+                                </a>
+                            {% endif %}
                         </div>
                     </div>
+                    <div class="card-body">
+                        <form method="POST" enctype="multipart/form-data" class="settings-form">
+                            {% csrf_token %}
+                            <input type="hidden" name="action" value="save">
+                            <input type="hidden" name="partner_id" value="{{ form_partner_id }}">
+
+                            {% if form_logo_url %}
+                                <div class="mb-4 text-center">
+                                    <img src="{{ form_logo_url }}" alt="{% trans 'Hamkor logosi' %}" class="img-thumbnail rounded" width="180">
+                                </div>
+                            {% endif %}
+
+                            <div class="mb-3">
+                                <label for="logo" class="form-label">{% trans "Logo" %}</label>
+                                <input type="file" name="logo" id="logo" class="form-control">
+                            </div>
+
+                            <ul class="nav nav-tabs mb-3" id="partnerNameTabs" role="tablist">
+                                {% for code, name in LANGUAGES %}
+                                    <li class="nav-item" role="presentation">
+                                        <button
+                                            class="nav-link {% if forloop.first %}active{% endif %}"
+                                            id="partner-name-tab-{{ code }}"
+                                            data-bs-toggle="tab"
+                                            data-bs-target="#partner-name-pane-{{ code }}"
+                                            type="button"
+                                            role="tab"
+                                            aria-controls="partner-name-pane-{{ code }}"
+                                            aria-selected="{% if forloop.first %}true{% else %}false{% endif %}"
+                                        >
+                                            {{ name }}
+                                        </button>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                            <div class="tab-content mb-4">
+                                {% for code, name in LANGUAGES %}
+                                    <div
+                                        class="tab-pane fade {% if forloop.first %}show active{% endif %}"
+                                        id="partner-name-pane-{{ code }}"
+                                        role="tabpanel"
+                                        aria-labelledby="partner-name-tab-{{ code }}"
+                                    >
+                                        <label for="name_{{ code }}" class="form-label">
+                                            {% trans "Nomi" %} ({{ name }}){% if code == 'uz' %} <span class="text-danger">*</span>{% endif %}
+                                        </label>
+                                        <input
+                                            type="text"
+                                            name="name_{{ code }}"
+                                            id="name_{{ code }}"
+                                            class="form-control"
+                                            value="{{ form_name|lookup:code }}"
+                                            {% if code == 'uz' %}required{% endif %}
+                                        >
+                                    </div>
+                                {% endfor %}
+                            </div>
+
+                            <ul class="nav nav-tabs mb-3" id="partnerDescTabs" role="tablist">
+                                {% for code, name in LANGUAGES %}
+                                    <li class="nav-item" role="presentation">
+                                        <button
+                                            class="nav-link {% if forloop.first %}active{% endif %}"
+                                            id="partner-desc-tab-{{ code }}"
+                                            data-bs-toggle="tab"
+                                            data-bs-target="#partner-desc-pane-{{ code }}"
+                                            type="button"
+                                            role="tab"
+                                            aria-controls="partner-desc-pane-{{ code }}"
+                                            aria-selected="{% if forloop.first %}true{% else %}false{% endif %}"
+                                        >
+                                            {{ name }}
+                                        </button>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                            <div class="tab-content mb-4">
+                                {% for code, name in LANGUAGES %}
+                                    <div
+                                        class="tab-pane fade {% if forloop.first %}show active{% endif %}"
+                                        id="partner-desc-pane-{{ code }}"
+                                        role="tabpanel"
+                                        aria-labelledby="partner-desc-tab-{{ code }}"
+                                    >
+                                        <label for="description_{{ code }}" class="form-label">
+                                            {% trans "Tavsif" %} ({{ name }}){% if code == 'uz' %} <span class="text-danger">*</span>{% endif %}
+                                        </label>
+                                        <div class="settings-editor">
+                                            <div id="description_editor_{{ code }}" class="rich-editor"></div>
+                                        </div>
+                                        <textarea
+                                            name="description_{{ code }}"
+                                            id="description_{{ code }}"
+                                            class="rich-editor-input d-none"
+                                            data-editor="description_editor_{{ code }}"
+                                        >{{ form_description|lookup:code }}</textarea>
+                                    </div>
+                                {% endfor %}
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="website_url" class="form-label">{% trans "Veb-sayt manzili" %}</label>
+                                <input
+                                    type="url"
+                                    name="website_url"
+                                    id="website_url"
+                                    class="form-control"
+                                    value="{{ form_website_url }}"
+                                    placeholder="https://example.com"
+                                >
+                            </div>
+
+                            <div class="form-check mb-4">
+                                <input class="form-check-input" type="checkbox" name="is_active" id="is_active" {% if form_is_active %}checked{% endif %}>
+                                <label class="form-check-label" for="is_active">{% trans "Faol" %}</label>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary w-100">
+                                <i class="ri-save-3-line me-1"></i>
+                                {% if form_partner_id %}
+                                    {% trans "Yangilash" %}
+                                {% else %}
+                                    {% trans "Saqlash" %}
+                                {% endif %}
+                            </button>
+                        </form>
+                    </div>
                 </div>
-            {% endfor %}
+            </div>
+
+            <div class="col-xl-7">
+                <div class="card h-100">
+                    <div class="card-header">
+                        <div class="d-flex align-items-center justify-content-between gap-3 flex-wrap">
+                            <div>
+                                <h4 class="card-title mb-1">{% trans "Hamkorlar ro'yxati" %}</h4>
+                                <p class="card-subtitle mb-0">{% trans "Hamkorlarni qidirish, filtrlash va boshqarish." %}</p>
+                            </div>
+                            <span class="badge bg-primary-subtle text-primary">{{ filtered_count }}</span>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <form method="GET" action="{% url 'partners-info' %}" class="row g-2 align-items-end mb-4">
+                            <div class="col-lg-7">
+                                <label for="q" class="form-label">{% trans "Qidirish" %}</label>
+                                <input
+                                    type="text"
+                                    name="q"
+                                    id="q"
+                                    value="{{ search_query }}"
+                                    class="form-control"
+                                    placeholder="ID, nom, tavsif yoki havola bo'yicha qidirish"
+                                >
+                            </div>
+                            <div class="col-lg-3">
+                                <label for="status" class="form-label">{% trans "Status" %}</label>
+                                <select name="status" id="status" class="form-select">
+                                    <option value="" {% if not status_filter %}selected{% endif %}>{% trans "Barchasi" %}</option>
+                                    <option value="active" {% if status_filter == 'active' %}selected{% endif %}>{% trans "Faol" %}</option>
+                                    <option value="inactive" {% if status_filter == 'inactive' %}selected{% endif %}>{% trans "Faol emas" %}</option>
+                                </select>
+                            </div>
+                            <div class="col-lg-2">
+                                <button type="submit" class="btn btn-primary w-100">{% trans "Filterlash" %}</button>
+                            </div>
+                        </form>
+
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>{% trans "Hamkor" %}</th>
+                                        <th>{% trans "Havola" %}</th>
+                                        <th>{% trans "Status" %}</th>
+                                        <th>{% trans "Yangilangan" %}</th>
+                                        <th>{% trans "Amallar" %}</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for partner in partners %}
+                                        <tr>
+                                            <td>{{ forloop.counter }}</td>
+                                            <td>
+                                                <div class="d-flex align-items-center gap-3">
+                                                    {% if partner.logo %}
+                                                        <img src="{{ partner.logo.url }}" alt="{{ partner.name|get_language_text:request.LANGUAGE_CODE }}" class="img-thumbnail rounded" width="72">
+                                                    {% endif %}
+                                                    <div>
+                                                        <div class="fw-semibold">{{ partner.name|get_language_text:request.LANGUAGE_CODE }}</div>
+                                                        <div class="text-muted small">{{ partner.description|get_language_text:request.LANGUAGE_CODE|truncatewords:10 }}</div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                {% if partner.website_url %}
+                                                    <a href="{{ partner.website_url }}" target="_blank" rel="noopener">{{ partner.website_url }}</a>
+                                                {% else %}
+                                                    <span class="text-muted">-</span>
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                {% if partner.is_active %}
+                                                    <span class="badge bg-success">{% trans "Faol" %}</span>
+                                                {% else %}
+                                                    <span class="badge bg-danger">{% trans "Faol emas" %}</span>
+                                                {% endif %}
+                                            </td>
+                                            <td class="text-nowrap">{{ partner.updated_at|date:"Y-m-d H:i" }}</td>
+                                            <td>
+                                                <div class="d-flex flex-wrap gap-2">
+                                                    <a
+                                                        href="?edit={{ partner.id }}{% if search_query %}&q={{ search_query }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}"
+                                                        class="btn btn-outline-primary btn-sm"
+                                                    >
+                                                        <i class="ri-edit-line"></i>
+                                                    </a>
+                                                    <form method="POST" action="{% url 'partners-info' %}">
+                                                        {% csrf_token %}
+                                                        <input type="hidden" name="action" value="delete">
+                                                        <input type="hidden" name="partner_id" value="{{ partner.id }}">
+                                                        <button type="submit" class="btn btn-outline-danger btn-sm">
+                                                            <i class="ri-delete-bin-line"></i>
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    {% empty %}
+                                        <tr>
+                                            <td colspan="6" class="text-center text-muted py-4">{% trans "Hozircha hamkorlar mavjud emas." %}</td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+
+                        {% if partners.has_previous or partners.has_next %}
+                            <nav class="mt-4">
+                                <ul class="pagination justify-content-center mb-0">
+                                    {% if partners.has_previous %}
+                                        <li class="page-item">
+                                            <a class="page-link" href="?page=1{% if page_query %}&{{ page_query }}{% endif %}">{% trans "Birinchi" %}</a>
+                                        </li>
+                                        <li class="page-item">
+                                            <a class="page-link" href="?page={{ partners.previous_page_number }}{% if page_query %}&{{ page_query }}{% endif %}">{% trans "Oldingi" %}</a>
+                                        </li>
+                                    {% endif %}
+
+                                    <li class="page-item active">
+                                        <span class="page-link">{{ partners.number }} / {{ partners.paginator.num_pages }}</span>
+                                    </li>
+
+                                    {% if partners.has_next %}
+                                        <li class="page-item">
+                                            <a class="page-link" href="?page={{ partners.next_page_number }}{% if page_query %}&{{ page_query }}{% endif %}">{% trans "Keyingi" %}</a>
+                                        </li>
+                                        <li class="page-item">
+                                            <a class="page-link" href="?page={{ partners.paginator.num_pages }}{% if page_query %}&{{ page_query }}{% endif %}">{% trans "Oxirgi" %}</a>
+                                        </li>
+                                    {% endif %}
+                                </ul>
+                            </nav>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 {% endblock content %}
+
 {% block vendor_js %}
-    <script>
-        var LANGUAGES = {{ LANGUAGES_JSON|safe }};
-        console.log("🟢 LANGUAGES:", LANGUAGES); // Debug uchun
-    </script>
-
-    <!-- jQuery CDN yuklash -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <!-- SweetAlert2 CDN yuklash -->
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script>
-        // 🔹 CSRF tokenni AJAX so‘rovlariga avtomatik qo‘shish
-        function getCSRFToken() {
-            return document.querySelector("[name=csrfmiddlewaretoken]").value;
-        }
-
-        $(document).ajaxSend(function (event, xhr, settings) {
-            if (!/^https?:.*/.test(settings.url)) {
-                xhr.setRequestHeader("X-CSRFToken", getCSRFToken());
-            }
-        });
-
-        // 🔹 Rasmni oldindan ko‘rish (preview)
-        function previewImage(event) {
-            let reader = new FileReader();
-            reader.onload = () => document.getElementById('logo_preview').src = reader.result;
-            reader.readAsDataURL(event.target.files[0]);
-        }
-
-        // 🔹 Formani tozalash (Yangi qo‘shish rejimiga qaytish)
-        function resetPartnerForm() {
-            document.getElementById('partnerForm').reset();
-            document.getElementById('partner_id').value = ""; // Yangi qo‘shish rejimiga qaytish
-            document.getElementById('logo_preview').src = "{% static 'images/placeholder.png' %}";
-        }
-
-        // 🔹 Partner ma'lumotlarini formaga yuklash (Tahrirlash uchun)
-        function editPartner(partnerId) {
-            console.log("🟡 Tahrirlash tugmasi bosildi. PartnerID:", partnerId);
-
-            $.get("{% url 'get-partner-info' %}", {partner_id: partnerId}, function (data) {
-                console.log("🟢 Serverdan ma'lumot kelib tushdi:", data);
-
-                if (!data || !data.id) {
-                    console.error("🔴 Xatolik: Partner ma'lumotlari kelmadi!");
-                    Swal.fire("❌ Xatolik!", "Ma'lumot yuklanmadi.", "error");
-                    return;
-                }
-
-                // 🔹 Formaga ma'lumotlarni yuklash
-                document.getElementById('partner_id').value = data.id;
-                document.getElementById('logo_preview').src = data.logo_url || "{% static 'images/placeholder.png' %}";
-                console.log("📷 Rasm yuklandi:", data.logo_url);
-
-                // 🔹 Tillar bo‘yicha sarlavha va tavsifni formaga joylash
-                LANGUAGES.forEach(lang => {
-                    let code = lang[0]; // 🔹 Til kodini olish ("uz", "ru", "en", ...)
-                    let nameField = document.getElementById(`name_${code}`);
-                    let descField = document.getElementById(`description_${code}`);
-
-                    if (nameField && descField) {
-                        nameField.value = data.name[code] || "";  // 🔹 Agar bo‘sh bo‘lsa, ""
-                        descField.value = data.description[code] || "";
-                        console.log(`📝 ${code} tilidagi ma'lumot yuklandi:`, {
-                            name: nameField.value,
-                            description: descField.value
-                        });
-                    } else {
-                        console.warn(`⚠️ Ogohlantirish: ${code} uchun form elementlari topilmadi!`);
-                    }
-                });
-
-                Swal.fire("✏️ Tahrirlash!", "Partner  ma'lumotlari formaga yuklandi.", "success");
-            }).fail((xhr) => {
-                console.error("🔴 Xatolik: Ma'lumot yuklab bo‘lmadi!", xhr);
-                Swal.fire("❌ Xatolik!", "Ma'lumot yuklanmadi.", "error");
-            });
-        }
-
-
-        // 🔹 Partner  ma'lumotlarini saqlash yoki yangilash
-        function submitPartnerForm() {
-            let partnerId = document.getElementById("partner_id").value;
-            let formElement = document.getElementById('partnerForm');
-            let formData = new FormData(formElement);
-
-            // 🔹 partner ID ni alohida qo‘shish
-            if (partnerId) {
-                formData.append("partner_id", partnerId);
-            }
-
-            // 🔹 JSON formatda name va description ni qo‘shish
-            let name = {};
-            let description = {};
-
-            LANGUAGES.forEach(([code]) => {
-                name[code] = formElement[`name[${code}]`]?.value || "";
-                description[code] = formElement[`description[${code}]`]?.value || "";
-            });
-
-            formData.append("name", JSON.stringify(name)); // 🔹 JSON formatga o'tkazish
-            formData.append("description", JSON.stringify(description)); // 🔹 JSON formatga o'tkazish
-
-            console.log("📤 Yuborilayotgan PATCH FormData:", [...formData.entries()]);
-
-            $.ajax({
-                url: "{% url 'partners-info' %}",
-                type: partnerId ? "POST" : "POST", // 🔹 PATCH metod o‘rniga POST ishlatamiz
-                contentType: false,
-                processData: false,
-                data: formData,
-                headers: {"X-CSRFToken": getCSRFToken()}, // 🔹 CSRF token qo‘shish
-                success: (response) => {
-                    Swal.fire("✅ Muvaffaqiyatli!", response.message, "success").then(() => location.reload());
-                },
-                error: (xhr) => {
-                    Swal.fire("❌ Xatolik!", xhr.responseJSON?.error || "Noma’lum xatolik", "error");
-                    console.error("🔴 Xatolik tafsilotlari:", xhr);
-                }
-            });
-        }
-
-
-        // 🔹 Partner  ma'lumotlarini o‘chirish
-        function deletePartner(PartnerId) {
-            Swal.fire({
-                title: "O‘chirishni tasdiqlaysizmi?",
-                text: "Bu amalni bekor qilib bo‘lmaydi!",
-                icon: "warning",
-                showCancelButton: true,
-                confirmButtonText: "Ha, o‘chirish!"
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    $.ajax({
-                        url: "{% url 'partners-info' %}",
-                        type: "DELETE",
-                        contentType: "application/json",
-                        data: JSON.stringify({partner_id: PartnerId}),
-                        headers: {"X-CSRFToken": getCSRFToken()},
-                        success: (response) => Swal.fire("✅ O‘chirildi!", response.message, "success").then(() => location.reload()),
-                        error: (xhr) => Swal.fire("❌ Xatolik!", xhr.responseJSON?.error || "Noma’lum xatolik", "error")
-                    });
-                }
-            });
-        }
-
-    </script>
+    <script src="{% static 'vendor/quill/quill.min.js' %}"></script>
+    <script src="{% static 'js/admin-settings.js' %}"></script>
 {% endblock vendor_js %}

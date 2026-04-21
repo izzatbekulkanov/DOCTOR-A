@@ -53,7 +53,7 @@
 
 								<h3>{{ serialized_announcement.title }}</h3>
 								<div class="blog-details-copy">
-									{{ announcement_content|linebreaks }}
+									{{ announcement_content|render_rich_text }}
 								</div>
 
 								<a href="{% url 'landing-v1-announcements' %}" class="default-btn">{{ news_page.back_to_news }}</a>

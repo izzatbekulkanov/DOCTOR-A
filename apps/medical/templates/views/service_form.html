@@ -1,0 +1,257 @@
+{% extends 'administrator/main.html' %}
+{% load static i18n custom_filters %}
+
+{% block title %}
+    {% trans page_title %}
+{% endblock title %}
+
+{% block vendor_css %}
+    <link rel="stylesheet" href="{% static 'medic/css/flaticon.css' %}">
+    <link rel="stylesheet" href="{% static 'vendor/quill/quill.core.css' %}">
+    <link rel="stylesheet" href="{% static 'css/admin-settings.css' %}">
+    <link rel="stylesheet" href="{% static 'css/admin-service-form.css' %}">
+{% endblock vendor_css %}
+
+{% block content %}
+    <div class="app-body admin-settings">
+        {% if messages %}
+            <div class="mb-4">
+                {% for message in messages %}
+                    <div class="alert {% if message.tags == 'success' %}alert-success{% elif message.tags == 'error' %}alert-danger{% else %}alert-info{% endif %} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <div class="d-flex justify-content-between align-items-center gap-3 flex-wrap mb-4">
+            <div>
+                <h4 class="mb-1">{% trans page_title %}</h4>
+                <p class="text-muted mb-0">{% trans page_subtitle %}</p>
+            </div>
+            <a href="{{ back_url }}" class="btn btn-outline-secondary">
+                <i class="ri-arrow-left-line me-1"></i>
+                {% trans "Ro'yxatga qaytish" %}
+            </a>
+        </div>
+
+        <form method="POST" action="{{ form_action_url }}" class="settings-form">
+            {% csrf_token %}
+            <input type="hidden" name="next" value="{{ back_url }}">
+
+            <div class="row g-4">
+                <div class="col-xl-8">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4 class="card-title mb-1">{% trans "Asosiy ma'lumotlar" %}</h4>
+                            <p class="card-subtitle mb-0">{% trans "Har bir til uchun xizmat nomi va tavsifini kiriting." %}</p>
+                        </div>
+                        <div class="card-body">
+                            <ul class="nav nav-tabs mb-3" id="serviceTitleTabs" role="tablist">
+                                {% for lang_code, lang_name in LANGUAGES %}
+                                    <li class="nav-item" role="presentation">
+                                        <button
+                                            class="nav-link {% if forloop.first %}active{% endif %}"
+                                            id="service-title-tab-{{ lang_code }}"
+                                            data-bs-toggle="tab"
+                                            data-bs-target="#service-title-pane-{{ lang_code }}"
+                                            type="button"
+                                            role="tab"
+                                            aria-controls="service-title-pane-{{ lang_code }}"
+                                            aria-selected="{% if forloop.first %}true{% else %}false{% endif %}"
+                                        >
+                                            {{ lang_name }}
+                                        </button>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                            <div class="tab-content mb-4">
+                                {% for lang_code, lang_name in LANGUAGES %}
+                                    <div
+                                        class="tab-pane fade {% if forloop.first %}show active{% endif %}"
+                                        id="service-title-pane-{{ lang_code }}"
+                                        role="tabpanel"
+                                        aria-labelledby="service-title-tab-{{ lang_code }}"
+                                    >
+                                        <label for="title_{{ lang_code }}" class="form-label">
+                                            {% trans "Xizmat nomi" %} ({{ lang_name }}){% if lang_code == 'uz' %} <span class="text-danger">*</span>{% endif %}
+                                        </label>
+                                        <input
+                                            type="text"
+                                            name="title_{{ lang_code }}"
+                                            id="title_{{ lang_code }}"
+                                            class="form-control"
+                                            value="{{ form_title|lookup:lang_code }}"
+                                            {% if lang_code == 'uz' %}required{% endif %}
+                                        >
+                                    </div>
+                                {% endfor %}
+                            </div>
+
+                            <ul class="nav nav-tabs mb-3" id="serviceSummaryTabs" role="tablist">
+                                {% for lang_code, lang_name in LANGUAGES %}
+                                    <li class="nav-item" role="presentation">
+                                        <button
+                                            class="nav-link {% if forloop.first %}active{% endif %}"
+                                            id="service-summary-tab-{{ lang_code }}"
+                                            data-bs-toggle="tab"
+                                            data-bs-target="#service-summary-pane-{{ lang_code }}"
+                                            type="button"
+                                            role="tab"
+                                            aria-controls="service-summary-pane-{{ lang_code }}"
+                                            aria-selected="{% if forloop.first %}true{% else %}false{% endif %}"
+                                        >
+                                            {{ lang_name }}
+                                        </button>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                            <div class="tab-content mb-4">
+                                {% for lang_code, lang_name in LANGUAGES %}
+                                    <div
+                                        class="tab-pane fade {% if forloop.first %}show active{% endif %}"
+                                        id="service-summary-pane-{{ lang_code }}"
+                                        role="tabpanel"
+                                        aria-labelledby="service-summary-tab-{{ lang_code }}"
+                                    >
+                                        <label for="summary_{{ lang_code }}" class="form-label">{% trans "Tavsif" %} ({{ lang_name }})</label>
+                                        <div class="settings-editor">
+                                            <div id="summary_editor_{{ lang_code }}" class="rich-editor"></div>
+                                        </div>
+                                        <textarea
+                                            name="summary_{{ lang_code }}"
+                                            id="summary_{{ lang_code }}"
+                                            class="rich-editor-input d-none"
+                                            data-editor="summary_editor_{{ lang_code }}"
+                                        >{{ form_summary|lookup:lang_code }}</textarea>
+                                    </div>
+                                {% endfor %}
+                            </div>
+
+                            <div class="row g-3">
+                                <div class="col-md-4">
+                                    <label for="sort_order" class="form-label">{% trans "Tartib" %}</label>
+                                    <input
+                                        type="number"
+                                        name="sort_order"
+                                        id="sort_order"
+                                        class="form-control"
+                                        value="{{ form_sort_order }}"
+                                        min="0"
+                                    >
+                                    <div class="form-text">
+                                        {% trans "Kichik raqam oldinroq chiqadi. Masalan, 1 yuqoriroqda, 10 undan keyin ko'rsatiladi." %}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-check my-4">
+                                <input class="form-check-input" type="checkbox" name="is_active" id="is_active" {% if form_is_active %}checked{% endif %}>
+                                <label class="form-check-label" for="is_active">{% trans "Xizmat faol" %}</label>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary">
+                                <i class="ri-save-3-line me-1"></i>
+                                {% trans submit_label %}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xl-4">
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h4 class="card-title mb-1">{% trans "Ikonka tanlash" %}</h4>
+                            <p class="card-subtitle mb-0">{% trans "Xizmat uchun flaticon ikonkasini o'ng paneldan tanlang." %}</p>
+                        </div>
+                        <div class="card-body">
+                            <label for="icon_class" class="form-label">{% trans "Flaticon ikonka" %}</label>
+                            <input type="hidden" name="icon_class" id="icon_class" value="{{ form_icon_class }}">
+                            <div class="icon-select" data-icon-select>
+                                <button type="button" class="icon-select__trigger form-control" data-icon-select-trigger aria-expanded="false">
+                                    <span class="icon-select__trigger-content">
+                                        <i class="{{ form_icon_class }}" data-icon-select-trigger-icon></i>
+                                        <span>
+                                            <strong data-icon-select-trigger-title>{{ selected_icon_label }}</strong>
+                                            <small data-icon-select-trigger-subtitle>{{ form_icon_class }}</small>
+                                        </span>
+                                    </span>
+                                    <i class="ri-arrow-down-s-line"></i>
+                                </button>
+                                <div class="icon-select__panel" data-icon-select-panel>
+                                    <div class="icon-select__grid">
+                                        {% for value, label in icon_choices %}
+                                            <button
+                                                type="button"
+                                                class="icon-select__option {% if form_icon_class == value %}is-active{% endif %}"
+                                                data-icon-option
+                                                data-value="{{ value }}"
+                                                data-label="{{ label }}"
+                                            >
+                                                <i class="{{ value }}"></i>
+                                                <span>{{ label }}</span>
+                                                <small>{{ value }}</small>
+                                            </button>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h4 class="card-title mb-1">{% trans "Ko'rinish" %}</h4>
+                            <p class="card-subtitle mb-0">{% trans "Landing sahifadagi xizmat uchun ikonka va asosiy meta ma'lumotlar." %}</p>
+                        </div>
+                        <div class="card-body">
+                            <div class="service-icon-preview mb-4">
+                                <div class="service-icon-preview__badge">
+                                    <i class="{{ form_icon_class }}" data-service-icon></i>
+                                </div>
+                                <div class="service-icon-preview__meta">
+                                    <strong data-service-icon-label>{{ form_icon_class }}</strong>
+                                    <span class="text-muted">{% trans "Tanlangan flaticon klassi" %}</span>
+                                </div>
+                            </div>
+
+                            <div class="service-preview-grid">
+                                <div class="service-preview-item">
+                                    <span class="text-muted d-block mb-1">{% trans "Holat" %}</span>
+                                    <strong data-service-status>
+                                        {% if form_is_active %}
+                                            {% trans "Faol" %}
+                                        {% else %}
+                                            {% trans "Faol emas" %}
+                                        {% endif %}
+                                    </strong>
+                                </div>
+                                <div class="service-preview-item">
+                                    <span class="text-muted d-block mb-1">{% trans "Tartib" %}</span>
+                                    <strong data-service-order>{{ form_sort_order }}</strong>
+                                </div>
+                                <div class="service-preview-item">
+                                    <span class="text-muted d-block mb-1">{% trans "Amal" %}</span>
+                                    <strong>
+                                        {% if service %}
+                                            {% trans "Tahrirlash" %}
+                                        {% else %}
+                                            {% trans "Yangi yozuv" %}
+                                        {% endif %}
+                                    </strong>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+{% endblock content %}
+
+{% block vendor_js %}
+    <script src="{% static 'vendor/quill/quill.min.js' %}"></script>
+    <script src="{% static 'js/admin-settings.js' %}"></script>
+    <script src="{% static 'js/admin-service-form.js' %}"></script>
+{% endblock vendor_js %}
