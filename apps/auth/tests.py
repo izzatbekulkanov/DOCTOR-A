@@ -35,6 +35,13 @@ class LoginViewTests(TestCase):
         self.assertEqual(response.status_code, 400)
         self.assertNotIn("_auth_user_id", self.client.session)
 
+    def test_login_page_sets_csrf_cookie_and_disables_cache(self):
+        response = self.client.get(self.login_url)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("csrftoken", response.cookies)
+        self.assertIn("no-cache", response.headers.get("Cache-Control", ""))
+
     @patch("apps.auth.login.views.requests.post")
     def test_login_rejects_failed_turnstile_verification(self, mock_post):
         mock_response = Mock()

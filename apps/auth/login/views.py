@@ -3,7 +3,10 @@ import requests
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import authenticate, get_user_model, login
+from django.utils.decorators import method_decorator
 from django.shortcuts import redirect, render
+from django.views.decorators.cache import never_cache
+from django.views.decorators.csrf import csrf_protect, ensure_csrf_cookie
 from django.urls import reverse
 from django.utils.http import url_has_allowed_host_and_scheme
 from django.utils.translation import gettext_lazy as _
@@ -13,6 +16,9 @@ from django.views import View
 User = get_user_model()
 
 
+@method_decorator(never_cache, name="dispatch")
+@method_decorator(csrf_protect, name="dispatch")
+@method_decorator(ensure_csrf_cookie, name="dispatch")
 class LoginView(View):
     template_name = "auth/login.html"
     invalid_credentials_message = _("Login yoki parol noto'g'ri.")

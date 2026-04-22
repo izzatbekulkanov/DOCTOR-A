@@ -1,6 +1,7 @@
 import os
 import sys
 from pathlib import Path
+from urllib.parse import urlsplit
 
 from dotenv import load_dotenv
 from django.utils.translation import gettext_lazy as _
@@ -24,12 +25,20 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 load_dotenv(dotenv_path=BASE_DIR / ".env")
 
 DJANGO_ENVIRONMENT = (os.environ.get("DJANGO_ENVIRONMENT") or "local").strip().lower()
-DEBUG = env_bool("DEBUG", DJANGO_ENVIRONMENT == "local")
+DEBUG = env_bool("DEBUG", True) if DJANGO_ENVIRONMENT == "local" else False
 
 SECRET_KEY = os.environ.get("SECRET_KEY", "unsafe-secret-key")
 BASE_URL = os.environ.get("BASE_URL", "http://127.0.0.1:8000").rstrip("/")
+BASE_URL_PARTS = urlsplit(BASE_URL)
+BASE_ORIGIN = (
+    f"{BASE_URL_PARTS.scheme}://{BASE_URL_PARTS.netloc}"
+    if BASE_URL_PARTS.scheme and BASE_URL_PARTS.netloc
+    else ""
+)
 
 ALLOWED_HOSTS = env_list("ALLOWED_HOSTS", "127.0.0.1,localhost")
+if BASE_URL_PARTS.hostname and BASE_URL_PARTS.hostname not in ALLOWED_HOSTS:
+    ALLOWED_HOSTS.append(BASE_URL_PARTS.hostname)
 if DEBUG:
     for local_host in ("127.0.0.1", "localhost", "testserver"):
         if local_host not in ALLOWED_HOSTS:
@@ -37,6 +46,8 @@ if DEBUG:
 
 csrf_default = "http://127.0.0.1:8000,http://localhost:8000" if DEBUG else ""
 CSRF_TRUSTED_ORIGINS = env_list("CSRF_TRUSTED_ORIGINS", csrf_default)
+if BASE_ORIGIN and BASE_ORIGIN not in CSRF_TRUSTED_ORIGINS:
+    CSRF_TRUSTED_ORIGINS.append(BASE_ORIGIN)
 
 LOCAL_APPS = [
     "apps.dashboards",
