@@ -62,18 +62,6 @@
 								<a href="#" style="color:#666;">{% trans "Parolni unutdingizmi?" %}</a>
 							</div>
 
-							{% if turnstile_enabled %}
-								<div class="col-12 mb-3 d-flex justify-content-center">
-									<div class="cf-turnstile" data-sitekey="{{ turnstile_site_key }}"></div>
-								</div>
-							{% elif turnstile_required %}
-								<div class="col-12 mb-3">
-									<div class="alert alert-danger mb-0" role="alert">
-										{% trans "Kirish himoyasi sozlanmagan. Administrator bilan bog'laning." %}
-									</div>
-								</div>
-							{% endif %}
-
 							<div class="col-12">
 								<button class="default-btn btn-two" type="submit">
 									{% trans "Kirish" %}
@@ -124,7 +112,4 @@
 				});
 			});
 		</script>
-		{% if turnstile_enabled %}
-			<script src="{{ turnstile_script_url }}" async defer></script>
-		{% endif %}
 {% endblock %}

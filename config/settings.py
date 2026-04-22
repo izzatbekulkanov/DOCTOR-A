@@ -170,6 +170,7 @@ STATIC_ROOT = BASE_DIR / "staticfiles"
 STATICFILES_DIRS = [
     BASE_DIR / "static",
 ]
+WHITENOISE_MANIFEST_STRICT = env_bool("WHITENOISE_MANIFEST_STRICT", False)
 
 staticfiles_backend = (
     "django.contrib.staticfiles.storage.StaticFilesStorage"
@@ -214,15 +215,30 @@ SECURE_CONTENT_TYPE_NOSNIFF = env_bool("SECURE_CONTENT_TYPE_NOSNIFF", True)
 SECURE_REFERRER_POLICY = os.environ.get("SECURE_REFERRER_POLICY", "same-origin")
 X_FRAME_OPTIONS = os.environ.get("X_FRAME_OPTIONS", "SAMEORIGIN")
 
-TURNSTILE_SITE_KEY = os.environ.get("TURNSTILE_SITE_KEY", "0x4AAAAAADAzCORlE16Oa7ho").strip()
-TURNSTILE_SECRET_KEY = os.environ.get("TURNSTILE_SECRET_KEY", "").strip()
-TURNSTILE_VERIFY_URL = os.environ.get(
-    "TURNSTILE_VERIFY_URL",
-    "https://challenges.cloudflare.com/turnstile/v0/siteverify",
-).strip()
-TURNSTILE_SCRIPT_URL = os.environ.get(
-    "TURNSTILE_SCRIPT_URL",
-    "https://challenges.cloudflare.com/turnstile/v0/api.js",
-).strip()
-TURNSTILE_TIMEOUT = int(os.environ.get("TURNSTILE_TIMEOUT", "10"))
-TURNSTILE_REQUIRED = env_bool("TURNSTILE_REQUIRED", not DEBUG)
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "verbose": {
+            "format": "%(levelname)s %(asctime)s %(name)s:%(lineno)d %(message)s",
+        },
+    },
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+            "formatter": "verbose",
+        },
+    },
+    "loggers": {
+        "django.request": {
+            "handlers": ["console"],
+            "level": "ERROR",
+            "propagate": False,
+        },
+        "apps": {
+            "handlers": ["console"],
+            "level": "ERROR",
+            "propagate": True,
+        },
+    },
+}

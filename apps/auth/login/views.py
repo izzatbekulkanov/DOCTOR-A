@@ -1,5 +1,3 @@
-import requests
-
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import authenticate, get_user_model, login
@@ -22,9 +20,6 @@ User = get_user_model()
 class LoginView(View):
     template_name = "auth/login.html"
     invalid_credentials_message = _("Login yoki parol noto'g'ri.")
-    turnstile_required_message = _("Robot emasligingizni tasdiqlang.")
-    turnstile_failed_message = _("Turnstile tekshiruvi muvaffaqiyatsiz bo'ldi. Qayta urinib ko'ring.")
-    turnstile_unavailable_message = _("Kirish himoyasi vaqtincha sozlanmagan.")
 
     def get(self, request):
         if request.user.is_authenticated:
@@ -37,11 +32,6 @@ class LoginView(View):
 
         if not username_or_email or not password:
             messages.error(request, _("Login va parolni kiriting."))
-            return self._render_form(request, status=400, login_value=username_or_email)
-
-        turnstile_valid, turnstile_error = self._verify_turnstile(request)
-        if not turnstile_valid:
-            messages.error(request, turnstile_error)
             return self._render_form(request, status=400, login_value=username_or_email)
 
         username = self._resolve_username(username_or_email)
@@ -60,10 +50,6 @@ class LoginView(View):
             {
                 "next": self._get_next_url(request),
                 "login_value": login_value,
-                "turnstile_enabled": bool(settings.TURNSTILE_SITE_KEY),
-                "turnstile_required": settings.TURNSTILE_REQUIRED,
-                "turnstile_site_key": settings.TURNSTILE_SITE_KEY,
-                "turnstile_script_url": settings.TURNSTILE_SCRIPT_URL,
             },
             status=status,
         )
@@ -100,46 +86,3 @@ class LoginView(View):
         if matched_user:
             return matched_user.username
         return username_or_email
-
-    def _verify_turnstile(self, request):
-        if not settings.TURNSTILE_REQUIRED:
-            return True, ""
-
-        token = (request.POST.get("cf-turnstile-response") or "").strip()
-        if not token:
-            return False, self.turnstile_required_message
-
-        if not settings.TURNSTILE_SECRET_KEY:
-            return False, self.turnstile_unavailable_message
-
-        payload = {
-            "secret": settings.TURNSTILE_SECRET_KEY,
-            "response": token,
-        }
-        client_ip = self._get_client_ip(request)
-        if client_ip:
-            payload["remoteip"] = client_ip
-
-        try:
-            response = requests.post(
-                settings.TURNSTILE_VERIFY_URL,
-                data=payload,
-                timeout=settings.TURNSTILE_TIMEOUT,
-            )
-            response.raise_for_status()
-            result = response.json()
-        except requests.RequestException:
-            return False, self.turnstile_failed_message
-
-        return bool(result.get("success")), self.turnstile_failed_message
-
-    @staticmethod
-    def _get_client_ip(request):
-        forwarded_for = request.META.get("HTTP_X_FORWARDED_FOR", "")
-        if forwarded_for:
-            return forwarded_for.split(",")[0].strip()
-
-        return (
-            request.META.get("HTTP_CF_CONNECTING_IP")
-            or request.META.get("REMOTE_ADDR", "")
-        ).strip()
