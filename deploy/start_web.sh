@@ -21,7 +21,7 @@ python manage.py migrate --noinput
 python manage.py collectstatic --noinput
 
 exec gunicorn config.wsgi:application \
-  --bind "${GUNICORN_BIND:-127.0.0.1:8001}" \
+  --bind "${GUNICORN_BIND:-0.0.0.01:8003}" \
   --workers "${GUNICORN_WORKERS:-3}" \
   --timeout "${GUNICORN_TIMEOUT:-120}" \
   --access-logfile - \
