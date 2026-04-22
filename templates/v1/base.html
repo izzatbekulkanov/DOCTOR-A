@@ -80,6 +80,10 @@
 		<!-- End LTR & RTL Button -->
 
         <!-- JQUERY MIN JS -->
+        <script>
+            window.yaContextCb = window.yaContextCb || [];
+        </script>
+        <script src="https://yandex.ru/ads/system/context.js" async></script>
         <script src="{% static 'medic/js/jquery.min.js' %}"></script>
         <!-- BOOTSTRAP MIN JS -->
         <script src="{% static 'medic/js/bootstrap.bundle.min.js' %}"></script>
@@ -198,6 +202,18 @@
 
 				window.addEventListener("hashchange", syncActiveLink);
 				syncActiveLink();
+			});
+		</script>
+		<script>
+			window.yaContextCb.push(function () {
+				if (!document.getElementById("yandex_rtb_R-A-19145681-1") || !window.Ya || !Ya.Context) {
+					return;
+				}
+
+				Ya.Context.AdvManager.render({
+					blockId: "R-A-19145681-1",
+					renderTo: "yandex_rtb_R-A-19145681-1"
+				});
 			});
 		</script>
 		{% block extra_scripts %}{% endblock %}
