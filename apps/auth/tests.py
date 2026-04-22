@@ -1,11 +1,12 @@
 from django.contrib.auth import get_user_model
-from django.test import TestCase
+from django.test import TestCase, override_settings
 from django.urls import reverse
 
 
 User = get_user_model()
 
 
+@override_settings(SECURE_SSL_REDIRECT=False)
 class LoginViewTests(TestCase):
     def setUp(self):
         self.password = "StrongPass123!"
