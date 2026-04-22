@@ -1,0 +1,128 @@
+.app-header {
+    gap: 12px;
+}
+
+.admin-header-title {
+    min-width: 0;
+}
+
+.admin-header-title h5 {
+    max-width: min(42vw, 420px);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.header-actions {
+    gap: 8px;
+    min-width: 0;
+}
+
+.header-actions .dropdown {
+    flex: 0 0 auto;
+}
+
+@media (max-width: 767.98px) {
+    .app-header {
+        min-height: 58px;
+        padding: 0 12px;
+        gap: 8px;
+    }
+
+    .admin-header-title {
+        display: none !important;
+    }
+
+    .app-brand-sm {
+        order: 1;
+        flex: 1 1 auto;
+        min-width: 0;
+        align-items: center;
+    }
+
+    .app-brand-sm .logo {
+        max-width: 42px;
+        max-height: 36px;
+    }
+
+    .app-header > .d-flex:first-child {
+        order: 0;
+        flex: 0 0 auto;
+    }
+
+    .header-actions {
+        order: 2;
+        margin-left: auto !important;
+        flex: 0 0 auto;
+    }
+
+    .header-actions .dropdown.me-3 {
+        margin-right: 0 !important;
+    }
+
+    .header-actions .dropdown.ms-2 {
+        margin-left: 0 !important;
+    }
+
+    .header-actions .badge {
+        min-width: 36px;
+        height: 32px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0 8px;
+        border-radius: 8px;
+    }
+
+    .avatar-box {
+        width: 34px;
+        height: 34px;
+        border-width: 2px;
+        font-size: 12px;
+    }
+
+    .toggle-sidebar,
+    .pin-sidebar {
+        width: 34px;
+        height: 34px;
+        border-width: 2px;
+    }
+
+    .app-hero-header {
+        top: 58px;
+        padding: 0.75rem 1rem;
+    }
+
+    .app-body {
+        padding: 1rem;
+    }
+}
+
+@media (max-width: 399.98px) {
+    .app-header {
+        padding: 0 8px;
+        gap: 6px;
+    }
+
+    .app-brand-sm .logo {
+        max-width: 36px;
+    }
+
+    .header-actions {
+        gap: 6px;
+    }
+
+    .header-actions .badge {
+        min-width: 32px;
+        height: 30px;
+        padding: 0 6px;
+        font-size: 11px;
+    }
+
+    .avatar-box,
+    .toggle-sidebar,
+    .pin-sidebar {
+        width: 32px;
+        height: 32px;
+    }
+}
