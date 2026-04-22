@@ -22,11 +22,15 @@
     flex: 0 0 auto;
 }
 
-@media (max-width: 767.98px) {
+@media (max-width: 1199.98px) {
     .app-header {
         min-height: 58px;
         padding: 0 12px;
         gap: 8px;
+    }
+
+    .app-header > .d-flex:first-child {
+        display: none !important;
     }
 
     .admin-header-title {
@@ -34,20 +38,22 @@
     }
 
     .app-brand-sm {
+        display: flex !important;
         order: 1;
         flex: 1 1 auto;
         min-width: 0;
         align-items: center;
     }
 
+    .app-brand-sm a {
+        display: inline-flex;
+        align-items: center;
+        max-width: 100%;
+    }
+
     .app-brand-sm .logo {
         max-width: 42px;
         max-height: 36px;
-    }
-
-    .app-header > .d-flex:first-child {
-        order: 0;
-        flex: 0 0 auto;
     }
 
     .header-actions {
@@ -88,6 +94,22 @@
         border-width: 2px;
     }
 
+    .toggle-sidebar {
+        display: flex !important;
+        flex: 0 0 34px;
+    }
+
+    .toggle-sidebar i {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 1em;
+        height: 1em;
+        color: #116aef;
+        font-size: 18px;
+        line-height: 1;
+    }
+
     .app-hero-header {
         top: 58px;
         padding: 0.75rem 1rem;
@@ -95,6 +117,17 @@
 
     .app-body {
         padding: 1rem;
+    }
+}
+
+@media (min-width: 768px) and (max-width: 1199.98px) {
+    .app-brand-sm .logo {
+        max-width: 46px;
+        max-height: 38px;
+    }
+
+    .header-actions {
+        gap: 10px;
     }
 }
 
