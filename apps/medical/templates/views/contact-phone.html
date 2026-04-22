@@ -1,6 +1,7 @@
 {% extends 'administrator/main.html' %}
 {% load static %}
 {% load custom_filters %}
+{% get_static_prefix as STATIC_PREFIX %}
 {% block title %}
     <title>Telefon raqamlari haqida ma'lumot</title>
 {% endblock title %}
@@ -31,7 +32,7 @@
                                     <button type="button" class="nav-link {% if forloop.first %}active{% endif %}"
                                             data-bs-toggle="tab"
                                             data-bs-target="#tab-{{ code }}">
-                                        <img src="{% static 'vendor/fonts/flags/1x1/' %}{{ code }}.svg" width="20">
+                                        <img src="{{ STATIC_PREFIX }}fonts/flag-icon-css/flags/{{ code }}.svg" width="20">
                                         {{ name }}
                                     </button>
                                 </li>
@@ -44,7 +45,7 @@
                                 <div class="tab-pane fade {% if forloop.first %}show active{% endif %}"
                                      id="tab-{{ code }}">
                                     <label class="form-label">
-                                        <img src="{% static 'vendor/fonts/flags/1x1/' %}{{ code }}.svg" width="20">
+                                        <img src="{{ STATIC_PREFIX }}fonts/flag-icon-css/flags/{{ code }}.svg" width="20">
                                         {{ name }} uchun tavsif
                                     </label>
                                     <input type="text" class="form-control" id="description_{{ code }}"

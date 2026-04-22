@@ -310,7 +310,7 @@
                                 {% if doctor.profile_picture %}
                                     <img src="{{ doctor.profile_picture.url }}" alt="{{ doctor.full_name|default:doctor.username }}">
                                 {% else %}
-                                    <img src="{% static 'medic/img/doctor-placeholder.jpg' %}" alt="{{ doctor.full_name|default:doctor.username }}">
+                                    <img src="{% static 'medic/img/doctors/user.jpeg' %}" alt="{{ doctor.full_name|default:doctor.username }}">
                                 {% endif %}
                             </a>
 
@@ -390,7 +390,7 @@
                                 {% if news_item.image %}
                                     <img src="{{ news_item.image.url }}" alt="{{ news_item.title|get_language_text:current_lang }}">
                                 {% else %}
-                                    <img src="{% static 'medic/img/blog-placeholder.jpg' %}" alt="{{ news_item.title|get_language_text:current_lang }}">
+                                    <img src="{% static 'medic/img/blog-details-img/recent-post-img-1.jpg' %}" alt="{{ news_item.title|get_language_text:current_lang }}">
                                 {% endif %}
                             </a>
 

@@ -385,7 +385,7 @@
 									{% if site_settings and site_settings.logo_light %}
 										<img class="site-brand-image site-brand-image-desktop" src="{{ site_settings.logo_light.url }}" alt="{{ site_settings.site_name|default:'Logo' }}">
 									{% else %}
-										<img class="site-brand-image site-brand-image-desktop" src="{% static 'medic/img/logo.png' %}" alt="{{ site_settings.site_name|default:'Logo' }}">
+										<img class="site-brand-image site-brand-image-desktop" src="{% static 'images/logo.svg' %}" alt="{{ site_settings.site_name|default:'Logo' }}">
 									{% endif %}
 								</a>
 								
@@ -456,7 +456,7 @@
 							{% if site_settings and site_settings.logo_light %}
 								<img class="site-brand-image site-brand-image-mobile" src="{{ site_settings.logo_light.url }}" alt="{{ site_settings.site_name|default:'Logo' }}">
 							{% else %}
-								<img class="site-brand-image site-brand-image-mobile" src="{% static 'medic/img/logo.png' %}" alt="{{ site_settings.site_name|default:'Logo' }}">
+								<img class="site-brand-image site-brand-image-mobile" src="{% static 'images/logo.svg' %}" alt="{{ site_settings.site_name|default:'Logo' }}">
 							{% endif %}
 						</a>
 					</div>

@@ -7,28 +7,21 @@
 
 {% block vendor_css %}
 {{ block.super }}
-<link rel="stylesheet" href="{% static 'vendor/libs/apex-charts/apex-charts.css' %}" />
-<link rel="stylesheet" href="{% static 'vendor/libs/swiper/swiper.css' %}" />
-<link rel="stylesheet" href="{% static 'vendor/libs/datatables-bs5/datatables.bootstrap5.css' %}" />
-<link rel="stylesheet" href="{% static 'vendor/libs/datatables-responsive-bs5/responsive.bootstrap5.css' %}" />
-<link rel="stylesheet" href="{% static 'vendor/libs/datatables-checkboxes-jquery/datatables.checkboxes.css' %}" />
+<link rel="stylesheet" href="{% static 'vendor/datatables/dataTables.bs5.css' %}" />
 {% endblock vendor_css %}
 
 {% block vendor_js %}
 {{ block.super }}
-<script src="{% static 'vendor/libs/apex-charts/apexcharts.js' %}"></script>
-<script src="{% static 'vendor/libs/swiper/swiper.js' %}"></script>
-<script src="{% static 'vendor/libs/datatables-bs5/datatables-bootstrap5.js' %}"></script>
+<script src="{% static 'vendor/datatables/dataTables.min.js' %}"></script>
+<script src="{% static 'vendor/datatables/dataTables.bootstrap.min.js' %}"></script>
 {% endblock vendor_js %}
 
 {% block page_css %}
 {{ block.super }}
-<link rel="stylesheet" href="{% static 'vendor/css/pages/cards-advance.css' %}" />
 {% endblock page_css %}
 
 {% block page_js %}
 {{ block.super }}
-<script src="{% static 'js/dashboards-analytics.js' %}"></script>
 {% endblock page_js %}
 
 {% block content %}

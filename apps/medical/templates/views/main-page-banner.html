@@ -1,6 +1,7 @@
 {% extends 'administrator/main.html' %}
 {% load static %}
 {% load custom_filters %}
+{% get_static_prefix as STATIC_PREFIX %}
 
 {% block title %}
     <title>Asosiy sahifa bannerlari</title>
@@ -37,7 +38,7 @@
                                 <li class="nav-item" role="presentation">
                                     <button class="nav-link {% if forloop.first %}active{% endif %}" id="{{ code }}-tab"
                                             data-bs-toggle="tab" data-bs-target="#{{ code }}" type="button" role="tab">
-                                        <img src="{% static 'vendor/fonts/flags/1x1/' %}{{ code }}.svg" width="20"
+                                        <img src="{{ STATIC_PREFIX }}fonts/flag-icon-css/flags/{{ code }}.svg" width="20"
                                              class="me-1">
                                         {{ name }}
                                     </button>
