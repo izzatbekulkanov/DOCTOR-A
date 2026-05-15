@@ -67,8 +67,20 @@ def _resolve_footer_rich_text(value, language_code, fallback_key):
     return _translate_footer_value(FOOTER_RICH_TEXT_TRANSLATIONS[fallback_key], language_code)
 
 
+def _video_file_exists(field_file):
+    """Tekshiradi: video fayl haqiqatan diskda mavjudmi."""
+    if not field_file:
+        return False
+    try:
+        return field_file.storage.exists(field_file.name)
+    except Exception:
+        return False
+
+
 def global_context(request):
     site_settings = SiteSettings.objects.first()
+    has_video1 = _video_file_exists(getattr(site_settings, "video1", None))
+    has_video2 = _video_file_exists(getattr(site_settings, "video2", None))
     banner = MainPageBanner.objects.last()
     doctor_info_list = DoctorAInfo.objects.order_by("-created_at")[:3]
     contact_phones = ContactPhone.objects.all()
@@ -96,6 +108,9 @@ def global_context(request):
 
     return {
         "site_settings": site_settings,
+        "has_video1": has_video1,
+        "has_video2": has_video2,
+        "has_clinic_videos": has_video1 or has_video2,
         "banner": banner,
         "doctor_info_list": doctor_info_list,
         "contact_phones": contact_phones,

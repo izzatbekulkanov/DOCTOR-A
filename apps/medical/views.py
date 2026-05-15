@@ -1503,6 +1503,7 @@ class UserFormMixin:
             "bio": user.get_clean_bio() if user else "",
             "address": user.address if user else "",
             "is_active": user.is_active if user else True,
+            "is_staff": user.is_staff if user else False,
         }
 
     def get_form_data(self, request, user=None):
@@ -1532,6 +1533,7 @@ class UserFormMixin:
             "bio": CustomUser.normalize_rich_text_content(request.POST.get("bio")),
             "address": request.POST.get("address", "").strip(),
             "is_active": request.POST.get("is_active") == "on",
+            "is_staff": request.POST.get("is_staff") == "on",
         }
 
     def resolve_username(self, form_data, user=None):
@@ -1599,6 +1601,7 @@ class UserFormMixin:
         user.address = form_data["address"] or ""
         user.is_active = form_data["is_active"]
         user.is_active_employee = form_data["is_active"]
+        user.is_staff = form_data["is_staff"]
 
         if profile_picture:
             user.profile_picture = profile_picture

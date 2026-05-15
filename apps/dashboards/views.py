@@ -337,6 +337,7 @@ class LandingPageV1View(TemplateView):
 
         doctors = CustomUser.objects.filter(
             is_active_employee=True,
+            is_staff=True,
             medical_specialty__isnull=False,
         ).exclude(
             profile_picture="",
@@ -1385,34 +1386,11 @@ class AnnouncementLandingMixin(NewsLandingMixin):
 class AnnouncementRightSidebarView(AnnouncementLandingMixin, TemplateView):
     template_name = "v1/announcements-right-sidebar.html"
     paginate_by = 6
-    announcement_image_urls = [
-        "https://medic.mhrtheme.com/wp-content/uploads/2021/10/blog-1.jpg",
-        "https://medic.mhrtheme.com/wp-content/uploads/2021/10/blog-2.jpg",
-        "https://medic.mhrtheme.com/wp-content/uploads/2021/10/blog-3.jpg",
-        "https://medic.mhrtheme.com/wp-content/uploads/2021/10/blog-4.jpg",
-        "https://medic.mhrtheme.com/wp-content/uploads/2021/09/blog-5.jpg",
-        "https://medic.mhrtheme.com/wp-content/uploads/2021/08/blog-6.jpg",
-    ]
-    fallback_announcements = [
-        {
-            "title": "Clinic Schedule Update",
-            "summary": "Revised outpatient reception hours and service windows for the upcoming month.",
-            "published_date": date(2026, 4, 12),
-            "author_name": "Admin",
-        },
-        {
-            "title": "Laboratory Service Notice",
-            "summary": "Morning sample collection capacity has been expanded to reduce patient waiting time.",
-            "published_date": date(2026, 4, 8),
-            "author_name": "Admin",
-        },
-        {
-            "title": "New Specialist Availability",
-            "summary": "Additional consultation slots are now open for cardiology and diagnostic imaging departments.",
-            "published_date": date(2026, 4, 3),
-            "author_name": "Admin",
-        },
-    ]
+    default_announcement_image = "medic/img/blog-details-img/recent-post-img-1.jpg"
+
+    def _get_announcement_image_url(self, announcement):
+        """E'lon uchun rasm URL ni qaytaradi. Hozircha default lokal rasm."""
+        return settings.STATIC_URL + self.default_announcement_image
 
     def _serialize_announcement(self, announcement, index, language_code):
         title = announcement.title.get(language_code) or announcement.title.get("uz") or "Announcement"
@@ -1428,26 +1406,15 @@ class AnnouncementRightSidebarView(AnnouncementLandingMixin, TemplateView):
             "summary": strip_tags(content),
             "published_date": announcement.published_date,
             "author_name": author_name,
-            "image_url": self.announcement_image_urls[index % len(self.announcement_image_urls)],
+            "image_url": self._get_announcement_image_url(announcement),
         }
 
     def _build_announcement_items(self, language_code):
         queryset = Announcement.objects.filter(is_published=True).select_related("author").order_by("-published_date")
-        items = [
+        return [
             self._serialize_announcement(announcement, index, language_code)
             for index, announcement in enumerate(queryset)
         ]
-
-        if items:
-            return items
-
-        fallback_items = []
-        for index, item in enumerate(self.fallback_announcements):
-            fallback_items.append({
-                **item,
-                "image_url": self.announcement_image_urls[index % len(self.announcement_image_urls)],
-            })
-        return fallback_items
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -1577,6 +1544,7 @@ class DoctorGridView(TemplateView):
         doctors_query = CustomUser.objects.filter(
             is_active_employee=True,
             is_superuser=False,
+            is_staff=True,
             medical_specialty__isnull=False
         ).exclude(medical_specialty='').order_by('full_name')
 

@@ -134,10 +134,10 @@
                             {% endif %}
                         </div>
 
-                        {% if site_settings and site_settings.video1 or site_settings and site_settings.video2 %}
+                        {% if has_clinic_videos %}
                             <div class="about-side-videos">
                                 <div class="row g-3">
-                                    {% if site_settings and site_settings.video1 %}
+                                    {% if has_video1 %}
                                         <div class="col-sm-6 col-6 d-flex">
                                             <div class="clinic-video-tile">
                                                 <video playsinline controls preload="metadata">
@@ -146,7 +146,7 @@
                                             </div>
                                         </div>
                                     {% endif %}
-                                    {% if site_settings and site_settings.video2 %}
+                                    {% if has_video2 %}
                                         <div class="col-sm-6 col-6 d-flex">
                                             <div class="clinic-video-tile">
                                                 <video playsinline controls preload="metadata">

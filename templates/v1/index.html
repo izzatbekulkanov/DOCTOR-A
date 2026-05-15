@@ -7,6 +7,56 @@
         height: auto;
         min-height: 620px;
         padding: 120px 0 80px;
+        background-image: url("{% static 'images/Artboard_Background.png' %}");
+        background-repeat: no-repeat;
+        background-position: center center;
+        background-size: cover;
+        position: relative;
+        isolation: isolate;
+    }
+
+    #home.banner-area::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+            90deg,
+            rgba(15, 23, 42, 0.78) 0%,
+            rgba(15, 23, 42, 0.55) 45%,
+            rgba(15, 23, 42, 0.25) 100%
+        );
+        z-index: -1;
+    }
+
+    #home.banner-area .container {
+        position: relative;
+        z-index: 1;
+    }
+
+    #home.banner-area .banner-content span,
+    #home.banner-area .banner-content h1,
+    #home.banner-area .banner-content p {
+        color: #ffffff !important;
+        text-shadow: 0 2px 12px rgba(0, 0, 0, 0.45);
+    }
+
+    #home.banner-area .banner-content span {
+        font-weight: 600;
+        letter-spacing: 0.5px;
+    }
+
+    #home.banner-area .banner-content p {
+        opacity: 0.95;
+    }
+
+    @media only screen and (max-width: 991px) {
+        #home.banner-area::before {
+            background: linear-gradient(
+                180deg,
+                rgba(15, 23, 42, 0.82) 0%,
+                rgba(15, 23, 42, 0.55) 100%
+            );
+        }
     }
 
     #home.banner-area .row {
@@ -60,6 +110,120 @@
     #services .single-services .read-more {
         margin-top: auto;
     }
+
+    /* === News (Yangiliklar) cards — equal height & uniform layout === */
+    #blog .row {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: stretch;
+    }
+
+    #blog .row > [class*="col-"] {
+        display: flex;
+        margin-bottom: 30px;
+    }
+
+    #blog .single-blog {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        background: #ffffff;
+        border-radius: 6px;
+        overflow: hidden;
+        box-shadow: 0 4px 18px rgba(15, 23, 42, 0.08);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    #blog .single-blog:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 10px 28px rgba(15, 23, 42, 0.12);
+    }
+
+    #blog .single-blog > a:first-child {
+        display: block;
+        position: relative;
+        width: 100%;
+        aspect-ratio: 16 / 10;
+        overflow: hidden;
+        background: #f4f5f7;
+    }
+
+    #blog .single-blog > a:first-child img {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.5s ease;
+    }
+
+    #blog .single-blog:hover > a:first-child img {
+        transform: scale(1.05);
+    }
+
+    #blog .single-blog .blog-content {
+        flex: 1 1 auto;
+        display: flex;
+        flex-direction: column;
+        padding: 24px;
+    }
+
+    #blog .single-blog .blog-content ul {
+        margin-bottom: 12px;
+        padding-left: 0;
+        list-style: none;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 14px;
+        font-size: 13px;
+    }
+
+    #blog .single-blog .blog-content h3 {
+        font-size: 20px;
+        line-height: 1.35;
+        margin-bottom: 12px;
+        min-height: 54px;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    #blog .single-blog .blog-content h3 a {
+        color: inherit;
+    }
+
+    #blog .single-blog .blog-content > a:has(h3) {
+        text-decoration: none;
+    }
+
+    #blog .single-blog .blog-content p {
+        font-size: 15px;
+        line-height: 1.6;
+        margin-bottom: 16px;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    #blog .single-blog .blog-content .read-more {
+        margin-top: auto;
+        align-self: flex-start;
+    }
+
+    @media only screen and (max-width: 575px) {
+        #blog .single-blog .blog-content {
+            padding: 20px;
+        }
+
+        #blog .single-blog .blog-content h3 {
+            font-size: 18px;
+            min-height: 48px;
+        }
+    }
+    /* === End News cards === */
 
     .section-title.section-title-with-action {
         display: flex;
